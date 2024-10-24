@@ -1,7 +1,7 @@
-# vqa-cliff-simp
+# PHOENIX: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ-Era quantum devices
+
+
 VQA application-specific compiler via Clifford simplification.
-
-
 
 
 
