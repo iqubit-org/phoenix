@@ -260,32 +260,33 @@ def fuse_blocks(blocks: List[Circuit], name: str = 'U') -> Circuit:
     return Circuit([gates.UnivGate(blk.unitary(), name=name).on(blk.qubits) for blk in blocks])
 
 
-def fuse_u3_to_su4(circ: Circuit) -> Circuit:
-    """Contract all single-qubit gates into neighboring SU(4)"""
-    dag = circ.to_dag()
-    nodes_2q_gate = filter_nodes(dag, lambda node: isinstance(node, Gate) and node.num_qregs == 2)
-    for g in nodes_2q_gate:
-        while True:
-            predecessors_1q = find_predecessors_by_node(dag, node_index(dag, g),
-                                                        lambda node: isinstance(node, Gate) and node.num_qregs == 1)
-            successors_1q = find_successors_by_node(dag, node_index(dag, g),
-                                                    lambda node: isinstance(node, Gate) and node.num_qregs == 1)
-            if not predecessors_1q and not successors_1q:  # there is no 1Q gate in the neighborhood
-                break
-            for g_pred in predecessors_1q:
-                if g_pred.tq == g.tqs[0]:
-                    g.data = g.data @ tensor_1_slot(g_pred.data, 2, 0)
-                else:
-                    g.data = g.data @ tensor_1_slot(g_pred.data, 2, 1)
-                dag.contract_nodes([node_index(dag, g), node_index(dag, g_pred)], g)
-            for g_succ in successors_1q:
-                if g_succ.tq == g.tqs[0]:
-                    g.data = tensor_1_slot(g_succ.data, 2, 0) @ g.data
-                else:
-                    g.data = tensor_1_slot(g_succ.data, 2, 1) @ g.data
-                dag.contract_nodes([node_index(dag, g), node_index(dag, g_succ)], g)
-
-    return dag_to_circuit(dag)
+# def fuse_u3_to_su4(circ: Circuit) -> Circuit:
+#     """Contract all single-qubit gates into neighboring SU(4)"""
+#     dag = circ.to_dag()
+#     nodes_2q_gate = filter_nodes(dag, lambda node: isinstance(node, Gate) and node.num_qregs == 2)
+#     for g in nodes_2q_gate:
+#         print(g)
+#         while True:
+#             predecessors_1q = find_predecessors_by_node(dag, node_index(dag, g),
+#                                                         lambda node: isinstance(node, Gate) and node.num_qregs == 1)
+#             successors_1q = find_successors_by_node(dag, node_index(dag, g),
+#                                                     lambda node: isinstance(node, Gate) and node.num_qregs == 1)
+#             if not predecessors_1q and not successors_1q:  # there is no 1Q gate in the neighborhood
+#                 break
+#             for g_pred in predecessors_1q:
+#                 if g_pred.tq == g.tqs[0]:
+#                     g.data = g.matrix() @ tensor_1_slot(g_pred.data, 2, 0)
+#                 else:
+#                     g.data = g.matrix() @ tensor_1_slot(g_pred.data, 2, 1)
+#                 dag.contract_nodes([node_index(dag, g), node_index(dag, g_pred)], g)
+#             for g_succ in successors_1q:
+#                 if g_succ.tq == g.tqs[0]:
+#                     g.data = tensor_1_slot(g_succ.data, 2, 0) @ g.data
+#                 else:
+#                     g.data = tensor_1_slot(g_succ.data, 2, 1) @ g.data
+#                 dag.contract_nodes([node_index(dag, g), node_index(dag, g_succ)], g)
+#
+#     return dag_to_circuit(dag)
 
 
 def fuse_neighbor_u3(circ: Circuit) -> Circuit:

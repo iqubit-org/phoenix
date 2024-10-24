@@ -307,7 +307,7 @@ class Circuit(list):
         if self.num_qubits > 10:
             # REMARK: Cirq only support common gates
             return circuit_to_unitary(self, 'cirq')
-        if self.num_qubits > 6:
+        if self.num_qubits > 8:
             return circuit_to_unitary(self, 'qiskit')
 
         ops = []

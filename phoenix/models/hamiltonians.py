@@ -2,7 +2,6 @@ import numpy as np
 import qiskit.quantum_info as qi
 from typing import List, Union, Tuple, Dict
 
-from quimb import pauli
 from scipy import linalg
 from copy import deepcopy
 from functools import reduce

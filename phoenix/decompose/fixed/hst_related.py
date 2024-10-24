@@ -20,7 +20,7 @@ def ch_decompose(CH: Gate) -> Circuit:
     Returns:
         Circuit: Decomposed circuit.
     """
-    if not (isinstance(CH, gate.HGate) and len(CH.cqs) == 1 and len(CH.tqs) == 1):
+    if not (isinstance(CH, gates.HGate) and len(CH.cqs) == 1 and len(CH.tqs) == 1):
         raise ValueError("CH must be a one control one target HGate")
     cq = CH.cq
     tq = CH.tq
