@@ -1,0 +1,34 @@
+{
+    "num_qubits": 4,
+    "num_terms": 13,
+    "paulis": [
+        "IIII",
+        "XXII",
+        "XIXI",
+        "XIIX",
+        "YYII",
+        "YIYI",
+        "YIIY",
+        "ZZII",
+        "ZIZI",
+        "ZIIZ",
+        "IXIX",
+        "IYIY",
+        "IZIZ"
+    ],
+    "coeffs": [
+        1.0,
+        -0.25,
+        -0.25,
+        -0.25,
+        -0.25,
+        -0.25,
+        -0.25,
+        -0.25,
+        -0.25,
+        -0.25,
+        -0.25,
+        -0.25,
+        -0.25
+    ]
+}
