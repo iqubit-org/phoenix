@@ -103,14 +103,12 @@ for fname in fnames:
     if os.path.exists(json_fname):
         continue
 
-
     circ = Circuit.from_qasm(fname=qasm_fname)
 
-    if circ.num_nonlocal_gates > 100000:
+    if circ.num_nonlocal_gates > 20000:
         continue
 
     print('converting {} to {} ...'.format(qasm_fname, json_fname))
-
 
     dag = circ.to_dag('networkx')
 
