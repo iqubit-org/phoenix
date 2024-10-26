@@ -94,7 +94,7 @@ class PhasePolynomial:
 qasm_dir = './chem_qasm/'
 json_dir = './chem_json/'
 
-fnames = natsorted([fname for fname in os.listdir(qasm_dir) if fname.endswith('.qasm')], reverse=True)
+fnames = natsorted([fname for fname in os.listdir(qasm_dir) if fname.endswith('.qasm')])
 
 for fname in fnames:
     qasm_fname = os.path.join(qasm_dir, fname)
