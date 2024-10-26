@@ -32,9 +32,14 @@ binaryoptimization,graph-gnp_k-4-gnp-k_4_n-6_rinst-15,6,315,90,207,78,315,90,105
 binaryoptimization,uf20-7-uf20-0384,8,79,50,46,30,111,50,37,20
 binaryoptimization,flat100-4-flat100-7,90,505,282,46,30,561,282,37,20
 binaryoptimization,uuf100-0-uuf100-0810,40,537,350,197,139,737,350,88,48
+discreteoptimization,binary-color02-dsjc1000,72,2637,1962,1097,864,5661,1962,475,218
+discreteoptimization,TSP_Ncity-16-tsp_prob-kroD100_Ncity-16_enc-stdbinary,64,27904,24064,26473,22996,93952,24064,5491,2147
 discreteoptimization,TSP_Ncity-7-tsp_prob-lin105_Ncity-7_enc-unary,49,931,588,145,92,931,588,46,30
+discreteoptimization,gray-color02-will199gpia_k-3-will199gpia,120,6072,4560,2467,1958,13176,4560,703,325
 discreteoptimization,unary-color02-ash608gpia_k-3-ash608gpia,480,3882,2268,170,108,3882,2268,46,30
+discreteoptimization,TSP_Ncity-16-tsp_prob-fl417_Ncity-16_enc-stdbinary,64,27904,24064,26473,22996,93952,24064,5491,2147
 discreteoptimization,TSP_Ncity-8-tsp_prob-ulysses22_Ncity-8_enc-stdbinary,24,2432,1984,2156,1793,6976,1984,925,382
+discreteoptimization,TSP_Ncity-4-tsp_rand-002_Ncity-4_enc-stdbinary,8,176,128,139,106,368,128,109,51
 discreteoptimization,TSP_Ncity-10-tsp_prob-st70_Ncity-10_enc-unary,100,2800,1800,301,194,2800,1800,70,46
 discreteoptimization,binary-graph-regular_k-5-reg-5_n-10_rinst-07,30,7345,6050,5416,4579,21425,6050,2491,1039
 discreteoptimization,gray-color02-1-fullins_5_k-5-1-fullins_5,144,30090,24756,15296,12963,87594,24756,7045,2969
