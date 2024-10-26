@@ -304,11 +304,11 @@ class Circuit(list):
 
         if self.num_qubits > 12:
             raise ValueError('Circuit to compute unitary matrix has too many qubits')
-        if self.num_qubits >= 10:
+        if self.num_qubits > 7:
             # REMARK: Cirq only support common gates
             return circuit_to_unitary(self, 'cirq')
-        if self.num_qubits > 8:
-            return circuit_to_unitary(self, 'qiskit')
+        # if self.num_qubits > 8:
+        #     return circuit_to_unitary(self, 'qiskit')
 
         ops = []
         if with_dummy:

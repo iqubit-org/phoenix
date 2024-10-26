@@ -18,6 +18,8 @@ with open('100_representative.json', 'r') as f:
 
 for ham in data:
     program_name = '{}-{}'.format(ham['ham_problem'], ham['ham_instance'].strip('/').strip(','))
+    program_name = program_name.replace('ham_', '')
+    program_name = program_name.replace('ham-', '')
     qasm_fname = os.path.join(QASM_DIR, ham['ham_category'], program_name + '.qasm')
     json_fname = os.path.join(JSON_DIR, ham['ham_category'], program_name + '.json')
 
