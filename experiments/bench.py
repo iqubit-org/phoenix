@@ -5,8 +5,6 @@ Benchmarking on hamlib100 with Phoenix compiler
 
 import sys
 
-from bokeh.client.states import DISCONNECTED
-
 sys.path.append('..')
 
 import os

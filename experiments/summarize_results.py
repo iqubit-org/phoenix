@@ -12,7 +12,7 @@ BENCHMARK_DPATH = '../benchmarks/hamlib100qasm'
 OUTPUT_DPATH = './output/'
 
 parser = argparse.ArgumentParser(prog='Summarize compilation results (gate count and circuit depth statistics)')
-parser.add_argument('-c', '--compiler', type=str, help='compiler name')
+parser.add_argument('-c', '--compiler', type=str, help='Compiler name')
 args = parser.parse_args()
 
 OUTPUT_DPATH = os.path.join(OUTPUT_DPATH, args.compiler)

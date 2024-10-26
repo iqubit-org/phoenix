@@ -375,3 +375,26 @@ def sabre_by_qiskit(circ: Circuit, device: rx.PyGraph,
     final_mapping = {j: i for i, j in final_mapping_inv.items()}
     circ = Circuit.from_qiskit(circ).rewire(init_mapping_inv)
     return circ, init_mapping, final_mapping
+
+
+################################################################
+# Topology-preserved optimization
+################################################################
+def phys_circ_opt_by_qiskit(circ: Circuit) -> Circuit:
+    import qiskit
+
+    circ_qiskit_opt = qiskit.transpile(circ.to_qiskit(), optimization_level=3, basis_gates=['u1', 'u2', 'u3', 'cx'])
+    circ_opt = Circuit.from_qiskit(circ_qiskit_opt)
+    assert sorted(circ.qubit_dependency().edges()) == sorted(circ_opt.qubit_dependency().edges()), "Topology mismatch"
+    return circ_opt
+
+
+def phys_circ_opt_by_tket(circ: Circuit) -> Circuit:
+    import pytket.passes
+
+    circ_tket = circ.to_tket()
+    pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ_tket)
+    pytket.passes.RemoveRedundancies().apply(circ_tket)
+    circ_opt = Circuit.from_tket(circ_tket)
+    assert sorted(circ.qubit_dependency().edges()) == sorted(circ_opt.qubit_dependency().edges()), "Topology mismatch"
+    return circ_opt
