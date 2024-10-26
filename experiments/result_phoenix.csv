@@ -12,3 +12,7 @@ chemistry,all-vib-bhf2-mu_y_prime_enc_stdbinary_dvalues_8-8-8-8-8-8,6,232,72,81,
 chemistry,all-vib-fccf-mu_y_prime_enc_unary_dvalues_8-8-8-8-8-8-8,8,126,28,84,28,126,28,24,8
 chemistry,Li2-JW14,14,14555,7622,9917,7524,13423,2876,6226,2168
 chemistry,all-vib-f2-enc_gray_dvalues_d-level-16,4,902,356,664,354,760,144,441,116
+condensedmatter,BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-10_U-30_enc-unary_d-8,80,74540,23520,40056,22948,40240,8820,2314,756
+condensedmatter,tfim-graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-160_h-0,324,3381,1606,519,344,3381,1606,21,12
+condensedmatter,BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-46_U-2_enc-gray_d-4,92,16422,5980,11839,5968,16514,3036,299,93
+condensedmatter,tfim-graph-2D-triag-pbc-qubitnodes_Lx-19_Ly-19_h-0,190,2280,1140,411,272,2280,1140,24,14

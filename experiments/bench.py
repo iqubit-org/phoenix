@@ -29,22 +29,36 @@ args = parser.parse_args()
 
 
 
-
-if args.type == 'binaryoptimization':
-    ...
-elif args.type == 'chemistry':
-    json_fnames = os.listdir(os.path.join(BENCHMARK_DPATH, args.type))
+def bench_hamlib100_type(type):
+    json_fnames = os.listdir(os.path.join(BENCHMARK_DPATH, type))
     for json_fname in json_fnames:
-        with open(os.path.join(BENCHMARK_DPATH, args.type, json_fname), 'r') as f:
+        with open(os.path.join(BENCHMARK_DPATH, type, json_fname), 'r') as f:
             data = json.load(f)
-        output_fname = os.path.join(OUTPUT_DPATH, args.type, json_fname.replace('.json', '.qasm'))
+        output_fname = os.path.join(OUTPUT_DPATH, type, json_fname.replace('.json', '.qasm'))
         ham = HamiltonianModel(data['paulis'], data['coeffs'])
         circ = ham.reconfigure_and_generate_circuit()
         circ.to_qasm(output_fname)
         print('Circuit saved to', output_fname)
-elif args.type == 'condensedmatter':
-    ...
-elif args.type == 'discreteoptimization':
-    ...
-else:
-    raise ValueError('Invalid benchmarks type (binaryoptimization, chemistry, condensedmatter, discreteoptimization)')
+
+bench_hamlib100_type(args.type)
+
+#
+# if args.type == 'binaryoptimization':
+#     bench_hamlib100_type(args.type)
+# elif args.type == 'chemistry':
+#     bench_hamlib100_type(args.type)
+#     # json_fnames = os.listdir(os.path.join(BENCHMARK_DPATH, args.type))
+#     # for json_fname in json_fnames:
+#     #     with open(os.path.join(BENCHMARK_DPATH, args.type, json_fname), 'r') as f:
+#     #         data = json.load(f)
+#     #     output_fname = os.path.join(OUTPUT_DPATH, args.type, json_fname.replace('.json', '.qasm'))
+#     #     ham = HamiltonianModel(data['paulis'], data['coeffs'])
+#     #     circ = ham.reconfigure_and_generate_circuit()
+#     #     circ.to_qasm(output_fname)
+#     #     print('Circuit saved to', output_fname)
+# elif args.type == 'condensedmatter':
+#     ...
+# elif args.type == 'discreteoptimization':
+#     ...
+# else:
+#     raise ValueError('Invalid benchmarks type (binaryoptimization, chemistry, condensedmatter, discreteoptimization)')
