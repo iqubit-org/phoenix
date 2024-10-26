@@ -25,14 +25,13 @@ result_fname = 'result_chem_{}_{}.csv'.format(args.compiler, args.device)
 
 # TODO: summarize all2all, chain, grid to only ONE file
 
-result = pd.DataFrame(columns=['category', 'benchmark', 'num_qubits', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q',
+result = pd.DataFrame(columns=['benchmark', 'num_qubits', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q',
                                'num_gates(opt)', 'num_2q_gates(opt)', 'depth(opt)', 'depth_2q(opt)'])
 
 for fname in os.listdir(BENCHMARK_DPATH):
     bench_name = fname.split('.')[0]
     origin_circ_file = os.path.join(BENCHMARK_DPATH, fname)
     output_circ_file = os.path.join(OUTPUT_DPATH, fname)
-    print(origin_circ_file, output_circ_file)
     if not os.path.exists(output_circ_file):
         continue
 
