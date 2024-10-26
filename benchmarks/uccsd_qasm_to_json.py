@@ -99,9 +99,18 @@ fnames = natsorted([fname for fname in os.listdir(qasm_dir) if fname.endswith('.
 for fname in fnames:
     qasm_fname = os.path.join(qasm_dir, fname)
     json_fname = os.path.join(json_dir, fname.replace('.qasm', '.json'))
-    print('converting {} to {} ...'.format(qasm_fname, json_fname))
+
+    if os.path.exists(json_fname):
+        continue
+
 
     circ = Circuit.from_qasm(fname=qasm_fname)
+
+    if circ.num_nonlocal_gates > 100000:
+        continue
+
+    print('converting {} to {} ...'.format(qasm_fname, json_fname))
+
 
     dag = circ.to_dag('networkx')
 
