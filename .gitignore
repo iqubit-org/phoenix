@@ -165,5 +165,7 @@ cython_debug/
 
 .vscode/
 
+*.tmp.*
+
 
 
