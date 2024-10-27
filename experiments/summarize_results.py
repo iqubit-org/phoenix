@@ -5,7 +5,7 @@ sys.path.append('..')
 import os
 import argparse
 import pandas as pd
-from phoenix import Circuit
+from natsort import natsorted
 from qiskit import QuantumCircuit
 
 BENCHMARK_DPATH = '../benchmarks/hamlib100qasm'
@@ -26,7 +26,7 @@ result = pd.DataFrame(columns=['category', 'benchmark', 'num_qubits', 'num_gates
                                'num_gates(opt)', 'num_2q_gates(opt)', 'depth(opt)', 'depth_2q(opt)'])
 
 for dir in os.listdir(BENCHMARK_DPATH):
-    fnames = os.listdir(os.path.join(BENCHMARK_DPATH, dir))
+    fnames = natsorted(os.listdir(os.path.join(BENCHMARK_DPATH, dir)))
     for fname in fnames:
         bench_name = fname.split('.')[0]
         origin_circ_file = os.path.join(BENCHMARK_DPATH, dir, fname)
