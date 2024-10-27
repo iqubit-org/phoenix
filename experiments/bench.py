@@ -28,15 +28,17 @@ args = parser.parse_args()
 
 
 def bench_hamlib100_type(type):
-    json_fnames = os.listdir(os.path.join(BENCHMARK_DPATH, type))
+    json_fnames = [fname for fname in os.listdir(os.path.join(BENCHMARK_DPATH, type)) if fname.endswith('.json')]
     for json_fname in json_fnames:
+        output_fname = os.path.join(OUTPUT_DPATH, type, json_fname.replace('.json', '.qasm'))
+        if os.path.exists(output_fname):
+            continue
+        print('Processing', json_fname)
         with open(os.path.join(BENCHMARK_DPATH, type, json_fname), 'r') as f:
             data = json.load(f)
-        output_fname = os.path.join(OUTPUT_DPATH, type, json_fname.replace('.json', '.qasm'))
         ham = HamiltonianModel(data['paulis'], data['coeffs'])
         circ = ham.reconfigure_and_generate_circuit()
         circ.to_qasm(output_fname)
-        print('Circuit saved to', output_fname)
 
 bench_hamlib100_type(args.type)
 

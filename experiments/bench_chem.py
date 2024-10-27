@@ -36,7 +36,7 @@ def phoenix_pass(ham: HamiltonianModel, device: rx.rustworkx = None) -> Circuit:
     return circ
 
 
-for json_fname in os.listdir(BENCHMARK_DPATH):
+for json_fname in [fname for fname in os.listdir(BENCHMARK_DPATH) if fname.endswith('.json')]:
     with open(os.path.join(BENCHMARK_DPATH, json_fname), 'r') as f:
         data = json.load(f)
 
