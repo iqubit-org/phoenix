@@ -36,6 +36,7 @@ chemistry,Li2-JW14,14,14555,7622,9917,7524,13423,2876,6226,2168
 chemistry,LiH-parity-4,4,208,86,159,86,212,56,122,50
 chemistry,N2-JW-22,22,138999,87142,104513,86800,133127,27930,61637,21199
 chemistry,NH-BK-14,14,26275,11594,15344,11570,20995,4850,10805,3829
+chemistry,Na2-JW24,24,211988,137080,161880,136594,203808,42518,95002,32554
 chemistry,OH-JW10,10,4629,2362,3269,2322,5033,1112,2432,845
 chemistry,all-vib-bhf2-mu_y_prime_enc_stdbinary_dvalues_8-8-8-8-8-8,6,232,72,81,36,176,36,59,18
 chemistry,all-vib-c2h-mu_y_prime_enc_stdbinary_dvalues_8-8-4-4,3,116,36,81,36,88,18,59,18
@@ -43,6 +44,7 @@ chemistry,all-vib-ch2-mu_y_prime_enc_gray_dvalues_16-16-16,4,192,96,163,94,246,5
 chemistry,all-vib-cyclo_propene-mu_x_prime_enc_unary_dvalues_16-16-16-16-16-16-16-16-16-16-16-16-16-16-16,64,1080,240,180,60,1080,240,24,8
 chemistry,all-vib-f2-enc_gray_dvalues_d-level-16,4,902,356,664,354,760,144,441,116
 chemistry,all-vib-fccf-enc_gray_dvalues_4-4-4-4-4-4-4,14,13137,5954,8655,5777,11169,2734,3659,1327
+chemistry,all-vib-fccf-mu_y_prime_enc_stdbinary_dvalues_16-16-16-16-8-8-8,4,408,144,271,144,260,56,171,52
 chemistry,all-vib-fccf-mu_y_prime_enc_unary_dvalues_8-8-8-8-8-8-8,8,126,28,84,28,126,28,24,8
 chemistry,all-vib-fccf-mu_z_prime_enc_unary_dvalues_16-16-16-16-16-16-16,16,270,60,180,60,270,60,24,8
 chemistry,all-vib-h2co-mu_y_prime_enc_unary_dvalues_16-16-16-16-16-16,32,540,120,180,60,540,120,24,8
