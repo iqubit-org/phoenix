@@ -1,0 +1,7 @@
+{
+	"Target_p" : "1", //The selected p-value (https://arxiv.org/pdf/1411.4028.pdf)
+        "Packing_Limit" : "10e10", //Maximum number of operation per layer (https://www.microarch.org/micro53/papers/738300a215.pdf)
+        "Route_Method" : "basic", //Routing method for the backend qiskit compiler: sabre/lookahead_swap/basic_swap/stochastic_swap
+        "Trans_Seed" : "0", //Transpiler seed for repeatable compilation
+        "Opt_Level" : "3" //Backend qiskit compiler optimization level 0-3
+}
