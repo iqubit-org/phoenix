@@ -4,12 +4,17 @@ Transformations on Paulis.
 import numpy as np
 from itertools import combinations, product
 from copy import deepcopy
+from functools import reduce
+from operator import add
 from typing import List, Tuple
+
 
 from phoenix.basic import gates
 from phoenix.basic.gates import Gate
+from phoenix.basic.circuits import Circuit
 from phoenix.models.paulis import BSF
 from phoenix.models.cliffords import Clifford2Q
+
 
 from rich.console import Console
 
@@ -40,7 +45,6 @@ def group_paulis(paulis: List[str]):
           (3,): ['IIIZI'],
           (4,): ['IIIIZ']}
     """
-    # TODO: is it necessary to use `OrderedDict` instead of `dict`?
     assert len(paulis) == len(np.unique(paulis)), 'Pauli strings must be unique'
 
     nontrivial = [tuple(np.where(np.array(list(pauli)) != 'I')[0]) for pauli in paulis]
@@ -82,12 +86,10 @@ def group_paulis(paulis: List[str]):
 
     return groups
 
+
 ################################################################
 # BSF Simplification
 ################################################################
-
-
-# TODO: 搜索 clifford 时候还需要考虑已经搜索到的Clifford的位置对cost的影响
 
 def simplify_bsf(bsf: BSF) -> Tuple[BSF, List[Tuple[Clifford2Q, BSF]]]:
     """Simplify a Pauli Tableau, until its weights are simultaneously 2."""
@@ -125,7 +127,7 @@ def search_cliffords(bsf: BSF, avoid: Tuple[int, int] = None) -> Tuple[BSF, floa
             if (i, j) == avoid or (j, i) == avoid:
                 continue
             bsf_ = bsf.apply_clifford_2q(cg, i, j)
-            cost = heuristic_cost(bsf_)
+            cost = heuristic_bsf_cost(bsf_)
             bsfs.append(bsf_)
             clifford_candidates.append((cg.on(i, j)))
             costs.append(cost)
@@ -147,7 +149,7 @@ def is_simplified(bsf: BSF, q: int) -> bool:
     return False
 
 
-def heuristic_cost(bsf: BSF, init_score: float = 0.0) -> float:
+def heuristic_bsf_cost(bsf: BSF, init_score: float = 0.0) -> float:
     """Heuristic cost for a 3-qubit Pauli Tableau, the smaller the simpler."""
     cost = init_score
     # cost += np.linalg.norm(bsf.x, ord=1, axis=1).sum() * 0.25
@@ -163,8 +165,6 @@ def heuristic_cost(bsf: BSF, init_score: float = 0.0) -> float:
     cost += bsf.total_weight * bsf.num_nonlocal_paulis ** 2
 
     return cost
-
-
 
 
 # def group_paulis_and_coeffs(paulis: List[str], coeffs: List[float]):
@@ -237,6 +237,51 @@ def pauli_rotation_gate_to_pauli_and_coeff(g: Gate, num_qubits: int) -> Tuple[st
         pauli = pauli[:tq] + p + pauli[tq + 1:]
     return pauli, g.angle / 2
 
+
 ################################################################
 # Ordering
 ################################################################
+def order_blocks(blocks: Circuit) -> Circuit:
+    def wire_width(circ):
+        return sum([g for g in circ.gates if g.num_qregs > 1])
+
+    def end_empty_layers(circ: Circuit):
+        circ = Circuit([g for g in circ if g.num_qregs > 1])
+        left_ends = {i: -1 for i in circ.qubits}
+        right_end = {i: -1 for i in circ.qubits}
+        for num_layer, layer in enumerate(circ.layer()):
+            for q in reduce(add, [g.qregs for g in layer]):
+                if left_ends[q] < 0:
+                    left_ends[q] = num_layer
+            if np.all(np.array(list(left_ends.values())) > 0):
+                break
+        for num_layer, layer in enumerate(circ.inverse().layer()):
+            for q in reduce(add, [g.qregs for g in layer]):
+                if right_end[q] < 0:
+                    right_end[q] = num_layer
+            if np.all(np.array(list(right_end.values())) > 0):
+                break
+
+        return left_ends, right_end
+
+
+
+
+
+################################################################
+# Other utils
+################################################################
+def unique_paulis_and_coeffs(paulis: List[str], coeffs: List[float]) -> Tuple[List[str], List[float]]:
+    """Remove duplicates in Pauli strings and sum up their coefficients."""
+    if len(np.unique(paulis)) == len(paulis):
+        return paulis, coeffs
+    unique_paulis = []
+    unique_coeffs = []
+    for pauli, coeff in zip(paulis, coeffs):
+        if pauli in unique_paulis:
+            idx = unique_paulis.index(pauli)
+            unique_coeffs[idx] += coeff
+        else:
+            unique_paulis.append(pauli)
+            unique_coeffs.append(coeff)
+    return unique_paulis, unique_coeffs

@@ -91,8 +91,8 @@ class PhasePolynomial:
             self.transformations.append((qubit, pauli))
 
 
-qasm_dir = './chem_qasm/'
-json_dir = './chem_json/'
+qasm_dir = 'uccsd_qasm/'
+json_dir = 'uccsd_json/'
 
 fnames = natsorted([fname for fname in os.listdir(qasm_dir) if fname.endswith('.qasm')])
 

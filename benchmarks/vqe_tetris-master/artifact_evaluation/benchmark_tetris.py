@@ -23,7 +23,7 @@ import json
 
 random.seed(1926)
 
-BENCHMARK_DPATH = 'chem_json'
+BENCHMARK_DPATH = 'uccsd_json'
 
 def json_load(filename):
     with open(filename, 'rb') as f:
@@ -39,7 +39,7 @@ def load_oplist(filename):
         oplist.append([mypauli.pauliString(ps=parr[i], coeff = coeff[i])])
     return oplist
 
-# oplist = load_oplist("chem_json/CH2_cmplt_BK_sto3g.json")
+# oplist = load_oplist("uccsd_json/CH2_cmplt_BK_sto3g.json")
 
 def tetris_benchmark(oplist):
     print("----------------tetris_benchmark pass------------------")

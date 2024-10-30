@@ -12,8 +12,8 @@ from phoenix.utils.functions import infidelity
 from phoenix.models import HamiltonianModel
 
 
-QASM_DIR = 'hamlib100qasm'
-JSON_DIR = 'hamlib100json'
+QASM_DIR = 'hamlib_qasm'
+JSON_DIR = 'hamlib_json'
 
 
 with open('100_representative.json', 'r') as f:

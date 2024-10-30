@@ -14,13 +14,14 @@ from phoenix.models import HamiltonianModel
 from phoenix.utils import arch
 from phoenix import transforms
 from phoenix import Circuit
+from phoenix.utils import  arch
 
-BENCHMARK_DPATH = '../benchmarks/chem_json'
+BENCHMARK_DPATH = '../benchmarks/uccsd_json'
 OUTPUT_DPATH = './output_chem/phoenix'
 
 parser = argparse.ArgumentParser(description='Benchmarking on UCCSD chemistry benchmarks')
 parser.add_argument('-d', '--device', default='all2all', type=str,
-                    help='Device topology (default: all2all)')
+                    help='Device topology (default: all2all, hex)')
 args = parser.parse_args()
 
 

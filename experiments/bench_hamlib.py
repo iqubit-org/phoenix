@@ -12,7 +12,7 @@ import json
 import argparse
 from phoenix.models import HamiltonianModel
 
-BENCHMARK_DPATH = '../benchmarks/hamlib100json'
+BENCHMARK_DPATH = '../benchmarks/hamlib_json'
 OUTPUT_DPATH = './output/phoenix'
 # BINARY_OPTIMIZATION = 'binaryoptimization'
 # CHEMISTRY = 'chemistry'

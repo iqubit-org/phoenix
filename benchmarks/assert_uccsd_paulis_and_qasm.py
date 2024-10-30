@@ -13,7 +13,7 @@ from phoenix import gates, Circuit
 from phoenix.utils.functions import infidelity
 from phoenix.utils.operations import tensor_1_slot
 
-circ_dir = './chem_qasm/'
+circ_dir = 'uccsd_qasm/'
 
 circ_fnames = os.listdir(circ_dir)
 qasm_fnames = [os.path.join(circ_dir, fname) for fname in circ_fnames if fname.endswith('.qasm')]

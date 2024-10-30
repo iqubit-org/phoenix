@@ -8,7 +8,7 @@ import pandas as pd
 from natsort import natsorted
 from qiskit import QuantumCircuit
 
-BENCHMARK_DPATH = '../benchmarks/hamlib100qasm'
+BENCHMARK_DPATH = '../benchmarks/hamlib_qasm'
 OUTPUT_DPATH = './output/'
 
 parser = argparse.ArgumentParser(prog='Summarize compilation results (gate count and circuit depth statistics)')
