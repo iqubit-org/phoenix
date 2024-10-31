@@ -29,7 +29,7 @@ def tket_post_optimize(circ: pytket.Circuit) -> pytket.Circuit:
     pytket.passes.RemoveRedundancies().apply(circ)
 
     circ = bench_utils.tket_to_qiskit(circ)
-    circ = qiskit.transpile(circ, optimization_level=3,
+    circ = qiskit.transpile(circ, optimization_level=2,
                             basis_gates=['u1', 'u2', 'u3', 'cx'],
                             coupling_map=CouplingMap(bench_utils.Manhattan_coupling.edge_list()),
                             layout_method='sabre')
@@ -62,14 +62,16 @@ for fname in natsorted(os.listdir(input_dpath)):
     fname = os.path.join(input_dpath, fname)
     print('Processing', fname)
 
-
-
     circ_qiskit = qiskit.QuantumCircuit.from_qasm_file(fname)
-    if circ_qiskit.num_qubits > 10:
+    # if circ_qiskit.num_qubits > 10:
+    #     continue
+    if not 'H2O_cmplt' in fname:
         continue
+
     circ_tket = pytket.qasm.circuit_from_qasm(fname)
-    circ_qiskit_opt = qiskit_post_optimize(circ_qiskit)
+
+    # circ_qiskit_opt = qiskit_post_optimize(circ_qiskit)
     circ_tket_opt = tket_post_optimize(circ_tket)
 
-    qiskit.qasm2.dump(circ_qiskit_opt, os.path.join('qiskit_post_opt_manhattan2', fname.split('/')[-1]))
+    # qiskit.qasm2.dump(circ_qiskit_opt, os.path.join('qiskit_post_opt_manhattan', fname.split('/')[-1]))
     pytket.qasm.circuit_to_qasm(circ_tket_opt, os.path.join('tket_post_opt_manhattan2', fname.split('/')[-1]))
