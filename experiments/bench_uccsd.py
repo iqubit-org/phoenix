@@ -36,6 +36,18 @@ def phoenix_pass(ham: HamiltonianModel, device: rx.rustworkx = None) -> Circuit:
     circ = transforms.circuit_pass.phys_circ_opt_by_qiskit(circ)
     return circ
 
+def phoenix_pass(ham: HamiltonianModel, device: rx.rustworkx = None) -> Circuit:
+    # topology-agnostic synthesis
+    circ = ham.reconfigure_and_generate_circuit()
+    if device is None:
+        return circ
+
+    # hardware mapping
+    circ, _, _ = transforms.circuit_pass.sabre_by_qiskit(circ, device)
+    circ = transforms.circuit_pass.phys_circ_opt_by_qiskit(circ)
+    return circ
+
+
 
 for json_fname in [fname for fname in os.listdir(BENCHMARK_DPATH) if fname.endswith('.json')]:
     with open(os.path.join(BENCHMARK_DPATH, json_fname), 'r') as f:
@@ -56,6 +68,8 @@ for json_fname in [fname for fname in os.listdir(BENCHMARK_DPATH) if fname.endsw
     else:
         raise ValueError('Invalid device topology (all2all, chain, grid)')
 
+
+    # TODO: add front_x_on ...
     ham = HamiltonianModel(data['paulis'], data['coeffs'])
     circ = phoenix_pass(ham, device)
     circ.to_qasm(os.path.join(OUTPUT_DPATH, args.device, output_fname))
