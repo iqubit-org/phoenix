@@ -262,6 +262,9 @@ def order_blocks(blocks: Circuit) -> Circuit:
             if np.all(np.array(list(right_end.values())) > 0):
                 break
 
+
+
+
         return left_ends, right_end
 
 
