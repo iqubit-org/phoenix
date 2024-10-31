@@ -29,10 +29,10 @@ def tket_post_optimize(circ: pytket.Circuit) -> pytket.Circuit:
     pytket.passes.RemoveRedundancies().apply(circ)
 
     circ = bench_utils.tket_to_qiskit(circ)
-    # circ = qiskit.transpile(circ, optimization_level=2,
-    #                         basis_gates=['u1', 'u2', 'u3', 'cx'],
-    #                         coupling_map=CouplingMap(bench_utils.Manhattan_coupling.edge_list()),
-    #                         layout_method='sabre')
+    circ = qiskit.transpile(circ, optimization_level=3,
+                            basis_gates=['u1', 'u2', 'u3', 'cx'],
+                            coupling_map=CouplingMap(bench_utils.Manhattan_coupling.edge_list()),
+                            layout_method='sabre')
 
     # def sabre_by_qiskit(circ: Circuit, device: rx.PyGraph,
     #                     seed: int = None) -> Tuple[Circuit, Dict[int, int], Dict[int, int]]:
@@ -48,8 +48,8 @@ def tket_post_optimize(circ: pytket.Circuit) -> pytket.Circuit:
     #     final_mapping = {j: i for i, j in final_mapping_inv.items()}
     #     circ = Circuit.from_qiskit(circ).rewire(init_mapping_inv)
     #     return circ, init_mapping, final_mapping
-    pm = PassManager([passes.SabreLayout(CouplingMap(bench_utils.Manhattan_coupling.edge_list()))])
-    circ = pm.run(circ)
+    # pm = PassManager([passes.SabreLayout(CouplingMap(bench_utils.Manhattan_coupling.edge_list()))])
+    # circ = pm.run(circ)
 
     circ = bench_utils.qiskit_to_tket(circ)
     pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
@@ -62,10 +62,14 @@ for fname in natsorted(os.listdir(input_dpath)):
     fname = os.path.join(input_dpath, fname)
     print('Processing', fname)
 
+
+
     circ_qiskit = qiskit.QuantumCircuit.from_qasm_file(fname)
+    if circ_qiskit.num_qubits > 10:
+        continue
     circ_tket = pytket.qasm.circuit_from_qasm(fname)
     circ_qiskit_opt = qiskit_post_optimize(circ_qiskit)
     circ_tket_opt = tket_post_optimize(circ_tket)
 
-    qiskit.qasm2.dump(circ_qiskit_opt, os.path.join('qiskit_post_opt_manhattan', fname.split('/')[-1]))
-    pytket.qasm.circuit_to_qasm(circ_tket_opt, os.path.join('tket_post_opt_manhattan', fname.split('/')[-1]))
+    qiskit.qasm2.dump(circ_qiskit_opt, os.path.join('qiskit_post_opt_manhattan2', fname.split('/')[-1]))
+    pytket.qasm.circuit_to_qasm(circ_tket_opt, os.path.join('tket_post_opt_manhattan2', fname.split('/')[-1]))
