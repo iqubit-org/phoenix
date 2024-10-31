@@ -6,18 +6,19 @@ input_dpath = './qiskit_post_opt_manhattan'
 output_dpath = './qiskit_post_opt_manhattan_opt'
 
 fnames = os.listdir(input_dpath)
+import  numpy as np
+
+np.random.shuffle(fnames)
 for fname in fnames:
     print('Processing', fname)
     intput_fname = os.path.join(input_dpath, fname)
     output_fname = os.path.join(output_dpath, fname)
 
-    print(intput_fname, output_fname)
+    if os.path.exists(output_fname):
+        continue
 
     circ = pytket.qasm.circuit_from_qasm(intput_fname)
 
-    if circ.n_qubits != 12:
-        continue
-
-    pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
-    pytket.passes.RemoveRedundancies().apply(circ)
+    print(pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ))
+    print(pytket.passes.RemoveRedundancies().apply(circ))
     pytket.qasm.circuit_to_qasm(circ, output_fname)

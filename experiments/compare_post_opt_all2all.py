@@ -29,7 +29,6 @@ def qiskit_post_optimize(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
 def tket_post_optimize(circ: pytket.Circuit) -> pytket.Circuit:
     circ = circ.copy()
     pytket.passes.FullPeepholeOptimise().apply(circ)
-    pytket.passes.RemoveRedundancies().apply(circ)
     return circ
 
 

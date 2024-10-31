@@ -14,7 +14,7 @@ import sys
 
 sys.path.append('..')
 
-from phoenix import Circuit
+from phoenix import Circuit, Gate
 from phoenix.utils import arch
 from phoenix.models.hamiltonians import HamiltonianModel
 
@@ -44,14 +44,15 @@ def qiskit_O3_all2all(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
     return circ
 
 
-def phoenix_pass(ham: HamiltonianModel) -> pytket.Circuit:
+def phoenix_pass(ham: HamiltonianModel, pre_gates: List[Gate] = None, post_gates: List[Gate] = None) -> pytket.Circuit:
     # Phoenix's high-level optimization
     circ = ham.reconfigure_and_generate_circuit()
+    circ.prepend(*pre_gates)
+    circ.append(*post_gates)
 
     # logical optimization by TKet
     circ = circ.to_tket()
     pytket.passes.FullPeepholeOptimise().apply(circ)
-    pytket.passes.RemoveRedundancies().apply(circ)
     return circ
 
 
@@ -88,7 +89,6 @@ def tket_pass(circ: pytket.Circuit) -> pytket.Circuit:
 
     # full optimization
     pytket.passes.FullPeepholeOptimise().apply(circ)
-    pytket.passes.RemoveRedundancies().apply(circ)
 
     return circ
 
@@ -130,7 +130,6 @@ def pre_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
     """Pre-mapping optimization on logical circuits by means of TKet's pass"""
     circ = circ.copy()
     pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
-    pytket.passes.RemoveRedundancies().apply(circ)
     return circ
 
 
@@ -138,7 +137,18 @@ def post_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
     """Post-mapping optimization on physical circuits by means of TKet's pass"""
     circ = circ.copy()
     pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
-    pytket.passes.RemoveRedundancies().apply(circ)
+    return circ
+
+
+def optimize_with_mapping(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap) -> qiskit.QuantumCircuit:
+    circ = qiskit.transpile(circ, optimization_level=3,
+                            basis_gates=['u1', 'u2', 'u3', 'cx'],
+                            coupling_map=coupling_map, layout_method='sabre')
+
+    circ = qiskit_to_tket(circ)
+    pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
+    circ = tket_to_qiskit(circ)
+
     return circ
 
 # TODO: verify utils

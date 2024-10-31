@@ -394,7 +394,6 @@ def phys_circ_opt_by_tket(circ: Circuit) -> Circuit:
 
     circ_tket = circ.to_tket()
     pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ_tket)
-    pytket.passes.RemoveRedundancies().apply(circ_tket)
     circ_opt = Circuit.from_tket(circ_tket)
     assert sorted(circ.qubit_dependency().edges()) == sorted(circ_opt.qubit_dependency().edges()), "Topology mismatch"
     return circ_opt
