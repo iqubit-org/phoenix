@@ -1,0 +1,129 @@
+"""
+Benchmarking utilities
+"""
+
+import qiskit
+import pytket
+import pytket.qasm
+import pytket.passes
+import rustworkx as rx
+from typing import Tuple, List
+from qiskit.transpiler import CouplingMap, PassManager
+
+import sys
+
+sys.path.append('..')
+
+from phoenix import Circuit
+from phoenix.utils import arch
+from phoenix.models.hamiltonians import HamiltonianModel
+
+Manhattan_coupling: rx.PyGraph = arch.read_device_topology('./manhattan.graphml')
+Sycamore_coupling: rx.PyGraph = arch.read_device_topology('./sycamore.graphml')
+
+"""
+def phoenix_pass(ham: HamiltonianModel, device: rx.rustworkx = None) -> Circuit:
+    # topology-agnostic synthesis
+    circ = ham.reconfigure_and_generate_circuit()
+    if device is None:
+        return circ
+
+    # hardware mapping
+    circ, _, _ = transforms.circuit_pass.sabre_by_qiskit(circ, device)
+    circ = transforms.circuit_pass.phys_circ_opt_by_qiskit(circ)
+    return circ
+"""
+
+
+def phoenix_pass(ham: HamiltonianModel) -> pytket.Circuit:
+    # Phoenix's high-level optimization
+    circ = ham.reconfigure_and_generate_circuit()
+
+    # logical optimization by TKet
+    circ = circ.to_tket()
+    pytket.passes.FullPeepholeOptimise().apply(circ)
+    pytket.passes.RemoveRedundancies().apply(circ)
+    return circ
+
+
+def paulihedral_pass(circ, coupling_map):
+    ...
+
+
+def tetris_pass(circ, coupling_map):
+    ...
+
+
+def pauliopt_pass(circ: Circuit):
+    ...
+
+
+def tket_pass(circ: pytket.Circuit) -> pytket.Circuit:
+    from phoenix.transforms.circuit_pass import unroll_u3
+
+    # unroll U3
+    circ = unroll_u3(Circuit.from_tket(circ)).to_tket()
+
+    # adaptive PauliSimp
+    circ_tmp = circ.copy()
+    best_depth_2q = circ.depth_2q()
+    best_num_2q_gates = circ.n_2qb_gates()
+    while True:
+        pytket.passes.PauliSimp().apply(circ_tmp)
+        if best_depth_2q > circ_tmp.depth_2q() and best_num_2q_gates > circ_tmp.n_2qb_gates():
+            best_depth_2q = circ_tmp.depth_2q()
+            best_num_2q_gates = circ_tmp.n_2qb_gates()
+            circ = circ_tmp.copy()
+        else:
+            break
+
+    # full optimization
+    pytket.passes.FullPeepholeOptimise().apply(circ)
+    pytket.passes.RemoveRedundancies().apply(circ)
+
+    return circ
+
+
+def tket_to_qiskit(circ: pytket.Circuit) -> qiskit.QuantumCircuit:
+    return qiskit.QuantumCircuit.from_qasm_str(pytket.qasm.circuit_to_qasm_str(circ))
+
+
+def qiskit_to_tket(circ: qiskit.QuantumCircuit) -> pytket.Circuit:
+    return pytket.qasm.circuit_from_qasm(circ.qasm())
+
+
+def sabre_map(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap) -> Tuple[
+    qiskit.QuantumCircuit, List[int], List[int]]:
+    """
+    Mapping logical circuits on physical qubits by means of SabreLayout pass in Qiskit.
+
+    Args:
+        circ: Input logical quantum circuit
+        coupling_map: Physical qubit connectivity graph
+
+    Returns:
+        Mapped circuit, initial mapping (physical qubit indices), final mapping (physical qubit indices)
+    """
+    from qiskit.transpiler import passes
+
+    pm = PassManager([passes.SabreLayout(coupling_map)])
+    circ = pm.run(circ)
+    # init_mapping_inv = {i: j for i, j in zip(circ.layout.initial_index_layout(), range(circ.num_qubits))}
+    # final_mapping_inv = {i: j for i, j in zip(circ.layout.final_index_layout(), range(circ.num_qubits))}
+    # init_mapping = {j: i for i, j in init_mapping_inv.items()}
+    # final_mapping = {j: i for i, j in final_mapping_inv.items()}
+    # circ = Circuit.from_qiskit(circ).rewire(init_mapping_inv)
+    # return circ, init_mapping, final_mapping
+    return circ, circ.layout.initial_index_layout(), circ.layout.final_index_layout()
+
+
+def post_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
+    """Post-mapping optimization on physical circuits by means of TKet's pass"""
+    circ = circ.copy()
+    pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
+    pytket.passes.RemoveRedundancies().apply(circ)
+    return circ
+
+# TODO: verify utils
+
+# TODO: qubit_mapping + post_mapping_optimize 和 Qiskit O3哪个好？？？ 只需要在 Phoenix UCCSD结果上比较就好了

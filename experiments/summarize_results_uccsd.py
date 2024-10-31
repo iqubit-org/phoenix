@@ -1,3 +1,7 @@
+"""
+Summarize UCCSD hardware-aware (all2all, manhattan, sycamore) benchmarking results from some compiler
+"""
+
 import sys
 
 sys.path.append('..')
@@ -9,7 +13,7 @@ from natsort import natsorted
 from qiskit import QuantumCircuit
 
 BENCHMARK_DPATH = '../benchmarks/uccsd_qasm'
-OUTPUT_DPATH = './output_chem/'
+OUTPUT_DPATH = './output_uccsd/'
 
 parser = argparse.ArgumentParser(prog='Summarize compilation results (gate count and circuit depth statistics)')
 parser.add_argument('-c', '--compiler', type=str, help='Compiler name')
@@ -23,13 +27,18 @@ if not os.path.exists(OUTPUT_DPATH):
 
 result_fname = 'result_chem_{}_{}.csv'.format(args.compiler, args.device)
 
-# TODO: summarize all2all, chain, grid to only ONE file
+# TODO: summarize all2all, manhattan, sycamore to one single file
 
-result = pd.DataFrame(columns=['benchmark', 'num_qubits', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q',
-                               'num_gates(opt)', 'num_2q_gates(opt)', 'depth(opt)', 'depth_2q(opt)'])
+result = pd.DataFrame(columns=['program', 'num_qubits', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q',
+                               'num_gates(all2all)', 'num_2q_gates(all2all)',
+                               'depth(all2all)', 'depth_2q(all2all)',
+                               'num_gates(manhattan)', 'num_2q_gates(manhattan)',
+                               'depth(manhattan)', 'depth_2q(manhattan)',
+                               'num_gates(sycamore)', 'num_2q_gates(sycamore)',
+                               'depth(sycamore)', 'depth_2q(sycamore)'])
 
 for fname in natsorted(os.listdir(BENCHMARK_DPATH)):
-    bench_name = fname.split('.')[0]
+    program_name = fname.split('.')[0]
     origin_circ_file = os.path.join(BENCHMARK_DPATH, fname)
     output_circ_file = os.path.join(OUTPUT_DPATH, fname)
     if not os.path.exists(output_circ_file):
@@ -39,7 +48,7 @@ for fname in natsorted(os.listdir(BENCHMARK_DPATH)):
     circ_opt = QuantumCircuit.from_qasm_file(output_circ_file)
 
     result = pd.concat([result, pd.DataFrame({
-        'benchmark': bench_name,
+        'program': program_name,
         'num_qubits': circ_origin.num_qubits,
         'num_gates': circ_origin.size(),
         'num_2q_gates': circ_origin.num_nonlocal_gates(),

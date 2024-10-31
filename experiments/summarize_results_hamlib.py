@@ -1,3 +1,6 @@
+"""
+Summarize four-category Hamlib benchmarking results from some compiler
+"""
 import sys
 
 sys.path.append('..')
@@ -9,7 +12,7 @@ from natsort import natsorted
 from qiskit import QuantumCircuit
 
 BENCHMARK_DPATH = '../benchmarks/hamlib_qasm'
-OUTPUT_DPATH = './output/'
+OUTPUT_DPATH = './output_hamlib/'
 
 parser = argparse.ArgumentParser(prog='Summarize compilation results (gate count and circuit depth statistics)')
 parser.add_argument('-c', '--compiler', type=str, help='Compiler name')
@@ -28,7 +31,7 @@ result = pd.DataFrame(columns=['category', 'benchmark', 'num_qubits', 'num_gates
 for dir in os.listdir(BENCHMARK_DPATH):
     fnames = natsorted(os.listdir(os.path.join(BENCHMARK_DPATH, dir)))
     for fname in fnames:
-        bench_name = fname.split('.')[0]
+        program_name = fname.split('.')[0]
         origin_circ_file = os.path.join(BENCHMARK_DPATH, dir, fname)
         output_circ_file = os.path.join(OUTPUT_DPATH, dir, fname)
         if not os.path.exists(output_circ_file):
@@ -39,7 +42,7 @@ for dir in os.listdir(BENCHMARK_DPATH):
 
         result = pd.concat([result, pd.DataFrame({
             'category': dir,
-            'benchmark': bench_name,
+            'benchmark': program_name,
             'num_qubits': circ_origin.num_qubits,
             'num_gates': circ_origin.size(),
             'num_2q_gates': circ_origin.num_nonlocal_gates(),

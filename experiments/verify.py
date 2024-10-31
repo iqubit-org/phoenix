@@ -9,9 +9,9 @@ input_dpath = '../benchmarks/uccsd_qasm'
 
 
 
-# output_dpath = 'qiskit_opt'
+output_dpath = 'qiskit_opt'
 
-output_dpath = 'tket_opt'
+# output_dpath = 'tket_opt'
 
 import sys
 
