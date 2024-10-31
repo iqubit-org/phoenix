@@ -35,6 +35,15 @@ def phoenix_pass(ham: HamiltonianModel, device: rx.rustworkx = None) -> Circuit:
 """
 
 
+def qiskit_O3_all2all(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
+    from itertools import combinations
+    for q0, q1 in combinations(range(circ.num_qubits), 2):
+        circ.cx(q0, q1)
+        circ.cx(q0, q1)
+    circ = qiskit.transpile(circ, optimization_level=3, basis_gates=['u1', 'u2', 'u3', 'cx'])
+    return circ
+
+
 def phoenix_pass(ham: HamiltonianModel) -> pytket.Circuit:
     # Phoenix's high-level optimization
     circ = ham.reconfigure_and_generate_circuit()
@@ -117,6 +126,14 @@ def sabre_map(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap) -> Tuple[
     return circ, circ.layout.initial_index_layout(), circ.layout.final_index_layout()
 
 
+def pre_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
+    """Pre-mapping optimization on logical circuits by means of TKet's pass"""
+    circ = circ.copy()
+    pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
+    pytket.passes.RemoveRedundancies().apply(circ)
+    return circ
+
+
 def post_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
     """Post-mapping optimization on physical circuits by means of TKet's pass"""
     circ = circ.copy()
@@ -125,5 +142,3 @@ def post_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
     return circ
 
 # TODO: verify utils
-
-# TODO: qubit_mapping + post_mapping_optimize 和 Qiskit O3哪个好？？？ 只需要在 Phoenix UCCSD结果上比较就好了
