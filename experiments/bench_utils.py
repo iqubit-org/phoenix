@@ -89,7 +89,7 @@ def tket_to_qiskit(circ: pytket.Circuit) -> qiskit.QuantumCircuit:
 
 
 def qiskit_to_tket(circ: qiskit.QuantumCircuit) -> pytket.Circuit:
-    return pytket.qasm.circuit_from_qasm(circ.qasm())
+    return pytket.qasm.circuit_from_qasm_str(circ.qasm())
 
 
 def sabre_map(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap) -> Tuple[

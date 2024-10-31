@@ -6,7 +6,8 @@ import pytket.qasm
 import pytket.passes
 import qiskit.qasm2
 from natsort import natsorted
-from qiskit.transpiler import CouplingMap
+from qiskit.transpiler import CouplingMap, PassManager
+from qiskit.transpiler import passes
 
 import bench_utils
 
@@ -28,10 +29,10 @@ def tket_post_optimize(circ: pytket.Circuit) -> pytket.Circuit:
     pytket.passes.RemoveRedundancies().apply(circ)
 
     circ = bench_utils.tket_to_qiskit(circ)
-    circ = qiskit.transpile(circ, optimization_level=3,
-                            basis_gates=['u1', 'u2', 'u3', 'cx'],
-                            coupling_map=CouplingMap(bench_utils.Manhattan_coupling.edge_list()),
-                            layout_method='sabre')
+    # circ = qiskit.transpile(circ, optimization_level=2,
+    #                         basis_gates=['u1', 'u2', 'u3', 'cx'],
+    #                         coupling_map=CouplingMap(bench_utils.Manhattan_coupling.edge_list()),
+    #                         layout_method='sabre')
 
     # def sabre_by_qiskit(circ: Circuit, device: rx.PyGraph,
     #                     seed: int = None) -> Tuple[Circuit, Dict[int, int], Dict[int, int]]:
@@ -47,7 +48,8 @@ def tket_post_optimize(circ: pytket.Circuit) -> pytket.Circuit:
     #     final_mapping = {j: i for i, j in final_mapping_inv.items()}
     #     circ = Circuit.from_qiskit(circ).rewire(init_mapping_inv)
     #     return circ, init_mapping, final_mapping
-    #
+    pm = PassManager([passes.SabreLayout(CouplingMap(bench_utils.Manhattan_coupling.edge_list()))])
+    circ = pm.run(circ)
 
     circ = bench_utils.qiskit_to_tket(circ)
     pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
