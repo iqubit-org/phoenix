@@ -8,9 +8,7 @@ import qiskit.qasm2
 from qiskit.quantum_info import Operator
 from natsort import natsorted
 
-# input_dpath = './output_uccsd/phoenix/all2all'
-
-input_dpath = '../benchmarks/uccsd_qasm'
+input_dpath = './output_uccsd/phoenix/all2all'
 
 import sys
 
@@ -40,24 +38,15 @@ for fname in natsorted(os.listdir(input_dpath)):
     print('Processing', fname)
 
     circ_qiskit = qiskit.QuantumCircuit.from_qasm_file(fname)
-    if circ_qiskit.num_qubits <= 10:
-        continue
-
-    # if circ_qiskit > 10:
+    # if circ_qiskit.num_qubits > 10:
     #     continue
-    # else:
-    #     circ_qiskit_opt = qiskit_post_optimize(circ_qiskit)
-    #     print(infidelity(
-    #         Operator(circ_qiskit_opt.reverse_bits()).to_matrix(),
-    #         Operator(circ_qiskit.reverse_bits()).to_matrix()
-    #     ))
 
     circ_tket = pytket.qasm.circuit_from_qasm(fname)
     circ_qiskit_opt = qiskit_post_optimize(circ_qiskit)
     circ_tket_opt = tket_post_optimize(circ_tket)
 
-    qiskit.qasm2.dump(circ_qiskit_opt, os.path.join('qiskit_opt', fname.split('/')[-1]))
-    pytket.qasm.circuit_to_qasm(circ_tket_opt, os.path.join('tket_opt', fname.split('/')[-1]))
+    qiskit.qasm2.dump(circ_qiskit_opt, os.path.join('qiskit_post_opt', fname.split('/')[-1]))
+    pytket.qasm.circuit_to_qasm(circ_tket_opt, os.path.join('tket_post_opt', fname.split('/')[-1]))
 
     # if circ_qiskit.num_qubits <= 10:
     #     try:
