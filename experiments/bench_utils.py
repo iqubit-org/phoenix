@@ -18,8 +18,12 @@ from phoenix import Circuit, Gate
 from phoenix.utils import arch
 from phoenix.models.hamiltonians import HamiltonianModel
 
-Manhattan_coupling: rx.PyGraph = arch.read_device_topology('./manhattan.graphml')
-Sycamore_coupling: rx.PyGraph = arch.read_device_topology('./sycamore.graphml')
+# Manhattan_coupling: rx.PyGraph = arch.read_device_topology('./manhattan.graphml')
+# Sycamore_coupling: rx.PyGraph = arch.read_device_topology('./sycamore.graphml')
+
+Manhattan = CouplingMap(arch.read_device_topology('./manhattan.graphml').edge_list())
+Sycamore = CouplingMap(arch.read_device_topology('./sycamore.graphml').edge_list())
+All2all = CouplingMap(...) # TODO: prepare all2all coupling_map
 
 """
 def phoenix_pass(ham: HamiltonianModel, device: rx.rustworkx = None) -> Circuit:
@@ -44,27 +48,36 @@ def qiskit_O3_all2all(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
     return circ
 
 
-def phoenix_pass(ham: HamiltonianModel, pre_gates: List[Gate] = None, post_gates: List[Gate] = None) -> pytket.Circuit:
+def phoenix_pass(paulis: List[str], coeffs: List[float],
+                 pre_gates: List[Gate] = None, post_gates: List[Gate] = None) -> pytket.Circuit:
     # Phoenix's high-level optimization
+    ham = HamiltonianModel(paulis, coeffs)
     circ = ham.reconfigure_and_generate_circuit()
     circ.prepend(*pre_gates)
     circ.append(*post_gates)
 
     # logical optimization by TKet
     circ = circ.to_tket()
-    pytket.passes.FullPeepholeOptimise().apply(circ)
+    pytket.passes.FullPeepholeOptimise().apply(circ)  # TODO: it might lead to Fault results when dumping to OpenQASM
     return circ
 
 
-def paulihedral_pass(circ, coupling_map):
+def paulihedral_pass(paulis: List[str], coeffs: List[float],
+                     pre_gates: List[Gate] = None, post_gates: List[Gate] = None,
+                     coupling_map: CouplingMap = All2all) -> qiskit.QuantumCircuit:
+    # TODO: it should also return init_mapping and final_mapping
     ...
 
 
-def tetris_pass(circ, coupling_map):
+def tetris_pass(paulis: List[str], coeffs: List[float],
+                pre_gates: List[Gate] = None, post_gates: List[Gate] = None,
+                coupling_map: CouplingMap = All2all) -> qiskit.QuantumCircuit:
     ...
 
 
-def pauliopt_pass(circ: Circuit):
+def pauliopt_pass(paulis: List[str], coeffs: List[float],
+                  pre_gates: List[Gate] = None, post_gates: List[Gate] = None,
+                  coupling_map: CouplingMap = All2all) -> qiskit.QuantumCircuit:
     ...
 
 
