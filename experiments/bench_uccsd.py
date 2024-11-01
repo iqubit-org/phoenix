@@ -37,6 +37,9 @@ json_fnames = [os.path.join(INPUT_JSON_DPATH, fname) for fname in natsorted(os.l
 
 output_dpath = os.path.join(OUTPUT_DPATH, args.compiler, args.device)
 
+if not os.path.exists(output_dpath):
+    os.makedirs(output_dpath)
+
 console.print('topology: {}'.format(args.device))
 console.print('compiler: {}'.format(args.compiler))
 console.print('output directory: {}'.format(output_dpath))

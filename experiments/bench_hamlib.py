@@ -34,10 +34,16 @@ parser.add_argument('-c', '--compiler', default='phoenix', type=str,
                     help='Compiler (default: phoenix)')
 args = parser.parse_args()
 
-qasm_fnames = [os.path.join(INPUT_QASM_DPATH, args.type, fname) for fname in natsorted(os.listdir(INPUT_QASM_DPATH))]
-json_fnames = [os.path.join(INPUT_JSON_DPATH, args.type, fname) for fname in natsorted(os.listdir(INPUT_JSON_DPATH))]
+
+qasm_fnames = [os.path.join(INPUT_QASM_DPATH, args.type, fname)
+               for fname in natsorted(os.listdir(os.path.join(INPUT_QASM_DPATH, args.type)))]
+json_fnames = [os.path.join(INPUT_JSON_DPATH, args.type, fname)
+               for fname in natsorted(os.listdir(os.path.join(INPUT_JSON_DPATH, args.type)))]
 
 output_dpath = os.path.join(OUTPUT_DPATH, args.compiler, args.type)
+
+if not os.path.exists(output_dpath):
+    os.makedirs(output_dpath)
 
 console.print('program type: {}'.format(args.type))
 console.print('compiler: {}'.format(args.compiler))
@@ -45,6 +51,7 @@ console.print('output directory: {}'.format(output_dpath))
 
 if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
     for fname in json_fnames:
+        console.print('Processing', fname)
         output_fname = os.path.join(output_dpath, os.path.basename(fname).replace('.json', '.qasm'))
         with open(fname, 'r') as f:
             data = json.load(f)
@@ -69,6 +76,14 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
 else:
     if args.compiler == 'tket':
         for fname in qasm_fnames:
+
+            # TODO: delete this line
+            if os.path.exists(os.path.join(output_dpath, os.path.basename(fname))):
+                continue
+
+
+
+            console.print('Processing', fname)
             circ = pytket.qasm.circuit_from_qasm(fname)
             circ = bench_utils.tket_pass(circ)
             pytket.qasm.circuit_to_qasm(circ, os.path.join(output_dpath, os.path.basename(fname)))

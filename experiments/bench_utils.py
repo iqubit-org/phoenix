@@ -23,7 +23,8 @@ from phoenix.models.hamiltonians import HamiltonianModel
 
 Manhattan = CouplingMap(arch.read_device_topology('./manhattan.graphml').edge_list())
 Sycamore = CouplingMap(arch.read_device_topology('./sycamore.graphml').edge_list())
-All2all = CouplingMap(...) # TODO: prepare all2all coupling_map
+# All2all = CouplingMap(...) # TODO: prepare all2all coupling_map
+All2all = None
 
 """
 def phoenix_pass(ham: HamiltonianModel, device: rx.rustworkx = None) -> Circuit:
