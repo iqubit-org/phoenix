@@ -12,14 +12,14 @@ from qiskit.transpiler import CouplingMap, PassManager
 
 import sys
 
-sys.path.append('..')
+sys.path.append('../..')
 
 from phoenix import Circuit, Gate
 from phoenix.utils import arch
 from phoenix.models.hamiltonians import HamiltonianModel
 
-Manhattan = CouplingMap(arch.read_device_topology('./manhattan.graphml').edge_list())
-Sycamore = CouplingMap(arch.read_device_topology('./sycamore.graphml').edge_list())
+Manhattan = CouplingMap(arch.read_device_topology('../topo_config/manhattan.graphml').edge_list())
+Sycamore = CouplingMap(arch.read_device_topology('../topo_config/sycamore.graphml').edge_list())
 All2all = CouplingMap(rx.generators.complete_graph(50).edge_list())
 
 from phoenix.transforms.circuit_pass import sabre_by_qiskit

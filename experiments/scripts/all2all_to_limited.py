@@ -3,16 +3,10 @@ All-to-all compilation results (especially for TKet, PauliOpt, Phoenix) to limit
 """
 import sys
 
-sys.path.append('..')
 sys.path.append('../..')
 
-import os
 import argparse
-import qiskit
-import pytket
-import pytket.qasm
-import pytket.passes
-import bench_utils
+from experiments.scripts import bench_utils
 
 bench_utils.optimize_with_mapping()
 

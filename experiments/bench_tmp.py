@@ -29,7 +29,7 @@ chem_name = 'CH2_cmplt_BK_sto3g.qasm'
 qasm_fname = chem_name
 qasm_fname_mapped = 'mapped_' + chem_name
 
-manhattan = nx.read_graphml('manhattan.graphml')
+manhattan = nx.read_graphml('topo_config/manhattan.graphml')
 
 # relabel str node to int node
 mapping = {node: int(node) for node in manhattan.nodes}
