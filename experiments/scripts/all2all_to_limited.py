@@ -1,25 +1,46 @@
+#!/usr/bin/env python
 """
-All-to-all compilation results (especially for TKet, PauliOpt, Phoenix) to limited connectivity topology (Manhattan, Sycamore)
+All-to-all compilation results (especially for TKet, PauliOpt, Phoenix)
+ to limited connectivity topology (Manhattan, Sycamore)
+ for UCCSD benchmarks
 """
 import sys
 
 sys.path.append('../..')
 
+import os
+from natsort import natsorted
+import qiskit
+import qiskit.qasm2
 import argparse
-from experiments.scripts import bench_utils
-
-bench_utils.optimize_with_mapping()
+import bench_utils
 
 parser = argparse.ArgumentParser(description='Map logical circuits to physical qubits with limited connectivity')
-parser.add_argument('-b', '--benchmark', type=str,
-                    help='Designate the benchmark suite (hamlib or uccsd) )')
+parser.add_argument('-d', '--device', type=str,
+                    help='Device topology (options: manhattan, sycamore)')
 parser.add_argument('-c', '--compiler', default='phoenix', type=str,
                     help='Compiler (default: phoenix)')
 args = parser.parse_args()
 
-'./'
+all2all_dpath = '../output_uccsd/{}/all2all'.format(args.compiler)
+fnames = natsorted(os.listdir(all2all_dpath))
 
-ALL2ALL_DPATH = './output_{}'.format(args.benchmark)
+if args.device == 'manhattan':
+    coupling_map = bench_utils.Manhattan
+elif args.device == 'sycamore':
+    coupling_map = bench_utils.Sycamore
+else:
+    raise ValueError('Unsupported topology')
 
+limited_dpath = '../output_uccsd/{}/{}'.format(args.compiler, args.device)
+if not os.path.exists(limited_dpath):
+    os.makedirs(limited_dpath)
 
+for fname in fnames:
+    print('Processing', fname)
+    all2all_circ_file = os.path.join(all2all_dpath, fname)
+    limited_circ_file = os.path.join(limited_dpath, fname)
 
+    circ = qiskit.QuantumCircuit.from_qasm_file(all2all_circ_file)
+    circ = bench_utils.optimize_with_mapping(circ, coupling_map)
+    qiskit.qasm2.dump(circ, limited_circ_file)

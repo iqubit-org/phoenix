@@ -6,7 +6,6 @@ Benchmarking on UCCSD benchmarks with given "compiler" and given "topology".
 import sys
 
 sys.path.append('../..')
-sys.path.append('../../..')
 
 import os
 import json
@@ -21,9 +20,9 @@ from rich.console import Console
 
 console = Console()
 
-INPUT_QASM_DPATH = '../benchmarks/uccsd_qasm'
-INPUT_JSON_DPATH = '../benchmarks/uccsd_json'
-OUTPUT_DPATH = './output_uccsd'
+INPUT_QASM_DPATH = '../../benchmarks/uccsd_qasm'
+INPUT_JSON_DPATH = '../../benchmarks/uccsd_json'
+OUTPUT_DPATH = '../output_uccsd'
 
 parser = argparse.ArgumentParser(description='Benchmarking on UCCSD chemistry benchmarks')
 parser.add_argument('-d', '--device', default='all2all', type=str,
