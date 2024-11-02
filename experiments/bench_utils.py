@@ -18,13 +18,11 @@ from phoenix import Circuit, Gate
 from phoenix.utils import arch
 from phoenix.models.hamiltonians import HamiltonianModel
 
-# Manhattan_coupling: rx.PyGraph = arch.read_device_topology('./manhattan.graphml')
-# Sycamore_coupling: rx.PyGraph = arch.read_device_topology('./sycamore.graphml')
-
 Manhattan = CouplingMap(arch.read_device_topology('./manhattan.graphml').edge_list())
 Sycamore = CouplingMap(arch.read_device_topology('./sycamore.graphml').edge_list())
-# All2all = CouplingMap(...) # TODO: prepare all2all coupling_map
-All2all = None
+All2all = CouplingMap(rx.generators.complete_graph(50).edge_list())
+
+from phoenix.transforms.circuit_pass import sabre_by_qiskit
 
 """
 def phoenix_pass(ham: HamiltonianModel, device: rx.rustworkx = None) -> Circuit:

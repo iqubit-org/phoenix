@@ -34,7 +34,6 @@ parser.add_argument('-c', '--compiler', default='phoenix', type=str,
                     help='Compiler (default: phoenix)')
 args = parser.parse_args()
 
-
 qasm_fnames = [os.path.join(INPUT_QASM_DPATH, args.type, fname)
                for fname in natsorted(os.listdir(os.path.join(INPUT_QASM_DPATH, args.type)))]
 json_fnames = [os.path.join(INPUT_JSON_DPATH, args.type, fname)
@@ -76,55 +75,15 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
 else:
     if args.compiler == 'tket':
         for fname in qasm_fnames:
+            console.print('Processing', fname)
 
             # TODO: delete this line
             if os.path.exists(os.path.join(output_dpath, os.path.basename(fname))):
                 continue
 
-
-
-            console.print('Processing', fname)
             circ = pytket.qasm.circuit_from_qasm(fname)
             circ = bench_utils.tket_pass(circ)
+
             pytket.qasm.circuit_to_qasm(circ, os.path.join(output_dpath, os.path.basename(fname)))
     else:
         raise ValueError('Unsupported compiler')
-#
-#
-#
-# def bench_hamlib(type):
-#     json_fnames = [fname for fname in os.listdir(os.path.join(BENCHMARK_DPATH, type)) if fname.endswith('.json')]
-#     for json_fname in json_fnames:
-#         output_fname = os.path.join(OUTPUT_DPATH, type, json_fname.replace('.json', '.qasm'))
-#         if os.path.exists(output_fname):
-#             continue
-#         print('Processing', json_fname)
-#         with open(os.path.join(BENCHMARK_DPATH, type, json_fname), 'r') as f:
-#             data = json.load(f)
-#         ham = HamiltonianModel(data['paulis'], data['coeffs'])
-#         circ = ham.reconfigure_and_generate_circuit()
-#         circ.to_qasm(output_fname)
-
-
-# bench_hamlib(args.type)
-
-#
-# if args.type == 'binaryoptimization':
-#     bench_hamlib100_type(args.type)
-# elif args.type == 'chemistry':
-#     bench_hamlib100_type(args.type)
-#     # json_fnames = os.listdir(os.path.join(BENCHMARK_DPATH, args.type))
-#     # for json_fname in json_fnames:
-#     #     with open(os.path.join(BENCHMARK_DPATH, args.type, json_fname), 'r') as f:
-#     #         data = json.load(f)
-#     #     output_fname = os.path.join(OUTPUT_DPATH, args.type, json_fname.replace('.json', '.qasm'))
-#     #     ham = HamiltonianModel(data['paulis'], data['coeffs'])
-#     #     circ = ham.reconfigure_and_generate_circuit()
-#     #     circ.to_qasm(output_fname)
-#     #     print('Circuit saved to', output_fname)
-# elif args.type == 'condensedmatter':
-#     ...
-# elif args.type == 'discreteoptimization':
-#     ...
-# else:
-#     raise ValueError('Invalid benchmarks type (binaryoptimization, chemistry, condensedmatter, discreteoptimization)')
