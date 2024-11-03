@@ -25,6 +25,10 @@ from itertools import combinations, product
 from copy import deepcopy
 from typing import List, Tuple
 
+from rich.console import Console
+
+console = Console()
+
 random.seed(1926)
 
 BENCHMARK_DPATH = './benchmarks/uccsd_json'
@@ -188,8 +192,7 @@ def PH_benchmark(oplist):
 from natsort import natsorted
 
 for json_fname in [fname for fname in natsorted(os.listdir(BENCHMARK_DPATH)) if fname.endswith('.json')]:
-    print()
-    print(json_fname)
+    console.rule(json_fname)
     with open(os.path.join(BENCHMARK_DPATH, json_fname), 'r') as f:
         data = json.load(f)
 
