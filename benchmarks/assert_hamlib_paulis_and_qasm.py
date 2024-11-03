@@ -44,17 +44,12 @@ for qasm_fname, json_fname in zip(qasm_fnames, json_fnames):
         print('skipping due to large number of gates')
         continue
 
-    # front_x = [tensor_1_slot(Pauli('X').to_matrix(), circ.num_qubits, i) for i in data['front_x_on']]
     ham = HamiltonianModel(data['paulis'], data['coeffs'])
     u_ideal = ham.unitary_evolution()
-
-    # u_ideal = reduce(np.dot, front_x) @ ham.unitary_evolution()
 
     u_ref = circ.unitary()
 
     circ_trotter = ham.generate_circuit()
-    # for q in data['front_x_on']:
-    #     circ_trotter.prepend(gates.X.on(q))
     u_trotter = circ_trotter.unitary()
 
     print('infidelity (ideal v.s. trotter):', infidelity(u_ideal, u_trotter))
