@@ -7,11 +7,8 @@ from math import sqrt, atan2
 
 import cirq
 import numpy as np
-import qfactor
 from scipy import linalg
-from scipy.stats import unitary_group
 from phoenix.basic import gates
-from phoenix.basic.gates import Gate, UnivGate
 from phoenix.utils.functions import is_power_of_two, replace_close_to_zero_with_zero
 
 M = np.array([[1, 0, 0, 1j],
@@ -509,47 +506,6 @@ def circuit_to_unitary(circ, backend=None) -> np.ndarray:
         return cirq.unitary(circ.to_cirq())
     else:
         raise ValueError("Unsupported backend {}".format(backend))
-
-
-def approximately_commutative(g1: Gate, g2: Gate) -> Union[bool, Tuple[Gate, Gate]]:
-    """Distinguish if two SU(4) gates can exchange their order by numerical approximation"""
-    assert g1.num_qregs == 2 and g2.num_qregs == 2 and len(g1.tqs) == 2 and len(g2.tqs) == 2, "Input must be 2 SU(4)s"
-    assert len(set(g1.tqs) & set(g2.tqs)) == 1, "Two SU(4)s must have one qubit commonly acted on"
-
-    q0 = list(set(g1.tqs) - set(g2.tqs))[0]
-    q1 = list(set(g1.tqs) & set(g2.tqs))[0]
-    q2 = list(set(g2.tqs) - set(g1.tqs))[0]
-
-    target = np.eye(8)
-
-    if q0 > q1:
-        # original g1.tqs is [q1, q0], need to reverse the order
-        target = tensor_slots(g1.data, 3, [1, 0]) @ target
-    else:
-        target = tensor_slots(g1.data, 3, [0, 1]) @ target
-
-    if q1 > q2:
-        # original g2.tqs is [q2, q1], need to reverse the order
-        target = tensor_slots(g2.data, 3, [2, 1]) @ target
-    else:
-        target = tensor_slots(g2.data, 3, [1, 2]) @ target
-
-    approx_circ = [
-        qfactor.Gate(unitary_group.rvs(4), (1, 2)),
-        qfactor.Gate(unitary_group.rvs(4), (0, 1)),
-    ]
-    ans = qfactor.optimize(approx_circ, target,  # <--- These are the only required args
-                           diff_tol_a=1e-12,  # Stopping criteria for distance change
-                           diff_tol_r=1e-6,  # Relative criteria for distance change
-                           dist_tol=1e-12,  # Stopping criteria for distance
-                           max_iters=100000,  # Maximum number of iterations
-                           min_iters=1000,  # Minimum number of iterations
-                           slowdown_factor=0)  # Larger numbers slowdown optimization
-
-    if qfactor.get_distance(ans, target) > 1e-6:
-        return False
-
-    return UnivGate(ans[0].utry).on([q1, q2]), UnivGate(ans[1].utry).on([q0, q1])
 
 
 def kak_coefficients(U: np.ndarray):
