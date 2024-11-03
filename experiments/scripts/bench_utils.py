@@ -117,7 +117,8 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
         # couplin_map is All2all but its size needs to be expanded
         coupling_map = CouplingMap(rx.generators.complete_graph(circ.num_qubits).to_directed().edge_list())
 
-    circ = qiskit.transpile(circ, basis_gates=['u1', 'u2', 'u3', 'cx'],
+    circ = qiskit.transpile(circ,
+                            basis_gates=['u1', 'u2', 'u3', 'cx'],
                             coupling_map=coupling_map,
                             initial_layout=list(range(circ.num_qubits)),
                             layout_method='sabre',

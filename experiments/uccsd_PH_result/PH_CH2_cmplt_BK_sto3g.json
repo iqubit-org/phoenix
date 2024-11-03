@@ -1,1 +1,9 @@
-{"n_qubits": 14, "PH_swap_count": 305, "PH_cx_count": 19574, "CNOT": 19807, "Single": 13280, "Total": 33087, "Depth": 20046}
+{
+  "n_qubits": 14,
+  "PH_swap_count": 305,
+  "PH_cx_count": 19574,
+  "CNOT": 19807,
+  "Single": 13280,
+  "Total": 33087,
+  "Depth": 20046
+}

@@ -23,12 +23,12 @@ def pauli_single_gates(qc, pauli_map, ps, left=True):
                 qc.u(-np.pi/2, -np.pi/2, np.pi/2, pauli_map[i])
 
 # def synthesis_initial(pauli_layers, pauli_map=None, graph=None, qc=None, arch='manhattan'):
-def synthesis_initial(pauli_layers, pauli_map=None, graph=None, qc=None):
+def synthesis_initial(pauli_layers, pauli_map=None, graph=None, arch=None, qc=None):
     assign_time_parameter(pauli_layers, 1)
     lnq = len(pauli_layers[0][0][0]) # logical qubits
-    # if graph == None:
-    #     G, C = load_graph(arch, dist_comp=True) # G is adj, C is dist
-    #     graph = pGraph(G, C)
+    if graph == None:
+        G, C = load_graph(arch, dist_comp=True) # G is adj, C is dist
+        graph = pGraph(G, C)
 
     if pauli_map == None:
         pauli_map = dummy_qubit_mapping(graph, lnq)
@@ -173,8 +173,10 @@ def similarity(level1, level2):
             ls2 = ls2 + 1
     return 0 if common == 0 else float(common) / (ls1 + ls2 - common)
 
-def synthesis_lookahead(pauli_layers, pauli_map=None, graph=None, qc=None, use_bridge=False, swap_coefficient=3, k=10):
-    pauli_map, graph, qc = synthesis_initial([[block] for block in pauli_layers], pauli_map, graph, qc)
+def synthesis_lookahead(pauli_layers, pauli_map=None, graph=None, qc=None,
+                        arch=None,
+                        use_bridge=False, swap_coefficient=3, k=10):
+    pauli_map, graph, qc = synthesis_initial([[block] for block in pauli_layers], pauli_map, graph, arch, qc)
     scheduler = Scheduler(pauli_map, graph, qc)
     n_qubits = len(pauli_layers[0][0].ps)
     block_cnt = 0

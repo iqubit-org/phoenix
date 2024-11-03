@@ -1,23 +1,23 @@
-import sys, time
-import sys
-import mypauli
-sys.path.append('../core/')
-sys.path.append('chem_json')
+# import mypauli
+from tetris.benchmark import mypauli
+# sys.path.append('../core/')
+# sys.path.append('chem_json')
 import argparse
-from utils.parallel_bl import *
+from tetris.utils.parallel_bl import gate_count_oriented_scheduling
 import qiskit
 from qiskit import QuantumCircuit, transpile
-import synthesis_SC
-import synthesis_FT
-from tools import *
-from arch import *
+# import synthesis_SC
+# import synthesis_FT
+from tetris import synthesis_SC
+from tetris.tools import *
+from tetris.arch import *
 import time, sys, os
-from t_arch import *
+from tetris.t_arch import *
 import pdb
 import random
-from utils.synthesis_broccoli import synthesis
-from utils.synthesis_max_cancel import synthesis_max_cancel
-from utils.synthesis_lookahead import synthesis_lookahead
+# from tetris.utils.synthesis_broccoli import synthesis
+# from tetris.utils.synthesis_max_cancel import synthesis_max_cancel
+from tetris.utils.synthesis_lookahead import synthesis_lookahead
 import pickle
 import json
 import numpy as np
@@ -27,8 +27,9 @@ from typing import List, Tuple
 
 random.seed(1926)
 
-BENCHMARK_DPATH = 'chem_json'
+BENCHMARK_DPATH = './benchmarks/uccsd_json'
 HAMLIB_DPATH = ['hamlib100json/binaryoptimization', 'hamlib100json/chemistry', 'hamlib100json/condensedmatter', 'hamlib100json/discreteoptimization']
+
 
 def group_paulis(paulis: List[str]):
 
@@ -184,17 +185,22 @@ def PH_benchmark(oplist):
     # out_file = open('uccsd_PH_result/PH_' + json_fname, "w")
     # json.dump(PH_output, out_file)
 
+from natsort import natsorted
 
-for json_fname in [fname for fname in os.listdir(BENCHMARK_DPATH) if fname.endswith('.json')]:
+for json_fname in [fname for fname in natsorted(os.listdir(BENCHMARK_DPATH)) if fname.endswith('.json')]:
+    print()
+    print(json_fname)
     with open(os.path.join(BENCHMARK_DPATH, json_fname), 'r') as f:
         data = json.load(f)
 
     parr, coeff = data['paulis'], data['coeffs']
-    qubit_count = len(parr[0])
-    if 'I' * qubit_count in parr:
-        parr.remove('I' * qubit_count)
 
-    
+    # trivial groups
+    # new_parr = []
+    # for p in parr:
+    #     ...
+
+    # group representation
     grouped = group_paulis(parr)
     new_parr = []
     for each in grouped.values():
@@ -203,9 +209,15 @@ for json_fname in [fname for fname in os.listdir(BENCHMARK_DPATH) if fname.endsw
             oplist.append(mypauli.pauliString(ps=each[i]))
         new_parr.append(oplist)
 
-    PH_output = PH_benchmark(new_parr)
-    out_file = open('uccsd_PH_result/PH_' + json_fname, "w")
-    json.dump(PH_output, out_file)
+
+    Tetris_output = tetris_benchmark(new_parr.copy())
+    PH_output = PH_benchmark(new_parr.copy())
+    from pprint import pprint
+    pprint(PH_output)
+    # out_file = open('uccsd_PH_result/PH_' + json_fname, "w")
+    # json.dump(PH_output, out_file)
+
+
 
 
 

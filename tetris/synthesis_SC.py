@@ -1,7 +1,12 @@
-from synthesis_sd import *
-from arch import *
-from synthesis_FT import assign_time_parameter
+from tetris.synthesis_sd import *
+from tetris.synthesis_FT import assign_time_parameter
+from tetris.arch import *
 from functools import partial
+
+# from synthesis_sd import *
+# from arch import *
+# from synthesis_FT import assign_time_parameter
+# from functools import partial
 
 def dummy_local_move(qc, graph, pauli_map, src, target):
     an = graph[src]
