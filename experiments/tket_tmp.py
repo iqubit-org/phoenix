@@ -56,7 +56,7 @@ circ_opt = tket_pass(circ)
 
 # qubit mapping on Manhattan
 qc = tket_to_qsikit(circ_opt)
-manhattan = nx.read_graphml('topo_config/manhattan.graphml')
+manhattan = nx.read_graphml('manhattan.graphml')
 manhattan = nx.relabel_nodes(manhattan, {node: int(node) for node in manhattan.nodes})
 coupling_edges = [list(edge) for edge in manhattan.edges]
 qc_mapped = qiskit.transpile(qc, basis_gates=['u1', 'u2', 'u3', 'cx'], optimization_level=3,
