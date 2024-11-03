@@ -12,30 +12,41 @@ import pandas as pd
 from natsort import natsorted
 from qiskit import QuantumCircuit
 
-BENCHMARK_DPATH = '../benchmarks/uccsd_qasm'
+# BENCHMARK_DPATH = '../benchmarks/uccsd_qasm'
 OUTPUT_DPATH = './output_uccsd/'
 
 parser = argparse.ArgumentParser(prog='Summarize compilation results (gate count and circuit depth statistics)')
 parser.add_argument('-c', '--compiler', type=str, help='Compiler name')
-parser.add_argument('-d', '--device', type=str, help='Device topology')
 args = parser.parse_args()
 
-OUTPUT_DPATH = os.path.join(OUTPUT_DPATH, args.compiler, args.device)
+OUTPUT_DPATH = os.path.join(OUTPUT_DPATH, args.compiler)
 
 if not os.path.exists(OUTPUT_DPATH):
-    raise ValueError('{} error, or {} error'.format(args.compiler, args.device))
+    raise ValueError('{} deos not exist'.format(OUTPUT_DPATH))
 
-result_fname = 'result_chem_{}_{}.csv'.format(args.compiler, args.device)
+result_fname = 'result_uccsd_{}.csv'.format(args.compiler)
 
-# TODO: summarize all2all, manhattan, sycamore to one single file
 
-result = pd.DataFrame(columns=['program', 'num_qubits', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q',
+result = pd.DataFrame(columns=['program',
                                'num_gates(all2all)', 'num_2q_gates(all2all)',
                                'depth(all2all)', 'depth_2q(all2all)',
                                'num_gates(manhattan)', 'num_2q_gates(manhattan)',
                                'depth(manhattan)', 'depth_2q(manhattan)',
                                'num_gates(sycamore)', 'num_2q_gates(sycamore)',
                                'depth(sycamore)', 'depth_2q(sycamore)'])
+
+results = {
+    'all2all': pd.DataFrame(columns=['program', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q']),
+}
+
+
+for device in ['all2all', 'manhattan', 'sycamore']:
+    output_dpath = os.path.join(OUTPUT_DPATH, args.compiler, device)
+    if not os.path.exists(output_dpath):
+        continue
+
+
+
 
 for fname in natsorted(os.listdir(BENCHMARK_DPATH)):
     program_name = fname.split('.')[0]
