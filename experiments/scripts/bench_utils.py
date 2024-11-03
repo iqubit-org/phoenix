@@ -111,6 +111,7 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
     circ.compose(qc, inplace=True)
     circ.compose(post_circ, inplace=True)
 
+    # num_phys_qubits = coupling_map.graph.num_nodes()
     if coupling_map.size() * (coupling_map.size() - 1) == len(
             coupling_map.get_edges()) and coupling_map.size() < circ.size():
         console.print('extending All2all topology')
