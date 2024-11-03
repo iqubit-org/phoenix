@@ -5,7 +5,6 @@ import numpy as np
 from typing import Tuple, List
 max_dist = 1000000
 max_size = 1000000
-package_directory = os.path.dirname(os.path.abspath(__file__))
 import csv
 
 class pNode:
@@ -53,7 +52,7 @@ def minDistance(dist, sptSet):
             minv = dist[v]
             min_index = v
     return min_index
- 
+
 def dijkstra(dist_matrix, src):
     n = dist_matrix.shape[0]
     dist = [dist_matrix[src, i] for i in range(n)]
@@ -70,16 +69,16 @@ def dijkstra(dist_matrix, src):
     for i in range(n):
         dist_matrix[src, i] = dist[i]
         dist_matrix[i, src] = dist[i]
-        
+
 def is_code_reduced(code):
-    if code in ['melbourne', 'mahattan']:
+    if code in ['melbourne', 'manhattan']:
         reduced = True
     else:
         reduced = False
     return reduced
 
 def load_sycamore_graph(dist_comp) -> Tuple[np.ndarray, np.ndarray]:
-    pth = os.path.join('arch', 'sycamore_64.txt')
+    pth = os.path.join('./tetris/arch', 'sycamore_64.txt')
 
     coup = []
     n = 0
@@ -87,7 +86,7 @@ def load_sycamore_graph(dist_comp) -> Tuple[np.ndarray, np.ndarray]:
         lines = file.readlines()
         num_nodes, num_edges = map(int, lines[0].split()[:2])
         n = num_nodes
-        
+
         # Add edges to the graph
         for edge in lines[1:]:
             node1, node2 = map(int, edge.split()[:2])
@@ -112,7 +111,7 @@ def load_graph(code, dist_comp=False, len_func=lambda x:x) -> Tuple[np.ndarray, 
         return load_sycamore_graph(dist_comp)
     reduced = is_code_reduced(code)
     # filepath = os.path.abspath(__file__)
-    pth = os.path.join('arch', 'data', 'ibmq_'+code+'_calibrations.csv')
+    pth = os.path.join('./tetris/arch', 'data', 'ibmq_'+code+'_calibrations.csv')
 
     # pth = os.path.join(os.path.dirname(os.path.dirname(filepath)), 'arch', 'data', 'ibmq_'+code+'_calibrations.csv')
     cgs = []
@@ -169,10 +168,30 @@ def graph_from_coupling(coup, dist_comp=True):
     return pGraph(G, C)
 
 
+def load_sycamore_coupling_map():
+    reduced = True
+    pth = os.path.join('./tetris/arch', 'sycamore_64.txt')
+
+    coupling = []
+    n = 0
+    with open(pth, 'r') as file:
+        lines = file.readlines()
+        num_nodes, num_edges = map(int, lines[0].split()[:2])
+        n = num_nodes
+
+        # Add edges to the graph
+        for edge in lines[1:]:
+            node1, node2 = map(int, edge.split()[:2])
+            coupling.append([node1, node2])
+            coupling.append([node2, node1])
+
+    return coupling
+
 def load_coupling_map(code) -> List[List[int]]:
+    if code == 'sycamore':
+        return load_sycamore_coupling_map()
     reduced = is_code_reduced(code)
-    pth = os.path.join('arch', 'data', 'ibmq_'+code+'_calibrations.csv')
-    print(pth, os.getcwd())
+    pth = os.path.join('./tetris/arch', 'data', 'ibmq_'+code+'_calibrations.csv')
     cgs = []
     n = 0
     with open(pth, 'r') as cf:

@@ -10,7 +10,6 @@ from qiskit import QuantumCircuit, transpile
 # import synthesis_FT
 from tetris import synthesis_SC
 from tetris.tools import *
-from tetris.arch import *
 import time, sys, os
 from tetris.t_arch import *
 import pdb
@@ -24,6 +23,10 @@ import numpy as np
 from itertools import combinations, product
 from copy import deepcopy
 from typing import List, Tuple
+
+import warnings
+
+warnings.filterwarnings("ignore")
 
 from rich.console import Console
 
@@ -99,6 +102,7 @@ def load_oplist(filename):
 
 from qiskit.transpiler import CouplingMap
 from phoenix.utils import arch
+from tetris.utils.hardware import pGraph, load_coupling_map
 
 Manhattan = CouplingMap(arch.read_device_topology('./experiments/manhattan.graphml').to_directed().edge_list())
 Sycamore = CouplingMap(arch.read_device_topology('./experiments/sycamore.graphml').to_directed().edge_list())
@@ -118,9 +122,10 @@ def Tetris_benchmark(oplist):
     print("----------------tetris_benchmark pass------------------")
     # lnq = len(oplist[0][0])
     coup = load_coupling_map('manhattan')
+    # coup = Manhattan
     a2 = oplist
     qc, metrics = synthesis_lookahead(a2,
-                                      graph=coupling_map_to_pGraph(Sycamore),
+                                      # graph=coupling_map_to_pGraph(Manhattan),
                                       arch='manhattan',
                                       use_bridge=False, swap_coefficient=3, k=10)
     pnq = qc.num_qubits
@@ -154,9 +159,11 @@ def PH_benchmark(oplist):
     print("-----------------PH pass------------------")
     lnq = len(oplist[0][0])
     coup = load_coupling_map('manhattan')
+    # coup = Manhattan
+
     a2 = gate_count_oriented_scheduling(oplist)
     qc, total_swaps, total_cx = synthesis_SC.block_opt_SC(a2,
-                                                          graph=coupling_map_to_pGraph(Sycamore),
+                                                          # graph=coupling_map_to_pGraph(Manhattan),
                                                           arch='manhattan'
                                                           )
     pnq = qc.num_qubits

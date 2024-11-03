@@ -1,5 +1,5 @@
 from tetris.synthesis_sd import *
-# from tetris.utils.hardware import *
+from tetris.utils.hardware import *
 from tetris.synthesis_FT import assign_time_parameter
 # from functools import partial
 from tetris.utils.scheduler import Scheduler
@@ -22,8 +22,9 @@ def pauli_single_gates(qc, pauli_map, ps, left=True):
             elif ps[i] == 'Y':
                 qc.u(-np.pi/2, -np.pi/2, np.pi/2, pauli_map[i])
 
-# def synthesis_initial(pauli_layers, pauli_map=None, graph=None, qc=None, arch='manhattan'):
-def synthesis_initial(pauli_layers, pauli_map=None, graph=None, arch=None, qc=None):
+def synthesis_initial(pauli_layers, pauli_map=None, graph=None,
+                      arch=None,
+                      qc=None):
     assign_time_parameter(pauli_layers, 1)
     lnq = len(pauli_layers[0][0][0]) # logical qubits
     if graph == None:

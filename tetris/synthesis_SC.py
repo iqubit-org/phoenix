@@ -1,6 +1,7 @@
 from tetris.synthesis_sd import *
 from tetris.synthesis_FT import assign_time_parameter
-from tetris.arch import *
+# from tetris.arch import *
+from tetris.utils.hardware import *
 from functools import partial
 
 # from synthesis_sd import *
@@ -130,6 +131,8 @@ def synthesis_initial(pauli_layers, pauli_map=None, graph=None, qc=None, arch='m
     lnq = len(pauli_layers[0][0][0]) # logical qubits
     if graph == None:
         G, C = load_graph(arch, dist_comp=True) # G is adj, C is dist
+        print(G.shape, C.shape)
+        print(np.unique(C))
         graph = pGraph(G, C)
     if pauli_map == None:
         pauli_map = dummy_qubit_mapping(graph, lnq)
@@ -151,7 +154,9 @@ def block_opt_SC(pauli_layers, pauli_map=None, graph=None, qc=None,
                  ):
     total_swaps = 0
     total_cx = 0
-    pauli_map, graph, qc = synthesis_initial(pauli_layers, pauli_map, graph, qc, arch)
+    pauli_map, graph, qc = synthesis_initial(pauli_layers, pauli_map, graph, qc, 
+                                             arch
+                                             )
     remain_layers = []
     # print(pauli_layers)
     dp = []
@@ -190,6 +195,11 @@ def block_opt_SC(pauli_layers, pauli_map=None, graph=None, qc=None,
                 connect_node(graph, pauli_map, pauli_map[id0], pauli_map[id1], ins)
                 # do we need to update lmt?
                 lmt.append(pauli_map[id0])
+                # print('swap:', id0, id1)
+                # print('ins:', ins)
+                # print('lmt:', lmt)
+                # print('nc:', nc)
+                
                 nc.remove(id0)
             for i3 in ins:
                 if i3[0] == 'swap':

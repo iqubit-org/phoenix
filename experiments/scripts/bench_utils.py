@@ -19,6 +19,10 @@ from phoenix import Circuit, Gate
 from phoenix.utils import arch
 from phoenix.models.hamiltonians import HamiltonianModel, console
 
+from tetris.benchmark.mypauli import pauliString
+from tetris.utils.hardware import pGraph
+from phoenix.transforms.pauli_pass import group_paulis_and_coeffs
+
 from rich.console import Console
 
 console = Console()
@@ -55,8 +59,10 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
     # Phoenix's high-level optimization
     ham = HamiltonianModel(paulis, coeffs)
     circ = ham.reconfigure_and_generate_circuit()
-    circ.prepend(*pre_gates)
-    circ.append(*post_gates)
+    if pre_gates is not None:
+        circ.prepend(*pre_gates)
+    if post_gates is not None:
+        circ.append(*post_gates)
 
     # logical optimization by TKet
     circ = circ.to_tket()
@@ -67,37 +73,57 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
 def paulihedral_pass(paulis: List[str], coeffs: List[float],
                      pre_gates: List[Gate] = None, post_gates: List[Gate] = None,
                      coupling_map: CouplingMap = All2all) -> qiskit.QuantumCircuit:
-    # TODO: it should also return init_mapping and final_mapping
-    ...
+    from tetris.utils.parallel_bl import gate_count_oriented_scheduling
+    from tetris.synthesis_SC import block_opt_SC
 
+    oplist = constr_mypauli_blocks(paulis, coeffs)
+    n = len(oplist[0][0])
+    if coupling_map.size() * (coupling_map.size() - 1) == len(coupling_map.get_edges()) and coupling_map.size() < n:
+        # coupling_map is All2all but its size needs to be expanded
+        console.print('extending All2all topology')
+        coupling_map = CouplingMap(rx.generators.complete_graph(n).to_directed().edge_list())
 
-# def coupling_map_to_adj_matrix(coupling_map: CouplingMap) -> np.n:
+    a2 = gate_count_oriented_scheduling(oplist)
+
+    qc, total_swaps, total_cx = block_opt_SC(a2, graph=coupling_map_to_pGraph(coupling_map))
+
+    circ = qiskit.QuantumCircuit(qc.num_qubits)
+    pre_circ = Circuit(pre_gates).to_qiskit()
+    post_circ = Circuit(post_gates).to_qiskit()
+    circ.compose(pre_circ, inplace=True)
+    circ.compose(qc, inplace=True)
+    circ.compose(post_circ, inplace=True)
+
+    circ = qiskit.transpile(circ,
+                            basis_gates=['u1', 'u2', 'u3', 'cx'],
+                            coupling_map=coupling_map,
+                            initial_layout=list(range(circ.num_qubits)),
+                            layout_method='sabre',
+                            optimization_level=3)
+    
+    console.print({
+        'n_qubits': n,
+        'PH_swap_count': total_swaps,
+        'PH_cx_count': total_cx,
+        'CNOT': circ.num_nonlocal_gates(),
+        'Single': circ.size() - circ.num_nonlocal_gates(),
+        'Total': circ.size(),
+        'Depth': circ.depth()})
+
+    return circ
+
 
 def tetris_pass(paulis: List[str], coeffs: List[float],
                 pre_gates: List[Gate] = None, post_gates: List[Gate] = None,
                 coupling_map: CouplingMap = All2all) -> qiskit.QuantumCircuit:
     from tetris.utils.synthesis_lookahead import synthesis_lookahead
-    from tetris.benchmark.mypauli import pauliString
-    from tetris.utils.hardware import pGraph
-    from phoenix.transforms.pauli_pass import group_paulis_and_coeffs
 
-    def coupling_map_to_pGraph(coupling_map: CouplingMap) -> pGraph:
-        MAX_DIST = 1000000
-        G = rx.adjacency_matrix(coupling_map.graph)
-        C = np.ones((coupling_map.size(), coupling_map.size())) * MAX_DIST
-        np.fill_diagonal(C, 0)
-        for src, dst in coupling_map.get_edges():
-            C[src, dst] = 1
-        return pGraph(G, C)
-
-    def constr_mypauli_blocks(paulis, coeffs):
-        groups = group_paulis_and_coeffs(paulis, coeffs)
-        mypauli_blocks = []
-        for paulis, coeffs in groups.values():
-            mypauli_blocks.append([])
-            for p, c in zip(paulis, coeffs):
-                mypauli_blocks[-1].append(pauliString(p, c))
-        return mypauli_blocks
+    oplist = constr_mypauli_blocks(paulis, coeffs)
+    n = len(oplist[0][0])
+    if coupling_map.size() * (coupling_map.size() - 1) == len(coupling_map.get_edges()) and coupling_map.size() < n:
+        # coupling_map is All2all but its size needs to be expanded
+        console.print('extending All2all topology')
+        coupling_map = CouplingMap(rx.generators.complete_graph(n).to_directed().edge_list())
 
     qc, metrics = synthesis_lookahead(constr_mypauli_blocks(paulis, coeffs),
                                       graph=coupling_map_to_pGraph(coupling_map),
@@ -111,12 +137,6 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
     circ.compose(qc, inplace=True)
     circ.compose(post_circ, inplace=True)
 
-    if coupling_map.size() * (coupling_map.size() - 1) == len(
-            coupling_map.get_edges()) and coupling_map.size() < circ.num_qubits:
-        console.print('extending All2all topology')
-        # couplin_map is All2all but its size needs to be expanded
-        coupling_map = CouplingMap(rx.generators.complete_graph(circ.num_qubits).to_directed().edge_list())
-
     circ = qiskit.transpile(circ,
                             basis_gates=['u1', 'u2', 'u3', 'cx'],
                             coupling_map=coupling_map,
@@ -127,53 +147,10 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
     metrics.update({'CNOT': circ.num_nonlocal_gates(),
                     'Single': circ.size() - circ.num_nonlocal_gates(),
                     'Total': circ.size(),
-                    'Depth': circ.depth(),
-                    # 'qasm' : qc2.qasm(),
-                    # 'latency1' : latency1,
-                    # 'latency2' : latency2
-                    })
+                    'Depth': circ.depth()})
     console.print(metrics)
 
     return circ
-
-    """
-    
-    def Tetris_lookahead_Mahattan(parr, use_bridge, swap_coefficient=3, k=10):
-        print('Tetris passes, Our schedule, Our synthesis, mahattan', flush=True)
-        lnq = len(parr[0][0])
-        length = lnq // 2 # `length' is a hyperparameter, and can be adjusted for best performance. Here we keep `length' fixed for simplicity.
-        coup = load_coupling_map('manhattan')
-        t0 = ctime()
-        # a2 = gate_count_oriented_scheduling(parr)#, length=length, maxiter=30)
-        # a2 = [block for blocks in a2 for block in blocks]
-        a2 = parr
-        qc, metrics = synthesis_lookahead(a2, arch='manhattan', use_bridge=use_bridge, swap_coefficient=swap_coefficient, k=k)
-        pnq = qc.num_qubits
-        latency1 = ctime() - t0
-        print('Tetris, Time costed:', ctime()-t0, flush=True)
-        qc1 = transpile(qc, basis_gates=['u3', 'cx'], coupling_map=coup, initial_layout=list(range(pnq)), optimization_level=0)
-        t0 = ctime()
-        qc2 = transpile(qc, basis_gates=['u3', 'cx'], coupling_map=coup, initial_layout=list(range(pnq)), optimization_level=3)
-        cnots, singles, depth = print_qc(qc2)
-        latency2 = ctime() - t0
-        print('Qiskit L3, Time costed:', ctime()-t0, flush=True)
-        metrics.update({'CNOT': cnots,
-                        'Single': singles,
-                        'Total': cnots+singles,
-                        'Depth': depth,
-                        'qasm' : qc2.qasm(),
-                        'latency1' : latency1,
-                        'latency2' : latency2
-                    })
-        key_to_exclude = 'qasm'
-
-        # Printing key-value pairs excluding a certain key
-        for key, value in metrics.items():
-            if key != key_to_exclude:
-                print(f"{key}: {value}")
-        return metrics
-        
-    """
 
 
 def pauliopt_pass(paulis: List[str], coeffs: List[float],
@@ -264,5 +241,21 @@ def optimize_with_mapping(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap
     circ = tket_to_qiskit(circ)
 
     return circ
+
+
+def coupling_map_to_pGraph(coupling_map: CouplingMap) -> pGraph:
+    G = rx.adjacency_matrix(coupling_map.graph)
+    C = rx.floyd_warshall_numpy(coupling_map.graph)
+    return pGraph(G, C)
+
+
+def constr_mypauli_blocks(paulis, coeffs) -> List[List[pauliString]]:
+    groups = group_paulis_and_coeffs(paulis, coeffs)
+    mypauli_blocks = []
+    for paulis, coeffs in groups.values():
+        mypauli_blocks.append([])
+        for p, c in zip(paulis, coeffs):
+            mypauli_blocks[-1].append(pauliString(p, c))
+    return mypauli_blocks
 
 # TODO: verify utils

@@ -10,7 +10,6 @@ sys.path.append('../..')
 
 import os
 from natsort import natsorted
-import qiskit
 import qiskit.qasm2
 import argparse
 import bench_utils
@@ -37,9 +36,10 @@ if not os.path.exists(limited_dpath):
     os.makedirs(limited_dpath)
 
 for fname in fnames:
-    print('Processing', fname)
     all2all_circ_file = os.path.join(all2all_dpath, fname)
     limited_circ_file = os.path.join(limited_dpath, fname)
+
+    print('Converting {} to {}'.format(all2all_circ_file, limited_circ_file))
 
     circ = qiskit.QuantumCircuit.from_qasm_file(all2all_circ_file)
     circ = bench_utils.optimize_with_mapping(circ, coupling_map)

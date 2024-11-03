@@ -1,0 +1,600 @@
+──────────────── CH2_cmplt_BK_sto3g.json ────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 12144, Single: 9489, Total: 21633, Depth: 13301
+n_qubits: 14
+IR_total: 37774
+IR_remain: 19114
+IR_cancel_ratio: 0.4939905755281411
+tetris_swap_count: 1316
+tetris_cx_count: 10640
+tetris_bridge_count: 0
+CNOT: 12144
+Single: 9489
+Total: 21633
+Depth: 13301
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 13568, Single: 11224, Total: 24792, Depth: 14584
+{'CNOT': 13568,
+ 'Depth': 14584,
+ 'PH_cx_count': 19574,
+ 'PH_swap_count': 305,
+ 'Single': 11224,
+ 'Total': 24792,
+ 'n_qubits': 14}
+──────────────── CH2_cmplt_JW_sto3g.json ────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 11111, Single: 9412, Total: 20523, Depth: 13260
+n_qubits: 14
+IR_total: 34272
+IR_remain: 20760
+IR_cancel_ratio: 0.3942577030812325
+tetris_swap_count: 508
+tetris_cx_count: 11880
+tetris_bridge_count: 0
+CNOT: 11111
+Single: 9412
+Total: 20523
+Depth: 13260
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 17177, Single: 10779, Total: 27956, Depth: 18832
+{'CNOT': 17177,
+ 'Depth': 18832,
+ 'PH_cx_count': 21072,
+ 'PH_swap_count': 214,
+ 'Single': 10779,
+ 'Total': 27956,
+ 'n_qubits': 14}
+──────────────────────────────── CH2_cmplt_P_sto3g.json ─────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 11398, Single: 9345, Total: 20743, Depth: 12670
+n_qubits: 14
+IR_total: 40194
+IR_remain: 21176
+IR_cancel_ratio: 0.4731551972931283
+tetris_swap_count: 1290
+tetris_cx_count: 12506
+tetris_bridge_count: 0
+CNOT: 11398
+Single: 9345
+Total: 20743
+Depth: 12670
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 16764, Single: 13052, Total: 29816, Depth: 19272
+{'CNOT': 16764,
+ 'Depth': 19272,
+ 'PH_cx_count': 20514,
+ 'PH_swap_count': 454,
+ 'Single': 13052,
+ 'Total': 29816,
+ 'n_qubits': 14}
+───────────────────────────────── CH2_frz_BK_sto3g.json ─────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 6522, Single: 5462, Total: 11984, Depth: 7274
+n_qubits: 12
+IR_total: 19872
+IR_remain: 10768
+IR_cancel_ratio: 0.4581320450885668
+tetris_swap_count: 651
+tetris_cx_count: 6078
+tetris_bridge_count: 0
+CNOT: 6522
+Single: 5462
+Total: 11984
+Depth: 7274
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 8080, Single: 6157, Total: 14237, Depth: 8704
+{'CNOT': 8080,
+ 'Depth': 8704,
+ 'PH_cx_count': 10228,
+ 'PH_swap_count': 284,
+ 'Single': 6157,
+ 'Total': 14237,
+ 'n_qubits': 12}
+───────────────────────────────── CH2_frz_JW_sto3g.json ─────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 5876, Single: 5442, Total: 11318, Depth: 7180
+n_qubits: 12
+IR_total: 17652
+IR_remain: 11348
+IR_cancel_ratio: 0.35712667119873104
+tetris_swap_count: 233
+tetris_cx_count: 6416
+tetris_bridge_count: 0
+CNOT: 5876
+Single: 5442
+Total: 11318
+Depth: 7180
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 7153, Single: 5884, Total: 13037, Depth: 7845
+{'CNOT': 7153,
+ 'Depth': 7845,
+ 'PH_cx_count': 10344,
+ 'PH_swap_count': 112,
+ 'Single': 5884,
+ 'Total': 13037,
+ 'n_qubits': 12}
+───────────────────────────────── CH2_frz_P_sto3g.json ──────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 6057, Single: 4971, Total: 11028, Depth: 6650
+n_qubits: 12
+IR_total: 19526
+IR_remain: 10754
+IR_cancel_ratio: 0.44924715763597256
+tetris_swap_count: 714
+tetris_cx_count: 6132
+tetris_bridge_count: 0
+CNOT: 6057
+Single: 4971
+Total: 11028
+Depth: 6650
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 8102, Single: 6431, Total: 14533, Depth: 9534
+{'CNOT': 8102,
+ 'Depth': 9534,
+ 'PH_cx_count': 9938,
+ 'PH_swap_count': 250,
+ 'Single': 6431,
+ 'Total': 14533,
+ 'n_qubits': 12}
+──────────────────────────────── H2O_cmplt_BK_sto3g.json ────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 7853, Single: 6357, Total: 14210, Depth: 8997
+n_qubits: 14
+IR_total: 25232
+IR_remain: 13066
+IR_cancel_ratio: 0.48216550412175013
+tetris_swap_count: 756
+tetris_cx_count: 7244
+tetris_bridge_count: 0
+CNOT: 7853
+Single: 6357
+Total: 14210
+Depth: 8997
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 9721, Single: 7787, Total: 17508, Depth: 10301
+{'CNOT': 9721,
+ 'Depth': 10301,
+ 'PH_cx_count': 13108,
+ 'PH_swap_count': 366,
+ 'Single': 7787,
+ 'Total': 17508,
+ 'n_qubits': 14}
+──────────────────────────────── H2O_cmplt_JW_sto3g.json ────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 7547, Single: 6530, Total: 14077, Depth: 8850
+n_qubits: 14
+IR_total: 23200
+IR_remain: 14074
+IR_cancel_ratio: 0.39336206896551723
+tetris_swap_count: 339
+tetris_cx_count: 8114
+tetris_bridge_count: 0
+CNOT: 7547
+Single: 6530
+Total: 14077
+Depth: 8850
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 10474, Single: 7430, Total: 17904, Depth: 10304
+{'CNOT': 10474,
+ 'Depth': 10304,
+ 'PH_cx_count': 14360,
+ 'PH_swap_count': 111,
+ 'Single': 7430,
+ 'Total': 17904,
+ 'n_qubits': 14}
+──────────────────────────────── H2O_cmplt_P_sto3g.json ─────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 7690, Single: 6283, Total: 13973, Depth: 8443
+n_qubits: 14
+IR_total: 27460
+IR_remain: 14792
+IR_cancel_ratio: 0.4613255644573926
+tetris_swap_count: 877
+tetris_cx_count: 8518
+tetris_bridge_count: 0
+CNOT: 7690
+Single: 6283
+Total: 13973
+Depth: 8443
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 9558, Single: 8333, Total: 17891, Depth: 10832
+{'CNOT': 9558,
+ 'Depth': 10832,
+ 'PH_cx_count': 14020,
+ 'PH_swap_count': 318,
+ 'Single': 8333,
+ 'Total': 17891,
+ 'n_qubits': 14}
+───────────────────────────────── H2O_frz_BK_sto3g.json ─────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 4283, Single: 3746, Total: 8029, Depth: 5312
+n_qubits: 12
+IR_total: 15620
+IR_remain: 7532
+IR_cancel_ratio: 0.517797695262484
+tetris_swap_count: 348
+tetris_cx_count: 4222
+tetris_bridge_count: 0
+CNOT: 4283
+Single: 3746
+Total: 8029
+Depth: 5312
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 6511, Single: 4968, Total: 11479, Depth: 7434
+{'CNOT': 6511,
+ 'Depth': 7434,
+ 'PH_cx_count': 8004,
+ 'PH_swap_count': 119,
+ 'Single': 4968,
+ 'Total': 11479,
+ 'n_qubits': 12}
+───────────────────────────────── H2O_frz_JW_sto3g.json ─────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 4720, Single: 4067, Total: 8787, Depth: 5672
+n_qubits: 12
+IR_total: 13696
+IR_remain: 8700
+IR_cancel_ratio: 0.36477803738317754
+tetris_swap_count: 221
+tetris_cx_count: 4892
+tetris_bridge_count: 0
+CNOT: 4720
+Single: 4067
+Total: 8787
+Depth: 5672
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 6672, Single: 4569, Total: 11241, Depth: 7473
+{'CNOT': 6672,
+ 'Depth': 7473,
+ 'PH_cx_count': 8064,
+ 'PH_swap_count': 54,
+ 'Single': 4569,
+ 'Total': 11241,
+ 'n_qubits': 12}
+───────────────────────────────── H2O_frz_P_sto3g.json ──────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 4892, Single: 3835, Total: 8727, Depth: 5151
+n_qubits: 12
+IR_total: 15284
+IR_remain: 8680
+IR_cancel_ratio: 0.4320858414027741
+tetris_swap_count: 593
+tetris_cx_count: 4930
+tetris_bridge_count: 0
+CNOT: 4892
+Single: 3835
+Total: 8727
+Depth: 5151
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 6375, Single: 4850, Total: 11225, Depth: 7466
+{'CNOT': 6375,
+ 'Depth': 7466,
+ 'PH_cx_count': 7796,
+ 'PH_swap_count': 161,
+ 'Single': 4850,
+ 'Total': 11225,
+ 'n_qubits': 12}
+──────────────────────────────── LiH_cmplt_BK_sto3g.json ────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 4361, Single: 3860, Total: 8221, Depth: 5112
+n_qubits: 12
+IR_total: 16760
+IR_remain: 7538
+IR_cancel_ratio: 0.5502386634844869
+tetris_swap_count: 420
+tetris_cx_count: 4194
+tetris_bridge_count: 0
+CNOT: 4361
+Single: 3860
+Total: 8221
+Depth: 5112
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 6426, Single: 4767, Total: 11193, Depth: 7454
+{'CNOT': 6426,
+ 'Depth': 7454,
+ 'PH_cx_count': 8680,
+ 'PH_swap_count': 175,
+ 'Single': 4767,
+ 'Total': 11193,
+ 'n_qubits': 12}
+──────────────────────────────── LiH_cmplt_JW_sto3g.json ────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 4491, Single: 4199, Total: 8690, Depth: 5517
+n_qubits: 12
+IR_total: 13696
+IR_remain: 8768
+IR_cancel_ratio: 0.3598130841121495
+tetris_swap_count: 185
+tetris_cx_count: 4960
+tetris_bridge_count: 0
+CNOT: 4491
+Single: 4199
+Total: 8690
+Depth: 5517
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 5763, Single: 4653, Total: 10416, Depth: 6206
+{'CNOT': 5763,
+ 'Depth': 6206,
+ 'PH_cx_count': 8064,
+ 'PH_swap_count': 107,
+ 'Single': 4653,
+ 'Total': 10416,
+ 'n_qubits': 12}
+──────────────────────────────── LiH_cmplt_P_sto3g.json ─────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 4906, Single: 3742, Total: 8648, Depth: 5218
+n_qubits: 12
+IR_total: 15128
+IR_remain: 8292
+IR_cancel_ratio: 0.4518773135906928
+tetris_swap_count: 614
+tetris_cx_count: 4668
+tetris_bridge_count: 0
+CNOT: 4906
+Single: 3742
+Total: 8648
+Depth: 5218
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 5212, Single: 4282, Total: 9494, Depth: 6120
+{'CNOT': 5212,
+ 'Depth': 6120,
+ 'PH_cx_count': 7640,
+ 'PH_swap_count': 124,
+ 'Single': 4282,
+ 'Total': 9494,
+ 'n_qubits': 12}
+───────────────────────────────── LiH_frz_BK_sto3g.json ─────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 1324, Single: 958, Total: 2282, Depth: 1268
+n_qubits: 10
+IR_total: 2886
+IR_remain: 1848
+IR_cancel_ratio: 0.3596673596673597
+tetris_swap_count: 185
+tetris_cx_count: 1002
+tetris_bridge_count: 0
+CNOT: 1324
+Single: 958
+Total: 2282
+Depth: 1268
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 1295, Single: 1044, Total: 2339, Depth: 1406
+{'CNOT': 1295,
+ 'Depth': 1406,
+ 'PH_cx_count': 1442,
+ 'PH_swap_count': 66,
+ 'Single': 1044,
+ 'Total': 2339,
+ 'n_qubits': 10}
+───────────────────────────────── LiH_frz_JW_sto3g.json ─────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 1066, Single: 990, Total: 2056, Depth: 1259
+n_qubits: 10
+IR_total: 2848
+IR_remain: 2006
+IR_cancel_ratio: 0.29564606741573035
+tetris_swap_count: 47
+tetris_cx_count: 1158
+tetris_bridge_count: 0
+CNOT: 1066
+Single: 990
+Total: 2056
+Depth: 1259
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 1617, Single: 903, Total: 2520, Depth: 1919
+{'CNOT': 1617,
+ 'Depth': 1919,
+ 'PH_cx_count': 1616,
+ 'PH_swap_count': 30,
+ 'Single': 903,
+ 'Total': 2520,
+ 'n_qubits': 10}
+───────────────────────────────── LiH_frz_P_sto3g.json ──────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 1319, Single: 916, Total: 2235, Depth: 1281
+n_qubits: 10
+IR_total: 2952
+IR_remain: 2008
+IR_cancel_ratio: 0.31978319783197834
+tetris_swap_count: 174
+tetris_cx_count: 1124
+tetris_bridge_count: 0
+CNOT: 1319
+Single: 916
+Total: 2235
+Depth: 1281
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 1140, Single: 1014, Total: 2154, Depth: 1279
+{'CNOT': 1140,
+ 'Depth': 1279,
+ 'PH_cx_count': 1448,
+ 'PH_swap_count': 16,
+ 'Single': 1014,
+ 'Total': 2154,
+ 'n_qubits': 10}
+──────────────────────────────── NH_cmplt_BK_sto3g.json ─────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 4283, Single: 3746, Total: 8029, Depth: 5312
+n_qubits: 12
+IR_total: 15620
+IR_remain: 7532
+IR_cancel_ratio: 0.517797695262484
+tetris_swap_count: 348
+tetris_cx_count: 4222
+tetris_bridge_count: 0
+CNOT: 4283
+Single: 3746
+Total: 8029
+Depth: 5312
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 6511, Single: 4968, Total: 11479, Depth: 7434
+{'CNOT': 6511,
+ 'Depth': 7434,
+ 'PH_cx_count': 8004,
+ 'PH_swap_count': 119,
+ 'Single': 4968,
+ 'Total': 11479,
+ 'n_qubits': 12}
+──────────────────────────────── NH_cmplt_JW_sto3g.json ─────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 4720, Single: 4067, Total: 8787, Depth: 5672
+n_qubits: 12
+IR_total: 13696
+IR_remain: 8700
+IR_cancel_ratio: 0.36477803738317754
+tetris_swap_count: 221
+tetris_cx_count: 4892
+tetris_bridge_count: 0
+CNOT: 4720
+Single: 4067
+Total: 8787
+Depth: 5672
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 6672, Single: 4569, Total: 11241, Depth: 7473
+{'CNOT': 6672,
+ 'Depth': 7473,
+ 'PH_cx_count': 8064,
+ 'PH_swap_count': 54,
+ 'Single': 4569,
+ 'Total': 11241,
+ 'n_qubits': 12}
+───────────────────────────────── NH_cmplt_P_sto3g.json ─────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 4892, Single: 3835, Total: 8727, Depth: 5151
+n_qubits: 12
+IR_total: 15284
+IR_remain: 8680
+IR_cancel_ratio: 0.4320858414027741
+tetris_swap_count: 593
+tetris_cx_count: 4930
+tetris_bridge_count: 0
+CNOT: 4892
+Single: 3835
+Total: 8727
+Depth: 5151
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 6375, Single: 4850, Total: 11225, Depth: 7466
+{'CNOT': 6375,
+ 'Depth': 7466,
+ 'PH_cx_count': 7796,
+ 'PH_swap_count': 161,
+ 'Single': 4850,
+ 'Total': 11225,
+ 'n_qubits': 12}
+───────────────────────────────── NH_frz_BK_sto3g.json ──────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 2951, Single: 2208, Total: 5159, Depth: 3122
+n_qubits: 10
+IR_total: 8298
+IR_remain: 4496
+IR_cancel_ratio: 0.4581826946252109
+tetris_swap_count: 336
+tetris_cx_count: 2404
+tetris_bridge_count: 0
+CNOT: 2951
+Single: 2208
+Total: 5159
+Depth: 3122
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 3513, Single: 2783, Total: 6296, Depth: 3986
+{'CNOT': 3513,
+ 'Depth': 3986,
+ 'PH_cx_count': 4178,
+ 'PH_swap_count': 109,
+ 'Single': 2783,
+ 'Total': 6296,
+ 'n_qubits': 10}
+───────────────────────────────── NH_frz_JW_sto3g.json ──────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 2489, Single: 2166, Total: 4655, Depth: 3069
+n_qubits: 10
+IR_total: 7040
+IR_remain: 4664
+IR_cancel_ratio: 0.3375
+tetris_swap_count: 116
+tetris_cx_count: 2528
+tetris_bridge_count: 0
+CNOT: 2489
+Single: 2166
+Total: 4655
+Depth: 3069
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 3824, Single: 2150, Total: 5974, Depth: 4610
+{'CNOT': 3824,
+ 'Depth': 4610,
+ 'PH_cx_count': 3896,
+ 'PH_swap_count': 62,
+ 'Single': 2150,
+ 'Total': 5974,
+ 'n_qubits': 10}
+────────────────────────────────── NH_frz_P_sto3g.json ──────────────────────────────────
+----------------tetris_benchmark pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 2633, Single: 2125, Total: 4758, Depth: 2965
+n_qubits: 10
+IR_total: 7284
+IR_remain: 4598
+IR_cancel_ratio: 0.3687534321801208
+tetris_swap_count: 303
+tetris_cx_count: 2618
+tetris_bridge_count: 0
+CNOT: 2633
+Single: 2125
+Total: 4758
+Depth: 2965
+-----------------PH pass------------------
+./tetris/arch/data/ibmq_manhattan_calibrations.csv /Users/anan/git-projects/quantum/phoenix
+CNOT: 3347, Single: 2644, Total: 5991, Depth: 3994
+{'CNOT': 3347,
+ 'Depth': 3994,
+ 'PH_cx_count': 3700,
+ 'PH_swap_count': 112,
+ 'Single': 2644,
+ 'Total': 5991,
+ 'n_qubits': 10}

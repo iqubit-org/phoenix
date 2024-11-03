@@ -44,10 +44,10 @@ console.print('compiler: {}'.format(args.compiler))
 console.print('output directory: {}'.format(output_dpath))
 
 if args.device == 'all2all':
-    coupling_map = None  # TODO: make a all2all topology
+    coupling_map = bench_utils.All2all  # TODO: make a all2all topology
 elif args.device == 'manhattan':
     coupling_map = bench_utils.Manhattan
-elif args.compiler == 'sycamore':
+elif args.device == 'sycamore':
     coupling_map = bench_utils.Sycamore
 else:
     raise ValueError('Unsupported device')
