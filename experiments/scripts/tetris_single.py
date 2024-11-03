@@ -1,7 +1,7 @@
 from bench_utils import *
 import json
 
-# json_fname = '../../benchmarks/uccsd_json/CH2_cmplt_BK_sto3g.json'
+json_fname = '../../benchmarks/uccsd_json/CH2_cmplt_BK_sto3g.json'
 # json_fname = '../../benchmarks/uccsd_json/LiH_frz_P_sto3g.json'
 
 
