@@ -87,19 +87,28 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
         for src, dst in coupling_map.get_edges():
             C[src, dst] = 1
         return pGraph(G, C)
-
-    groups = group_paulis_and_coeffs(paulis, coeffs)
-
-    mypauli_blocks = []
-    for paulis, coeffs in groups.values():
-        mypauli_blocks.append([])
-        for p, c in zip(paulis, coeffs):
-            mypauli_blocks[-1].append(pauliString(p, c))
     
-    circ, metrics = synthesis_lookahead(mypauli_blocks,
-                                        graph=coupling_map_to_pGraph(coupling_map),
-                                        use_bridge=False,
-                                        swap_coefficient=3, k=10)
+    def constr_mypauli_blocks(paulis, coeffs):
+        groups = group_paulis_and_coeffs(paulis, coeffs)
+        mypauli_blocks = []
+        for paulis, coeffs in groups.values():
+            mypauli_blocks.append([])
+            for p, c in zip(paulis, coeffs):
+                mypauli_blocks[-1].append(pauliString(p, c))
+        return mypauli_blocks
+    
+    qc, metrics = synthesis_lookahead(constr_mypauli_blocks(paulis, coeffs),
+                                      graph=coupling_map_to_pGraph(coupling_map),
+                                      use_bridge=False,
+                                      swap_coefficient=3, k=10)
+    
+    circ = qiskit.QuantumCircuit(circ.num_qubits)
+    pre_circ = Circuit(pre_gates).to_qiskit()
+    post_circ = Circuit(post_gates).to_qiskit()
+    circ.compose(pre_circ, inplace=True)
+    circ.compose(qc, inplace=True)
+    circ.compose(post_circ, inplace=True)
+
     circ = qiskit.transpile(circ, basis_gates=['u1', 'u2', 'u3', 'cx'],
                             coupling_map=coupling_map,
                             initial_layout=list(range(circ.num_qubits)),

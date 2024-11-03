@@ -2,7 +2,7 @@ from synthesis_sd import *
 from utils.hardware import *
 from synthesis_FT import assign_time_parameter
 from functools import partial
-from utils.scheduler import Scheduler
+from ..utils.scheduler import Scheduler
 import random
 import pdb
 

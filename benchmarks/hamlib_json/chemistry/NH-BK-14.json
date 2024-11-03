@@ -2,7 +2,6 @@
     "num_qubits": 14,
     "num_terms": 1086,
     "paulis": [
-        "IIIIIIIIIIIIII",
         "XXXIIIIIIIIIII",
         "XXXXIIIYIYIXII",
         "XXXXIIIYIIIYII",
@@ -1090,7 +1089,6 @@
         "IIIIIIIIIIIIIZ"
     ],
     "coeffs": [
-        -51.40244508774681,
         -0.010369617216076515,
         -0.006093793113978015,
         -0.02200351939686624,
