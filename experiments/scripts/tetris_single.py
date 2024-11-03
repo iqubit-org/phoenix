@@ -10,8 +10,8 @@ with open(json_fname, 'r') as f:
 circ = tetris_pass(data['paulis'], data['coeffs'],
                    coupling_map=Manhattan)
 
+circ = tetris_pass(data['paulis'], data['coeffs'],
+                   coupling_map=Sycamore)
 
-
-
-# circ = tetris_pass(data['paulis'], data['coeffs'],
-#                    coupling_map=Sycamore)
+circ = tetris_pass(data['paulis'], data['coeffs'],
+                   coupling_map=All2all)
