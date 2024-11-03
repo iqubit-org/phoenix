@@ -9,7 +9,9 @@ input_dpath = '../benchmarks/uccsd_qasm'
 
 
 
-output_dpath = 'qiskit_opt'
+# output_dpath = 'qiskit_opt'
+
+output_dpath = './output_uccsd/tetris/all2all'
 
 # output_dpath = 'tket_opt'
 

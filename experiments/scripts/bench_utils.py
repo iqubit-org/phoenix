@@ -85,6 +85,8 @@ def paulihedral_pass(paulis: List[str], coeffs: List[float],
 
     a2 = gate_count_oriented_scheduling(oplist)
 
+    console.print(a2)
+
     qc, total_swaps, total_cx = block_opt_SC(a2, graph=coupling_map_to_pGraph(coupling_map))
 
     circ = qiskit.QuantumCircuit(qc.num_qubits)
