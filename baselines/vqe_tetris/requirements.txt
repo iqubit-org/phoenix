@@ -1,4 +1,0 @@
-qiskit==0.43.2
-pytket
-pandas
-matplotlib

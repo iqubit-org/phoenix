@@ -1,9 +1,0 @@
-10_6_0.txt CNOT gate count by 2QAN: 112
-10_6_1.txt CNOT gate count by 2QAN: 122
-10_7_0.txt CNOT gate count by 2QAN: 125
-10_7_1.txt CNOT gate count by 2QAN: 130
-10_9_0.txt CNOT gate count by 2QAN: 160
-12_6_0.txt CNOT gate count by 2QAN: 151
-12_6_1.txt CNOT gate count by 2QAN: 160
-12_7_0.txt CNOT gate count by 2QAN: 168
-12_7_1.txt CNOT gate count by 2QAN: 178
