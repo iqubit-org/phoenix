@@ -176,7 +176,9 @@ def similarity(level1, level2):
 def synthesis_lookahead(pauli_layers, pauli_map=None, graph=None, qc=None,
                         arch=None,
                         use_bridge=False, swap_coefficient=3, k=10):
-    pauli_map, graph, qc = synthesis_initial([[block] for block in pauli_layers], pauli_map, graph, arch, qc)
+    pauli_map, graph, qc = synthesis_initial([[block] for block in pauli_layers], pauli_map, graph,
+                                             arch,
+                                             qc)
     scheduler = Scheduler(pauli_map, graph, qc)
     n_qubits = len(pauli_layers[0][0].ps)
     block_cnt = 0

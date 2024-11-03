@@ -146,7 +146,9 @@ def inter_synthesis(pauli_layers, pauli_map=None, graph=None, qc=None, arch='man
         for i2 in i1:
             pass
 
-def block_opt_SC(pauli_layers, pauli_map=None, graph=None, qc=None, arch='manhattan'):
+def block_opt_SC(pauli_layers, pauli_map=None, graph=None, qc=None,
+                 arch='manhattan'
+                 ):
     total_swaps = 0
     total_cx = 0
     pauli_map, graph, qc = synthesis_initial(pauli_layers, pauli_map, graph, qc, arch)

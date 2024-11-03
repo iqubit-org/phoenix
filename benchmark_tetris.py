@@ -29,14 +29,14 @@ from rich.console import Console
 
 console = Console()
 
-random.seed(1926)
+# random.seed(1926)
 
 BENCHMARK_DPATH = './benchmarks/uccsd_json'
-HAMLIB_DPATH = ['hamlib100json/binaryoptimization', 'hamlib100json/chemistry', 'hamlib100json/condensedmatter', 'hamlib100json/discreteoptimization']
+HAMLIB_DPATH = ['hamlib100json/binaryoptimization', 'hamlib100json/chemistry', 'hamlib100json/condensedmatter',
+                'hamlib100json/discreteoptimization']
 
 
 def group_paulis(paulis: List[str]):
-
     assert len(paulis) == len(np.unique(paulis)), 'Pauli strings must be unique'
 
     nontrivial = [tuple(np.where(np.array(list(pauli)) != 'I')[0]) for pauli in paulis]
@@ -78,10 +78,12 @@ def group_paulis(paulis: List[str]):
 
     return groups
 
+
 def json_load(filename):
     with open(filename, 'rb') as f:
         obj = json.load(f)
     return obj
+
 
 def load_oplist(filename):
     data = json_load(filename)
@@ -89,39 +91,63 @@ def load_oplist(filename):
     # oplist = [mypauli.pauliString(ps=parr, coeff = coeff)]
     oplist = []
     for i in range(len(parr)):
-        oplist.append([mypauli.pauliString(ps=parr[i], coeff = coeff[i])])
+        oplist.append([mypauli.pauliString(ps=parr[i], coeff=coeff[i])])
     return oplist
+
 
 # oplist = load_oplist("chem_json/CH2_cmplt_BK_sto3g.json")
 
-def tetris_benchmark(oplist):
+from qiskit.transpiler import CouplingMap
+from phoenix.utils import arch
+
+Manhattan = CouplingMap(arch.read_device_topology('./experiments/manhattan.graphml').to_directed().edge_list())
+Sycamore = CouplingMap(arch.read_device_topology('./experiments/sycamore.graphml').to_directed().edge_list())
+
+
+def coupling_map_to_pGraph(coupling_map: CouplingMap) -> pGraph:
+    import rustworkx as rx
+    MAX_DIST = 1000000
+    G = rx.adjacency_matrix(coupling_map.graph)
+    C = np.ones((coupling_map.size(), coupling_map.size())) * MAX_DIST
+    np.fill_diagonal(C, 0)
+    for src, dst in coupling_map.get_edges():
+        C[src, dst] = 1
+    return pGraph(G, C)
+
+def Tetris_benchmark(oplist):
     print("----------------tetris_benchmark pass------------------")
     # lnq = len(oplist[0][0])
     coup = load_coupling_map('manhattan')
     a2 = oplist
-    qc, metrics = synthesis_lookahead(a2, arch='manhattan', use_bridge=False, swap_coefficient=3, k=10)
+    qc, metrics = synthesis_lookahead(a2,
+                                      graph=coupling_map_to_pGraph(Sycamore),
+                                      arch='manhattan',
+                                      use_bridge=False, swap_coefficient=3, k=10)
     pnq = qc.num_qubits
-    qc2 = transpile(qc, basis_gates=['u3', 'cx'], coupling_map=coup, initial_layout=list(range(pnq)), optimization_level=3)
+    qc2 = transpile(qc, basis_gates=['u3', 'cx'], coupling_map=coup,
+                    initial_layout=list(range(pnq)),
+                    layout_method='sabre',
+                    optimization_level=3)
     cnots, singles, depth = print_qc(qc2)
 
     metrics.update({'CNOT': cnots,
                     'Single': singles,
-                    'Total': cnots+singles,
+                    'Total': cnots + singles,
                     'Depth': depth,
                     # 'qasm' : qiskit.qasm3.dump(qc2),
                     # 'latency1' : latency1,
                     # 'latency2' : latency2
-                })
+                    })
     for key, value in metrics.items():
         print(f"{key}: {value}")
     return {'CNOT': cnots,
-                    'Single': singles,
-                    'Total': cnots+singles,
-                    'Depth': depth,
-                    # 'qasm' : qiskit.qasm3.dump(qc2),
-                    # 'latency1' : latency1,
-                    # 'latency2' : latency2
-                }
+            'Single': singles,
+            'Total': cnots + singles,
+            'Depth': depth,
+            # 'qasm' : qiskit.qasm3.dump(qc2),
+            # 'latency1' : latency1,
+            # 'latency2' : latency2
+            }
 
 
 def PH_benchmark(oplist):
@@ -129,9 +155,13 @@ def PH_benchmark(oplist):
     lnq = len(oplist[0][0])
     coup = load_coupling_map('manhattan')
     a2 = gate_count_oriented_scheduling(oplist)
-    qc, total_swaps, total_cx = synthesis_SC.block_opt_SC(a2, arch='manhattan')
+    qc, total_swaps, total_cx = synthesis_SC.block_opt_SC(a2,
+                                                          graph=coupling_map_to_pGraph(Sycamore),
+                                                          arch='manhattan'
+                                                          )
     pnq = qc.num_qubits
-    qc2 = transpile(qc, basis_gates=['u3', 'cx'], coupling_map=coup, initial_layout=list(range(pnq)), optimization_level=3)
+    qc2 = transpile(qc, basis_gates=['u3', 'cx'], coupling_map=coup, initial_layout=list(range(pnq)),
+                    optimization_level=3)
     cnots, singles, depth = print_qc(qc2)
 
     return {
@@ -140,12 +170,13 @@ def PH_benchmark(oplist):
         'PH_cx_count': total_cx,
         'CNOT': cnots,
         'Single': singles,
-        'Total': cnots+singles,
+        'Total': cnots + singles,
         'Depth': depth,
         # 'qasm' : qc2.qasm(),
         # 'latency1' : latency1,
         # 'latency2' : latency2
     }
+
 
 # for json_fname in [fname for fname in os.listdir(BENCHMARK_DPATH) if fname.endswith('.json')]:
 
@@ -163,7 +194,7 @@ def PH_benchmark(oplist):
 #             parr.remove('I' * qubit_count)
 
 #         if qubit_count <= 65:
-            
+
 #             grouped = group_paulis(parr)
 #             new_parr = []
 #             for each in grouped.values():
@@ -171,7 +202,7 @@ def PH_benchmark(oplist):
 #                 for i in range(len(each)):
 #                     oplist.append(mypauli.pauliString(ps=each[i]))
 #                 new_parr.append(oplist)
-            
+
 #             # tetris_output = tetris_benchmark(new_parr)
 #             # out_file = open('ham100_tetris_result/tetris_' + json_fname, "w")
 #             # json.dump(tetris_output, out_file)
@@ -180,14 +211,14 @@ def PH_benchmark(oplist):
 #             out_file = open('ham100_PH_result/PH_' + json_fname, "w")
 #             json.dump(PH_output, out_file)
 
-    # "-------PH--------------"
-    # parr, coeff = data['paulis'], data['coeffs']
-    # oplist = []   
-    # for i in range(len(parr)):
-    #     oplist.append([mypauli.pauliString(ps=parr[i], coeff = coeff[i])])
-    # PH_output = PH_benchmark(oplist)
-    # out_file = open('uccsd_PH_result/PH_' + json_fname, "w")
-    # json.dump(PH_output, out_file)
+# "-------PH--------------"
+# parr, coeff = data['paulis'], data['coeffs']
+# oplist = []
+# for i in range(len(parr)):
+#     oplist.append([mypauli.pauliString(ps=parr[i], coeff = coeff[i])])
+# PH_output = PH_benchmark(oplist)
+# out_file = open('uccsd_PH_result/PH_' + json_fname, "w")
+# json.dump(PH_output, out_file)
 
 from natsort import natsorted
 
@@ -198,11 +229,6 @@ for json_fname in [fname for fname in natsorted(os.listdir(BENCHMARK_DPATH)) if 
 
     parr, coeff = data['paulis'], data['coeffs']
 
-    # trivial groups
-    # new_parr = []
-    # for p in parr:
-    #     ...
-
     # group representation
     grouped = group_paulis(parr)
     new_parr = []
@@ -212,17 +238,13 @@ for json_fname in [fname for fname in natsorted(os.listdir(BENCHMARK_DPATH)) if 
             oplist.append(mypauli.pauliString(ps=each[i]))
         new_parr.append(oplist)
 
-
-    Tetris_output = tetris_benchmark(new_parr.copy())
+    Tetris_output = Tetris_benchmark(new_parr.copy())
     PH_output = PH_benchmark(new_parr.copy())
     from pprint import pprint
+
     pprint(PH_output)
     # out_file = open('uccsd_PH_result/PH_' + json_fname, "w")
     # json.dump(PH_output, out_file)
-
-
-
-
 
 ##### test oplist #####
 # def gene_dot_1d(w, seed=12):

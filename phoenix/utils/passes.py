@@ -5,7 +5,6 @@ from functools import reduce
 from operator import add
 from phoenix.basic.gates import Gate, UnivGate
 from phoenix.basic.circuits import Circuit
-from phoenix.utils.operations import approximately_commutative
 from phoenix.utils.graphs import find_predecessors_by_node, find_successors_by_node, node_index
 from rich.console import Console
 
