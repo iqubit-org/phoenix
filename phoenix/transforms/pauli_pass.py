@@ -6,15 +6,13 @@ from itertools import combinations, product
 from copy import deepcopy
 from functools import reduce
 from operator import add
-from typing import List, Tuple
-
+from typing import List, Tuple, Dict
 
 from phoenix.basic import gates
 from phoenix.basic.gates import Gate
 from phoenix.basic.circuits import Circuit
 from phoenix.models.paulis import BSF
 from phoenix.models.cliffords import Clifford2Q
-
 
 from rich.console import Console
 
@@ -25,7 +23,7 @@ console = Console()
 # Grouping
 ################################################################
 
-def group_paulis(paulis: List[str]):
+def group_paulis(paulis: List[str]) -> List[List[str]]:
     """
     Group Pauli strings by their nontrivial parts.
 
@@ -84,6 +82,14 @@ def group_paulis(paulis: List[str]):
             selected_indices.append(idx)
             groups[idx] = equal_len_groups.pop(idx)
 
+    return groups
+
+
+def group_paulis_and_coeffs(paulis: List[str], coeffs: List[float]) -> Dict[Tuple[int], Tuple[List[str], np.ndarray]]:
+    """Group Pauli strings (with coefficients) by their nontrivial parts."""
+    groups = {}
+    for idx, paulis in group_paulis(paulis).items():
+        groups[idx] = paulis, np.array([coeffs[paulis.index(pauli)] for pauli in paulis])
     return groups
 
 
@@ -262,13 +268,7 @@ def order_blocks(blocks: Circuit) -> Circuit:
             if np.all(np.array(list(right_end.values())) > 0):
                 break
 
-
-
-
         return left_ends, right_end
-
-
-
 
 
 ################################################################
