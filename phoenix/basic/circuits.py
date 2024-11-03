@@ -143,6 +143,9 @@ class Circuit(list):
 
     def to_qasm(self, fname: str = None):
         """Convert self to QSAM string"""
+        if not self.gates:
+            return ''
+
         circuit = deepcopy(self)
         output = QASMStringIO()
         output.write_header()

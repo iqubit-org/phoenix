@@ -181,7 +181,7 @@ def PH_benchmark(oplist):
     # for i in range(len(parr)):
     #     oplist.append([mypauli.pauliString(ps=parr[i], coeff = coeff[i])])
     # PH_output = PH_benchmark(oplist)
-    # out_file = open('chem_PH_result/PH_' + json_fname, "w")
+    # out_file = open('uccsd_PH_result/PH_' + json_fname, "w")
     # json.dump(PH_output, out_file)
 
 
@@ -204,7 +204,7 @@ for json_fname in [fname for fname in os.listdir(BENCHMARK_DPATH) if fname.endsw
         new_parr.append(oplist)
 
     PH_output = PH_benchmark(new_parr)
-    out_file = open('chem_PH_result/PH_' + json_fname, "w")
+    out_file = open('uccsd_PH_result/PH_' + json_fname, "w")
     json.dump(PH_output, out_file)
 
 

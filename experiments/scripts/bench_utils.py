@@ -17,13 +17,15 @@ sys.path.append('../..')
 
 from phoenix import Circuit, Gate
 from phoenix.utils import arch
-from phoenix.models.hamiltonians import HamiltonianModel
+from phoenix.models.hamiltonians import HamiltonianModel, console
+
+from rich.console import Console
+
+console = Console()
 
 Manhattan = CouplingMap(arch.read_device_topology('../manhattan.graphml').to_directed().edge_list())
 Sycamore = CouplingMap(arch.read_device_topology('../sycamore.graphml').to_directed().edge_list())
 All2all = CouplingMap(rx.generators.complete_graph(50).to_directed().edge_list())
-
-from phoenix.transforms.circuit_pass import sabre_by_qiskit
 
 """
 def phoenix_pass(ham: HamiltonianModel, device: rx.rustworkx = None) -> Circuit:
@@ -74,9 +76,9 @@ def paulihedral_pass(paulis: List[str], coeffs: List[float],
 def tetris_pass(paulis: List[str], coeffs: List[float],
                 pre_gates: List[Gate] = None, post_gates: List[Gate] = None,
                 coupling_map: CouplingMap = All2all) -> qiskit.QuantumCircuit:
-    from baselines.tetris.utils import synthesis_lookahead
-    from baselines.tetris.benchmark.mypauli import pauliString
-    from baselines.tetris.utils.hardware import pGraph
+    from tetris.utils.synthesis_lookahead import synthesis_lookahead
+    from tetris.benchmark.mypauli import pauliString
+    from tetris.utils.hardware import pGraph
     from phoenix.transforms.pauli_pass import group_paulis_and_coeffs
 
     def coupling_map_to_pGraph(coupling_map: CouplingMap) -> pGraph:
@@ -87,7 +89,7 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
         for src, dst in coupling_map.get_edges():
             C[src, dst] = 1
         return pGraph(G, C)
-    
+
     def constr_mypauli_blocks(paulis, coeffs):
         groups = group_paulis_and_coeffs(paulis, coeffs)
         mypauli_blocks = []
@@ -96,26 +98,43 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
             for p, c in zip(paulis, coeffs):
                 mypauli_blocks[-1].append(pauliString(p, c))
         return mypauli_blocks
-    
+
     qc, metrics = synthesis_lookahead(constr_mypauli_blocks(paulis, coeffs),
                                       graph=coupling_map_to_pGraph(coupling_map),
                                       use_bridge=False,
                                       swap_coefficient=3, k=10)
-    
-    circ = qiskit.QuantumCircuit(circ.num_qubits)
+
+    circ = qiskit.QuantumCircuit(qc.num_qubits)
     pre_circ = Circuit(pre_gates).to_qiskit()
     post_circ = Circuit(post_gates).to_qiskit()
     circ.compose(pre_circ, inplace=True)
     circ.compose(qc, inplace=True)
     circ.compose(post_circ, inplace=True)
 
+    if coupling_map.size() * (coupling_map.size() - 1) == len(
+            coupling_map.get_edges()) and coupling_map.size() < circ.size():
+        console.print('extending All2all topology')
+        # couplin_map is All2all but its size needs to be expanded
+        coupling_map = CouplingMap(rx.generators.complete_graph(circ.num_qubits).to_directed().edge_list())
+
     circ = qiskit.transpile(circ, basis_gates=['u1', 'u2', 'u3', 'cx'],
                             coupling_map=coupling_map,
                             initial_layout=list(range(circ.num_qubits)),
                             layout_method='sabre',
                             optimization_level=3)
+
+    metrics.update({'CNOT': circ.num_nonlocal_gates(),
+                    'Single': circ.size() - circ.num_nonlocal_gates(),
+                    'Total': circ.size(),
+                    'Depth': circ.depth(),
+                    # 'qasm' : qc2.qasm(),
+                    # 'latency1' : latency1,
+                    # 'latency2' : latency2
+                    })
+    console.print(metrics)
+
     return circ
-    
+
     """
     
     def Tetris_lookahead_Mahattan(parr, use_bridge, swap_coefficient=3, k=10):
@@ -154,8 +173,6 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
         return metrics
         
     """
-
-    
 
 
 def pauliopt_pass(paulis: List[str], coeffs: List[float],
