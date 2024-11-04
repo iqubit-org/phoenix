@@ -51,26 +51,8 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
     if post_gates is not None:
         circ.append(*post_gates)
 
-    return circ.to_qiskit()
-
     # logical optimization by Qiskit
-    circ_opt = qiskit_O3_all2all(circ.to_qiskit())
-
-    circ_opt_2 = qiskit.transpile(
-        circ.to_qiskit(), optimization_level=3,
-        basis_gates=['u1', 'u2', 'u3', 'cx'],
-        coupling_map=All2all,
-        layout_method='sabre'
-    )
-
-    circ_tket = circ.to_tket()
-    pytket.passes.FullPeepholeOptimise().apply(
-        circ_tket)  # TODO: it might lead to Fault results when dumping to OpenQASM
-
-    console.print(circ.num_nonlocal_gates, circ_opt.num_nonlocal_gates(),
-                  circ_opt_2.num_nonlocal_gates(), circ_tket.n_2qb_gates())
-
-    return circ_opt
+    return qiskit_O3_all2all(circ.to_qiskit())
 
 
 def paulihedral_pass(paulis: List[str], coeffs: List[float],
@@ -97,12 +79,14 @@ def paulihedral_pass(paulis: List[str], coeffs: List[float],
     circ.compose(qc, inplace=True)
     circ.compose(post_circ, inplace=True)
 
-    # circ = qiskit.transpile(circ,
-    #                         basis_gates=['u1', 'u2', 'u3', 'cx'],
-    #                         coupling_map=coupling_map,
-    #                         initial_layout=list(range(circ.num_qubits)),
-    #                         layout_method='sabre',
-    #                         optimization_level=3)
+    # circ = qiskit.transpile(circ, basis_gates=['u1', 'u2', 'u3', 'cx'], optimization_level=1)
+
+    circ = qiskit.transpile(circ,
+                            basis_gates=['u1', 'u2', 'u3', 'cx'],
+                            coupling_map=coupling_map,
+                            initial_layout=list(range(circ.num_qubits)),
+                            layout_method='sabre',
+                            optimization_level=3)
 
     console.print({
         'n_qubits': n,
@@ -139,6 +123,8 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
     circ.compose(pre_circ, inplace=True)
     circ.compose(qc, inplace=True)
     circ.compose(post_circ, inplace=True)
+
+    # circ = qiskit.transpile(circ, basis_gates=['u1', 'u2', 'u3', 'cx'], optimization_level=0)
 
     circ = qiskit.transpile(circ,
                             basis_gates=['u1', 'u2', 'u3', 'cx'],

@@ -82,8 +82,8 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
             circ = bench_utils.paulihedral_pass(data['paulis'], data['coeffs'], pre_gates,
                                                 coupling_map=coupling_map)  # TODO: do no return mappings?
 
-            circ_origin = qiskit.QuantumCircuit.from_qasm_file(
-                os.path.join(INPUT_QASM_DPATH, os.path.basename(fname).replace('.json', '.qasm')))
+            # circ_origin = qiskit.QuantumCircuit.from_qasm_file(
+            #     os.path.join(INPUT_QASM_DPATH, os.path.basename(fname).replace('.json', '.qasm')))
 
             # if circ.num_qubits <= 10:
 
@@ -91,12 +91,12 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
             #               infidelity(bench_utils.qiskit_to_unitary(circ_origin),
             #                          bench_utils.qiskit_to_unitary(circ)))
 
-            qiskit.qasm2.dump(circ, output_fname)
+            # qiskit.qasm2.dump(circ, output_fname)
         elif args.compiler == 'tetris':
             circ = bench_utils.tetris_pass(data['paulis'], data['coeffs'], pre_gates,
                                            coupling_map=coupling_map)  # TODO: do no return mappings?
-            circ_origin = qiskit.QuantumCircuit.from_qasm_file(
-                os.path.join(INPUT_QASM_DPATH, os.path.basename(fname).replace('.json', '.qasm')))
+            # circ_origin = qiskit.QuantumCircuit.from_qasm_file(
+                # os.path.join(INPUT_QASM_DPATH, os.path.basename(fname).replace('.json', '.qasm')))
 
             # if circ.num_qubits <= 10:
             # import sys
@@ -107,7 +107,7 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
 
             # console.print('Infidelity:',
             #               infidelity(c1.unitary(), c2.unitary()))
-            qiskit.qasm2.dump(circ, output_fname)
+            # qiskit.qasm2.dump(circ, output_fname)
         elif args.compiler == 'pauliopt':
             circ = bench_utils.pauliopt_pass(data['paulis'], data['coeffs'], pre_gates,
                                              coupling_map=coupling_map)  # TODO: do no return mappings?
