@@ -9,11 +9,17 @@ input_dpath = '../benchmarks/uccsd_qasm'
 
 
 
+
+output_dpath = './output_uccsd/phoenix/all2all'
+
+# output_dpath = 'qiskit_post_opt'
+
 # output_dpath = 'qiskit_opt'
 
-output_dpath = './output_uccsd/tetris/all2all'
+# output_dpath = './output_uccsd/tetris/all2all'
 
 # output_dpath = 'tket_opt'
+# output_dpath = 'tket_post_opt'
 
 import sys
 
@@ -21,7 +27,7 @@ sys.path.append('..')
 from phoenix.utils.functions import infidelity
 from qiskit.quantum_info import Operator
 
-for fname in natsorted(os.listdir(input_dpath)):
+for fname in natsorted(os.listdir(input_dpath), reverse=True):
     input_fname = os.path.join(input_dpath, fname)
     output_fname = os.path.join(output_dpath, fname)
 

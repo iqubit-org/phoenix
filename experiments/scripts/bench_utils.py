@@ -31,19 +31,6 @@ Manhattan = CouplingMap(arch.read_device_topology('../manhattan.graphml').to_dir
 Sycamore = CouplingMap(arch.read_device_topology('../sycamore.graphml').to_directed().edge_list())
 All2all = CouplingMap(rx.generators.complete_graph(50).to_directed().edge_list())
 
-"""
-def phoenix_pass(ham: HamiltonianModel, device: rx.rustworkx = None) -> Circuit:
-    # topology-agnostic synthesis
-    circ = ham.reconfigure_and_generate_circuit()
-    if device is None:
-        return circ
-
-    # hardware mapping
-    circ, _, _ = transforms.circuit_pass.sabre_by_qiskit(circ, device)
-    circ = transforms.circuit_pass.phys_circ_opt_by_qiskit(circ)
-    return circ
-"""
-
 
 def qiskit_O3_all2all(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
     from itertools import combinations
@@ -55,7 +42,7 @@ def qiskit_O3_all2all(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
 
 
 def phoenix_pass(paulis: List[str], coeffs: List[float],
-                 pre_gates: List[Gate] = None, post_gates: List[Gate] = None) -> pytket.Circuit:
+                 pre_gates: List[Gate] = None, post_gates: List[Gate] = None) -> qiskit.QuantumCircuit:
     # Phoenix's high-level optimization
     ham = HamiltonianModel(paulis, coeffs)
     circ = ham.reconfigure_and_generate_circuit()
@@ -64,10 +51,26 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
     if post_gates is not None:
         circ.append(*post_gates)
 
-    # logical optimization by TKet
-    circ = circ.to_tket()
-    pytket.passes.FullPeepholeOptimise().apply(circ)  # TODO: it might lead to Fault results when dumping to OpenQASM
-    return circ
+    return circ.to_qiskit()
+
+    # logical optimization by Qiskit
+    circ_opt = qiskit_O3_all2all(circ.to_qiskit())
+
+    circ_opt_2 = qiskit.transpile(
+        circ.to_qiskit(), optimization_level=3,
+        basis_gates=['u1', 'u2', 'u3', 'cx'],
+        coupling_map=All2all,
+        layout_method='sabre'
+    )
+
+    circ_tket = circ.to_tket()
+    pytket.passes.FullPeepholeOptimise().apply(
+        circ_tket)  # TODO: it might lead to Fault results when dumping to OpenQASM
+
+    console.print(circ.num_nonlocal_gates, circ_opt.num_nonlocal_gates(),
+                  circ_opt_2.num_nonlocal_gates(), circ_tket.n_2qb_gates())
+
+    return circ_opt
 
 
 def paulihedral_pass(paulis: List[str], coeffs: List[float],
@@ -85,8 +88,6 @@ def paulihedral_pass(paulis: List[str], coeffs: List[float],
 
     a2 = gate_count_oriented_scheduling(oplist)
 
-    console.print(a2)
-
     qc, total_swaps, total_cx = block_opt_SC(a2, graph=coupling_map_to_pGraph(coupling_map))
 
     circ = qiskit.QuantumCircuit(qc.num_qubits)
@@ -96,13 +97,13 @@ def paulihedral_pass(paulis: List[str], coeffs: List[float],
     circ.compose(qc, inplace=True)
     circ.compose(post_circ, inplace=True)
 
-    circ = qiskit.transpile(circ,
-                            basis_gates=['u1', 'u2', 'u3', 'cx'],
-                            coupling_map=coupling_map,
-                            initial_layout=list(range(circ.num_qubits)),
-                            layout_method='sabre',
-                            optimization_level=3)
-    
+    # circ = qiskit.transpile(circ,
+    #                         basis_gates=['u1', 'u2', 'u3', 'cx'],
+    #                         coupling_map=coupling_map,
+    #                         initial_layout=list(range(circ.num_qubits)),
+    #                         layout_method='sabre',
+    #                         optimization_level=3)
+
     console.print({
         'n_qubits': n,
         'PH_swap_count': total_swaps,
@@ -139,12 +140,12 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
     circ.compose(qc, inplace=True)
     circ.compose(post_circ, inplace=True)
 
-    circ = qiskit.transpile(circ,
-                            basis_gates=['u1', 'u2', 'u3', 'cx'],
-                            coupling_map=coupling_map,
-                            initial_layout=list(range(circ.num_qubits)),
-                            layout_method='sabre',
-                            optimization_level=3)
+    # circ = qiskit.transpile(circ,
+    #                         basis_gates=['u1', 'u2', 'u3', 'cx'],
+    #                         coupling_map=coupling_map,
+    #                         initial_layout=list(range(circ.num_qubits)),
+    #                         layout_method='sabre',
+    #                         optimization_level=3)
 
     metrics.update({'CNOT': circ.num_nonlocal_gates(),
                     'Single': circ.size() - circ.num_nonlocal_gates(),
@@ -184,6 +185,11 @@ def tket_pass(circ: pytket.Circuit) -> pytket.Circuit:
     pytket.passes.FullPeepholeOptimise().apply(circ)
 
     return circ
+
+
+def qiskit_to_unitary(circ: qiskit.QuantumCircuit) -> np.ndarray:
+    from qiskit.quantum_info import Operator
+    return Operator(circ.reverse_bits()).to_matrix()
 
 
 def tket_to_qiskit(circ: pytket.Circuit) -> qiskit.QuantumCircuit:

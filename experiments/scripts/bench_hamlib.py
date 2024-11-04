@@ -49,6 +49,7 @@ console.print('output directory: {}'.format(output_dpath))
 
 if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
     for fname in json_fnames:
+
         console.print('Processing', fname)
         output_fname = os.path.join(output_dpath, os.path.basename(fname).replace('.json', '.qasm'))
         with open(fname, 'r') as f:
@@ -57,7 +58,11 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
 
         if args.compiler == 'phoenix':
             circ = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], pre_gates)
-            pytket.qasm.circuit_to_qasm(circ, output_fname)
+
+            # pytket.qasm.circuit_to_qasm(circ, output_fname) # TODO: modify it
+
+            qiskit.qasm2.dump(circ, output_fname)
+
         elif args.compiler == 'paulihedral':
             circ = bench_utils.paulihedral_pass(data['paulis'], data['coeffs'],
                                                 pre_gates)  # TODO: do no return mappings?

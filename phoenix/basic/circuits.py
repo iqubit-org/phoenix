@@ -706,7 +706,7 @@ def _from_qiskit(circ_qiskit: qiskit.QuantumCircuit) -> Circuit:
             circ.append(gates.U1(*params).on(qubits))
         elif opr.name == 'u2':
             circ.append(gates.U2(*params).on(qubits))
-        elif opr.name == 'u3':
+        elif opr.name == 'u3' or opr.name == 'u':
             circ.append(gates.U3(*params).on(qubits))
         elif opr.name == 'p':
             circ.append(gates.P(*params).on(qubits))
