@@ -140,12 +140,12 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
     circ.compose(qc, inplace=True)
     circ.compose(post_circ, inplace=True)
 
-    # circ = qiskit.transpile(circ,
-    #                         basis_gates=['u1', 'u2', 'u3', 'cx'],
-    #                         coupling_map=coupling_map,
-    #                         initial_layout=list(range(circ.num_qubits)),
-    #                         layout_method='sabre',
-    #                         optimization_level=3)
+    circ = qiskit.transpile(circ,
+                            basis_gates=['u1', 'u2', 'u3', 'cx'],
+                            coupling_map=coupling_map,
+                            initial_layout=list(range(circ.num_qubits)),
+                            layout_method='sabre',
+                            optimization_level=3)
 
     metrics.update({'CNOT': circ.num_nonlocal_gates(),
                     'Single': circ.size() - circ.num_nonlocal_gates(),
