@@ -87,11 +87,11 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
 
             # if circ.num_qubits <= 10:
 
-            console.print('Infidelity:',
-                          infidelity(bench_utils.qiskit_to_unitary(circ_origin),
-                                     bench_utils.qiskit_to_unitary(circ)))
+            # console.print('Infidelity:',
+            #               infidelity(bench_utils.qiskit_to_unitary(circ_origin),
+            #                          bench_utils.qiskit_to_unitary(circ)))
 
-            # qiskit.qasm2.dump(circ, output_fname)
+            qiskit.qasm2.dump(circ, output_fname)
         elif args.compiler == 'tetris':
             circ = bench_utils.tetris_pass(data['paulis'], data['coeffs'], pre_gates,
                                            coupling_map=coupling_map)  # TODO: do no return mappings?
@@ -99,15 +99,15 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
                 os.path.join(INPUT_QASM_DPATH, os.path.basename(fname).replace('.json', '.qasm')))
 
             # if circ.num_qubits <= 10:
-            import sys
-            sys.path.append('../..')
-            from phoenix import Circuit
-            c1 = Circuit.from_qiskit(circ)
-            c2 = Circuit.from_qiskit(circ_origin)
+            # import sys
+            # sys.path.append('../..')
+            # from phoenix import Circuit
+            # c1 = Circuit.from_qiskit(circ)
+            # c2 = Circuit.from_qiskit(circ_origin)
 
-            console.print('Infidelity:',
-                          infidelity(c1.unitary(), c2.unitary()))
-            # qiskit.qasm2.dump(circ, output_fname)
+            # console.print('Infidelity:',
+            #               infidelity(c1.unitary(), c2.unitary()))
+            qiskit.qasm2.dump(circ, output_fname)
         elif args.compiler == 'pauliopt':
             circ = bench_utils.pauliopt_pass(data['paulis'], data['coeffs'], pre_gates,
                                              coupling_map=coupling_map)  # TODO: do no return mappings?
