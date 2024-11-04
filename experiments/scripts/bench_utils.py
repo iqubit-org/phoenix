@@ -61,14 +61,7 @@ def paulihedral_pass(paulis: List[str], coeffs: List[float],
     from tetris.utils.parallel_bl import gate_count_oriented_scheduling
     from tetris.synthesis_SC import block_opt_SC
 
-    oplist = constr_mypauli_blocks(paulis, coeffs)
-    n = len(oplist[0][0])
-    if coupling_map.size() * (coupling_map.size() - 1) == len(coupling_map.get_edges()) and coupling_map.size() < n:
-        # coupling_map is All2all but its size needs to be expanded
-        console.print('extending All2all topology')
-        coupling_map = CouplingMap(rx.generators.complete_graph(n).to_directed().edge_list())
-
-    a2 = gate_count_oriented_scheduling(oplist)
+    a2 = gate_count_oriented_scheduling(constr_mypauli_blocks(paulis, coeffs))
 
     qc, total_swaps, total_cx = block_opt_SC(a2, graph=coupling_map_to_pGraph(coupling_map))
 
@@ -79,17 +72,18 @@ def paulihedral_pass(paulis: List[str], coeffs: List[float],
     circ.compose(qc, inplace=True)
     circ.compose(post_circ, inplace=True)
 
-    # circ = qiskit.transpile(circ, basis_gates=['u1', 'u2', 'u3', 'cx'], optimization_level=1)
-
-    circ = qiskit.transpile(circ,
-                            basis_gates=['u1', 'u2', 'u3', 'cx'],
-                            coupling_map=coupling_map,
-                            initial_layout=list(range(circ.num_qubits)),
-                            layout_method='sabre',
-                            optimization_level=3)
+    if is_all2all_coupling_map(coupling_map):
+        circ = qiskit_O3_all2all(circ)
+    else:
+        # circ = qiskit.transpile(circ, basis_gates=['u1', 'u2', 'u3', 'cx'], optimization_level=1)
+        circ = qiskit.transpile(circ,
+                                basis_gates=['u1', 'u2', 'u3', 'cx'],
+                                coupling_map=coupling_map,
+                                initial_layout=list(range(circ.num_qubits)),
+                                layout_method='sabre',
+                                optimization_level=3)
 
     console.print({
-        'n_qubits': n,
         'PH_swap_count': total_swaps,
         'PH_cx_count': total_cx,
         'CNOT': circ.num_nonlocal_gates(),
@@ -105,13 +99,6 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
                 coupling_map: CouplingMap = All2all) -> qiskit.QuantumCircuit:
     from tetris.utils.synthesis_lookahead import synthesis_lookahead
 
-    oplist = constr_mypauli_blocks(paulis, coeffs)
-    n = len(oplist[0][0])
-    if coupling_map.size() * (coupling_map.size() - 1) == len(coupling_map.get_edges()) and coupling_map.size() < n:
-        # coupling_map is All2all but its size needs to be expanded
-        console.print('extending All2all topology')
-        coupling_map = CouplingMap(rx.generators.complete_graph(n).to_directed().edge_list())
-
     qc, metrics = synthesis_lookahead(constr_mypauli_blocks(paulis, coeffs),
                                       graph=coupling_map_to_pGraph(coupling_map),
                                       use_bridge=False,
@@ -124,14 +111,16 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
     circ.compose(qc, inplace=True)
     circ.compose(post_circ, inplace=True)
 
-    # circ = qiskit.transpile(circ, basis_gates=['u1', 'u2', 'u3', 'cx'], optimization_level=0)
-
-    circ = qiskit.transpile(circ,
-                            basis_gates=['u1', 'u2', 'u3', 'cx'],
-                            coupling_map=coupling_map,
-                            initial_layout=list(range(circ.num_qubits)),
-                            layout_method='sabre',
-                            optimization_level=3)
+    if is_all2all_coupling_map(coupling_map):
+        circ = qiskit_O3_all2all(circ)
+    else:
+        # circ = qiskit.transpile(circ, basis_gates=['u1', 'u2', 'u3', 'cx'], optimization_level=0)
+        circ = qiskit.transpile(circ,
+                                basis_gates=['u1', 'u2', 'u3', 'cx'],
+                                coupling_map=coupling_map,
+                                initial_layout=list(range(circ.num_qubits)),
+                                layout_method='sabre',
+                                optimization_level=3)
 
     metrics.update({'CNOT': circ.num_nonlocal_gates(),
                     'Single': circ.size() - circ.num_nonlocal_gates(),
@@ -251,5 +240,12 @@ def constr_mypauli_blocks(paulis, coeffs) -> List[List[pauliString]]:
         for p, c in zip(paulis, coeffs):
             mypauli_blocks[-1].append(pauliString(p, c))
     return mypauli_blocks
+
+
+def is_all2all_coupling_map(coupling_map: CouplingMap) -> bool:
+    # directed coupling map
+    if coupling_map.size() * (coupling_map.size() - 1) == len(coupling_map.get_edges()):
+        return True
+    return False
 
 # TODO: verify utils
