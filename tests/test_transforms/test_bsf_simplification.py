@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append('../..')
+sys.path.append('..')
 
 from phoenix.models import BSF, Clifford2Q, HamiltonianModel
 from phoenix import gates

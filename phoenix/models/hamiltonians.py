@@ -60,7 +60,7 @@ class HamiltonianModel:
 
     def group_paulis_and_coeffs(self) -> Dict[Tuple, Tuple[List[str], np.ndarray]]:
         """Group Pauli strings (with coefficients) by their nontrivial parts."""
-        from phoenix.transforms.pauli_pass import group_paulis
+        from phoenix.synthesis.grouping import group_paulis
         groups = {}
         for idx, paulis in group_paulis(self.paulis).items():
             groups[idx] = paulis, np.array([self.coeffs[self.paulis.index(pauli)] for pauli in paulis])
@@ -94,7 +94,7 @@ class HamiltonianModel:
 
     def reconfigure(self) -> List[Union[BSF, Clifford2Q]]:
         """Reconfigure the Hamiltonian into a series of 2-weight Hamiltonians interleaved with Clifford2Q operators"""
-        from phoenix.transforms.pauli_pass import simplify_bsf
+        from phoenix.synthesis.simplification import simplify_bsf
 
         groups = self.group_paulis_and_coeffs()
         config = []

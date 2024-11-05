@@ -21,7 +21,7 @@ from phoenix.models.hamiltonians import HamiltonianModel, console
 
 from tetris.benchmark.mypauli import pauliString
 from tetris.utils.hardware import pGraph
-from phoenix.transforms.pauli_pass import group_paulis_and_coeffs
+from phoenix.synthesis.grouping import group_paulis_and_coeffs
 
 from rich.console import Console
 
@@ -137,7 +137,7 @@ def pauliopt_pass(paulis: List[str], coeffs: List[float],
 
 
 def tket_pass(circ: pytket.Circuit) -> pytket.Circuit:
-    from phoenix.transforms.circuit_pass import unroll_u3
+    from phoenix.synthesis.utils import unroll_u3
 
     # unroll U3
     circ = unroll_u3(Circuit.from_tket(circ)).to_tket()

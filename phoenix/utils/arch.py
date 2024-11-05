@@ -1,6 +1,7 @@
 """
 Arch/Compiler-related Utils functions
 """
+import qiskit
 import random
 import numpy as np
 import rustworkx as rx
@@ -309,7 +310,7 @@ def gene_random_circuit(num_qubits: int, depth: int, seed=None) -> Circuit:
             # with some low probability, condition on classical bit values
             qc.append(op, register_operands)
 
-    return Circuit.from_qasm(qc.qasm())
+    return Circuit.from_qasm(qiskit.qasm2.dumps(qc))
 
 
 def gene_random_clifford_circuit(num_qubits: int, depth: int, seed=None) -> Circuit:
@@ -382,4 +383,4 @@ def gene_random_clifford_circuit(num_qubits: int, depth: int, seed=None) -> Circ
             # with some low probability, condition on classical bit values
             qc.append(op, register_operands)
 
-    return Circuit.from_qasm(qc.qasm())
+    return Circuit.from_qasm(qiskit.qasm2.dumps(qc))

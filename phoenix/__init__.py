@@ -3,7 +3,6 @@ Phoenix is a Python package for compiling VQA programs whose high-level IR is Pa
 """
 from .basic import gates, circuits
 from .basic import Gate, Circuit, QASMStringIO
-from . import decompose
-from . import transforms
+from . import synthesis
 from . import models
 from . import utils

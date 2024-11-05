@@ -9,7 +9,6 @@ import os
 import warnings
 import argparse
 from qiskit import QuantumCircuit
-from qiskit.converters import circuit_to_dag
 from rich.console import Console
 from rich.table import Table
 from collections import Counter
