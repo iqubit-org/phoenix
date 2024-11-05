@@ -114,7 +114,6 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
     if is_all2all_coupling_map(coupling_map):
         circ = qiskit_O3_all2all(circ)
     else:
-        # circ = qiskit.transpile(circ, basis_gates=['u1', 'u2', 'u3', 'cx'], optimization_level=0)
         circ = qiskit.transpile(circ,
                                 basis_gates=['u1', 'u2', 'u3', 'cx'],
                                 coupling_map=coupling_map,
