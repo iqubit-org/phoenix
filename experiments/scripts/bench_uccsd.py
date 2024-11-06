@@ -34,7 +34,7 @@ parser.add_argument('-c', '--compiler', default='phoenix', type=str,
 args = parser.parse_args()
 
 qasm_fnames = [os.path.join(INPUT_QASM_DPATH, fname) for fname in natsorted(os.listdir(INPUT_QASM_DPATH))]
-json_fnames = [os.path.join(INPUT_JSON_DPATH, fname) for fname in natsorted(os.listdir(INPUT_JSON_DPATH))]
+json_fnames = [os.path.join(INPUT_JSON_DPATH, fname) for fname in natsorted(os.listdir(INPUT_JSON_DPATH), reverse=True)]
 
 output_dpath = os.path.join(OUTPUT_DPATH, args.compiler, args.device)
 
