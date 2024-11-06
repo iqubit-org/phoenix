@@ -7,7 +7,6 @@ from typing import List, Tuple, Dict
 from phoenix.basic import gates
 from phoenix.basic.gates import Gate
 
-
 from rich.console import Console
 
 console = Console()
@@ -78,11 +77,9 @@ def group_paulis(paulis: List[str]) -> Dict[Tuple[int], List[str]]:
 def group_paulis_and_coeffs(paulis: List[str], coeffs: List[float]) -> Dict[Tuple[int], Tuple[List[str], np.ndarray]]:
     """Group Pauli strings (with coefficients) by their nontrivial parts."""
     groups = {}
-    for idx, paulis in group_paulis(paulis).items():
-        groups[idx] = paulis, np.array([coeffs[paulis.index(pauli)] for pauli in paulis])
+    for idx, pls in group_paulis(paulis).items():
+        groups[idx] = pls, np.array([coeffs[paulis.index(p)] for p in pls])
     return groups
-
-
 
 
 # def group_paulis_and_coeffs(paulis: List[str], coeffs: List[float]):
@@ -154,5 +151,3 @@ def pauli_rotation_gate_to_pauli_and_coeff(g: Gate, num_qubits: int) -> Tuple[st
     for p, tq in zip(g.name[1:], g.tqs):
         pauli = pauli[:tq] + p + pauli[tq + 1:]
     return pauli, g.angle / 2
-
-

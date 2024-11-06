@@ -486,6 +486,32 @@ class FSim(Gate):
         return FSim(-self.angles[0], -self.angles[1])
 
 
+class Clifford2QGate(Gate):
+    """Use universal controlled gates to represent generic 2Q Clifford gates"""
+
+    def __init__(self, pauli_0: str, pauli_1: str):
+        assert pauli_0 in ['X', 'Y', 'Z'] and pauli_1 in ['X', 'Y', 'Z']
+        import qiskit.quantum_info as qi
+        self.pauli_0, self.pauli_1 = pauli_0, pauli_1
+        I = qi.Pauli('I')
+        P0, P1 = qi.Pauli(pauli_0), qi.Pauli(pauli_1)
+        super().__init__(qi.SparsePauliOp([I ^ I, P0 ^ I, I ^ P1, P0 ^ P1],
+                                          [1 / 2, 1 / 2, 1 / 2, -1 / 2]).to_matrix(),
+                         name='C({}, {})'.format(pauli_0, pauli_1))
+
+    def hermitian(self):
+        return self.copy()
+
+    # def __eq__(self, other):
+    #     is_same_type = self.pauli_0 == other.pauli_0 and self.pauli_1 == other.pauli_1
+    #     if self.tqs:
+    #         return is_same_type and self.tqs == other.tqs and self.cqs == other.cqs
+    #     return is_same_type
+
+    # def __hash__(self):
+    #     return hash((self.pauli_0, self.pauli_1, tuple(self.tqs), tuple(self.cqs)))
+
+
 class Canonical(Gate):
     r"""
     Canonical gate with respect to Weyl chamber
@@ -664,4 +690,70 @@ ISWAP_DEF_BY_CNOT = """gate iswap a,b {
     cx a, b;
     cx b, a;
     h b;
+}"""
+
+CXX_DEF_BY_CNOT = """gate cxx a,b {
+h a;
+cx a, b;
+h a;
+}"""
+
+CXY_DEF_BY_CNOT = """gate cxy a,b {
+h a;
+sdg b;
+cx a, b;
+h a;
+s b;
+}"""
+
+CXZ_DEF_BY_CNOT = """gate cxz a,b {
+h a;
+h b;
+cx a, b;
+h a;
+h b;
+}"""
+
+CYX_DEF_BY_CNOT = """gate cyx a,b {
+sdg a;
+h a;
+cx a, b;
+h a;
+s a;
+}"""
+
+CYY_DEF_BY_CNOT = """gate cyy a,b {
+sdg a;
+h a;
+sdg b;
+cx a, b;
+h a;
+s a;
+s b;
+}"""
+
+CYZ_DEF_BY_CNOT = """gate cyz a,b {
+sdg a;
+h a;
+h b;
+cx a, b;
+h a;
+s a;
+h b;
+}"""
+
+CZX_DEF_BY_CNOT = """gate czx a,b {
+cx a, b;
+}"""
+
+CZY_DEF_BY_CNOT = """gate czy a,b {
+sdg b;
+cx a, b;
+s b;
+}"""
+
+CZZ_DEF_BY_CNOT = """gate czz a,b {
+h b;
+cx a, b;
+h b;
 }"""

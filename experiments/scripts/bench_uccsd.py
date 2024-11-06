@@ -16,6 +16,7 @@ from phoenix import gates
 from natsort import natsorted
 import bench_utils
 from phoenix.utils.functions import infidelity
+from phoenix.utils.display import print_circ_info
 
 from rich.console import Console
 
@@ -68,6 +69,7 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
         if args.compiler == 'phoenix':
             circ = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], pre_gates)
             # pytket.qasm.circuit_to_qasm(circ, output_fname)
+            print_circ_info(circ)
             qiskit.qasm2.dump(circ, output_fname)
 
             # circ_origin = qiskit.QuantumCircuit.from_qasm_file(
@@ -91,6 +93,8 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
             #               infidelity(bench_utils.qiskit_to_unitary(circ_origin),
             #                          bench_utils.qiskit_to_unitary(circ)))
 
+            print(circ)
+
             # qiskit.qasm2.dump(circ, output_fname)
         elif args.compiler == 'tetris':
             circ = bench_utils.tetris_pass(data['paulis'], data['coeffs'], pre_gates,
@@ -104,13 +108,14 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
             # from phoenix import Circuit
             # c1 = Circuit.from_qiskit(circ)
             # c2 = Circuit.from_qiskit(circ_origin)
-
+            print_circ_info(circ)
             # console.print('Infidelity:',
             #               infidelity(c1.unitary(), c2.unitary()))
             # qiskit.qasm2.dump(circ, output_fname)
         elif args.compiler == 'pauliopt':
             circ = bench_utils.pauliopt_pass(data['paulis'], data['coeffs'], pre_gates,
                                              coupling_map=coupling_map)  # TODO: do no return mappings?
+            print_circ_info(circ)
             qiskit.qasm2.dump(circ, output_fname)
         else:
             raise ValueError('Unsupported compiler')
@@ -120,6 +125,7 @@ else:
             console.print('Processing', fname)
             circ = pytket.qasm.circuit_from_qasm(fname)
             circ = bench_utils.tket_pass(circ)
+            print_circ_info(circ)
             pytket.qasm.circuit_to_qasm(circ, os.path.join(output_dpath, os.path.basename(fname)))
     else:
         raise ValueError('Unsupported compiler')

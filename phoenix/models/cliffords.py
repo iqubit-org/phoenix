@@ -198,6 +198,8 @@ class Clifford2Q:
         """
         return decompose.can_decompose(gates.UnivGate(self.data).on([self.ctrl, self.targ]))
 
+    def as_gate(self) -> gates.Clifford2QGate:
+        return gates.Clifford2QGate(self.pauli_0, self.pauli_1).on([self.ctrl, self.targ])
 
 def assemble_paulistr_with_sign(pauli, sign):
     if sign == 0:

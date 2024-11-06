@@ -60,11 +60,8 @@ class HamiltonianModel:
 
     def group_paulis_and_coeffs(self) -> Dict[Tuple, Tuple[List[str], np.ndarray]]:
         """Group Pauli strings (with coefficients) by their nontrivial parts."""
-        from phoenix.synthesis.grouping import group_paulis
-        groups = {}
-        for idx, paulis in group_paulis(self.paulis).items():
-            groups[idx] = paulis, np.array([self.coeffs[self.paulis.index(pauli)] for pauli in paulis])
-        return groups
+        from phoenix.synthesis.grouping import group_paulis_and_coeffs
+        return group_paulis_and_coeffs(self.paulis, self.coeffs)
 
     def generate_circuit(self, order: int = 1) -> Circuit:
         """
@@ -149,7 +146,8 @@ class HamiltonianModel:
                 if isinstance(item, Clifford2Q):
                     cliff = item
                     if by == 'cnot':
-                        circ += cliff.as_cnot_circuit()
+                        # circ += cliff.as_cnot_circuit()
+                        circ.append(item.as_gate())
                     if by == 'su4':
                         circ += cliff.as_su4_circuit()
                 if isinstance(item, BSF):
@@ -190,8 +188,14 @@ class Heisenberg1D(HamiltonianModel):
         self.num_qubits = len(h)
         self._constr_paulis_and_coeffs()
 
-    def _constr_paulis_and_coeffs(self):
-        """Construct the list of Pauli strings and the corresponding coefficients for Heisenberg 1D model"""
+    def _constr_paulis_and_coeffs(self, tile=False):
+        """
+        Construct the list of Pauli strings and the corresponding coefficients for Heisenberg 1D model.
+
+        :param tile: whether to tile the couplings (default: False)
+            If tile is True, generate Pauli lists like ['XXI', 'YYI', 'ZZI', 'IXX', 'IYY', 'IZZ', 'XIX', 'YIY', 'ZIZ']
+            If tile is False, generate Pauli lists like ['XXI', 'IXX', 'XIX', 'YYI', 'IYY', 'YIY', 'ZZI', 'IZZ', 'ZIZ']
+        """
         I_str = 'I' * self.num_qubits
 
         def XX_str(i, j):
@@ -217,14 +221,20 @@ class Heisenberg1D(HamiltonianModel):
             res[i] = 'Z'
             return ''.join(res)
 
-        # coupling_paulilist = reduce(add, [[XX_str(i, i + 1), YY_str(i, i + 1), ZZ_str(i, i + 1)] for i in
-        #                                   range(self.num_qubits - 1)])
-        # coupling_coeffs = np.tile(self.couplings, self.num_qubits - 1)
-        coupling_paulis = reduce(add, [[XX_str(i % self.num_qubits, (i + 1) % self.num_qubits),
-                                        YY_str(i % self.num_qubits, (i + 1) % self.num_qubits),
-                                        ZZ_str(i % self.num_qubits, (i + 1) % self.num_qubits)] for i in
-                                       range(self.num_qubits)])
-        coupling_coeffs = np.tile(self.couplings, self.num_qubits)
+        if tile:
+            coupling_paulis = reduce(add, [[XX_str(i % self.num_qubits, (i + 1) % self.num_qubits),
+                                            YY_str(i % self.num_qubits, (i + 1) % self.num_qubits),
+                                            ZZ_str(i % self.num_qubits, (i + 1) % self.num_qubits)] for i in
+                                           range(self.num_qubits)])
+            coupling_coeffs = np.tile(self.couplings, self.num_qubits)
+        else:
+            coupling_paulis = [XX_str(i % self.num_qubits, (i + 1) % self.num_qubits) for i in
+                               range(self.num_qubits)] + [YY_str(i % self.num_qubits, (i + 1) % self.num_qubits) for
+                                                          i in range(self.num_qubits)] + [
+                                  ZZ_str(i % self.num_qubits, (i + 1) % self.num_qubits) for i in
+                                  range(self.num_qubits)]
+            coupling_coeffs = np.repeat(self.couplings, self.num_qubits)
+
         free_paulis = [Z_str(i) for i in range(self.num_qubits)]
 
         self.paulis = coupling_paulis + free_paulis

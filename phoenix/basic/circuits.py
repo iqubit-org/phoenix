@@ -11,6 +11,7 @@ import networkx as nx
 import rustworkx as rx
 from math import pi
 from functools import reduce
+from itertools import product
 from operator import add
 from typing import List, Tuple, Dict, Union
 from copy import deepcopy, copy
@@ -143,9 +144,6 @@ class Circuit(list):
 
     def to_qasm(self, fname: str = None):
         """Convert self to QSAM string"""
-        if not self.gates:
-            return ''
-
         circuit = deepcopy(self)
         output = QASMStringIO()
         output.write_header()
@@ -166,12 +164,20 @@ class Circuit(list):
             output.write(gates.ISWAP_DEF_BY_CNOT)
             output.write_line_gap(2)
 
+        for P0, P1 in product(['X', 'Y', 'Z'], ['X', 'Y', 'Z']):
+            if 'C({}, {})'.format(P0, P1) in self.gate_stats():
+                output.write_comment("Customized 'c{}{}' gate definition".format(P0, P1))
+                # output.write(gates.C2_DEF_BY_ISING[P0, P1])
+                output.write(getattr(gates, 'C{}{}_DEF_BY_CNOT'.format(P0, P1)))
+                output.write_line_gap(2)
+
         # no measurement, just computing gates
         output.write_comment('Qubits: {}'.format(list(range(n))))
         output.write_qregs(n)
         output.write_line_gap()
 
         tuples_parsed = parse_to_qasm_tuples(circuit)
+
         output.write_comment('Quantum gate operations')
         for opr, idx in tuples_parsed:
             output.write_operation(opr, 'q', *idx)
@@ -307,11 +313,11 @@ class Circuit(list):
 
         if self.num_qubits > 12:
             raise ValueError('Circuit to compute unitary matrix has too many qubits')
-        if self.num_qubits > 7:
+        if self.num_qubits > 10:
             # REMARK: Cirq only support common gates
             return circuit_to_unitary(self, 'cirq')
-        # if self.num_qubits > 8:
-        #     return circuit_to_unitary(self, 'qiskit')
+        if self.num_qubits > 6:
+            return circuit_to_unitary(self, 'qiskit')
 
         ops = []
         if with_dummy:
@@ -402,7 +408,7 @@ class Circuit(list):
         If mapping is given, returned is physical qubit dependency graph; Otherwise, logical qubit dependency graph.
         """
         dependency = nx.Graph()
-        dependency.add_nodes_from(range(self.num_qubits))
+        dependency.add_nodes_from(self.qubits)
         for g in self.gates:
             if g.num_qregs > 2:
                 raise ValueError('Only support 1Q or 2Q gates with designated qubits')
@@ -423,7 +429,6 @@ class Circuit(list):
         :rtype:     graphviz.Graph
         """
         import graphviz as gv
-        qregs = ['q{}'.format(i) for i in self.qubits]
         G = gv.Graph(
             "Qubit connectivity",
             node_attr={
@@ -435,7 +440,7 @@ class Circuit(list):
             engine="neato"
         )
         G.edges(
-            (qregs[src], qregs[tgt]) for src, tgt in self.qubit_dependency(mapping).edges()
+            (f'q{src}', f'q{tgt}') for src, tgt in self.qubit_dependency().edges()
         )
         return G
 
@@ -593,7 +598,8 @@ def parse_to_qasm_tuples(circuit: Circuit) -> List[Tuple[str, List[int]]]:
                 (len(g.tqs) == 2 and len(g.cqs) <= 1 and isinstance(g, (gates.SWAPGate, gates.ISWAPGate))) or
                 (len(g.tqs) == 2 and len(g.cqs) == 0 and isinstance(g, (gates.RXX, gates.RYY, gates.RZZ, gates.Can))) or
                 (len(g.tqs) == 1 and len(g.cqs) == 2 and isinstance(g, (gates.XGate, gates.ZGate))) or
-                (len(g.tqs) == 1 and len(g.cqs) >= 3 and isinstance(g, gates.XGate))):
+                (len(g.tqs) == 1 and len(g.cqs) >= 3 and isinstance(g, gates.XGate)) or
+                (len(g.tqs) == 2 and len(g.cqs) == 0 and isinstance(g, gates.Clifford2QGate))):
             raise ValueError('Only support 1Q or 2Q gates with designated qubits except for CCX, CCZ and MCX')
 
         if isinstance(g, gates.IGate):
@@ -635,6 +641,8 @@ def parse_to_qasm_tuples(circuit: Circuit) -> List[Tuple[str, List[int]]]:
                 angles = list(map(limit_angle, g.angles))
                 factors = list(map(lambda x: x / pi, angles))
                 opr = '{}({}*pi, {}*pi)'.format(gname, *factors)
+            elif match := re.match(r"c\((x|y|z), (x|y|z)\)", gname):
+                opr = 'c{}{}'.format(*match.groups())
             else:  # R(X/Y/Z), R(XX/YY/ZZ), U1
                 angle = limit_angle(g.angle)
                 factor = angle / pi
@@ -734,7 +742,7 @@ def _from_qiskit(circ_qiskit: qiskit.QuantumCircuit) -> Circuit:
             circ.append(gates.S.on(qubits[1], qubits[0]))
         elif opr.name == 'cp':
             circ.append(gates.P(*params).on(qubits[1], qubits[0]))
-        elif opr.name == 'cu3':
+        elif opr.name == 'cu3':  # TODO: is cu3 the same as u3?
             circ.append(gates.U3(*params).on(qubits[1], qubits[0]))
         elif opr.name == 'cswap':
             circ.append(gates.SWAP.on(qubits[1:], qubits[0]))

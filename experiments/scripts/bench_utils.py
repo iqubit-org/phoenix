@@ -51,6 +51,8 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
     if post_gates is not None:
         circ.append(*post_gates)
 
+    print(circ.gate_stats())
+
     # logical optimization by Qiskit
     return qiskit_O3_all2all(circ.to_qiskit())
 
