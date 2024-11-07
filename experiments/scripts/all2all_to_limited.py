@@ -43,4 +43,4 @@ for fname in fnames:
 
     circ = qiskit.QuantumCircuit.from_qasm_file(all2all_circ_file)
     circ = bench_utils.optimize_with_mapping(circ, coupling_map)
-    # qiskit.qasm2.dump(circ, limited_circ_file)
+    qiskit.qasm2.dump(circ, limited_circ_file)

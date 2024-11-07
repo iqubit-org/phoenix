@@ -70,11 +70,12 @@ class Circuit(list):
     def from_qiskit(cls, qiskit_circ):
         """Convert from qiskit.QuantumCircuit instance"""
         try:
+            import qiskit
             from qiskit import QuantumCircuit
         except ImportError:
             raise ImportError('qiskit is not installed')
         assert isinstance(qiskit_circ, QuantumCircuit), "Input should be a qiskit.QuantumCircuit instance"
-        # return cls.from_qasm(qiskit_circ.qasm())
+        return cls.from_qasm(qiskit.qasm2.dumps(qiskit_circ))
         return _from_qiskit(qiskit_circ)
 
     def to_cirq(self):
@@ -169,7 +170,7 @@ class Circuit(list):
 
         for P0, P1 in product(['X', 'Y', 'Z'], ['X', 'Y', 'Z']):
             if 'C({}, {})'.format(P0, P1) in self.gate_stats():
-                output.write_comment("Customized 'c{}{}' gate definition".format(P0, P1))
+                output.write_comment("Customized 'c{}{}' gate definition".format(P0.lower(), P1.lower()))
                 # output.write(gates.C2_DEF_BY_ISING[P0, P1])
                 output.write(getattr(gates, 'C{}{}_DEF_BY_CNOT'.format(P0, P1)))
                 output.write_line_gap(2)
@@ -244,6 +245,9 @@ class Circuit(list):
                 gname = line[0][2:]
                 tq = parse_qubit_index(line[-1])
                 cq = [parse_qubit_index(line[-3]), parse_qubit_index(line[-2])]
+            elif re.match(r"c(x|y|z)(x|y|z)", line[0]):
+                gname = line[0]
+                tq = [parse_qubit_index(line[1]), parse_qubit_index(line[2])]
             elif line[0].startswith('c') and line[0] != 'can':
                 gname = line[0][1:]
                 tq = parse_qubit_index(line[-1])
@@ -271,6 +275,8 @@ class Circuit(list):
             elif gname in ['rx', 'ry', 'rz', 'rxx', 'ryy', 'rzz', 'u1', 'p']:
                 angle = eval(line[1])
                 g = getattr(gates, gname.upper())(angle).on(tq, cq)
+            elif match := re.match(r"c(x|y|z)(x|y|z)", gname):
+                g = gates.Clifford2QGate(match.groups()[0].upper(), match.groups()[1].upper()).on(tq)
             else:
                 raise ValueError(f'Unsupported gate {gname}')
             circ.append(g)
@@ -739,8 +745,8 @@ def _from_qiskit(circ_qiskit: qiskit.QuantumCircuit) -> Circuit:
             circ.append(gates.Y.on(qubits[1], qubits[0]))
         elif opr.name == 'cz':
             circ.append(gates.Z.on(qubits[1], qubits[0]))
-        elif opr.name == 'cx':
-            circ.append(gates.X.on(qubits[1], qubits[0]))
+        elif opr.name == 'ch':
+            circ.append(gates.H.on(qubits[1], qubits[0]))
         elif opr.name == 'cs':
             circ.append(gates.S.on(qubits[1], qubits[0]))
         elif opr.name == 'cp':
@@ -759,6 +765,8 @@ def _from_qiskit(circ_qiskit: qiskit.QuantumCircuit) -> Circuit:
             circ.append(gates.X.on(qubits[1:], qubits[0]))
         elif opr.name == 'ccz':
             circ.append(gates.Z.on(qubits[1:], qubits[0]))
+        elif match := re.match(r"c(x|y|z)(x|y|z)", opr.name):
+            circ.append(gates.Clifford2QGate(match.groups()[0].upper(), match.groups()[1].upper()).on(qubits))
         else:
             raise ValueError(f'Unsupported gate {opr.name}')
 
