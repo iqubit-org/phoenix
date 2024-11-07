@@ -173,7 +173,7 @@ def tket_to_qiskit(circ: pytket.Circuit) -> qiskit.QuantumCircuit:
 
 
 def qiskit_to_tket(circ: qiskit.QuantumCircuit) -> pytket.Circuit:
-    return pytket.qasm.circuit_from_qasm_str(circ.qasm())
+    return pytket.qasm.circuit_from_qasm_str(qiskit.qasm2.dumps(circ))
 
 
 def sabre_map(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap) -> Tuple[
@@ -215,14 +215,20 @@ def post_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
     return circ
 
 
-def optimize_with_mapping(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap) -> qiskit.QuantumCircuit:
+def optimize_with_mapping(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap, tket_opt: bool = False) -> qiskit.QuantumCircuit:
+    from phoenix.utils.display import print_circ_info
+
     circ = qiskit.transpile(circ, optimization_level=3,
                             basis_gates=['u1', 'u2', 'u3', 'cx'],
                             coupling_map=coupling_map, layout_method='sabre')
+    
+    print_circ_info(circ)
 
-    circ = qiskit_to_tket(circ)
-    pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
-    circ = tket_to_qiskit(circ)
+    if tket_opt:
+        circ = qiskit_to_tket(circ)
+        pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
+        circ = tket_to_qiskit(circ)
+        print_circ_info(circ)
 
     return circ
 
