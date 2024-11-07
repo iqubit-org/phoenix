@@ -9,10 +9,13 @@ import sys
 sys.path.append('../..')
 
 import os
+import warnings
 from natsort import natsorted
 import qiskit.qasm2
 import argparse
 import bench_utils
+
+warnings.filterwarnings('ignore')
 
 parser = argparse.ArgumentParser(description='Map logical circuits to physical qubits with limited connectivity')
 parser.add_argument('-d', '--device', type=str,
