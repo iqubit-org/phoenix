@@ -10,6 +10,7 @@ sys.path.append('../..')
 import os
 import json
 import argparse
+import warnings
 import pytket.qasm
 import qiskit.qasm2
 from phoenix import gates
@@ -17,6 +18,8 @@ from natsort import natsorted
 import bench_utils
 from phoenix.utils.functions import infidelity
 from phoenix.utils.display import print_circ_info
+
+warnings.filterwarnings('ignore')
 
 from rich.console import Console
 
@@ -75,7 +78,6 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
             # circ_origin = qiskit.QuantumCircuit.from_qasm_file(
             #     os.path.join(INPUT_QASM_DPATH, os.path.basename(fname).replace('.json', '.qasm')))
 
-
             # console.print('Infidelity:',
             #               infidelity(bench_utils.qiskit_to_unitary(circ_origin),
             #                          bench_utils.qiskit_to_unitary(circ)))
@@ -100,7 +102,7 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
             circ = bench_utils.tetris_pass(data['paulis'], data['coeffs'], pre_gates,
                                            coupling_map=coupling_map)  # TODO: do no return mappings?
             # circ_origin = qiskit.QuantumCircuit.from_qasm_file(
-                # os.path.join(INPUT_QASM_DPATH, os.path.basename(fname).replace('.json', '.qasm')))
+            # os.path.join(INPUT_QASM_DPATH, os.path.basename(fname).replace('.json', '.qasm')))
 
             # if circ.num_qubits <= 10:
             # import sys

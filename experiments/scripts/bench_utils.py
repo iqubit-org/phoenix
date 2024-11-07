@@ -22,6 +22,7 @@ from phoenix.models.hamiltonians import HamiltonianModel, console
 from tetris.benchmark.mypauli import pauliString
 from tetris.utils.hardware import pGraph
 from phoenix.synthesis.grouping import group_paulis_and_coeffs
+from phoenix.utils.display import print_circ_info
 
 from rich.console import Console
 
@@ -45,13 +46,15 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
                  pre_gates: List[Gate] = None, post_gates: List[Gate] = None) -> qiskit.QuantumCircuit:
     # Phoenix's high-level optimization
     ham = HamiltonianModel(paulis, coeffs)
-    circ = ham.reconfigure_and_generate_circuit()
+    # circ = ham.reconfigure_and_generate_circuit()
+    circ = ham.phoenix_circuit()
+
+    print_circ_info(circ)
+
     if pre_gates is not None:
         circ.prepend(*pre_gates)
     if post_gates is not None:
         circ.append(*post_gates)
-
-    print(circ.gate_stats())
 
     # logical optimization by Qiskit
     return qiskit_O3_all2all(circ.to_qiskit())
@@ -158,7 +161,7 @@ def tket_pass(circ: pytket.Circuit) -> pytket.Circuit:
             break
 
     # full optimization
-    pytket.passes.FullPeepholeOptimise().apply(circ)
+    pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
 
     return circ
 
@@ -215,13 +218,14 @@ def post_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
     return circ
 
 
-def optimize_with_mapping(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap, tket_opt: bool = False) -> qiskit.QuantumCircuit:
+def optimize_with_mapping(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap,
+                          tket_opt: bool = True) -> qiskit.QuantumCircuit:
     from phoenix.utils.display import print_circ_info
 
     circ = qiskit.transpile(circ, optimization_level=3,
                             basis_gates=['u1', 'u2', 'u3', 'cx'],
                             coupling_map=coupling_map, layout_method='sabre')
-    
+
     print_circ_info(circ)
 
     if tket_opt:

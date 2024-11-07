@@ -58,6 +58,11 @@ class Circuit(list):
         #                                                                          self.with_measure)
         return 'Circuit(num_gates: {}, num_qubits: {})'.format(self.num_gates, self.num_qubits)
 
+    @property
+    def nonlocal_structure(self):
+        """Obtain its circuit structure only with nonlocal gates"""
+        return Circuit([g for g in self if g.num_qregs > 1])
+
     def to_qiskit(self):
         """Convert to qiskit.QuantumCircuit instance"""
         try:
@@ -75,7 +80,7 @@ class Circuit(list):
         except ImportError:
             raise ImportError('qiskit is not installed')
         assert isinstance(qiskit_circ, QuantumCircuit), "Input should be a qiskit.QuantumCircuit instance"
-        return cls.from_qasm(qiskit.qasm2.dumps(qiskit_circ))
+        # return cls.from_qasm(qiskit.qasm2.dumps(qiskit_circ))
         return _from_qiskit(qiskit_circ)
 
     def to_cirq(self):

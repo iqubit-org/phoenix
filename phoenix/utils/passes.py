@@ -534,7 +534,7 @@ def num_nontrivial_swaps(circ: Circuit) -> int:
     from phoenix.basic.gates import SWAPGate
     from phoenix.utils.graphs import node_index
     """Count the number of SWAP gates that cannot be absorbed by their adjacent 2Q gates"""
-    dag = Circuit([g for g in circ if g.num_qregs > 1]).to_dag()
+    dag = circ.nonlocal_structure.to_dag()
     swaps = [g for g in circ if isinstance(g, SWAPGate)]
     num_swaps = len(swaps)
     for swap in swaps:

@@ -1,5 +1,9 @@
+import qiskit
+from itertools import product
 from phoenix.basic.circuits import Circuit
 from phoenix.basic import gates
+from phoenix.models.cliffords import Clifford2Q
+from phoenix.models.paulis import BSF
 from phoenix import decompose
 from typing import List, Tuple
 import numpy as np
@@ -37,3 +41,26 @@ def unique_paulis_and_coeffs(paulis: List[str], coeffs: List[float]) -> Tuple[Li
             unique_paulis.append(pauli)
             unique_coeffs.append(coeff)
     return unique_paulis, unique_coeffs
+
+
+def optimize_clifford_circuit_by_qiskit(circ: Circuit, optimization_level=1) -> Circuit:
+    """Topology-preserved optimization by Qiskit"""
+    basis_gates = ['h', 's', 'sdg', 'rz', 'u3', 'cx']
+    for p0, p1 in product(['x', 'y', 'z'], repeat=2):
+        basis_gates.append(f'c{p0}{p1}')
+    return Circuit.from_qiskit(qiskit.transpile(circ.to_qiskit(), optimization_level=optimization_level,
+                                                basis_gates=basis_gates))
+
+
+def config_to_circuit(config, optimize=True):
+    circ = Circuit()
+    for item in config:
+        if isinstance(item, Clifford2Q):
+            circ.append(item.as_gate())
+        if isinstance(item, BSF):
+            circ += item.as_cnot_circuit()
+
+    # by default, we use Qiskit O2 to consolidate redundant 1Q and CNOT gates
+    if optimize:
+        return optimize_clifford_circuit_by_qiskit(circ, 2)
+    return circ
