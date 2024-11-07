@@ -28,8 +28,6 @@ args = parser.parse_args()
 all2all_dpath = '../output_uccsd/{}/all2all'.format(args.compiler)
 fnames = natsorted(os.listdir(all2all_dpath), reverse=True)
 
-print(fnames)
-
 if args.device == 'manhattan':
     coupling_map = bench_utils.Manhattan
 elif args.device == 'sycamore':
