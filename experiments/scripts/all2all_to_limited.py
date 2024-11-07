@@ -14,6 +14,7 @@ from natsort import natsorted
 import qiskit.qasm2
 import argparse
 import bench_utils
+from phoenix.utils.display import print_circ_info
 
 warnings.filterwarnings('ignore')
 
@@ -25,7 +26,9 @@ parser.add_argument('-c', '--compiler', default='phoenix', type=str,
 args = parser.parse_args()
 
 all2all_dpath = '../output_uccsd/{}/all2all'.format(args.compiler)
-fnames = natsorted(os.listdir(all2all_dpath))
+fnames = natsorted(os.listdir(all2all_dpath), reverse=True)
+
+print(fnames)
 
 if args.device == 'manhattan':
     coupling_map = bench_utils.Manhattan
@@ -46,4 +49,5 @@ for fname in fnames:
 
     circ = qiskit.QuantumCircuit.from_qasm_file(all2all_circ_file)
     circ = bench_utils.optimize_with_mapping(circ, coupling_map)
+    print_circ_info(circ)
     qiskit.qasm2.dump(circ, limited_circ_file)
