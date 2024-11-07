@@ -39,7 +39,12 @@ limited_dpath = '../output_uccsd/{}/{}'.format(args.compiler, args.device)
 if not os.path.exists(limited_dpath):
     os.makedirs(limited_dpath)
 
+flag = False
 for fname in fnames:
+    if 'H2O_cmplt_JW_sto3g' in fname:
+        flag = True
+    if not flag:
+        continue
     all2all_circ_file = os.path.join(all2all_dpath, fname)
     limited_circ_file = os.path.join(limited_dpath, fname)
 
