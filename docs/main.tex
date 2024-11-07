@@ -3,7 +3,9 @@
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
+% \usepackage{algorithmic}
+\usepackage[ruled, vlined, linesnumbered]{algorithm2e}
+\usepackage{mhchem}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
@@ -15,7 +17,21 @@
 \usepackage{adjustbox}
 
 \newcommand{\note}[1]{{\color{blue} #1}}
-\newcommand{\ZZ}[1]{{\color{red} #1}}
+\newcommand{\ZY}[1]{{\color{purple}[ZY: #1]}}
+
+\newcommand{\phoenix}{\textsc{Phoenix}}
+\newcommand{\qiskit}{\textsc{Qiskit}}
+\newcommand{\tket}{\textsc{TKet}}
+\newcommand{\tetris}{\textsc{Tetris}}
+\newcommand{\paulihedral}{\textsc{Paulihedral}}
+\newcommand{\pcaost}{\textsc{PCOAST}}
+\newcommand{\twoqan}{\textsc{2QAN}}
+
+
+\SetAlFnt{\small}
+% \SetAlCapFnt{\small}
+
+
 
 % \newcommand{\note}{\underline}
 
@@ -32,7 +48,9 @@
 % \thanks{Identify applicable funding agency here. If none, delete this.}
 % }
 
-\title{VQA programs Synthesis by Clifford Formalism}
+\title{\phoenix: Pauli-based High-level Optimization Engine for Instruction Execution on NISQ Devices}
+
+% VQA Programs Synthesis by Clifford Formalism
 
 
 
@@ -45,20 +63,18 @@
 % }
 
 
-\author{
-    \IEEEauthorblockN{Zhaohui Yang\IEEEauthorrefmark{1}, David Ding\IEEEauthorrefmark{2}, Jianxin Chen\IEEEauthorrefmark{3}, Yuan Xie\IEEEauthorrefmark{1}}
+% \author{
+%     \IEEEauthorblockN{Zhaohui Yang\IEEEauthorrefmark{1}, David Ding\IEEEauthorrefmark{2}, Jianxin Chen\IEEEauthorrefmark{3}, Yuan Xie\IEEEauthorrefmark{1}}
     
-    % \IEEEauthorblockN{Zhaohui Yang\IEEEauthorrefmark{1}, Chaohan Cui\IEEEauthorrefmark{2}, Zheshen Zhang\IEEEauthorrefmark{3}\IEEEauthorrefmark{2}\IEEEauthorrefmark{1}\IEEEauthorrefmark{4}}
-    
-    \IEEEauthorblockA{\textit{\IEEEauthorrefmark{1}Department of Electronic and Computer Engineering, The Hong Kong University of Science and Technology, Hong Kong}}
+%     \IEEEauthorblockA{\textit{\IEEEauthorrefmark{1}Department of Electronic and Computer Engineering, The Hong Kong University of Science and Technology, Hong Kong}}
 
-    \IEEEauthorblockA{\textit{\IEEEauthorrefmark{2} Yau Mathematical Sciences Center, Tsinghua University, Beijing, China}}
+%     \IEEEauthorblockA{\textit{\IEEEauthorrefmark{2} Yau Mathematical Sciences Center, Tsinghua University, Beijing, China}}
 
-    \IEEEauthorblockA{\textit{\IEEEauthorrefmark{3}Department of Computer Science and Technology, Tsinghua University, Beijing, China}}
+%     \IEEEauthorblockA{\textit{\IEEEauthorrefmark{3}Department of Computer Science and Technology, Tsinghua University, Beijing, China}}
 
 
-    % \IEEEauthorblockA{\{zhaohui\}@ucsb.edu, }
-}
+%     % \IEEEauthorblockA{\{zhaohui\}@ucsb.edu, }
+% }
 
 
 \maketitle
@@ -67,7 +83,7 @@
 \begin{abstract}
     Quantum computing ...
 
-    PHOENIX: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ-Era quantum devices
+    We propose a Pauli-based High-level Optimization ENgine for Instruction eXecution (\phoenix) of Hamiltonian simulation programs on NISQ devices
 
     
     
@@ -92,7 +108,122 @@
 
 
     % The rest of this paper is structured as follows. In Sec. \ref{sec:2:resutls}, we firstly describe the hardware infrastructures and their re-constructing approaches on basis of the existing fiber-based network at the University of Arizona (UA), and then explain how the QISP is implemented under a reconfigurable framework. Field-test evaluation results are also included in this section. We summarize our work in Sec. \ref{sec:3:discussion} with analyses of current limitations and future work directions. In Sec. \ref{sec:4:methods}, we will see in more detail the Quagent's architecture and the entanglement source characterization methods.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Motivation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Motivation}
+
+\ZY{Motivation and preliminary knowledge}
+
+
+\section{Our Propsal: \phoenix}
+
+\subsection{Overall framework}
+
+\subsection{BSF simplification for each IR group}
+
+
+    \begin{algorithm}[tbp]
+        \SetAlgoLined
+        \caption{Pauli Strings Simplification in BSF}
+        \label{algo:simplification}
+        \SetKwInOut{Input}{Input}
+        \SetKwInOut{Output}{Output}
+        \SetKwBlock{Assumption}{Assumption}{}
     
+        % \Input{Pauli strings with corresponding coefficients (\textit{pls}, \textit{coes})}
+        \Input{Pauli strings list \textit{pls}}
+        \Output{Reconfigured circuit components list \textit{cfg}}
+    
+        % \tcp{Following pseudocode only involves transformation on pls while omitting coes WLOG}
+        \BlankLine
+        \textit{cfg} $ \gets \emptyset $;\quad
+        \textit{bsf} $ \gets \textsc{BSF}$(\textit{pls});\quad
+        \textit{cliffs\_with\_locals} $\gets \emptyset$\; %\tcp*{Cliffords with local Paulis}
+        % $ n \gets $ \textit{bsf}.\textsc{numQubits}()\;
+        \While{bsf.\textsc{totalWeight()} $>$ 2}{
+            \textit{local\_bsf} $\gets$ \textit{bsf}.\textsc{popLocalPaulis}()\; 
+            % $ C \gets \emptyset$;\quad
+            % $ B \gets \emptyset$;\quad
+    
+            $ C \gets \emptyset$ \tcp*{Clifford2Q candidates}
+            $ B \gets \emptyset$ \tcp*{Each element of $B$ results from applying each Clifford2Q candidate on \textit{bsf}}
+            \textit{costs} $\gets \emptyset$ \tcp*{Cost functions calculated on each element of $B$}
+            \For{cg \textbf{in} \textsc{CLIFFORD\_2Q\_SET}}{
+                \For{i, j \textbf{in} $ \textsc{combinations}(\textsc{range}(n), 2) $}{
+                    \textit{cliff} $\gets$ \textit{cg}.\textsc{on}$ (i, j) $ \tcp*{qubits acted on}
+                    \textit{bsf}$'$ $\gets$ \textit{bsf}.\textsc{applyClifford2Q}(\textit{cliff})\;
+                    \textit{cost} $\gets$ \textsc{calculateBSFCost}(\textit{bsf}$'$)\;
+                    $ C.\textsc{append}$(\textit{cliff})\;
+                    $ B.\textsc{append}$(\textit{bsf}$'$)\;
+                    \textit{costs}.\textsc{append}(\textit{cost})\;
+                }
+            }
+            % \textit{bsf} $\gets$ \textit{B}[\textit{costs}.\textsc{index}(\textit{min}(\textit{costs}))]\;
+            % \textit{cliff} $\gets$ \textit{C}[\textit{costs}.\textsc{index}(\textit{min}(\textit{costs}))]\;
+            \textit{bsf} $ \gets \textsc{BSFWithMinCost} (B, \textit{costs}) $\;
+            \textit{cliff} $ \gets \textsc{CliffordWithMinCost} (C, \textit{costs}) $\;
+            \textit{cliffs\_with\_locals}.\textsc{append}((\textit{cliff}, \textit{local\_bsf}))\;
+        }
+        \BlankLine
+        \textit{cfg}.\textsc{append}(\textit{bsf})\;
+        \For{cliff, local\_bsf \textbf{in} cliffs\_with\_locals}{
+            \tcp{Clifford2Q operators are added as conjugations, with local Pauli strings peeled before each epoch}
+            \textit{cfg}.\textsc{prepend}(\textit{cliff})\;
+            \textit{cfg}.\textsc{append}(\textit{local\_bsf})\;
+            \textit{cfg}.\textsc{append}(\textit{cliff})\;
+        }
+    
+    \end{algorithm}
+
+
+\subsection{Ordering of IR groups}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Evaluation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Evaluation}
+
+
+\subsection{Experimental settings}
+
+\subsubsection{Baselines}
+
+\begin{itemize}
+    \item \tket
+    \item \paulihedral
+    \item \tetris
+\end{itemize}
+
+
+
+\subsection{Benchmarking on generic Hamiltonian simulation programs}
+
+
+
+\subsection{Hardware-aware benchmarking across UCCSD programs}
+
+
+
+\subsection{Pass-wise breakdown analysis}
+
+
+
+
+
+\subsection{Real system evaluation}
+
+
+\subsection{Scalability}
+
+
+
 
 
 

@@ -220,6 +220,7 @@ def post_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
 
 def optimize_with_mapping(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap,
                           tket_opt: bool = True) -> qiskit.QuantumCircuit:
+    """By default, we use Qiskit's O3 compiler appended by a TKet's topology-preserved optimization pass"""
     from phoenix.utils.display import print_circ_info
 
     circ = qiskit.transpile(circ, optimization_level=3,
