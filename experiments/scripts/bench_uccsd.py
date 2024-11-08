@@ -97,7 +97,7 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
 
             print_circ_info(circ)
 
-            qiskit.qasm2.dump(circ, output_fname)
+            # qiskit.qasm2.dump(circ, output_fname)
         elif args.compiler == 'tetris':
             circ = bench_utils.tetris_pass(data['paulis'], data['coeffs'], pre_gates,
                                            coupling_map=coupling_map)  # TODO: do no return mappings?
@@ -113,7 +113,7 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
             print_circ_info(circ)
             # console.print('Infidelity:',
             #               infidelity(c1.unitary(), c2.unitary()))
-            qiskit.qasm2.dump(circ, output_fname)
+            # qiskit.qasm2.dump(circ, output_fname)
         elif args.compiler == 'pauliopt':
             circ = bench_utils.pauliopt_pass(data['paulis'], data['coeffs'], pre_gates,
                                              coupling_map=coupling_map)  # TODO: do no return mappings?
