@@ -12,7 +12,9 @@ import json
 import argparse
 import pytket.qasm
 import qiskit.qasm2
-from phoenix import gates
+import rustworkx as rx
+from qiskit.transpiler import CouplingMap
+from phoenix.utils.display import print_circ_info
 from natsort import natsorted
 import bench_utils
 
@@ -54,25 +56,25 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
         output_fname = os.path.join(output_dpath, os.path.basename(fname).replace('.json', '.qasm'))
         with open(fname, 'r') as f:
             data = json.load(f)
-        pre_gates = [gates.X.on(q) for q in data['front_x_on']]
 
         if args.compiler == 'phoenix':
-            circ = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], pre_gates)
-
-            # pytket.qasm.circuit_to_qasm(circ, output_fname) # TODO: modify it
-
+            circ = bench_utils.phoenix_pass(data['paulis'], data['coeffs'])
+            print_circ_info(circ)
             qiskit.qasm2.dump(circ, output_fname)
-
         elif args.compiler == 'paulihedral':
-            circ = bench_utils.paulihedral_pass(data['paulis'], data['coeffs'],
-                                                pre_gates)  # TODO: do no return mappings?
+            circ = bench_utils.paulihedral_pass(data['paulis'], data['coeffs'], coupling_map=CouplingMap(
+                rx.generators.complete_graph(data['num_qubits']).to_directed().edge_list()))
+            print_circ_info(circ)
             qiskit.qasm2.dump(circ, output_fname)
         elif args.compiler == 'tetris':
-            circ = bench_utils.tetris_pass(data['paulis'], data['coeffs'], pre_gates)  # TODO: do no return mappings?
+            circ = bench_utils.tetris_pass(data['paulis'], data['coeffs'], coupling_map=CouplingMap(
+                rx.generators.complete_graph(data['num_qubits']).to_directed().edge_list()))
+            print_circ_info(circ)
             qiskit.qasm2.dump(circ, output_fname)
 
         elif args.compiler == 'pauliopt':
-            circ = bench_utils.pauliopt_pass(data['paulis'], data['coeffs'], pre_gates)  # TODO: do no return mappings?
+            circ = bench_utils.pauliopt_pass(data['paulis'], data['coeffs'])
+            print_circ_info(circ)
             qiskit.qasm2.dump(circ, output_fname)
         else:
             raise ValueError('Unsupported compiler')
@@ -87,6 +89,7 @@ else:
 
             circ = pytket.qasm.circuit_from_qasm(fname)
             circ = bench_utils.tket_pass(circ)
+            print_circ_info(circ)
 
             # pytket.qasm.circuit_to_qasm(circ, os.path.join(output_dpath, os.path.basename(fname)))
     else:

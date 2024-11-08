@@ -1,6 +1,6 @@
 import networkx as nx
 import rustworkx as rx
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, Callable
 from functools import reduce
 from operator import add
 from phoenix.basic.gates import Gate, UnivGate
@@ -43,12 +43,16 @@ def dag_to_circuit(dag: Union[nx.DiGraph, rx.PyDiGraph]) -> Circuit:
 
 
 def obtain_front_layer(dag_or_circ: Union[Circuit, nx.DiGraph, rx.PyDiGraph],
-                       return_indices: bool = False) -> Union[
+                       return_indices: bool = False,
+                       predicate: Callable = None) -> Union[
     List[Union[Gate, Circuit]], Tuple[List[Union[Gate, Circuit]], List[int]]]:
     """
     Obtain front layer (with in_degree == 0) of the DAG.
     Since the node of DAG might be Gate instance or Circuit instance, result is a list of Gate or Circuit.
     """
+    if predicate is None:
+        predicate = lambda _: True
+
     if isinstance(dag_or_circ, Circuit):
         dag = dag_or_circ.to_dag()
     else:
@@ -57,11 +61,11 @@ def obtain_front_layer(dag_or_circ: Union[Circuit, nx.DiGraph, rx.PyDiGraph],
     front_layer_indices = []
     if isinstance(dag, nx.DiGraph):
         for node in dag.nodes():
-            if dag.in_degree(node) == 0:
+            if dag.in_degree(node) == 0 and predicate(node):
                 front_layer.append(node)
     elif isinstance(dag, rx.PyDiGraph):
         for node_idx in dag.node_indices():
-            if dag.in_degree(node_idx) == 0:
+            if dag.in_degree(node_idx) == 0 and predicate(dag[node_idx]):
                 front_layer.append(dag[node_idx])
                 front_layer_indices.append(node_idx)
     else:
@@ -71,6 +75,40 @@ def obtain_front_layer(dag_or_circ: Union[Circuit, nx.DiGraph, rx.PyDiGraph],
     if isinstance(dag, rx.PyDiGraph) and return_indices:
         return front_layer, front_layer_indices
     return front_layer
+
+def obtain_last_layer(dag_or_circ: Union[Circuit, nx.DiGraph, rx.PyDiGraph],
+                      return_indices: bool = False,
+                      predicate: Callable = None) -> Union[
+    List[Union[Gate, Circuit]], Tuple[List[Union[Gate, Circuit]], List[int]]]:
+    """
+    Obtain last layer (with out_degree == 0) of the DAG.
+    Since the node of DAG might be Gate instance or Circuit instance, result is a list of Gate or Circuit.
+    """
+    if predicate is None:
+        predicate = lambda _: True
+
+    if isinstance(dag_or_circ, Circuit):
+        dag = dag_or_circ.to_dag()
+    else:
+        dag = dag_or_circ
+    last_layer = []
+    last_layer_indices = []
+    if isinstance(dag, nx.DiGraph):
+        for node in dag.nodes():
+            if dag.out_degree(node) == 0 and predicate(node):
+                last_layer.append(node)
+    elif isinstance(dag, rx.PyDiGraph):
+        for node_idx in dag.node_indices():
+            if dag.out_degree(node_idx) == 0 and predicate(dag[node_idx]):
+                last_layer.append(dag[node_idx])
+                last_layer_indices.append(node_idx)
+    else:
+        raise TypeError("Input must be a Circuit, networkx.DiGraph or rustworkx.PyDiGraph instance, not {}".format(
+            type(dag_or_circ)))
+
+    if isinstance(dag, rx.PyDiGraph) and return_indices:
+        return last_layer, last_layer_indices
+    return last_layer
 
 
 def sort_blocks_on_qregs(blocks: List[Circuit], descend=False) -> List[Circuit]:
@@ -548,3 +586,16 @@ def num_nontrivial_swaps(circ: Circuit) -> int:
                 and (set(predecessors[0].qregs) == set(swap.qregs))):
             num_swaps -= 1
     return num_swaps
+
+
+def front_full_width_circuit(circ: Circuit, predicate: Callable = None) -> Circuit:
+    """Get the front subcircuit whose qubits are fully occupied (only gates satisfying the predicate are counted)"""
+    if predicate is None:
+        predicate = lambda _: True
+    ffwc = Circuit()
+    for g in circ.gates:
+        if predicate(g):
+            ffwc.append(g)
+            if ffwc.num_qubits == circ.num_qubits:
+                break
+    return ffwc

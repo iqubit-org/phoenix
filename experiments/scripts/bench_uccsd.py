@@ -37,7 +37,7 @@ parser.add_argument('-c', '--compiler', default='phoenix', type=str,
 args = parser.parse_args()
 
 qasm_fnames = [os.path.join(INPUT_QASM_DPATH, fname) for fname in natsorted(os.listdir(INPUT_QASM_DPATH))]
-json_fnames = [os.path.join(INPUT_JSON_DPATH, fname) for fname in natsorted(os.listdir(INPUT_JSON_DPATH))]
+json_fnames = [os.path.join(INPUT_JSON_DPATH, fname) for fname in natsorted(os.listdir(INPUT_JSON_DPATH), reverse=True)]
 
 output_dpath = os.path.join(OUTPUT_DPATH, args.compiler, args.device)
 
@@ -59,10 +59,6 @@ else:
 
 if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
     for fname in json_fnames:
-
-        # if 'LiH_frz' not in fname:
-        #     continue
-
         console.print('Processing', fname)
         output_fname = os.path.join(output_dpath, os.path.basename(fname).replace('.json', '.qasm'))
         with open(fname, 'r') as f:

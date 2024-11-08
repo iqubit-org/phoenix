@@ -30,7 +30,7 @@ console = Console()
 
 Manhattan = CouplingMap(arch.read_device_topology('../manhattan.graphml').to_directed().edge_list())
 Sycamore = CouplingMap(arch.read_device_topology('../sycamore.graphml').to_directed().edge_list())
-All2all = CouplingMap(rx.generators.complete_graph(50).to_directed().edge_list())
+All2all = CouplingMap(rx.generators.complete_graph(20).to_directed().edge_list())
 
 
 def qiskit_O3_all2all(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
@@ -46,7 +46,7 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
                  pre_gates: List[Gate] = None, post_gates: List[Gate] = None) -> qiskit.QuantumCircuit:
     # Phoenix's high-level optimization
     ham = HamiltonianModel(paulis, coeffs)
-    # circ = ham.reconfigure_and_generate_circuit()
+    # circ = ham.reconfigure_and_generate_circuit() # this is the old version
     circ = ham.phoenix_circuit()
 
     print_circ_info(circ)
