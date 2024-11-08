@@ -47,6 +47,7 @@ for device in ['all2all', 'manhattan', 'sycamore']:
     print('Processing', output_dpath)
     for fname in natsorted(os.listdir(output_dpath)):
         program_name = fname.split('.')[0]
+        program_name = program_name.replace('_sto3g', '')  # simplify the name
         output_circ_file = os.path.join(output_dpath, fname)
         circ = QuantumCircuit.from_qasm_file(output_circ_file)
 
@@ -61,7 +62,13 @@ for device in ['all2all', 'manhattan', 'sycamore']:
 # initially, this data frame contains information of original circuits
 result = pd.DataFrame(columns=['program', 'num_qubits', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q'])
 for fname in natsorted(os.listdir(BENCHMARK_DPATH)):
+    if '_P_' in fname:  # skip P-type encoding
+        continue
+
+
     program_name = fname.split('.')[0]
+    program_name = program_name.replace('_sto3g', '')  # simplify the name
+
     qasm_file = os.path.join(BENCHMARK_DPATH, fname)
     circ = QuantumCircuit.from_qasm_file(qasm_file)
 
