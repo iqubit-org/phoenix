@@ -41,7 +41,7 @@ if not os.path.exists(cnot_dpath):
 if not os.path.exists(su4_dpath):
     os.makedirs(su4_dpath)
 
-console.rule('{}: CNOT --> SU(4) ISA on hamlib-{}'.format(args.compiler, dir))
+console.rule('{}: CNOT --> SU(4) ISA on hamlib-{}'.format(args.compiler, args.type))
 
 for fname in natsorted(os.listdir(cnot_dpath)):
     cnot_fname = os.path.join(cnot_dpath, fname)
