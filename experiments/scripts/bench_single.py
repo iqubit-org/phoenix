@@ -60,7 +60,6 @@ elif args.compiler == 'paulihedral':
 elif args.compiler == 'tetris':
     circ = qiskit.QuantumCircuit.from_qasm_file(qasm_fname)
     circ_opt = bench_utils.tetris_pass(data['paulis'], data['coeffs'], coupling_map=coupling_map)
-    circ_opt = bench_utils.qiskit_O3_all2all(circ_opt)
     print_circ_info(circ, title='Original circuit')
     print_circ_info(circ_opt, title='Optimized circuit')
 elif args.compiler == 'phoenix':
