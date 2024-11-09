@@ -46,6 +46,6 @@ for fname in fnames:
     print('Converting {} to {}'.format(all2all_circ_file, limited_circ_file))
 
     circ = qiskit.QuantumCircuit.from_qasm_file(all2all_circ_file)
-    circ = bench_utils.optimize_with_mapping(circ, coupling_map)
+    circ = bench_utils.optimize_with_mapping(circ, coupling_map, tket_opt=True)
     print_circ_info(circ)
     qiskit.qasm2.dump(circ, limited_circ_file)
