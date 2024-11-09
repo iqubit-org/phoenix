@@ -29,7 +29,7 @@ console = Console()
 
 Manhattan = CouplingMap(arch.read_device_topology('../manhattan.graphml').to_directed().edge_list())
 Sycamore = CouplingMap(arch.read_device_topology('../sycamore.graphml').to_directed().edge_list())
-All2all = CouplingMap(rx.generators.complete_graph(20).to_directed().edge_list())
+All2all = CouplingMap(rx.generators.complete_graph(30).to_directed().edge_list())
 
 
 def qiskit_O3_all2all(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:

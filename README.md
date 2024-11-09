@@ -2,12 +2,43 @@
 
 [![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue)
 
+## Overview
 
-VQA application-specific compiler via Clifford simplification.
+Phoenix is a highly-effective VQA (variational quantum algorithm) application-specifc compiler based on BSF (binary symplectic form) of Pauli exponentiations and Clifford formalism. Different from ZX-calulus-like approaches (e.g., [TKet](https://github.com/CQCL/pytket-docs), [PauliOpt](https://github.com/hashberg-io/pauliopt)) and local peephole optimization approaches (e.g., [Paulihedral](https://arxiv.org/abs/2109.03371), [TKet](https://arxiv.org/abs/2309.01905v2)), Phoenix exploits global optimiation opportunities for VQA programs to the largest extent, when representing Pauli strings as BSF and employing Clifford formalism on the higher-level IR.
 
+This repo includes benchmarking scripts and results with other SOTA baselines -- TKet, Paulihedral, and Tetris. Code of Paulihedral and Tetris are refactored and integrated in this repo.
 
+Backbone of this code repo is builed on [unisys](https://github.com/Youngcius/unisys) and core functionalities of this Phoenix compiler are also integrated wihtin it. Another project [regulus](https://github.com/iqubit-org/regulus) (the reconfigurable quantum instruction set computers compiler) worth mentionning is also based on [unisys](https://github.com/Youngcius/unisys).
 
-Our VQA application-specific compiler named "Phoenix" outperforms all other SOTA approaches such as Paulihedral, Tetris, and TKet.
+If you make sure of Phoenix in your work, please cite the following publication:
 
+```
+......
+```
 
+## Requirements
 
+Basic library requirements are lists in `requirements.txt`.
+
+- We align with the `1.2.4` version of  `qiskit`  across the published benchmarking results. Since `qiskit`'s O1/O2 has different built-in workflows, note that version 1.0+ are suitable for Phoenix.
+- Originally, Paulihedral and Tetris require version 0.23.x and version 0.43.x of Qiskit. In this code repo, they can also be soomthly tested under Qiskit-1.2.4.
+
+## Benchmarking description
+
+**Benchmark suites:**
+
+- Hamlib: 100 generic Hamiltonian simulation programs ( a subset of the original [Hamlib](https://arxiv.org/abs/2306.13126)) from IBM's latest [benchpress]() toolkit, including "binaryoptimization", "discreteoptimization", "chemistry", and "condensedmatter" four categories of Hamiltonian simulation programs.
+- UCCSD: 16 molecule simulation programs from benchmarks from [TKet benchmarking](https://github.com/CQCL/tket_benchmarking). We use this suite for fine-grain benchmarking and real system analysis.
+
+**Result files:**
+
+- `./experiments/output_hamlib/<compiler>/<category>/`: Output circuits by some `<compiler>` (e.g., Tetris, Phoenix) from some `<category>` of the Hamlib benchmark suite
+- `./experiments/output_hamlib/<compiler>/<category>_su4/`: Output circuits that are further rebased to SU(4) ISA *(For Phoenix compiler, the SU(4)-based circutis can be natively generated that are the same as the rebased results from CNOT-based output circuits)*
+
+- `./experiments/output_uccsd/<compiler>/<device>`: Output circuits by some `<compiler>` (E.g., Tetris, Phoenix) for some kind of `<device>` (E.g.,  all2all,  manhattan) from the UCCSD benchmark suite
+
+- `./experiments/output_uccsd/<compiler>_opt/all2all`: Output circuits by some `<compiler>` (E.g., Tetris, Phoenix) when performing its logical-level synthesis with Qiskit O3 optimization procedure on logical circuits
+
+## Copyright and License
+
+This project is licensed under the Apache License 2.0 -- see the [LICENSE](LICENSE) file for details.

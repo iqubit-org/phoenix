@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+import sys
+sys.path.append('../..')
+
+import os
+import json
+import pytket
+import qiskit
+import pytket.qasm
+import argparse
+import warnings
+from phoenix.utils.display import print_circ_info
+import bench_utils
+
+warnings.filterwarnings('ignore')
+
+from rich.console import Console
+
+parser = argparse.ArgumentParser(description='Run a single benchmark')
+parser.add_argument('filename', type=str, help='Filename of the benchmark')
+parser.add_argument('-d', '--device', default='all2all', type=str,
+                    help='Device topology (default: all2all) (options: all2all, manhattan, sycamore)')
+parser.add_argument('-c', '--compiler', default='phoenix', type=str,
+                    help='Compiler (default: phoenix)')
+args = parser.parse_args()
+
+if 'json' in args.filename:
+    json_fname = args.filename
+    qasm_fname = args.filename.replace('json', 'qasm')
+elif 'qasm' in args.filename:
+    qasm_fname = args.filename
+    json_fname = args.filename.replace('qasm', 'json')
+else:
+    raise ValueError('Unsupported file type {}'.format(args.filename))
+
+circ = qiskit.QuantumCircuit.from_qasm_file(qasm_fname)
+with open(json_fname, 'r') as f:
+    data = json.load(f)
+
+if args.device == 'all2all':
+    coupling_map = bench_utils.All2all  # TODO: make a all2all topology
+elif args.device == 'manhattan':
+    coupling_map = bench_utils.Manhattan
+elif args.device == 'sycamore':
+    coupling_map = bench_utils.Sycamore
+else:
+    raise ValueError('Unsupported device')
+
+
+if args.compiler == 'tket':
+    circ = pytket.qasm.circuit_from_qasm(qasm_fname)
+    circ_opt = bench_utils.tket_pass(circ)
+    print_circ_info(circ, title='Original circuit')
+    print_circ_info(circ_opt, title='Optimized circuit')
+elif args.compiler == 'paulihedral':
+    circ = qiskit.QuantumCircuit.from_qasm_file(qasm_fname)
+    circ_opt = bench_utils.paulihedral_pass(data['paulis'], data['coeffs'], coupling_map=coupling_map)
+    print_circ_info(circ, title='Original circuit')
+    print_circ_info(circ_opt, title='Optimized circuit')
+elif args.compiler == 'tetris':
+    circ = qiskit.QuantumCircuit.from_qasm_file(qasm_fname)
+    circ_opt = bench_utils.tetris_pass(data['paulis'], data['coeffs'], coupling_map=coupling_map)
+    circ_opt = bench_utils.qiskit_O3_all2all(circ_opt)
+    print_circ_info(circ, title='Original circuit')
+    print_circ_info(circ_opt, title='Optimized circuit')
+elif args.compiler == 'phoenix':
+    circ = qiskit.QuantumCircuit.from_qasm_file(qasm_fname)
+    circ_opt = bench_utils.phoenix_pass(data['paulis'], data['coeffs'])
+    print_circ_info(circ, title='Original circuit')
+    print_circ_info(circ_opt, title='Optimized circuit')
+else:
+    raise ValueError('Unsupported compiler')

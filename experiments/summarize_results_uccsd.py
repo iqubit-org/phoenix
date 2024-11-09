@@ -24,7 +24,7 @@ OUTPUT_DPATH = os.path.join(OUTPUT_DPATH, args.compiler)
 if not os.path.exists(OUTPUT_DPATH):
     raise ValueError('{} deos not exist'.format(OUTPUT_DPATH))
 
-result_fname = 'result_uccsd_{}.csv'.format(args.compiler)
+result_fname = './results/result_uccsd_{}.csv'.format(args.compiler)
 
 results = {
     'all2all': pd.DataFrame(columns=['program', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q']),
