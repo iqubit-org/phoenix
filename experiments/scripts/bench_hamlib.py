@@ -58,7 +58,7 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
             data = json.load(f)
 
         if args.compiler == 'phoenix':
-            circ = bench_utils.phoenix_pass(data['paulis'], data['coeffs'])
+            circ = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], efficient=True)
             print_circ_info(circ)
             qiskit.qasm2.dump(circ, output_fname)
         elif args.compiler == 'paulihedral':

@@ -234,14 +234,14 @@ class HamiltonianModel:
         # config = self.reconfigure()
         return trotter_config(self.reconfigure(), order)
 
-    def phoenix_circuit(self) -> Circuit:
+    def phoenix_circuit(self, efficient: bool = False) -> Circuit:
         from phoenix.synthesis import ordering, utils
         # grouping and group-wise simplification
         configs = self.phoenix_reconfigure()
 
         # ordering
         blocks = [utils.config_to_circuit(config) for config in configs]
-        circ = ordering.order_blocks(blocks)
+        circ = ordering.order_blocks(blocks, efficient=efficient)
 
         return circ
 

@@ -136,7 +136,7 @@ def right_end_empty_layers(circ: Circuit, num_qubits: int = None) -> np.ndarray:
     return right_end
 
 
-def assembling_overhead(lhs: CircuitTetris, rhs: CircuitTetris, approach: str = None):
+def assembling_overhead(lhs: CircuitTetris, rhs: CircuitTetris, efficient: bool = False):
     """
     Assembling overhead considering
         - depth overhead
@@ -146,6 +146,9 @@ def assembling_overhead(lhs: CircuitTetris, rhs: CircuitTetris, approach: str = 
     lhs, rhs = lhs.copy(), rhs.copy()
 
     cost = depth_overhead(lhs.right_end, rhs.left_end)
+
+    if efficient:
+        return cost
 
     while commons := common_cliffords(lhs.last_cliffs, rhs.front_cliffs):
         indices = np.unique([cliff.qregs for cliff in commons[0]])
@@ -178,7 +181,7 @@ def depth_overhead(lhs: np.ndarray, rhs: np.ndarray):
     return cost
 
 
-def order_blocks(blocks: List[Circuit]) -> Circuit:
+def order_blocks(blocks: List[Circuit], efficient: bool = False) -> Circuit:
     """Order unarranged simplified subcircuits (blocks) in a tetris-heuristic strategy"""
     num_qubits = max(reduce(add, [block.qubits for block in blocks])) + 1
     tetris = CircuitTetris(blocks.pop(0), num_qubits=num_qubits)
@@ -188,7 +191,8 @@ def order_blocks(blocks: List[Circuit]) -> Circuit:
     # TODO: what is the suitable number of blocks to look ahead?
     # ! after field test, 40 is a good lookahead length    LOOKAHEAD = 40
     while tetris_list:
-        costs = {i: assembling_overhead(tetris, tts) for i, tts in enumerate(tetris_list[:LOOKAHEAD])}
+        costs = {i: assembling_overhead(tetris, tts, efficient=efficient) for i, tts in
+                 enumerate(tetris_list[:LOOKAHEAD])}
         i = sorted(costs.items(), key=lambda x: x[1])[0][0]
         tetris.right_assemble(tetris_list.pop(i))
 

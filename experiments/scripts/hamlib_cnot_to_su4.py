@@ -46,8 +46,8 @@ console.rule('{}: CNOT --> SU(4) ISA on hamlib-{}'.format(args.compiler, args.ty
 for fname in natsorted(os.listdir(cnot_dpath)):
     cnot_fname = os.path.join(cnot_dpath, fname)
     su4_fname = os.path.join(su4_dpath, fname)
-    # if os.path.exists(su4_fname):  # TODO: remove this line later
-    #     continue
+    if os.path.exists(su4_fname):
+        continue
     console.print('Converting {} to {}'.format(cnot_fname, su4_fname))
     circ = Circuit.from_qasm(fname=cnot_fname)
     ##############################################
