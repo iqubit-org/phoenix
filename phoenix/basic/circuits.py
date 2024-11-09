@@ -268,6 +268,9 @@ class Circuit(list):
             if gname == 'id':
                 gname = 'i'
 
+            if gname == 'u':
+                gname = 'u3'
+
             # create Gate instance
             if gname in gates.FIXED_GATES:
                 g = getattr(gates, gname.upper()).on(tq, cq)
