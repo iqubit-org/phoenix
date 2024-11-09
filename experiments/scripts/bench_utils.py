@@ -215,6 +215,7 @@ def sabre_map(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap) -> Tuple[
 def optimize_with_mapping(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap,
                           tket_opt: bool = False) -> qiskit.QuantumCircuit:
     """By default, we use Qiskit's O3 compiler to performa hardware-aware tranpilation and optimization"""
+    circ = qiskit_O3_all2all(circ)  # since input is logical circuit, we can first ally a all2all Qiskit O3
     circ = qiskit.transpile(circ, optimization_level=3,
                             basis_gates=['u1', 'u2', 'u3', 'cx'],
                             coupling_map=coupling_map, layout_method='sabre')

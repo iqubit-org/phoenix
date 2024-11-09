@@ -54,9 +54,6 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
 
         console.print('Processing', fname)
         output_fname = os.path.join(output_dpath, os.path.basename(fname).replace('.json', '.qasm'))
-        if os.path.exists(output_fname):
-            console.print('Already exists:', output_fname)
-            continue
         with open(fname, 'r') as f:
             data = json.load(f)
 
@@ -74,7 +71,6 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
                 rx.generators.complete_graph(data['num_qubits']).to_directed().edge_list()))
             print_circ_info(circ)
             qiskit.qasm2.dump(circ, output_fname)
-
         elif args.compiler == 'pauliopt':
             circ = bench_utils.pauliopt_pass(data['paulis'], data['coeffs'])
             print_circ_info(circ)

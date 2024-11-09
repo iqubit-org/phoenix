@@ -26,24 +26,16 @@ if not os.path.exists(OUTPUT_DPATH):
 
 result_fname = 'result_uccsd_{}.csv'.format(args.compiler)
 
-
-# result = pd.DataFrame(columns=['program',
-#                                'num_gates(all2all)', 'num_2q_gates(all2all)',
-#                                'depth(all2all)', 'depth_2q(all2all)',
-#                                'num_gates(manhattan)', 'num_2q_gates(manhattan)',
-#                                'depth(manhattan)', 'depth_2q(manhattan)',
-#                                'num_gates(sycamore)', 'num_2q_gates(sycamore)',
-#                                'depth(sycamore)', 'depth_2q(sycamore)'])
-
 results = {
     'all2all': pd.DataFrame(columns=['program', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q']),
+    'all2all_opt': pd.DataFrame(columns=['program', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q']),
     'manhattan': pd.DataFrame(columns=['program', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q']),
     'sycamore': pd.DataFrame(columns=['program', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q'])
 }
 
 
-for device in ['all2all', 'manhattan', 'sycamore']:
-    output_dpath = os.path.join(OUTPUT_DPATH, device)
+for dir in ['all2all', 'all2all_opt', 'manhattan', 'sycamore']:
+    output_dpath = os.path.join(OUTPUT_DPATH, dir)
     print('Processing', output_dpath)
     for fname in natsorted(os.listdir(output_dpath)):
         program_name = fname.split('.')[0]
@@ -51,7 +43,7 @@ for device in ['all2all', 'manhattan', 'sycamore']:
         output_circ_file = os.path.join(output_dpath, fname)
         circ = QuantumCircuit.from_qasm_file(output_circ_file)
 
-        results[device] = pd.concat([results[device], pd.DataFrame({
+        results[dir] = pd.concat([results[dir], pd.DataFrame({
             'program': program_name,
             'num_gates': circ.size(),
             'num_2q_gates': circ.num_nonlocal_gates(),
@@ -79,6 +71,7 @@ for fname in natsorted(os.listdir(BENCHMARK_DPATH)):
 
 
 result = pd.merge(result, results['all2all'], on='program', suffixes=('', '(all2all)'))
+result = pd.merge(result, results['all2all_opt'], on='program', suffixes=('', '(all2all_opt)'))
 result = pd.merge(result, results['manhattan'], on='program', suffixes=('', '(manhattan)'))
 result = pd.merge(result, results['sycamore'], on='program', suffixes=('', '(sycamore)'))
 
