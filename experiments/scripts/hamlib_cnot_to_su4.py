@@ -59,8 +59,8 @@ for fname in natsorted(os.listdir(cnot_dpath)):
     circ_su4 = fuse_neighbor_u3(circ_su4)
     #############################################
     # circ_su4 = rebase_to_canonical(circ)
-    print_circ_info(circ)
-    print_circ_info(circ_su4)
+    print_circ_info(circ, title='CNOT ISA circuit')
+    print_circ_info(circ_su4, title='SU(4) ISA circuit')
     circ_su4.to_qasm(su4_fname)
 
 bqskit_compiler.close()
