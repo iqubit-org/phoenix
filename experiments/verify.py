@@ -7,8 +7,8 @@ from natsort import natsorted
 # input_dpath = './output_uccsd/phoenix/all2all'
 input_dpath = '../benchmarks/uccsd_qasm'
 
-# output_dpath = './output_uccsd/phoenix/all2all'
-output_dpath = './output_uccsd/tket/all2all'
+output_dpath = './output_uccsd/phoenix/all2all'
+# output_dpath = './output_uccsd/tket/all2all'
 
 # output_dpath = 'qiskit_post_opt'
 

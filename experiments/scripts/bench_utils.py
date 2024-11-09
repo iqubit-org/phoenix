@@ -23,7 +23,6 @@ from tetris.benchmark.mypauli import pauliString
 from tetris.utils.hardware import pGraph
 from phoenix.synthesis.grouping import group_paulis_and_coeffs
 from phoenix.utils.display import print_circ_info
-
 from rich.console import Console
 
 console = Console()
@@ -49,15 +48,12 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
     # circ = ham.reconfigure_and_generate_circuit() # this is the old version
     circ = ham.phoenix_circuit()
 
-    print_circ_info(circ)
-
     if pre_gates is not None:
         circ.prepend(*pre_gates)
     if post_gates is not None:
         circ.append(*post_gates)
 
-    # logical optimization by Qiskit
-    return qiskit_O3_all2all(circ.to_qiskit())
+    return circ
 
 
 def paulihedral_pass(paulis: List[str], coeffs: List[float],
@@ -77,10 +73,10 @@ def paulihedral_pass(paulis: List[str], coeffs: List[float],
     circ.compose(qc, inplace=True)
     circ.compose(post_circ, inplace=True)
 
-    if is_all2all_coupling_map(coupling_map):
-        circ = qiskit_O3_all2all(circ)
-    else:
-        # circ = qiskit.transpile(circ, basis_gates=['u1', 'u2', 'u3', 'cx'], optimization_level=1)
+    # ! by default, Paulihedral requires Qiskit O2 optimization to remove redundant gates
+    circ = qiskit.transpile(circ, optimization_level=2, basis_gates=['u1', 'u2', 'u3', 'cx'])
+
+    if not is_all2all_coupling_map(coupling_map):
         circ = qiskit.transpile(circ,
                                 basis_gates=['u1', 'u2', 'u3', 'cx'],
                                 coupling_map=coupling_map,
@@ -88,13 +84,13 @@ def paulihedral_pass(paulis: List[str], coeffs: List[float],
                                 layout_method='sabre',
                                 optimization_level=3)
 
-    console.print({
-        'PH_swap_count': total_swaps,
-        'PH_cx_count': total_cx,
-        'CNOT': circ.num_nonlocal_gates(),
-        'Single': circ.size() - circ.num_nonlocal_gates(),
-        'Total': circ.size(),
-        'Depth': circ.depth()})
+    # console.print({
+    #     'PH_swap_count': total_swaps,
+    #     'PH_cx_count': total_cx,
+    #     'CNOT': circ.num_nonlocal_gates(),
+    #     'Single': circ.size() - circ.num_nonlocal_gates(),
+    #     'Total': circ.size(),
+    #     'Depth': circ.depth()})
 
     return circ
 
@@ -116,22 +112,19 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
     circ.compose(qc, inplace=True)
     circ.compose(post_circ, inplace=True)
 
-    if is_all2all_coupling_map(coupling_map):
-        circ = qiskit_O3_all2all(circ)
-    else:
+    if not is_all2all_coupling_map(coupling_map):
         circ = qiskit.transpile(circ,
                                 basis_gates=['u1', 'u2', 'u3', 'cx'],
                                 coupling_map=coupling_map,
                                 initial_layout=list(range(circ.num_qubits)),
                                 layout_method='sabre',
                                 optimization_level=3)
-        # circ = optimize_with_mapping(circ, coupling_map, tket_opt=False)
 
     metrics.update({'CNOT': circ.num_nonlocal_gates(),
                     'Single': circ.size() - circ.num_nonlocal_gates(),
                     'Total': circ.size(),
                     'Depth': circ.depth()})
-    console.print(metrics)
+    # console.print(metrics)
 
     return circ
 
@@ -161,7 +154,7 @@ def tket_pass(circ: pytket.Circuit) -> pytket.Circuit:
         else:
             break
 
-    # full optimization
+    # ! full peephole optimization: because when allow_swaps=True there might be fault synthesis results
     pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
 
     return circ
@@ -205,27 +198,28 @@ def sabre_map(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap) -> Tuple[
     return circ, circ.layout.initial_index_layout(), circ.layout.final_index_layout()
 
 
-def pre_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
-    """Pre-mapping optimization on logical circuits by means of TKet's pass"""
-    circ = circ.copy()
-    pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
-    return circ
-
-
-def post_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
-    """Post-mapping optimization on physical circuits by means of TKet's pass"""
-    circ = circ.copy()
-    pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
-    return circ
+# def pre_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
+#     """Pre-mapping optimization on logical circuits by means of TKet's pass"""
+#     circ = circ.copy()
+#     pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
+#     return circ
+#
+#
+# def post_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
+#     """Post-mapping optimization on physical circuits by means of TKet's pass"""
+#     circ = circ.copy()
+#     pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
+#     return circ
 
 
 def optimize_with_mapping(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap,
                           tket_opt: bool = False) -> qiskit.QuantumCircuit:
-    """By default, we use Qiskit's O3 compiler appended by a TKet's topology-preserved optimization pass"""
+    """By default, we use Qiskit's O3 compiler to performa hardware-aware tranpilation and optimization"""
     circ = qiskit.transpile(circ, optimization_level=3,
                             basis_gates=['u1', 'u2', 'u3', 'cx'],
                             coupling_map=coupling_map, layout_method='sabre')
 
+    # whether to further perform a TKet's topology-preserved optimization pass
     if tket_opt:
         circ = qiskit_to_tket(circ)
         pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
@@ -235,12 +229,14 @@ def optimize_with_mapping(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap
 
 
 def coupling_map_to_pGraph(coupling_map: CouplingMap) -> pGraph:
+    """Used in Paulihedral/Tetris synthesis"""
     G = rx.adjacency_matrix(coupling_map.graph)
     C = rx.floyd_warshall_numpy(coupling_map.graph)
     return pGraph(G, C)
 
 
 def constr_mypauli_blocks(paulis, coeffs) -> List[List[pauliString]]:
+    """Used in Paulihedral/Tetris synthesis"""
     groups = group_paulis_and_coeffs(paulis, coeffs)
     mypauli_blocks = []
     for paulis, coeffs in groups.values():
@@ -251,9 +247,9 @@ def constr_mypauli_blocks(paulis, coeffs) -> List[List[pauliString]]:
 
 
 def is_all2all_coupling_map(coupling_map: CouplingMap) -> bool:
-    # directed coupling map
+    # ! coupling_map.graph is a directed coupling map
     if coupling_map.size() * (coupling_map.size() - 1) == len(coupling_map.get_edges()):
         return True
     return False
 
-# TODO: verify utils
+# TODO: verify functionalities
