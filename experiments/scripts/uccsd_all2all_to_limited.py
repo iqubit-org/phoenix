@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-All-to-all compilation results (especially for TKet, PauliOpt, Phoenix)
+All-to-all compilation results (especially for TKet, PauliOpt, Phoenix) for UCCSD benchmarks
  to limited connectivity topology (Manhattan, Sycamore)
  for UCCSD benchmarks
 """

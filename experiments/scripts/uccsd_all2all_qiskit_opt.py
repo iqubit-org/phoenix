@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Optimize logical circuits by Qiskit O3
+Optimize logical circuits by Qiskit O3 for UCCSD benchmarks
 """
 import sys
 
