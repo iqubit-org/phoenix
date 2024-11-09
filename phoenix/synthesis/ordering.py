@@ -184,10 +184,10 @@ def order_blocks(blocks: List[Circuit]) -> Circuit:
     tetris = CircuitTetris(blocks.pop(0), num_qubits=num_qubits)
     tetris_list = [CircuitTetris(blk, num_qubits=num_qubits) for blk in blocks]
 
-    LOOKAHEAD = 20
+    LOOKAHEAD = 40
+    # TODO: what is the suitable number of blocks to look ahead?
+    # ! after field test, 40 is a good lookahead length    LOOKAHEAD = 40
     while tetris_list:
-        # TODO: what is the suitable number of blocks to look ahead?
-        # ! after field test, 40 is a good lookahead length
         costs = {i: assembling_overhead(tetris, tts) for i, tts in enumerate(tetris_list[:LOOKAHEAD])}
         i = sorted(costs.items(), key=lambda x: x[1])[0][0]
         tetris.right_assemble(tetris_list.pop(i))

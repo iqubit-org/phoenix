@@ -43,7 +43,7 @@ def qiskit_O3_all2all(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
 
 def phoenix_pass(paulis: List[str], coeffs: List[float],
                  pre_gates: List[Gate] = None, post_gates: List[Gate] = None) -> qiskit.QuantumCircuit:
-    # Phoenix's high-level optimization
+    """Phoenix's high-level optimization"""
     ham = HamiltonianModel(paulis, coeffs)
     # circ = ham.reconfigure_and_generate_circuit() # this is the old version
     circ = ham.phoenix_circuit()
@@ -53,7 +53,7 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
     if post_gates is not None:
         circ.append(*post_gates)
 
-    return circ
+    return circ.to_qiskit()
 
 
 def paulihedral_pass(paulis: List[str], coeffs: List[float],

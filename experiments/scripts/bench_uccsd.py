@@ -59,6 +59,9 @@ else:
 
 if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
     for fname in json_fnames:
+        if 'CH2_cmplt' not in fname:
+            continue
+
         console.print('Processing', fname)
         output_fname = os.path.join(output_dpath, os.path.basename(fname).replace('.json', '.qasm'))
         with open(fname, 'r') as f:

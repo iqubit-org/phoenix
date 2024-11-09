@@ -11,6 +11,7 @@ import warnings
 import qiskit.qasm2
 import bench_utils
 from natsort import natsorted
+from phoenix.utils.display import print_circ_info
 
 warnings.filterwarnings('ignore')
 
@@ -20,7 +21,7 @@ console = Console()
 
 output_dpath = '../output_uccsd/'
 
-for compiler in ['tket', 'paulihedral', 'tetris', 'phoenix']:
+for compiler in ['phoenix']:
     all2all_dpath = os.path.join(output_dpath, compiler, 'all2all')
     all2all_opt_dpath = os.path.join(output_dpath, compiler, 'all2all_opt')
 
@@ -37,4 +38,5 @@ for compiler in ['tket', 'paulihedral', 'tetris', 'phoenix']:
         console.print('Converting {} to {}'.format(all2all_fname, all2all_opt_fname))
         circ = qiskit.QuantumCircuit.from_qasm_file(all2all_fname)
         circ = bench_utils.qiskit_O3_all2all(circ)
+        print_circ_info(circ)
         qiskit.qasm2.dump(circ, all2all_opt_fname)
