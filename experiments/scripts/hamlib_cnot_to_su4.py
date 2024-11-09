@@ -8,12 +8,9 @@ sys.path.append('../..')
 import os
 import warnings
 import argparse
-import qiskit.qasm2
-import bench_utils
 from natsort import natsorted
 from phoenix import Circuit
 from phoenix.utils.display import print_circ_info
-from phoenix.synthesis.utils import rebase_to_canonical
 
 warnings.filterwarnings('ignore')
 
@@ -27,6 +24,12 @@ args = parser.parse_args()
 
 output_dpath = '../output_hamlib'
 
+from phoenix import gates
+from phoenix.synthesis.utils import unroll_su4, _normalize_canonical_coordinates, fuse_neighbor_u3
+from bqskit.compiler import Compiler
+from bqskit.passes import QuickPartitioner
+
+bqskit_compiler = Compiler()
 
 for dir in ['binaryoptimization', 'discreteoptimization', 'chemistry', 'condensedmatter']:
     cnot_dpath = os.path.join(output_dpath, args.compiler, dir)
@@ -42,11 +45,21 @@ for dir in ['binaryoptimization', 'discreteoptimization', 'chemistry', 'condense
     for fname in natsorted(os.listdir(cnot_dpath)):
         cnot_fname = os.path.join(cnot_dpath, fname)
         su4_fname = os.path.join(su4_dpath, fname)
-        if os.path.exists(su4_fname):  # TODO: remove this line later
-            continue
+        # if os.path.exists(su4_fname):  # TODO: remove this line later
+        #     continue
         console.print('Converting {} to {}'.format(cnot_fname, su4_fname))
         circ = Circuit.from_qasm(fname=cnot_fname)
-        circ_su4 = rebase_to_canonical(circ)
+        ##############################################
+        # rebase to SU(4) ISA
+        blocks = list(bqskit_compiler.compile(circ.to_bqskit(), QuickPartitioner(2)))
+        fused_2q = Circuit([gates.UnivGate(blk.get_unitary().numpy).on(list(blk.location)) for blk in blocks])
+        circ_su4 = unroll_su4(fused_2q, by='can')
+        circ_su4 = _normalize_canonical_coordinates(circ_su4)
+        circ_su4 = fuse_neighbor_u3(circ_su4)
+        #############################################
+        # circ_su4 = rebase_to_canonical(circ)
         print_circ_info(circ)
         print_circ_info(circ_su4)
         circ_su4.to_qasm(su4_fname)
+
+bqskit_compiler.close()
