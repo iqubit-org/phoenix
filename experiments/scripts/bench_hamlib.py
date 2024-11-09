@@ -84,13 +84,12 @@ else:
             console.print('Processing', fname)
 
             # TODO: delete this line
-            # if os.path.exists(os.path.join(output_dpath, os.path.basename(fname))):
-            #     continue
+            if os.path.exists(os.path.join(output_dpath, os.path.basename(fname))):
+                continue
 
             circ = pytket.qasm.circuit_from_qasm(fname)
             circ = bench_utils.tket_pass(circ)
             print_circ_info(circ)
-
-            # pytket.qasm.circuit_to_qasm(circ, os.path.join(output_dpath, os.path.basename(fname)))
+            pytket.qasm.circuit_to_qasm(circ, os.path.join(output_dpath, os.path.basename(fname)))
     else:
         raise ValueError('Unsupported compiler')
