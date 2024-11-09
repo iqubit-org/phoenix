@@ -125,6 +125,7 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
                                 initial_layout=list(range(circ.num_qubits)),
                                 layout_method='sabre',
                                 optimization_level=3)
+        # circ = optimize_with_mapping(circ, coupling_map, tket_opt=False)
 
     metrics.update({'CNOT': circ.num_nonlocal_gates(),
                     'Single': circ.size() - circ.num_nonlocal_gates(),
@@ -219,7 +220,7 @@ def post_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
 
 
 def optimize_with_mapping(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap,
-                          tket_opt: bool = True) -> qiskit.QuantumCircuit:
+                          tket_opt: bool = False) -> qiskit.QuantumCircuit:
     """By default, we use Qiskit's O3 compiler appended by a TKet's topology-preserved optimization pass"""
     circ = qiskit.transpile(circ, optimization_level=3,
                             basis_gates=['u1', 'u2', 'u3', 'cx'],
