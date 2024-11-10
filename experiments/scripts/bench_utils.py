@@ -47,7 +47,7 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
     """Phoenix's high-level optimization"""
     ham = HamiltonianModel(paulis, coeffs)
     # circ = ham.reconfigure_and_generate_circuit() # this is the old version
-    circ = ham.phoenix_circuit(efficient)
+    circ = ham.phoenix_circuit(efficient=efficient)
 
     if pre_gates is not None:
         circ.prepend(*pre_gates)

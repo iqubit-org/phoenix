@@ -54,6 +54,12 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
 
         console.print('Processing', fname)
         output_fname = os.path.join(output_dpath, os.path.basename(fname).replace('.json', '.qasm'))
+
+        if os.path.exists(output_fname):
+            console.print('Already processed', output_fname)
+            continue
+
+
         with open(fname, 'r') as f:
             data = json.load(f)
 
