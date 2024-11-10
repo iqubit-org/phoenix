@@ -23,13 +23,14 @@ OUTPUT_DPATH = os.path.join(OUTPUT_DPATH, args.compiler)
 if not os.path.exists(OUTPUT_DPATH):
     raise ValueError('There is not compiled circuit output by {} compiler'.format(args.compiler))
 
-result_fname = './results/result_{}.csv'.format(args.compiler)
+result_fname = './results/result_hamlib_{}.csv'.format(args.compiler)
 
 result = pd.DataFrame(columns=['category', 'benchmark', 'num_qubits', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q',
                                'num_gates(opt)', 'num_2q_gates(opt)', 'depth(opt)', 'depth_2q(opt)',
                                'num_gates(opt_su4)', 'num_2q_gates(opt_su4)', 'depth(opt_su4)', 'depth_2q(opt_su4)'])
 
 for dir in os.listdir(BENCHMARK_DPATH):
+    print('Processing', os.path.join(BENCHMARK_DPATH, dir))
     fnames = natsorted(os.listdir(os.path.join(BENCHMARK_DPATH, dir)))
     for fname in fnames:
         program_name = fname.split('.')[0]
@@ -37,6 +38,8 @@ for dir in os.listdir(BENCHMARK_DPATH):
         output_circ_file = os.path.join(OUTPUT_DPATH, dir, fname)
         output_circ_su4_file = os.path.join(OUTPUT_DPATH, dir + '_su4', fname)
         if not os.path.exists(output_circ_file):
+            continue
+        if not os.path.exists(output_circ_su4_file):
             continue
 
         circ_origin = QuantumCircuit.from_qasm_file(origin_circ_file)
@@ -62,3 +65,4 @@ for dir in os.listdir(BENCHMARK_DPATH):
         }, index=[0])], ignore_index=True)
 
 result.to_csv(result_fname, index=False)
+print('Saved to', result_fname)
