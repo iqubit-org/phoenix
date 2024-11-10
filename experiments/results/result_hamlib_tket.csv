@@ -1,4 +1,4 @@
-category,benchmark,num_qubits,num_gates,num_2q_gates,depth,depth_2q,num_gates(opt),num_2q_gates(opt),depth(opt),depth_2q(opt),num_gates(opt_su4),num_2q_gates(opt_su4),depth(opt_su4),depth_2q(opt_su4)
+category,program,num_qubits,num_gates,num_2q_gates,depth,depth_2q,num_gates(opt),num_2q_gates(opt),depth(opt),depth_2q(opt),num_gates(opt_su4),num_2q_gates(opt_su4),depth(opt_su4),depth_2q(opt_su4)
 binaryoptimization,flat100-4-flat100-7,90,505,282,46,30,491,268,42,26,513,141,31,15
 binaryoptimization,graph-complete_bipart-complbipart-n-10_a-5_b-5,10,525,150,327,118,296,130,184,106,298,96,169,84
 binaryoptimization,graph-gnp_k-2-gnp-k_2_n-4_rinst-05,4,84,24,60,24,46,17,30,15,28,8,15,7

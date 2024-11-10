@@ -25,7 +25,7 @@ if not os.path.exists(OUTPUT_DPATH):
 
 result_fname = './results/result_hamlib_{}.csv'.format(args.compiler)
 
-result = pd.DataFrame(columns=['category', 'benchmark', 'num_qubits', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q',
+result = pd.DataFrame(columns=['category', 'program', 'num_qubits', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q',
                                'num_gates(opt)', 'num_2q_gates(opt)', 'depth(opt)', 'depth_2q(opt)',
                                'num_gates(opt_su4)', 'num_2q_gates(opt_su4)', 'depth(opt_su4)', 'depth_2q(opt_su4)'])
 
@@ -48,7 +48,7 @@ for dir in os.listdir(BENCHMARK_DPATH):
 
         result = pd.concat([result, pd.DataFrame({
             'category': dir,
-            'benchmark': program_name,
+            'program': program_name,
             'num_qubits': circ_origin.num_qubits,
             'num_gates': circ_origin.size(),
             'num_2q_gates': circ_origin.num_nonlocal_gates(),
