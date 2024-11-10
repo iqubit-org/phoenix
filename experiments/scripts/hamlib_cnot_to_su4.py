@@ -50,8 +50,8 @@ for fname in natsorted(os.listdir(cnot_dpath), reverse=True):
         console.print('Already processed', su4_fname)
         continue
 
-    if 'Na2-JW24' in su4_fname:
-        break
+    # if 'Na2-JW24' in su4_fname:
+    #     break
 
     console.print('Converting {} to {}'.format(cnot_fname, su4_fname))
     circ = Circuit.from_qasm(fname=cnot_fname)
