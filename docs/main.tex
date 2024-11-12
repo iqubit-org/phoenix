@@ -81,10 +81,7 @@
 
 
 \begin{abstract}
-    Quantum computing ...
-
-    We propose a Pauli-based High-level Optimization ENgine for Instruction eXecution (\phoenix) of Hamiltonian simulation programs on NISQ devices
-
+    Variational quantum algorithms based on Hamilton simulation represent a specialized class of quantum programs well-suited for near-term quantum computing applications due to its modest resource requirements in terms of qubits and circuit depth. Unlike the conventional single-qubit/two-qubit gate sequence representation, Hamiltonian simulation programs are composed of disciplined subroutines known as Pauli exponentiations (Pauli strings with coefficients) that are variably arranged. To capitalize on these distinct program features, this study introduces \phoenix, a highly effective compilation framework that primarily operates at the high-level Pauli-based intermediate representation (IR) for generic Hamiltonian simulation programs. \phoenix\ exploits global program optimization opportunities to the largest extent, compared to existing SOTA methods despite some of them also utilizing similar IRs. \phoenix\ employs the binary symplectic form (BSF) to formally describe Pauli strings and reformulates IR synthesis as a sequence of Clifford transformations on BSF. It comes with a heuristic BSF simplification algorithm that simultaneously reduces Pauli strings' weights to two-qubit operations by identifying the most appropriate Clifford operators. \phoenix\ further performs a global ordering strategy in a Tetris-like fashion for these simplified IR groups, carefully balancing optimization opportunities for gate cancellation, minimizing circuit depth, and managing qubit routing overhead. Overall, \phoenix\ outperforms other SOTA dedicated compilers in benchmarking across diverse program categories, backend ISAs, and hardware topologies.
     
     
 \end{abstract}
@@ -251,8 +248,8 @@
 \begin{table}[btp]
     \centering
     \caption{QAOA benchmarking versus 2QAN.}
-    \setlength{\tabcolsep}{4.2pt}
-    \scalebox{0.8}{
+    \setlength{\tabcolsep}{3.8pt}
+    \scalebox{0.78}{
         \input{tables/qaoa.tex}
     }
     \label{tab:qaoa}
