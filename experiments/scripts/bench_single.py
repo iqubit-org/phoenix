@@ -19,7 +19,7 @@ from rich.console import Console
 parser = argparse.ArgumentParser(description='Run a single benchmark')
 parser.add_argument('filename', type=str, help='Filename of the benchmark')
 parser.add_argument('-d', '--device', default='all2all', type=str,
-                    help='Device topology (default: all2all) (options: all2all, manhattan, sycamore)')
+                    help='Device topology (default: all2all) (options: all2all, chain, manhattan, sycamore)')
 parser.add_argument('-c', '--compiler', default='phoenix', type=str,
                     help='Compiler (default: phoenix)')
 args = parser.parse_args()
@@ -39,6 +39,8 @@ with open(json_fname, 'r') as f:
 
 if args.device == 'all2all':
     coupling_map = bench_utils.All2all  # TODO: make a all2all topology
+elif args.device == 'chain':
+    coupling_map = bench_utils.Chain
 elif args.device == 'manhattan':
     coupling_map = bench_utils.Manhattan
 elif args.device == 'sycamore':

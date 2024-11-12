@@ -26,21 +26,3 @@ for fname in fnames:
             lines[i] = line.replace('e-05', 'e-2')
     with open(os.path.join('uccsd_json', json_fname.split('/')[-1]), 'w') as f:
         f.writelines(lines)
-
-#
-#
-# with open(fname, 'r') as f:
-#     lines = f.readlines()
-#
-# print(lines[200])
-# for i, line in enumerate(lines):
-#     line.replace('0.0001', '0.01')
-#
-# for line in lines:
-#     if 'e-05' in line:
-#
-#     # if '0.0001' in line:
-#     #     print(line)
-#         # line = line.replace('0.0001', '0.01')
-#         # print
-#     # print(line)

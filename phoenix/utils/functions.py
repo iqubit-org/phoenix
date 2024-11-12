@@ -54,6 +54,7 @@ def infidelity(u: np.ndarray, v: np.ndarray) -> float:
 
 def spectral_distance(u: np.ndarray, v: np.ndarray) -> float:
     """Spectral distance between two matrices"""
+    print(u.shape, v.shape)
     if u.shape != v.shape:
         raise ValueError('u and v must have the same shape.')
 

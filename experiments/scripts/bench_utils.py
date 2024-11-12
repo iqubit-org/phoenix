@@ -27,9 +27,10 @@ from rich.console import Console
 
 console = Console()
 
+Chain = CouplingMap(rx.generators.path_graph(35).to_directed().edge_list())
 Manhattan = CouplingMap(arch.read_device_topology('../manhattan.graphml').to_directed().edge_list())
 Sycamore = CouplingMap(arch.read_device_topology('../sycamore.graphml').to_directed().edge_list())
-All2all = CouplingMap(rx.generators.complete_graph(30).to_directed().edge_list())
+All2all = CouplingMap(rx.generators.complete_graph(35).to_directed().edge_list())
 
 
 def qiskit_O3_all2all(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
@@ -54,7 +55,9 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
     if post_gates is not None:
         circ.append(*post_gates)
 
-    return circ.to_qiskit()
+    # return circ.to_qiskit()
+
+    return optimize_with_mapping(circ.to_qiskit(), Chain)
 
 
 def paulihedral_pass(paulis: List[str], coeffs: List[float],

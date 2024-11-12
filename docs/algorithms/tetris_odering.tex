@@ -1,23 +1,23 @@
-% \documentclass{article}
-% \usepackage[ruled, vlined, linesnumbered]{algorithm2e}
-% \usepackage{amsmath}
-% \usepackage{mhchem}
-% \usepackage{xcolor}
-% \usepackage{amssymb}
+\documentclass{article}
+\usepackage[ruled, vlined, linesnumbered]{algorithm2e}
+\usepackage{amsmath}
+\usepackage{mhchem}
+\usepackage{xcolor}
+\usepackage{amssymb}
 
-% \begin{document}
+\begin{document}
 \begin{figure}
     % \removelatexerror    
        \begin{algorithm*}[H]
        \SetAlgoLined
-       \caption{Pauli Strings Simplification in BSF}
+       \caption{Ordering Simplified IR Groups}
        \label{algo:simplification}
        \SetKwInOut{Input}{Input}
        \SetKwInOut{Output}{Output}
        \SetKwBlock{Assumption}{Assumption}{}
    
        % \Input{Pauli strings with corresponding coefficients (\textit{pls}, \textit{coes})}
-       \Input{Pauli strings list \textit{pls}}
+       \Input{Simplified subcircuit list \textit{sbs}}
        \Output{Reconfigured circuit components list \textit{cfg}}
    
        % \tcp{Following pseudocode only involves transformation on pls while omitting coes WLOG}
@@ -52,14 +52,14 @@
        }
        \BlankLine
        \textit{cfg}.\textsc{append}(\textit{bsf})\;
-       \For{cliff, local\_bsf \textbf{in} \textsc{reversed}(cliffs\_with\_locals)}{
+       \For{cliff, local\_bsf \textbf{in} cliffs\_with\_locals}{
            \tcp{Clifford2Q operators are added as conjugations, with local Pauli strings removed before each search epoch}
            \textit{cfg}.\textsc{prepend}(\textit{cliff})\;
-           \textit{cfg}.\textsc{append}(\textit{cliff})\;
            \textit{cfg}.\textsc{append}(\textit{local\_bsf})\;
+           \textit{cfg}.\textsc{append}(\textit{cliff})\;
        }
    
        \end{algorithm*}
    \end{figure}
-% \end{document}
+\end{document}
    
