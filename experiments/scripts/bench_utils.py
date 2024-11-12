@@ -83,9 +83,12 @@ def paulihedral_pass(paulis: List[str], coeffs: List[float],
     # (Circuit.from_qiskit(circ)
 
     # ! by default, Paulihedral requires Qiskit O2 optimization to remove redundant gates
+    print_circ_info(circ)
     circ = qiskit.transpile(circ, optimization_level=2, basis_gates=['u1', 'u2', 'u3', 'cx'])
 
-    print(circ)
+    # print_circ_info(circ)
+
+    # print(circ)
     if not is_all2all_coupling_map(coupling_map):
         circ = qiskit.transpile(circ,
                                 basis_gates=['u1', 'u2', 'u3', 'cx'],
