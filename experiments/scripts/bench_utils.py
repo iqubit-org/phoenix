@@ -56,6 +56,9 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
 
     return circ.to_qiskit()
 
+    return qiskit.transpile(circ.to_qiskit(), optimization_level=2, basis_gates=['u1', 'u2', 'u3', 'cx'])
+    # circ =
+
 
 def paulihedral_pass(paulis: List[str], coeffs: List[float],
                      pre_gates: List[Gate] = None, post_gates: List[Gate] = None,
@@ -74,9 +77,18 @@ def paulihedral_pass(paulis: List[str], coeffs: List[float],
     circ.compose(qc, inplace=True)
     circ.compose(post_circ, inplace=True)
 
+    # print(circ)
+
+    from qiskit.transpiler import passes, PassManager
+
+    # pm = PassManager([
+    #     passes.InverseCancellation([]) ])
+    # (Circuit.from_qiskit(circ)
+
     # ! by default, Paulihedral requires Qiskit O2 optimization to remove redundant gates
     circ = qiskit.transpile(circ, optimization_level=2, basis_gates=['u1', 'u2', 'u3', 'cx'])
 
+    print(circ)
     if not is_all2all_coupling_map(coupling_map):
         circ = qiskit.transpile(circ,
                                 basis_gates=['u1', 'u2', 'u3', 'cx'],

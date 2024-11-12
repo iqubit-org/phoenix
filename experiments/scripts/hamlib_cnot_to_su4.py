@@ -43,7 +43,7 @@ if not os.path.exists(su4_dpath):
 
 console.rule('{}: CNOT --> SU(4) ISA on hamlib-{}'.format(args.compiler, args.type))
 
-for fname in natsorted(os.listdir(cnot_dpath), reverse=True):
+for fname in natsorted(os.listdir(cnot_dpath)):
     cnot_fname = os.path.join(cnot_dpath, fname)
     su4_fname = os.path.join(su4_dpath, fname)
     if os.path.exists(su4_fname):

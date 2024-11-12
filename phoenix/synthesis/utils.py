@@ -131,6 +131,22 @@ def unroll_su4(circ: Circuit, by: str = 'can') -> Circuit:
 
     return circ_unrolled
 
+#     # Use multiprocessing to accelerate the unrolling process
+#     from multiprocessing import Pool
+#
+#
+#     with Pool() as pool:
+#         circ_unrolled = reduce(add, pool.map(unroll_gate, circ))
+#
+#     return circ_unrolled
+#
+# def unroll_gate(g) -> Circuit:
+#     if g.num_qregs == 2 and not g.cqs:
+#         # if by == 'can':
+#         return decompose.can_decompose(g)
+#         # if by == 'cnot':
+#         #     return decompose.kak_decompose(g)
+#     return Circuit([g])
 
 def fuse_blocks(blocks: List[Circuit], name: str = 'U') -> Circuit:
     """
