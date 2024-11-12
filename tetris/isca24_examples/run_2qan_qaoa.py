@@ -1,3 +1,8 @@
+import sys
+
+sys.path.append('../..')
+
+
 import numpy as np
 import time
 
@@ -9,12 +14,18 @@ import qiskit
 import os
 import pickle as pkl
 from qiskit import transpile, QuantumCircuit
-from arch import load_coupling_map
+# from arch import load_coupling_map
+from tetris.utils.hardware import pGraph, load_coupling_map
 import pdb
 from collections import defaultdict
 import re
 
+idx = 0
+
 def qs_compiler(qasm, coupling_map, qaoa=True, layers=1, trials=1, mapper='qiskit', bgate='rzz', params=None):
+
+    global idx
+
     print(f'coupling is: {coupling_map}')
     qs_circ = None
     qs_swap = (0, 0) # the number of swaps in the format (#swaps,#swaps merged with circuit gate)
@@ -49,6 +60,25 @@ def qs_compiler(qasm, coupling_map, qaoa=True, layers=1, trials=1, mapper='qiski
             # For quantum simulation circuits, we assume each layer has the same time steps
             qs_circ0, swaps1 = router.run(layers=layers, msmt='True')
         qs_circ0 = transpile(qs_circ0, basis_gates=None, optimization_level=3)
+
+        qc_tmp = transpile(qs_circ0, basis_gates=['u1', 'u2', 'u3', 'cx', 'reset', 'measure'], optimization_level=3)
+
+        qc_tmp.qasm(filename='qaoa_{}.qasm'.format(idx))
+        idx += 1
+
+
+        #
+        #
+        # qs_circ0 = transpile(qs_circ0, basis_gates=['u1', 'u2', 'u3', 'cx', 'reset', 'measure'], optimization_level=3)
+        # print(qs_circ0)
+        # print(type(qs_circ0))
+        #
+        # return qs_circ0.num_nonlocal_gates(), qs_circ0.depth(lambda instr: instr.operation.num_qubits > 1)
+        #
+
+
+
+
         # qs_circ0 is the routed circuit without gate decomposition
         # swaps1 is a tuple=(#swaps,#swaps merged with circuit gate)
         print("drawing qs_circ0")
@@ -57,7 +87,7 @@ def qs_compiler(qasm, coupling_map, qaoa=True, layers=1, trials=1, mapper='qiski
         print(qs_circ0.qasm())
         end = time.time()
         print("Total run time: ", end - start)
-        print(qs_circ0)
+        # print(qs_circ0)
 
         c = qs_circ0.qasm().split("\n")
         #print(c)
@@ -132,7 +162,8 @@ def runner(file_name):
     #read input file:
     # graph_path = "benchmarks/random_graph/" + str(lq) + "_0." + str(d) + "_0.txt"
     # graph_path = "myBench/random_graph" + str(lq) + "_" + str(d) + "_0.txt"
-    graph_path = "myBench/" + file_name
+    # graph_path = "../myBench/" + file_name
+    graph_path = file_name
 
     # graph_path = "myBench/"+file_name
     print(f'graph_path is {graph_path}')
@@ -145,6 +176,7 @@ def runner(file_name):
     gates = graph_file.read().split('\n')
 
     info = gates[0].split(' ')
+    print(info)
     logical_q_count = int(info[0])
     logical_e_count = int(info[1])
     for g in gates[1:]:
@@ -208,49 +240,67 @@ def runner(file_name):
 #     return (total_gate_count, depth, total_time)
 
 
-if __name__ == '__main__':
-    # print('random_graph10_0.1_1.txt')
-    # total_gate_count, swap_count, depth, total_time = runner('random_graph10_0.1_1.txt')
+# if __name__ == '__main__':
+#     # print('random_graph10_0.1_1.txt')
+#     # total_gate_count, swap_count, depth, total_time = runner('random_graph10_0.1_1.txt')
 
-    result = {}
-    swapCOUNT = []
-    cxCOUNT = []
-    depthCOUNT = []
-    # Specify the folder path
-    folder_path = 'myBench'  # Replace with the actual path to your folder
 
-    # Get a list of all files in the folder
-    file_names = os.listdir(folder_path)
+result = {}
+swapCOUNT = []
+cxCOUNT = []
+depthCOUNT = []
+# Specify the folder path
+# folder_path = '../myBench'  # Replace with the actual path to your folder
 
-    # Print the list of file names
-    file_names.sort()
-    skip = ['.DS_Store', 'tetris', '2qan_results.txt', 'construct_qaoa_circ_json_regular.py', 'random_graph10_0.1_0.txt', 'random_graph10_0.1_1.txt', 'random_graph10_0.1_2.txt', 'random_graph10_0.1_4.txt']
-    for file_name in file_names:
-        if file_name in skip:
-            continue
-            
-        print(file_name)        
-       
-        print("scheduling: ", file_name)
-        total_gate_count, swap_count, depth, total_time = runner(file_name)
-        result[file_name] = (total_gate_count, swap_count, depth, total_time)
-        cxCOUNT.append(total_gate_count)
-        swapCOUNT.append(swap_count)
-        depthCOUNT.append(depth)
-    #save result
-    with open("myBench/2qan_results.txt", "w") as file:
-        for key, value in result.items():
-            file.write(f"{key} CNOT gate count by 2QAN: {value[0]}\n")
-    # print(result)
-    print('depth:')
-    for i in depthCOUNT:
-        print(i)
-    print('swap:')
-    for i in swapCOUNT:
-        print(i)
-    print('cx:')
-    for i in cxCOUNT:
-        print(i)
+folder_path = '../../benchmarks/qaoa_text'
+
+# Get a list of all files in the folder
+file_names = [os.path.join(folder_path, fname) for fname in os.listdir(folder_path)]
+
+# Print the list of file names
+file_names.sort()
+skip = ['.DS_Store', 'tetris',
+        '2qan_results.txt', 'construct_qaoa_circ_json_regular.py',
+        'random_graph10_0.1_0.txt', 'random_graph10_0.1_1.txt',
+        'random_graph10_0.1_2.txt', 'random_graph10_0.1_4.txt',
+        '__init__.py', 'construct_qaoa_circ_json_regular.py', 'tetris']
+
+for file_name in file_names:
+    if file_name in skip:
+        continue
+
+    print(file_name)
+
+    print("scheduling: ", file_name)
+    total_gate_count, swap_count, depth, total_time = runner(file_name)
+
+    # num_2q, depth_2q = runner(file_name)
+    # cxCOUNT.append(num_2q)
+    # depthCOUNT.append(depth_2q)
+    # result[file_name] = (num_2q, 0, depth_2q)
+
+
+    result[file_name] = (total_gate_count, swap_count, depth, total_time)
+    cxCOUNT.append(total_gate_count)
+    swapCOUNT.append(swap_count)
+    depthCOUNT.append(depth)
+#save result
+with open("../myBench/2qan_results.txt", "w") as file:
+    for key, value in result.items():
+        file.write(f"{key} CNOT gate count by 2QAN: {value[0]}\n")
+# print(result)
+print('depth:')
+for i in depthCOUNT:
+    print(i)
+print('swap:')
+for i in swapCOUNT:
+    print(i)
+print('cx:')
+for i in cxCOUNT:
+    print(i)
+
+
+print(file_names)
 
 ###############################################################
     # coupling = ["ibm"]

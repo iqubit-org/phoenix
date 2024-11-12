@@ -55,9 +55,9 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
     if post_gates is not None:
         circ.append(*post_gates)
 
-    # return circ.to_qiskit()
+    return circ.to_qiskit()
 
-    return optimize_with_mapping(circ.to_qiskit(), Chain)
+    # return optimize_with_mapping(circ.to_qiskit(), Chain)
 
 
 def paulihedral_pass(paulis: List[str], coeffs: List[float],

@@ -9,6 +9,7 @@ from phoenix import models
 
 json_dpath = './qaoa_json'
 qasm_dpath = './qaoa_qasm'
+text_dpath = './qaoa_text'
 
 
 # only testing ordering for parameter-shift layer of QAOA
@@ -32,6 +33,20 @@ for n in [16, 20, 24]:
     with open(os.path.join(json_dpath, 'qaoa_rand_{}.json'.format(n)), 'w') as f:
         json.dump({'num_qubits': n, 'paulis': paulis, 'coeffs': coeffs}, f, indent=4)
 
+    lines = ['{} {}\n'.format(n, g.number_of_edges())]
+    for i, j in g.edges:
+        lines.append('{} {}\n'.format(i, j))
+    with open(os.path.join(text_dpath, 'qaoa_rand_{}.txt'.format(n)), 'w') as f:
+        f.writelines(lines)
+        # f.write('paulis:\n')
+        # for p in paulis:
+        #     f.write(p + '\n')
+        # f.write('coeffs:\n')
+        # for c in coeffs:
+        #     f.write(str(c) + '\n')
+
+
+
     print(n, len(paulis))
 
 
@@ -54,6 +69,12 @@ for n in [16, 20, 24]:
 
     with open(os.path.join(json_dpath, 'qaoa_reg3_{}.json'.format(n)), 'w') as f:
         json.dump({'num_qubits': n, 'paulis': paulis, 'coeffs': coeffs}, f, indent=4)
+
+    lines = ['{} {}\n'.format(n, g.number_of_edges())]
+    for i, j in g.edges:
+        lines.append('{} {}\n'.format(i, j))
+    with open(os.path.join(text_dpath, 'qaoa_reg3_{}.txt'.format(n)), 'w') as f:
+        f.writelines(lines)
 
     print(n, len(paulis))
 

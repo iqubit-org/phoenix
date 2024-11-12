@@ -44,4 +44,9 @@ for qasm_fname in qasm_fnames:
 
 console.print(description)
 
+# with open('description_uccsd.txt', 'w') as f:
+#     f.write(description.to_string())
+
+# description.to_latex('description_uccsd.tex', index=False)
+
 description.to_csv('description_uccsd.csv', index=False)
