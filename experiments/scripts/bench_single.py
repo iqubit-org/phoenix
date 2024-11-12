@@ -9,7 +9,7 @@ import qiskit
 import pytket.qasm
 import argparse
 import warnings
-from phoenix.utils.display import print_circ_info
+from phoenix.utils.display import print_circ_info, console
 import bench_utils
 
 warnings.filterwarnings('ignore')
@@ -47,11 +47,33 @@ else:
     raise ValueError('Unsupported device')
 
 
+import sys
+sys.path.append('..')
+from bqskit.compiler import Compiler
+import bqskit
+from bqskit.passes import QuickPartitioner
+from phoenix import Circuit, gates
+from phoenix.utils.operations import is_tensor_prod
+
+
+bqskit_compiler = Compiler()
+workflow = QuickPartitioner(2)
+
+def su4_circ_stats(circ):
+    """Statistic of #2Q and Depth-2Q of SU(4)-based circuit."""
+    blocks = list(bqskit_compiler.compile(circ, workflow))
+    fused_2q = Circuit([gates.UnivGate(blk.get_unitary().numpy).on(list(blk.location)) for blk in blocks])
+    circ_su4 = Circuit([g for g in fused_2q if not is_tensor_prod(g.data)])
+    return circ_su4.num_gates, len(circ_su4.layer())
+
+
+
 if args.compiler == 'tket':
     circ = pytket.qasm.circuit_from_qasm(qasm_fname)
     circ_opt = bench_utils.tket_pass(circ)
     print_circ_info(circ, title='Original circuit')
     print_circ_info(circ_opt, title='Optimized circuit')
+    console.print(su4_circ_stats(Circuit.from_tket(circ_opt).to_bqskit()))
 elif args.compiler == 'paulihedral':
     circ = qiskit.QuantumCircuit.from_qasm_file(qasm_fname)
     circ_opt = bench_utils.paulihedral_pass(data['paulis'], data['coeffs'], coupling_map=coupling_map)

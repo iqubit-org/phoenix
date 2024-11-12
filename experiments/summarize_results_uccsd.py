@@ -38,7 +38,7 @@ for dir in ['all2all', 'all2all_opt', 'manhattan', 'sycamore']:
     output_dpath = os.path.join(OUTPUT_DPATH, dir)
     print('Processing', output_dpath)
     for fname in natsorted(os.listdir(output_dpath)):
-        program_name = fname.split('.')[0]
+        program_name = fname.replace('.qasm', '')
         program_name = program_name.replace('_sto3g', '')  # simplify the name
         output_circ_file = os.path.join(output_dpath, fname)
         circ = QuantumCircuit.from_qasm_file(output_circ_file)

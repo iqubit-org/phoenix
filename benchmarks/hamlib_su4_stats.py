@@ -40,7 +40,7 @@ for dir in stats:
         #     q0, q1 = g.tqs
         #     qc_su4.cx(q0, q1)
 
-        stats[dir][fname] = {
+        stats[dir][fname.split('.')[0]] = {
             # 'num_su4': qc_su4.size(),
             # 'depth_su4': qc_su4.depth()
             'num_su4': circ_su4.num_gates,

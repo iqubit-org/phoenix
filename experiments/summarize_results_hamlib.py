@@ -57,7 +57,7 @@ for dir in os.listdir(BENCHMARK_DPATH):
     print('Processing', os.path.join(BENCHMARK_DPATH, dir))
     fnames = natsorted(os.listdir(os.path.join(BENCHMARK_DPATH, dir)))
     for fname in fnames:
-        program_name = fname.split('.')[0]
+        program_name = fname.replace('.qasm', '')
         origin_circ_file = os.path.join(BENCHMARK_DPATH, dir, fname)
         output_circ_file = os.path.join(OUTPUT_DPATH, dir, fname)
         if not os.path.exists(output_circ_file):
@@ -83,8 +83,8 @@ for dir in os.listdir(BENCHMARK_DPATH):
             'num_2q_gates': circ_origin.num_nonlocal_gates(),
             'depth': circ_origin.depth(),
             'depth_2q': circ_origin.depth(lambda instr: instr.operation.num_qubits > 1),
-            'num_su4': su4_stats_origin[dir][fname]['num_su4'],
-            'depth_su4': su4_stats_origin[dir][fname]['depth_su4'],
+            'num_su4': su4_stats_origin[dir][program_name]['num_su4'],
+            'depth_su4': su4_stats_origin[dir][program_name]['depth_su4'],
             'num_gates(opt)': circ_opt.size(),
             'num_2q_gates(opt)': circ_opt.num_nonlocal_gates(),
             'depth(opt)': circ_opt.depth(),

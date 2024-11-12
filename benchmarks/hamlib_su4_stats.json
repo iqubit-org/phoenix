@@ -1,408 +1,408 @@
 {
   "binaryoptimization": {
-    "flat100-4-flat100-7.cnf-90-cc.qasm": {
+    "flat100-4-flat100-7.cnf-90-cc": {
       "num_su4": 141,
       "depth_su4": 15
     },
-    "graph-complete_bipart-complbipart-n-10_a-5_b-5.qasm": {
+    "graph-complete_bipart-complbipart-n-10_a-5_b-5": {
       "num_su4": 75,
       "depth_su4": 59
     },
-    "graph-gnp_k-2-gnp-k_2_n-4_rinst-05.qasm": {
+    "graph-gnp_k-2-gnp-k_2_n-4_rinst-05": {
       "num_su4": 10,
       "depth_su4": 10
     },
-    "graph-gnp_k-4-gnp-k_4_n-6_rinst-15.qasm": {
+    "graph-gnp_k-4-gnp-k_4_n-6_rinst-15": {
       "num_su4": 43,
       "depth_su4": 37
     },
-    "graph-gnp_k-4-gnp-k_4_n-40_rinst-07.qasm": {
+    "graph-gnp_k-4-gnp-k_4_n-40_rinst-07": {
       "num_su4": 800,
       "depth_su4": 598
     },
-    "graph-gnp_k-5-gnp-k_5_n-24_rinst-04.qasm": {
+    "graph-gnp_k-5-gnp-k_5_n-24_rinst-04": {
       "num_su4": 188,
       "depth_su4": 40
     },
-    "graph-gnp_k-5-gnp-k_5_n-60_rinst-19.qasm": {
+    "graph-gnp_k-5-gnp-k_5_n-60_rinst-19": {
       "num_su4": 1969,
       "depth_su4": 1465
     },
-    "graph-gnp_k-5-gnp-k_5_n-90_rinst-02.qasm": {
+    "graph-gnp_k-5-gnp-k_5_n-90_rinst-02": {
       "num_su4": 2946,
       "depth_su4": 2126
     },
-    "graph-regular_reg-4-reg-4_n-90_rinst-07.qasm": {
+    "graph-regular_reg-4-reg-4_n-90_rinst-07": {
       "num_su4": 492,
       "depth_su4": 88
     },
-    "uf20-7-uf20-0384.cnf-8-res.qasm": {
+    "uf20-7-uf20-0384.cnf-8-res": {
       "num_su4": 26,
       "depth_su4": 15
     },
-    "uf100-2-uf100-0396.cnf-46-res.qasm": {
+    "uf100-2-uf100-0396.cnf-46-res": {
       "num_su4": 275,
       "depth_su4": 105
     },
-    "uf100-2-uf100-0601.cnf-46-res.qasm": {
+    "uf100-2-uf100-0601.cnf-46-res": {
       "num_su4": 291,
       "depth_su4": 101
     },
-    "uf100-4-uf100-0246.cnf-70-res.qasm": {
+    "uf100-4-uf100-0246.cnf-70-res": {
       "num_su4": 780,
       "depth_su4": 352
     },
-    "uuf100-0-uuf100-0810.cnf-40-res.qasm": {
+    "uuf100-0-uuf100-0810.cnf-40-res": {
       "num_su4": 175,
       "depth_su4": 71
     },
-    "uuf100-8-uuf100-0509.cnf-40-cc.qasm": {
+    "uuf100-8-uuf100-0509.cnf-40-cc": {
       "num_su4": 203,
       "depth_su4": 73
     }
   },
   "discreteoptimization": {
-    "TSP_Ncity-4-tsp_rand-002_Ncity-4_enc-stdbinary.qasm": {
+    "TSP_Ncity-4-tsp_rand-002_Ncity-4_enc-stdbinary": {
       "num_su4": 59,
       "depth_su4": 48
     },
-    "TSP_Ncity-5-tsp_prob-ts225_Ncity-5_enc-unary.qasm": {
+    "TSP_Ncity-5-tsp_prob-ts225_Ncity-5_enc-unary": {
       "num_su4": 100,
       "depth_su4": 22
     },
-    "TSP_Ncity-7-tsp_prob-lin105_Ncity-7_enc-unary.qasm": {
+    "TSP_Ncity-7-tsp_prob-lin105_Ncity-7_enc-unary": {
       "num_su4": 294,
       "depth_su4": 46
     },
-    "TSP_Ncity-8-tsp_prob-d198_Ncity-8_enc-unary.qasm": {
+    "TSP_Ncity-8-tsp_prob-d198_Ncity-8_enc-unary": {
       "num_su4": 448,
       "depth_su4": 61
     },
-    "TSP_Ncity-8-tsp_prob-ulysses22_Ncity-8_enc-stdbinary.qasm": {
+    "TSP_Ncity-8-tsp_prob-ulysses22_Ncity-8_enc-stdbinary": {
       "num_su4": 974,
       "depth_su4": 892
     },
-    "TSP_Ncity-10-tsp_prob-pr76_Ncity-10_enc-unary.qasm": {
+    "TSP_Ncity-10-tsp_prob-pr76_Ncity-10_enc-unary": {
       "num_su4": 900,
       "depth_su4": 97
     },
-    "TSP_Ncity-10-tsp_prob-st70_Ncity-10_enc-unary.qasm": {
+    "TSP_Ncity-10-tsp_prob-st70_Ncity-10_enc-unary": {
       "num_su4": 900,
       "depth_su4": 97
     },
-    "TSP_Ncity-16-tsp_prob-fl417_Ncity-16_enc-stdbinary.qasm": {
+    "TSP_Ncity-16-tsp_prob-fl417_Ncity-16_enc-stdbinary": {
       "num_su4": 13725,
       "depth_su4": 13244
     },
-    "TSP_Ncity-16-tsp_prob-kroD100_Ncity-16_enc-stdbinary.qasm": {
+    "TSP_Ncity-16-tsp_prob-kroD100_Ncity-16_enc-stdbinary": {
       "num_su4": 13725,
       "depth_su4": 13244
     },
-    "binary-color02-dsjc1000.1_k-3-dsjc1000.1.qasm": {
+    "binary-color02-dsjc1000.1_k-3-dsjc1000.1": {
       "num_su4": 878,
       "depth_su4": 365
     },
-    "binary-graph-regular_k-5-reg-5_n-10_rinst-07.qasm": {
+    "binary-graph-regular_k-5-reg-5_n-10_rinst-07": {
       "num_su4": 2939,
       "depth_su4": 2264
     },
-    "gray-color02-1-fullins_5_k-5-1-fullins_5.qasm": {
+    "gray-color02-1-fullins_5_k-5-1-fullins_5": {
       "num_su4": 12028,
       "depth_su4": 6421
     },
-    "gray-color02-will199gpia_k-3-will199gpia.qasm": {
+    "gray-color02-will199gpia_k-3-will199gpia": {
       "num_su4": 2032,
       "depth_su4": 817
     },
-    "unary-color02-ash608gpia_k-3-ash608gpia.qasm": {
+    "unary-color02-ash608gpia_k-3-ash608gpia": {
       "num_su4": 1134,
       "depth_su4": 54
     },
-    "unary-color02-queen13_13_k-4-queen13_13.qasm": {
+    "unary-color02-queen13_13_k-4-queen13_13": {
       "num_su4": 300,
       "depth_su4": 29
     }
   },
   "chemistry": {
-    "BH-JW-10.qasm": {
+    "BH-JW-10": {
       "num_su4": 1711,
       "depth_su4": 1683
     },
-    "Be2-JW-6.qasm": {
+    "Be2-JW-6": {
       "num_su4": 198,
       "depth_su4": 192
     },
-    "C2-JW-18.qasm": {
+    "C2-JW-18": {
       "num_su4": 23962,
       "depth_su4": 23829
     },
-    "H2-JW-8.qasm": {
+    "H2-JW-8": {
       "num_su4": 904,
       "depth_su4": 889
     },
-    "HF-BK12.qasm": {
+    "HF-BK12": {
       "num_su4": 4097,
       "depth_su4": 4083
     },
-    "HF-parity10.qasm": {
+    "HF-parity10": {
       "num_su4": 1817,
       "depth_su4": 1811
     },
-    "Li2-JW14.qasm": {
+    "Li2-JW14": {
       "num_su4": 5890,
       "depth_su4": 5829
     },
-    "LiH-parity-4.qasm": {
+    "LiH-parity-4": {
       "num_su4": 39,
       "depth_su4": 39
     },
-    "N2-JW-22.qasm": {
+    "N2-JW-22": {
       "num_su4": 74130,
       "depth_su4": 73903
     },
-    "N2-parity-14.qasm": {
+    "N2-parity-14": {
       "num_su4": 4878,
       "depth_su4": 4856
     },
-    "NH-BK-14.qasm": {
+    "NH-BK-14": {
       "num_su4": 8631,
       "depth_su4": 8611
     },
-    "NH-JW-14.qasm": {
+    "NH-JW-14": {
       "num_su4": 10263,
       "depth_su4": 10180
     },
-    "Na2-JW24.qasm": {
+    "Na2-JW24": {
       "num_su4": 118420,
       "depth_su4": 118099
     },
-    "O3-BK22.qasm": {
+    "O3-BK22": {
       "num_su4": 62423,
       "depth_su4": 62326
     },
-    "OH-JW10.qasm": {
+    "OH-JW10": {
       "num_su4": 1711,
       "depth_su4": 1683
     },
-    "OH-JW12.qasm": {
+    "OH-JW12": {
       "num_su4": 5075,
       "depth_su4": 5013
     },
-    "OH-parity12.qasm": {
+    "OH-parity12": {
       "num_su4": 5286,
       "depth_su4": 5278
     },
-    "all-vib-bh-enc_stdbinary_dvalues_d-level-4.qasm": {
+    "all-vib-bh-enc_stdbinary_dvalues_d-level-4": {
       "num_su4": 1,
       "depth_su4": 1
     },
-    "all-vib-bhf2-mu_y_prime_enc_stdbinary_dvalues_8-8-8-8-8-8.qasm": {
+    "all-vib-bhf2-mu_y_prime_enc_stdbinary_dvalues_8-8-8-8-8-8": {
       "num_su4": 26,
       "depth_su4": 13
     },
-    "all-vib-c2h-mu_y_prime_enc_stdbinary_dvalues_8-8-4-4.qasm": {
+    "all-vib-c2h-mu_y_prime_enc_stdbinary_dvalues_8-8-4-4": {
       "num_su4": 13,
       "depth_su4": 13
     },
-    "all-vib-c2h-mu_z_prime_enc_gray_dvalues_4-4-4-4.qasm": {
+    "all-vib-c2h-mu_z_prime_enc_gray_dvalues_4-4-4-4": {
       "num_su4": 2,
       "depth_su4": 1
     },
-    "all-vib-ch2-mu_y_prime_enc_gray_dvalues_16-16-16.qasm": {
+    "all-vib-ch2-mu_y_prime_enc_gray_dvalues_16-16-16": {
       "num_su4": 44,
       "depth_su4": 43
     },
-    "all-vib-cyclo_propene-mu_x_prime_enc_stdbinary_dvalues_8-8-8-8-8-8-8-8-8-4-4-4-4-4-4.qasm": {
+    "all-vib-cyclo_propene-mu_x_prime_enc_stdbinary_dvalues_8-8-8-8-8-8-8-8-8-4-4-4-4-4-4": {
       "num_su4": 40,
       "depth_su4": 13
     },
-    "all-vib-cyclo_propene-mu_x_prime_enc_unary_dvalues_16-16-16-16-16-16-16-16-16-16-16-16-16-16-16.qasm": {
+    "all-vib-cyclo_propene-mu_x_prime_enc_unary_dvalues_16-16-16-16-16-16-16-16-16-16-16-16-16-16-16": {
       "num_su4": 60,
       "depth_su4": 15
     },
-    "all-vib-f2-enc_gray_dvalues_d-level-16.qasm": {
+    "all-vib-f2-enc_gray_dvalues_d-level-16": {
       "num_su4": 145,
       "depth_su4": 144
     },
-    "all-vib-fccf-enc_gray_dvalues_4-4-4-4-4-4-4.qasm": {
+    "all-vib-fccf-enc_gray_dvalues_4-4-4-4-4-4-4": {
       "num_su4": 3137,
       "depth_su4": 3061
     },
-    "all-vib-fccf-mu_y_prime_enc_stdbinary_dvalues_16-16-16-16-8-8-8.qasm": {
+    "all-vib-fccf-mu_y_prime_enc_stdbinary_dvalues_16-16-16-16-8-8-8": {
       "num_su4": 64,
       "depth_su4": 64
     },
-    "all-vib-fccf-mu_y_prime_enc_unary_dvalues_8-8-8-8-8-8-8.qasm": {
+    "all-vib-fccf-mu_y_prime_enc_unary_dvalues_8-8-8-8-8-8-8": {
       "num_su4": 7,
       "depth_su4": 7
     },
-    "all-vib-fccf-mu_z_prime_enc_unary_dvalues_16-16-16-16-16-16-16.qasm": {
+    "all-vib-fccf-mu_z_prime_enc_unary_dvalues_16-16-16-16-16-16-16": {
       "num_su4": 15,
       "depth_su4": 15
     },
-    "all-vib-h2co-mu_y_prime_enc_unary_dvalues_16-16-16-16-16-16.qasm": {
+    "all-vib-h2co-mu_y_prime_enc_unary_dvalues_16-16-16-16-16-16": {
       "num_su4": 30,
       "depth_su4": 15
     },
-    "all-vib-hc3h2cn-mu_y_prime_enc_stdbinary_dvalues_4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4.qasm": {
+    "all-vib-hc3h2cn-mu_y_prime_enc_stdbinary_dvalues_4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4": {
       "num_su4": 12,
       "depth_su4": 1
     },
-    "all-vib-hco-enc_unary_dvalues_4-4-4.qasm": {
+    "all-vib-hco-enc_unary_dvalues_4-4-4": {
       "num_su4": 8193,
       "depth_su4": 8136
     },
-    "all-vib-hno-mu_x_prime_enc_unary_dvalues_4-4-4.qasm": {
+    "all-vib-hno-mu_x_prime_enc_unary_dvalues_4-4-4": {
       "num_su4": 9,
       "depth_su4": 3
     },
-    "all-vib-o3-enc_gray_dvalues_8-8-8.qasm": {
+    "all-vib-o3-enc_gray_dvalues_8-8-8": {
       "num_su4": 16907,
       "depth_su4": 16898
     },
-    "all-vib-o3-mu_y_prime_enc_unary_dvalues_4-4-4.qasm": {
+    "all-vib-o3-mu_y_prime_enc_unary_dvalues_4-4-4": {
       "num_su4": 3,
       "depth_su4": 3
     }
   },
   "condensedmatter": {
-    "BH_D-1_d-4-bh_graph-1D-grid-nonpbc-qubitnodes_Lx-12_U-40_enc-unary_d-4.qasm": {
+    "BH_D-1_d-4-bh_graph-1D-grid-nonpbc-qubitnodes_Lx-12_U-40_enc-unary_d-4": {
       "num_su4": 2475,
       "depth_su4": 2405
     },
-    "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-14_U-10_enc-stdbinary_d-4.qasm": {
+    "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-14_U-10_enc-stdbinary_d-4": {
       "num_su4": 1072,
       "depth_su4": 1054
     },
-    "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-24_U-20_enc-stdbinary_d-4.qasm": {
+    "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-24_U-20_enc-stdbinary_d-4": {
       "num_su4": 1842,
       "depth_su4": 1814
     },
-    "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-46_U-2_enc-gray_d-4.qasm": {
+    "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-46_U-2_enc-gray_d-4": {
       "num_su4": 2847,
       "depth_su4": 2841
     },
-    "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-60_U-10_enc-stdbinary_d-4.qasm": {
+    "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-60_U-10_enc-stdbinary_d-4": {
       "num_su4": 4614,
       "depth_su4": 4550
     },
-    "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-4_U-40_enc-gray_d-8.qasm": {
+    "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-4_U-40_enc-gray_d-8": {
       "num_su4": 3760,
       "depth_su4": 3735
     },
-    "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-10_U-30_enc-unary_d-8.qasm": {
+    "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-10_U-30_enc-unary_d-8": {
       "num_su4": 11949,
       "depth_su4": 11659
     },
-    "BH_D-2_d-4-bh_graph-2D-grid-nonpbc-qubitnodes_Lx-7_Ly-7_U-70_enc-gray_d-4.qasm": {
+    "BH_D-2_d-4-bh_graph-2D-grid-nonpbc-qubitnodes_Lx-7_Ly-7_U-70_enc-gray_d-4": {
       "num_su4": 4993,
       "depth_su4": 4777
     },
-    "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-5_U-30_enc-gray_d-4.qasm": {
+    "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-5_U-30_enc-gray_d-4": {
       "num_su4": 1647,
       "depth_su4": 1569
     },
-    "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-11_Ly-11_U-100_enc-gray_d-4.qasm": {
+    "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-11_Ly-11_U-100_enc-gray_d-4": {
       "num_su4": 11551,
       "depth_su4": 10869
     },
-    "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-3_Ly-22_U-70_enc-unary_d-4.qasm": {
+    "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-3_Ly-22_U-70_enc-unary_d-4": {
       "num_su4": 21672,
       "depth_su4": 20475
     },
-    "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-5_Ly-5_U-30_enc-unary_d-4.qasm": {
+    "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-5_Ly-5_U-30_enc-unary_d-4": {
       "num_su4": 9846,
       "depth_su4": 9375
     },
-    "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-10_Ly-10_U-30_enc-stdbinary_d-4.qasm": {
+    "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-10_Ly-10_U-30_enc-stdbinary_d-4": {
       "num_su4": 10844,
       "depth_su4": 10326
     },
-    "BH_D-3_d-4-bh_graph-3D-grid-nonpbc-qubitnodes_Lx-2_Ly-2_Lz-2_U-20_enc-unary_d-4.qasm": {
+    "BH_D-3_d-4-bh_graph-3D-grid-nonpbc-qubitnodes_Lx-2_Ly-2_Lz-2_U-20_enc-unary_d-4": {
       "num_su4": 2655,
       "depth_su4": 2523
     },
-    "FH_D-1-fh-graph-1D-grid-nonpbc-qubitnodes_Lx-90_U-2_enc-jw.qasm": {
+    "FH_D-1-fh-graph-1D-grid-nonpbc-qubitnodes_Lx-90_U-2_enc-jw": {
       "num_su4": 268,
       "depth_su4": 92
     },
-    "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-50_U-2_enc-jw.qasm": {
+    "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-50_U-2_enc-jw": {
       "num_su4": 532,
       "depth_su4": 436
     },
-    "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-160_U-12_enc-parity.qasm": {
+    "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-160_U-12_enc-parity": {
       "num_su4": 2853,
       "depth_su4": 2850
     },
-    "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-105_U-8_enc-bk.qasm": {
+    "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-105_U-8_enc-bk": {
       "num_su4": 5956,
       "depth_su4": 2015
     },
-    "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-72_U-0_enc-parity.qasm": {
+    "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-72_U-0_enc-parity": {
       "num_su4": 28522,
       "depth_su4": 28521
     },
-    "FH_D-2-fh-graph-2D-triag-nonpbc-qubitnodes_Lx-16_Ly-16_U-4_enc-bk.qasm": {
+    "FH_D-2-fh-graph-2D-triag-nonpbc-qubitnodes_Lx-16_Ly-16_U-4_enc-bk": {
       "num_su4": 13991,
       "depth_su4": 7556
     },
-    "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-4_Ly-133_h-0.1.qasm": {
+    "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-4_Ly-133_h-0.1": {
       "num_su4": 927,
       "depth_su4": 272
     },
-    "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-58_h-2.qasm": {
+    "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-58_h-2": {
       "num_su4": 517,
       "depth_su4": 125
     },
-    "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-186_h-0.5.qasm": {
+    "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-186_h-0.5": {
       "num_su4": 1669,
       "depth_su4": 381
     },
-    "heis-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-185_h-0.5.qasm": {
+    "heis-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-185_h-0.5": {
       "num_su4": 555,
       "depth_su4": 368
     },
-    "heis-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-190_h-0.qasm": {
+    "heis-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-190_h-0": {
       "num_su4": 1520,
       "depth_su4": 571
     },
-    "heis-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-186_h-3.qasm": {
+    "heis-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-186_h-3": {
       "num_su4": 1860,
       "depth_su4": 561
     },
-    "heis-graph-2D-triag-nonpbc-qubitnodes_Lx-40_Ly-40_h-0.1.qasm": {
+    "heis-graph-2D-triag-nonpbc-qubitnodes_Lx-40_Ly-40_h-0.1": {
       "num_su4": 2460,
       "depth_su4": 256
     },
-    "tfim-graph-1D-grid-pbc-qubitnodes_Lx-16_h-2.qasm": {
+    "tfim-graph-1D-grid-pbc-qubitnodes_Lx-16_h-2": {
       "num_su4": 16,
       "depth_su4": 14
     },
-    "tfim-graph-1D-grid-pbc-qubitnodes_Lx-26_h-6.qasm": {
+    "tfim-graph-1D-grid-pbc-qubitnodes_Lx-26_h-6": {
       "num_su4": 26,
       "depth_su4": 24
     },
-    "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-15_h-3.qasm": {
+    "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-15_h-3": {
       "num_su4": 130,
       "depth_su4": 39
     },
-    "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-19_Ly-19_h-5.qasm": {
+    "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-19_Ly-19_h-5": {
       "num_su4": 684,
       "depth_su4": 89
     },
-    "tfim-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-148_h-6.qasm": {
+    "tfim-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-148_h-6": {
       "num_su4": 1184,
       "depth_su4": 445
     },
-    "tfim-graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-160_h-0.1.qasm": {
+    "tfim-graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-160_h-0.1": {
       "num_su4": 803,
       "depth_su4": 172
     },
-    "tfim-graph-2D-triag-pbc-qubitnodes_Lx-13_Ly-13_h-0.1.qasm": {
+    "tfim-graph-2D-triag-pbc-qubitnodes_Lx-13_Ly-13_h-0.1": {
       "num_su4": 273,
       "depth_su4": 74
     },
-    "tfim-graph-2D-triag-pbc-qubitnodes_Lx-19_Ly-19_h-0.5.qasm": {
+    "tfim-graph-2D-triag-pbc-qubitnodes_Lx-19_Ly-19_h-0.5": {
       "num_su4": 570,
       "depth_su4": 136
     }

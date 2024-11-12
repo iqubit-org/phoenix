@@ -30,7 +30,7 @@ for dir in os.listdir(benchmark_dpath):
          fname.endswith('.qasm')])
     for qasm_fname in qasm_fnames:
         json_fname = qasm_fname.replace('qasm', 'json')
-        program_name = qasm_fname.split('/')[-1].split('.')[0]
+        program_name = qasm_fname.split('/')[-1].replace('.qasm', '')
         qc = QuantumCircuit.from_qasm_file(qasm_fname)
         with open(json_fname, 'r') as f:
             data = json.load(f)
