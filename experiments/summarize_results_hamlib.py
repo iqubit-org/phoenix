@@ -73,7 +73,8 @@ for dir in os.listdir(BENCHMARK_DPATH):
         else:
             output_circ_su4_file = os.path.join(OUTPUT_DPATH, dir + '_su4', fname)
             circ_opt_su4 = QuantumCircuit.from_qasm_file(output_circ_su4_file)
-            num_su4, depth_su4 = circ_opt_su4.size(), circ_opt_su4.depth(lambda instr: instr.operation.num_qubits > 1)
+            num_su4, depth_su4 = (circ_opt_su4.num_nonlocal_gates(),
+                                  circ_opt_su4.depth(lambda instr: instr.operation.num_qubits > 1))
 
         result = pd.concat([result, pd.DataFrame({
             'category': dir,
