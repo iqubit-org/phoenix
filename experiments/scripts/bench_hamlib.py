@@ -38,7 +38,7 @@ args = parser.parse_args()
 qasm_fnames = [os.path.join(INPUT_QASM_DPATH, args.type, fname)
                for fname in natsorted(os.listdir(os.path.join(INPUT_QASM_DPATH, args.type)))]
 json_fnames = [os.path.join(INPUT_JSON_DPATH, args.type, fname)
-               for fname in natsorted(os.listdir(os.path.join(INPUT_JSON_DPATH, args.type)))]
+               for fname in natsorted(os.listdir(os.path.join(INPUT_JSON_DPATH, args.type)), reverse=True)]
 
 output_dpath = os.path.join(OUTPUT_DPATH, args.compiler, args.type)
 
@@ -59,9 +59,6 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
         #     console.print('Already processed', output_fname)
         #     continue
 
-
-
-
         with open(fname, 'r') as f:
             data = json.load(f)
 
@@ -72,12 +69,12 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
             else:
                 circ = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], efficient=False)
 
-            # circ = qiskit.transpile(circ, optimization_level=2, basis_gates=['u1', 'u2', 'u3', 'cx'])
+            circ = qiskit.transpile(circ, optimization_level=2, basis_gates=['u1', 'u2', 'u3', 'cx'])
             circ = bench_utils.qiskit_O3_all2all(circ)
             print_circ_info(circ)
             qiskit.qasm2.dump(circ, output_fname)
         elif args.compiler == 'paulihedral':
-            if qiskit.QuantumCircuit.from_qasm_file(fname.replace('json', 'qasm')).num_nonlocal_gates() > 3000:
+            if qiskit.QuantumCircuit.from_qasm_file(fname.replace('json', 'qasm')).num_nonlocal_gates() > 10000:
                 continue
             circ = bench_utils.paulihedral_pass(data['paulis'], data['coeffs'], coupling_map=CouplingMap(
                 rx.generators.complete_graph(data['num_qubits']).to_directed().edge_list()))
@@ -101,7 +98,7 @@ else:
 
             # TODO: delete this line
             # if os.path.exists(os.path.join(output_dpath, os.path.basename(fname))):
-                # continue
+            # continue
 
             circ = pytket.qasm.circuit_from_qasm(fname)
             circ = bench_utils.tket_pass(circ)
