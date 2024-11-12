@@ -193,7 +193,21 @@
 
 \subsection{Experimental settings}
 
+
+\begin{table}[tbp]
+    \centering
+    \caption{UCCSD benchmark suite.}
+    \setlength{\tabcolsep}{4.2pt}
+    % \fontsize{5}{5}\selectfont
+    \scalebox{0.876}{
+        \input{tables/uccsd.tex}
+    }
+    \label{tab:uccsd}
+    
+\end{table}
+
 \subsection{Benchmarks}
+
 
 \subsubsection{Metrics}
 
@@ -225,24 +239,23 @@
 
 
 
-
-\begin{table}[tbp]
-    \centering
-    \caption{UCCSD benchmark suite.}
-    \scalebox{0.95}{
-        \input{tables/uccsd.tex}
-    }
-    \label{tab:uccsd}
-    
-\end{table}
-
-
 \begin{figure}[tbp]
     \centering
     \includegraphics[width=\columnwidth]{figures/qaoa.pdf}
     \caption{QAOA benchmarking}
     \label{fig:qaoa}
 \end{figure}
+
+
+
+\begin{table*}[btp]
+    \centering
+    \caption{QAOA benchmarking versus 2QAN.}
+    \scalebox{1}{
+        \inpute{tables/qaoa.tex}
+    }
+    \lable{tab:qaoa}
+\end{table*}
 
 
 \subsection{Hardware-aware compilation}
