@@ -55,19 +55,30 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
         console.print('Processing', fname)
         output_fname = os.path.join(output_dpath, os.path.basename(fname).replace('.json', '.qasm'))
 
-        if os.path.exists(output_fname):
-            console.print('Already processed', output_fname)
-            continue
+        # if os.path.exists(output_fname):
+        #     console.print('Already processed', output_fname)
+        #     continue
+
+
 
 
         with open(fname, 'r') as f:
             data = json.load(f)
 
         if args.compiler == 'phoenix':
-            circ = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], efficient=True)
+            if qiskit.QuantumCircuit.from_qasm_file(fname.replace('json', 'qasm')).num_nonlocal_gates() > 3000:
+                continue
+                circ = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], efficient=True)
+            else:
+                circ = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], efficient=False)
+
+            # circ = qiskit.transpile(circ, optimization_level=2, basis_gates=['u1', 'u2', 'u3', 'cx'])
+            circ = bench_utils.qiskit_O3_all2all(circ)
             print_circ_info(circ)
             qiskit.qasm2.dump(circ, output_fname)
         elif args.compiler == 'paulihedral':
+            if qiskit.QuantumCircuit.from_qasm_file(fname.replace('json', 'qasm')).num_nonlocal_gates() > 3000:
+                continue
             circ = bench_utils.paulihedral_pass(data['paulis'], data['coeffs'], coupling_map=CouplingMap(
                 rx.generators.complete_graph(data['num_qubits']).to_directed().edge_list()))
             print_circ_info(circ)

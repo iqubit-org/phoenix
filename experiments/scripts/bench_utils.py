@@ -56,9 +56,6 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
 
     return circ.to_qiskit()
 
-    return qiskit.transpile(circ.to_qiskit(), optimization_level=2, basis_gates=['u1', 'u2', 'u3', 'cx'])
-    # circ =
-
 
 def paulihedral_pass(paulis: List[str], coeffs: List[float],
                      pre_gates: List[Gate] = None, post_gates: List[Gate] = None,
