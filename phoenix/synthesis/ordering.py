@@ -187,7 +187,7 @@ def order_blocks(blocks: List[Circuit], efficient: bool = False) -> Circuit:
     tetris = CircuitTetris(blocks.pop(0), num_qubits=num_qubits)
     tetris_list = [CircuitTetris(blk, num_qubits=num_qubits) for blk in blocks]
 
-    LOOKAHEAD = 60
+    LOOKAHEAD = 40
     # LOOKAHEAD = 25
     # TODO: what is the suitable number of blocks to look ahead?
     # ! after field test, 40 is a good lookahead length    LOOKAHEAD = 40
