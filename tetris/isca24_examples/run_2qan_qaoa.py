@@ -20,18 +20,28 @@ import pdb
 from collections import defaultdict
 import re
 
+# import sys
+# sys.path.append('../..')
+# from phoenix import Circuit
+
+from tqdm import tqdm
+
 idx = 0
 
 def qs_compiler(qasm, coupling_map, qaoa=True, layers=1, trials=1, mapper='qiskit', bgate='rzz', params=None):
 
     global idx
 
+    num_cnot = []
+    num_swap = []
+    depth_2q = []
+
     print(f'coupling is: {coupling_map}')
     qs_circ = None
     qs_swap = (0, 0) # the number of swaps in the format (#swaps,#swaps merged with circuit gate)
     qs_g2 = 0 # the number of two-qubit gates without decomposition
     # Perform qubit mapping, routing, and scheduling only, without gate decomposition
-    for trial in range(trials):
+    for trial in tqdm(range(trials)):
         # Both QAP and Qiskit mappers output inital qubit maps randomly, 
         # one can run the mapper several times to achieve better compilation results
         # Initial qubit mapping 
@@ -46,7 +56,7 @@ def qs_compiler(qasm, coupling_map, qaoa=True, layers=1, trials=1, mapper='qiski
             init_map = {i:i for i in range(len(init_map.items()))}
         
         # init_map = {circuit qubit index:device qubit index}
-        print('The initial qubit map is \n', init_map)
+        # print('The initial qubit map is \n', init_map)
 
         # Routing and scheduling, takes init_map as input
         router = QuRouter(qasm, init_map=init_map, coupling_map=coupling_map)
@@ -54,17 +64,25 @@ def qs_compiler(qasm, coupling_map, qaoa=True, layers=1, trials=1, mapper='qiski
             # For QAOA, different layers have different gate parameters
             
             #qs_circ0, swaps1 = router.run_qaoa(layers=layers, gammas=params[layers-1][:layers], betas=params[layers-1][layers:], msmt=True) 
-            qs_circ0, swaps1 = router.run_qaoa(layers=layers, gammas=[0.05], betas=[0.05], msmt=True) 
+            qs_circ0, swaps1 = router.run_qaoa(layers=layers, gammas=[0.05], betas=[0.05], msmt=True)
+            # print(router.run_qaoa(layers=layers, gammas=[0.05], betas=[0.05], msmt=True))
+            # qs_circ0, _ = router.run_qaoa(layers=layers, gammas=[0.05], betas=[0.05], msmt=True)
+
             # print(qs_circ0)
         else:
             # For quantum simulation circuits, we assume each layer has the same time steps
             qs_circ0, swaps1 = router.run(layers=layers, msmt='True')
         qs_circ0 = transpile(qs_circ0, basis_gates=None, optimization_level=3)
 
+        num_swap.append(qs_circ0.count_ops()['swap'])
+
+
         qc_tmp = transpile(qs_circ0, basis_gates=['u1', 'u2', 'u3', 'cx', 'reset', 'measure'], optimization_level=3)
 
-        qc_tmp.qasm(filename='qaoa_{}.qasm'.format(idx))
-        idx += 1
+        num_cnot.append(qc_tmp.num_nonlocal_gates())
+        depth_2q.append(qc_tmp.depth(lambda instr: instr[0].num_qubits > 1))
+        # qc_tmp.qasm(filename='qaoa_{}.qasm'.format(idx))
+        # idx += 1
 
 
         #
@@ -79,49 +97,47 @@ def qs_compiler(qasm, coupling_map, qaoa=True, layers=1, trials=1, mapper='qiski
 
 
 
-        # qs_circ0 is the routed circuit without gate decomposition
-        # swaps1 is a tuple=(#swaps,#swaps merged with circuit gate)
-        print("drawing qs_circ0")
-        #print(f"depth0 is {qs_circ0.depth()}")
-        #print(qs_circ0)
-        print(qs_circ0.qasm())
-        end = time.time()
-        print("Total run time: ", end - start)
-        # print(qs_circ0)
+        # # qs_circ0 is the routed circuit without gate decomposition
+        # # swaps1 is a tuple=(#swaps,#swaps merged with circuit gate)
+        # print("drawing qs_circ0")
+        # #print(f"depth0 is {qs_circ0.depth()}")
+        # #print(qs_circ0)
+        # print(qs_circ0.qasm())
+        # end = time.time()
+        # print("Total run time: ", end - start)
+        # # print(qs_circ0)
+        #
+        # c = qs_circ0.qasm().split("\n")
+        # #print(c)
+        #
+        # depth_dict = defaultdict(int)
+        # gate_count = 0
+        # pattern = re.compile(r"\[(\d+)\]") #using the regular expression to find all numbers in []
+        # swap_count = 0
+        # for line in c:
+        #     if line[0:3] == 'rzz' or line[0:4] == 'swap':
+        #         if line[0:3] == 'rzz':
+        #             gate_count += 2
+        #         if line[0:4] == 'swap':
+        #             gate_count += 3
+        #             swap_count += 1
+        #         qubits = pattern.findall(line)
+        #         q1 = int(qubits[0])
+        #         q2 = int(qubits[1])
+        #         depth_dict[q1] = depth_dict[q2] = max(depth_dict[q1], depth_dict[q2]) + 3
+        #         #print('rzz',q1,"-",q2, ' ', depth_dict[q1])
+        #     if line[0:3] == 'dZZ':
+        #         gate_count += 3
+        #         swap_count += 1
+        #         qubits = pattern.findall(line)
+        #         q1 = int(qubits[0])
+        #         q2 = int(qubits[1])
+        #         depth_dict[q1] = depth_dict[q2] = max(depth_dict[q1], depth_dict[q2]) + 4
+        #         #print('dzz',q1,"-",q2, ' ', depth_dict[q1])
+        # depth = max(depth_dict.values())
 
-        c = qs_circ0.qasm().split("\n")
-        #print(c)
-
-        depth_dict = defaultdict(int)
-        gate_count = 0
-        pattern = re.compile(r"\[(\d+)\]") #using the regular expression to find all numbers in []
-        swap_count = 0
-        for line in c:
-            if line[0:3] == 'rzz' or line[0:4] == 'swap':
-                if line[0:3] == 'rzz':
-                    gate_count += 2
-                if line[0:4] == 'swap':
-                    gate_count += 3
-                    swap_count += 1
-                qubits = pattern.findall(line)
-                q1 = int(qubits[0])
-                q2 = int(qubits[1])
-                depth_dict[q1] = depth_dict[q2] = max(depth_dict[q1], depth_dict[q2]) + 3
-                #print('rzz',q1,"-",q2, ' ', depth_dict[q1])
-            if line[0:3] == 'dZZ':
-                gate_count += 3
-                swap_count += 1
-                qubits = pattern.findall(line)
-                q1 = int(qubits[0])
-                q2 = int(qubits[1])
-                depth_dict[q1] = depth_dict[q2] = max(depth_dict[q1], depth_dict[q2]) + 4
-                #print('dzz',q1,"-",q2, ' ', depth_dict[q1])
-        depth = max(depth_dict.values())
-
-        
-
-        
-    return gate_count, swap_count, depth, end - start
+    # return gate_count, swap_count, depth, end - start
+    return np.mean(num_cnot).astype(int), np.mean(num_swap).astype(int), np.mean(depth_2q).astype(int), 0
 
 def qiskit_decompose(circ, basis_gates=['id', 'rz', 'u3', 'u2', 'cx', 'reset'], bgate='cx'):
     # Perform gate decomposition and optimization into cx gate set
@@ -144,6 +160,8 @@ def get_qasm(gate_list, q_count):
         qasm_string += "rzz(0.15) q[" + str(g[0]) + "],q[" + str(g[1]) + "];\n"
     return qasm_string
 
+# import rustworkx as rx
+import networkx as nx
 
 # def runner(coupling, lq, pq, d ):
 def runner(file_name):
@@ -157,7 +175,11 @@ def runner(file_name):
     # else:
     #     coupling_path = "sycamore_coupling/sycamore_" + str(pq) + ".txt"
     # coupling_path = "ibm_coupling/ibm_rings_39.txt"
-    coup = load_coupling_map('manhattan')
+    # coup = load_coupling_map('manhattan')
+
+    coup = [list(edge) for edge in nx.complete_graph(24).edges()]
+    # print(coup)
+
 
     #read input file:
     # graph_path = "benchmarks/random_graph/" + str(lq) + "_0." + str(d) + "_0.txt"
@@ -191,7 +213,7 @@ def runner(file_name):
     graph_file.close()
        
     c_qasm = get_qasm(gate_list,logical_q_count)
-    print(c_qasm)
+    # print(c_qasm)
     
     # test_circ = qiskit.QuantumCircuit.from_qasm_str(c_qasm)
 
@@ -205,10 +227,12 @@ def runner(file_name):
     coupling_map = [list(edge) for edge in list(grid_topology.edges)]
     coupling_map += [[edge[1], edge[0]] for edge in list(grid_topology.edges)]
 
-    total_gate_count, swap_count, depth, total_time = qs_compiler(c_qasm, coupling_map, qaoa=qaoa, layers=1, trials=1, bgate='rzz', params=param)
-    
-    print(total_gate_count, depth)
-    return (total_gate_count, swap_count, depth, total_time)
+    # total_gate_count, swap_count, depth, total_time = qs_compiler(c_qasm, coupling_map, qaoa=qaoa, layers=1, trials=50, bgate='rzz', params=param)
+    num_cnot, num_swap, depth_2q, total_time = qs_compiler(c_qasm, coupling_map, qaoa=qaoa, layers=1, trials=50, bgate='rzz', params=param)
+
+    # print(total_gate_count, depth)
+    # return (total_gate_count, swap_count, depth, total_time)
+    return num_cnot, num_swap, depth_2q, total_time
 # def test():
 #     gate_list = [(0,3),(2,4),(0,5),(0,6),(1,3)]
 #     logical_q_count = 7
@@ -255,7 +279,9 @@ depthCOUNT = []
 folder_path = '../../benchmarks/qaoa_text'
 
 # Get a list of all files in the folder
-file_names = [os.path.join(folder_path, fname) for fname in os.listdir(folder_path)]
+# file_names = [os.path.join(folder_path, fname) for fname in os.listdir(folder_path)]
+
+file_names = [os.path.join(folder_path, 'qaoa_rand_16.txt')]
 
 # Print the list of file names
 file_names.sort()
@@ -265,6 +291,11 @@ skip = ['.DS_Store', 'tetris',
         'random_graph10_0.1_2.txt', 'random_graph10_0.1_4.txt',
         '__init__.py', 'construct_qaoa_circ_json_regular.py', 'tetris']
 
+
+num_cnot_list = []
+num_swap_list = []
+depth_2q_list = []
+
 for file_name in file_names:
     if file_name in skip:
         continue
@@ -272,7 +303,12 @@ for file_name in file_names:
     print(file_name)
 
     print("scheduling: ", file_name)
-    total_gate_count, swap_count, depth, total_time = runner(file_name)
+    # total_gate_count, swap_count, depth, total_time = runner(file_name)
+    num_cnot, num_swap, depth, total_time = runner(file_name)
+
+    num_cnot_list.append(num_cnot)
+    num_swap_list.append(num_swap)
+    depth_2q_list.append(depth)
 
     # num_2q, depth_2q = runner(file_name)
     # cxCOUNT.append(num_2q)
@@ -280,25 +316,28 @@ for file_name in file_names:
     # result[file_name] = (num_2q, 0, depth_2q)
 
 
-    result[file_name] = (total_gate_count, swap_count, depth, total_time)
-    cxCOUNT.append(total_gate_count)
-    swapCOUNT.append(swap_count)
-    depthCOUNT.append(depth)
+    # result[file_name] = (total_gate_count, swap_count, depth, total_time)
+    # cxCOUNT.append(total_gate_count)
+    # swapCOUNT.append(swap_count)
+    # depthCOUNT.append(depth)
 #save result
-with open("../myBench/2qan_results.txt", "w") as file:
-    for key, value in result.items():
-        file.write(f"{key} CNOT gate count by 2QAN: {value[0]}\n")
-# print(result)
-print('depth:')
-for i in depthCOUNT:
-    print(i)
-print('swap:')
-for i in swapCOUNT:
-    print(i)
-print('cx:')
-for i in cxCOUNT:
-    print(i)
+# with open("../myBench/2qan_results.txt", "w") as file:
+#     for key, value in result.items():
+#         file.write(f"{key} CNOT gate count by 2QAN: {value[0]}\n")
+# # print(result)
+# print('depth:')
+# for i in depthCOUNT:
+#     print(i)
+# print('swap:')
+# for i in swapCOUNT:
+#     print(i)
+# print('cx:')
+# for i in cxCOUNT:
+#     print(i)
 
+print('num_cnot:', num_cnot_list)
+print('num_swap:', num_swap_list)
+print('depth_2q:', depth_2q_list)
 
 print(file_names)
 
