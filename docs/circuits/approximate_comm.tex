@@ -1,0 +1,58 @@
+\documentclass[twocolumn]{article}
+
+%\usetikzlibrary{...}% tikz package already loaded by 'tikz' option
+\usepackage{tikz}
+\usetikzlibrary{quantikz}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{geometry}
+\usepackage{rotating}
+\usepackage{amsmath}
+\usepackage{adjustbox}
+\usepackage{subfigure}
+\usepackage{subcaption}
+
+
+\geometry{
+    a4paper,
+    left=20mm,
+    top=20mm,
+    right=20mm,
+    bottom=20mm
+}
+
+\begin{document}
+    \begin{figure}
+        \centering
+
+        
+\begin{adjustbox}{width=0.8\columnwidth}
+    \begin{quantikz}[row sep=0.2cm, column sep=0.18cm, align equals at=2.5]
+        & \ghost{\mathrm{U3}}\qw & \qw & \qw & \qw & \qw & \qw & \qw & \gate[3,disable auto height,style={fill=green!20}]{\mathrm{SU(8)}} & \qw\\
+        & \gate{\mathrm{U3}}\gategroup[3,steps=7,style={dotted,cap=round,inner sep=0.01pt,fill=green!20},background]{} & \ctrl{1} & \qw & \qw & \qw & \qw & \gate{\mathrm{U3}} & & \qw\\
+        & \gate{\mathrm{U3}} & \targ{} & \gate{Z} & \ctrl{1} & \qw & \ctrl{1} & \gate{\mathrm{U3}} & & \qw \\
+        & \gate{\mathrm{U3}} & \qw & \qw & \targ{} & \gate{Z_\theta} & \targ{} & \gate{\mathrm{U3}} & \qw & \qw
+    \end{quantikz}\,$\boldsymbol{=}$ 
+    \begin{quantikz}[row sep=0.2cm, column sep=0.1cm, align equals at=2.5]
+        & \qw & \qw & \gate[3,disable auto height,style={fill=green!20}]{\mathrm{SU(8)}} & \qw\\
+        & \gate[2,disable auto height,style={fill=green!20}]{\mathrm{SU(4)}} & \qw & &\qw\\
+        & & \gate[2,disable auto height,style={fill=green!20}]{\mathrm{SU(4)}} & & \qw\\
+        & \qw & & \qw & \qw
+    \end{quantikz}\,$\boldsymbol{=}$ \begin{quantikz}[row sep=0.2cm, column sep=0.1cm, align equals at=2.5]
+        & \qw & \qw & \gate[3,disable auto height,style={fill=green!20}]{\mathrm{SU(8)}} & \qw \\
+        & \qw & \gate[2,disable auto height,style={fill=red!20}]{\mathrm{SU(4)}} & & \qw \\
+        & \gate[2,disable auto height,style={fill=red!20}]{\mathrm{SU(4)}} & & & \qw\\
+        & & \qw & \qw & \qw
+    \end{quantikz}\,$\boldsymbol{=}$ \begin{quantikz}[row sep=0.2cm, column sep=0.1cm, align equals at=2.5]
+        & \qw & \gate[3,disable auto height,style={fill=red!20}]{\mathrm{SU(8)}} & \ghost{\mathrm{U3}}\qw \\
+        & \qw &  & \ghost{\mathrm{U3}}\qw \\
+        & \gate[2,disable auto height,style={fill=red!20}]{\mathrm{SU(4)}} & & \ghost{\mathrm{U3}}\qw\\
+        & & \qw & \ghost{\mathrm{U3}}\qw
+    \end{quantikz}            
+\end{adjustbox}
+
+
+    \end{figure}
+
+\end{document}
+

@@ -1,0 +1,38 @@
+\documentclass[border=0px]{standalone}
+
+\usepackage{tikz}
+\usetikzlibrary{quantikz}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+
+\newcommand{\UGate}[3]{\mathrm{U_3}(#1,#2,#3)}
+
+
+\begin{document}
+
+
+
+            % \begin{quantikz}[row sep=0.2cm, column sep=0.1cm, align equals at=2]
+            %     & \gate[3,disable auto height,style]{\begin{array}{l}Z \\ Z \\ Z\end{array}} & \ghost{S^\dagger}\qw\\
+            %     & & \ghost{S^\dagger}\qw\\
+            %     & & \ghost{S^\dagger}\qw
+            % \end{quantikz}\,=
+
+            \begin{quantikz}[row sep=0.2cm, column sep=0.1cm, align equals at=2]
+                & \gate[3,disable auto height,style]{\begin{array}{l}Z \\ Z \\ Z\end{array}} & \ghost{S^\dagger}\qw\\
+                & & \ghost{S^\dagger}\qw\\
+                & & \ghost{S^\dagger}\qw
+            \end{quantikz}\,=\begin{quantikz}[row sep=0.2cm, column sep=0.1cm, align equals at=2]
+                & \ctrl{1} & \qw & \qw & \qw & \ctrl{1} & \ghost{Z_\theta}\qw\\
+                & \targ{} & \ctrl{1} & \qw & \ctrl{1} & \targ{} & \ghost{Z_\theta}\qw\\
+                & \qw & \targ{} & \gate{Z_\theta} & \targ{} & \qw & \ghost{Z_\theta}\qw
+            \end{quantikz}\,=\begin{quantikz}[row sep=0.2cm, column sep=0.1cm, align equals at=2]
+                & \ctrl{1} & \qw & \qw & \qw & \ctrl{1} & \ghost{Z_\theta}\qw\\
+                & \targ{} & \targ{} & \gate{Z_\theta} & \targ{} & \targ{} & \ghost{Z_\theta}\qw\\
+                & \qw & \ctrl{-1} & \qw & \ctrl{-1} & \qw & \ghost{Z_\theta}\qw
+            \end{quantikz}\,= $ \cdots $
+    
+
+
+\end{document}
+

@@ -20,11 +20,50 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
+\bibitem{shor1994algorithms}
+P.~W. Shor, ``Algorithms for quantum computation: discrete logarithms and factoring,'' in \emph{Proceedings 35th annual symposium on foundations of computer science}.\hskip 1em plus 0.5em minus 0.4em\relax Ieee, 1994, pp. 124--134.
+
+\bibitem{harrow2009quantum}
+A.~W. Harrow, A.~Hassidim, and S.~Lloyd, ``Quantum algorithm for linear systems of equations,'' \emph{Physical review letters}, vol. 103, no.~15, p. 150502, 2009.
+
+\bibitem{lloyd1996universal}
+S.~Lloyd, ``Universal quantum simulators,'' \emph{Science}, vol. 273, no. 5278, pp. 1073--1078, 1996.
+
+\bibitem{preskill2018quantum}
+J.~Preskill, ``Quantum computing in the nisq era and beyond,'' \emph{Quantum}, vol.~2, p.~79, 2018.
+
+\bibitem{peruzzo2014variational}
+A.~Peruzzo, J.~McClean, P.~Shadbolt, M.-H. Yung, X.-Q. Zhou, P.~J. Love, A.~Aspuru-Guzik, and J.~L. O’brien, ``A variational eigenvalue solver on a photonic quantum processor,'' \emph{Nature communications}, vol.~5, no.~1, p. 4213, 2014.
+
+\bibitem{farhi2014quantum}
+E.~Farhi, J.~Goldstone, and S.~Gutmann, ``A quantum approximate optimization algorithm,'' \emph{arXiv preprint arXiv:1411.4028}, 2014.
+
+\bibitem{cerezo2021variational}
+M.~Cerezo, A.~Arrasmith, R.~Babbush, S.~C. Benjamin, S.~Endo, K.~Fujii, J.~R. McClean, K.~Mitarai, X.~Yuan, L.~Cincio, and P.~J. Coles, ``Variational quantum algorithms,'' \emph{Nature Reviews Physics}, vol.~3, no.~9, pp. 625--644, 2021.
+
+\bibitem{cowtan2019phase}
+A.~Cowtan, S.~Dilkes, R.~Duncan, W.~Simmons, and S.~Sivarajah, ``Phase gadget synthesis for shallow circuits,'' \emph{arXiv preprint arXiv:1906.01734}, 2019.
+
+\bibitem{van2023towards}
+A.~M. van~de Griend, ``Towards a generic compilation approach for quantum circuits through resynthesis,'' \emph{arXiv preprint arXiv:2304.08814}, 2023.
+
+\bibitem{paykin2023pcoast}
+J.~Paykin, A.~T. Schmitz, M.~Ibrahim, X.-C. Wu, and A.~Y. Matsuura, ``Pcoast: a pauli-based quantum circuit optimization framework,'' in \emph{2023 IEEE International Conference on Quantum Computing and Engineering (QCE)}, vol.~1.\hskip 1em plus 0.5em minus 0.4em\relax IEEE, 2023, pp. 715--726.
+
 \bibitem{li2022paulihedral}
 G.~Li, A.~Wu, Y.~Shi, A.~Javadi-Abhari, Y.~Ding, and Y.~Xie, ``Paulihedral: a generalized block-wise compiler optimization framework for quantum simulation kernels,'' in \emph{Proceedings of the 27th ACM International Conference on Architectural Support for Programming Languages and Operating Systems}, 2022, pp. 554--569.
 
 \bibitem{jin2024tetris}
 Y.~Jin, Z.~Li, F.~Hua, T.~Hao, H.~Zhou, Y.~Huang, and E.~Z. Zhang, ``Tetris: A compilation framework for vqa applications in quantum computing,'' in \emph{2024 ACM/IEEE 51st Annual International Symposium on Computer Architecture (ISCA)}.\hskip 1em plus 0.5em minus 0.4em\relax IEEE, 2024, pp. 277--292.
+
+\bibitem{sivarajah2020t}
+S.~Sivarajah, S.~Dilkes, A.~Cowtan, W.~Simmons, A.~Edgington, and R.~Duncan, ``$t|ket\rangle$: a retargetable compiler for nisq devices,'' \emph{Quantum Science and Technology}, vol.~6, no.~1, p. 014003, 2020.
+
+\bibitem{chen2024one}
+J.~Chen, D.~Ding, W.~Gong, C.~Huang, and Q.~Ye, ``One gate scheme to rule them all: Introducing a complex yet reduced instruction set for quantum computing,'' in \emph{Proceedings of the 29th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 2}.\hskip 1em plus 0.5em minus 0.4em\relax La Jolla, CA, USA: ACM, 2024, pp. 779--796.
+
+\bibitem{van2020circuit}
+E.~Van Den~Berg and K.~Temme, ``Circuit optimization of hamiltonian simulation by simultaneous diagonalization of pauli clusters,'' \emph{Quantum}, vol.~4, p. 322, 2020.
 
 \bibitem{grier2022classification}
 D.~Grier and L.~Schaeffer, ``The classification of clifford gates over qubits,'' \emph{Quantum}, vol.~6, p. 734, 2022.
@@ -34,12 +73,6 @@ C.~Rigetti and M.~Devoret, ``Fully microwave-tunable universal gates in supercon
 
 \bibitem{bruzewicz2019trapped}
 C.~D. Bruzewicz, J.~Chiaverini, R.~McConnell, and J.~M. Sage, ``Trapped-ion quantum computing: Progress and challenges,'' \emph{Applied Physics Reviews}, vol.~6, no.~2, 2019.
-
-\bibitem{magesan2011scalable}
-E.~Magesan, J.~M. Gambetta, and J.~Emerson, ``Scalable and robust randomized benchmarking of quantum processes,'' \emph{Physical review letters}, vol. 106, no.~18, p. 180504, 2011.
-
-\bibitem{sivarajah2020t}
-S.~Sivarajah, S.~Dilkes, A.~Cowtan, W.~Simmons, A.~Edgington, and R.~Duncan, ``$t|ket\rangle$: a retargetable compiler for nisq devices,'' \emph{Quantum Science and Technology}, vol.~6, no.~1, p. 014003, 2020.
 
 \bibitem{li2019tackling}
 G.~Li, Y.~Ding, and Y.~Xie, ``Tackling the qubit mapping problem for nisq-era quantum devices,'' in \emph{Proceedings of the twenty-fourth international conference on architectural support for programming languages and operating systems}, 2019, pp. 1001--1014.
@@ -62,7 +95,9 @@ G.~J. Mooney, G.~A. White, C.~D. Hill, and L.~C. Hollenberg, ``Whole-device enta
 \bibitem{abrams2020implementation}
 D.~M. Abrams, N.~Didier, B.~R. Johnson, M.~P.~d. Silva, and C.~A. Ryan, ``Implementation of xy entangling gates with a single calibrated pulse,'' \emph{Nature Electronics}, vol.~3, no.~12, pp. 744--750, 2020.
 
-\bibitem{chen2024one}
-J.~Chen, D.~Ding, W.~Gong, C.~Huang, and Q.~Ye, ``One gate scheme to rule them all: Introducing a complex yet reduced instruction set for quantum computing,'' in \emph{Proceedings of the 29th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 2}.\hskip 1em plus 0.5em minus 0.4em\relax La Jolla, CA, USA: ACM, 2024, pp. 779--796.
+\bibitem{ibm_fractional_gates}
+\BIBentryALTinterwordspacing
+I.~Quantum. (2024) New fractional gates reduce circuit depth for utility-scale workloads. Accessed: Nov. 18, 2024. [Online]. Available: \url{https://www.ibm.com/quantum/blog/fractional-gates}
+\BIBentrySTDinterwordspacing
 
 \end{thebibliography}

@@ -88,8 +88,7 @@ Existing template-based~\cite{maslov2008quantum,bravyi2021clifford} and peephole
 \end{figure}
 
 
-\textbf{Template-based synthesis for Type-I programs:} ReQISC compiler integrates a \dquote{pre-synthesis then assembling} strategy to compile Type-I programs. 
-Before being fed to its program-adaptive synthesis pass as illustrated in \Cref{fig:program_adaptive} (a), all Type-I circuits are transformed into $\mathrm{CCX}$-based circuits by unrolling its involved $\mathrm{MCX}$ gates according to decomposition strategies shown in the upper right of \Cref{fig:program_example} (a), which sometimes introducing ancilla qubits. Refined 3Q IRs are the partitioned 3Q blocks on these $\mathrm{CCX}$-based circuits. Initially, the compiler extracts all unique 3Q subcircuit structures from the whole Type-I benchmark suite, discarding absolute qubit indices, and determines the optimal (minimal-\#2Q) $\SU(4)$ synthesis templates for these 3Q blocks through multiple rounds of approximate synthesis. The compiler also computes the equivalent circuit classes (ECC) based on the permutability and self-invertibility of these 3Q IRs, aiming to reveal as many circuit optimization opportunities as possible. When synthesizing a specific Type-I circuit, the compiler assembles its 3Q IRs building on the pre-synthesized template library by greedily searching the optimal combination schemes among the synthesis schemes of IR's ECCs. In principle, the distinct 3Q IRs are finite among real-world Type-I programs and hence this template-based approach is computationally efficient and calibration-friendly. In our field test, there are only 57 distinct 3Q subcircuit structures among a plethora of Type-I benchmarks with a variety of circuit sizes.
+
 
 
 

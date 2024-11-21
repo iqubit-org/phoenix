@@ -1,11 +1,11 @@
-\documentclass[conference]{IEEEtran}
+\documentclass[conference,9pt]{IEEEtran}
 \IEEEoverridecommandlockouts
 % The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
 % \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 % \usepackage{algorithmic}
 \usepackage[ruled, vlined, linesnumbered]{algorithm2e}
-\usepackage{mhchem}
+\usepackage[version=4]{mhchem}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
@@ -22,10 +22,12 @@
 \usepackage{adjustbox}
 \usepackage{cleveref}
 \usepackage{multirow}
+\usepackage{soul}
 
 
 \Crefname{figure}{Fig.}{Figs.}
 \Crefname{table}{Tab.}{Tabs.}
+\crefname{equation}{Eq.}{Eqs.}
 
 \newcommand{\squote}[1]{`#1'}
 \newcommand{\dquote}[1]{``#1''}
@@ -43,7 +45,8 @@
 \newcommand{\tket}{\textsc{TKet}}
 \newcommand{\tetris}{\textsc{Tetris}}
 \newcommand{\paulihedral}{\textsc{Paulihedral}}
-\newcommand{\pcaost}{\textsc{PCOAST}}
+\newcommand{\pauliopt}{\textsc{Paulihedral}}
+\newcommand{\pcoast}{\textsc{PCOAST}}
 \newcommand{\twoqan}{\textsc{2QAN}}
 
 
@@ -58,17 +61,21 @@
 \newcommand{\CNOT}{\mathrm{CNOT}}
 \newcommand{\SUfour}{\mathrm{SU}(4)}
 \newcommand{\UGate}[3]{\mathrm{U_3}(#1,#2,#3)}
-
+\newcommand{\CanGate}[3]{\mathrm{Can}(#1,#2,#3)}
 
 \newcommand{\totalWeight}{\mathrm{total\_weight}}
 
+% \newcommand{\eRrightPre}{e_r^{(pre)}}
+% \newcommand{\eLeftPost}{e_l^{(post)}}
 
+\newcommand{\eRrightPre}{e_r}
+\newcommand{\eLeftPost}{e_l'}
 
 
 
 \SetAlFnt{\small}
 % \SetAlCapFnt{\small}
-
+\SetCommentSty{textit}
 
 \hypersetup{hidelinks}
 % \hypersetup{draft}
@@ -87,44 +94,83 @@
 
 \title{\phoenix: Pauli-based High-level Optimization Engine for Instruction Execution on NISQ Devices}
 
-% VQA Programs Synthesis by Clifford Formalism
+\iffalse
+\author{
+     \IEEEauthorblockN{Zhaohui Yang}
+     \IEEEauthorblockA{\textit{Department} \\
+     \textit{University}\\
+     Addresss\\
+     email@email.email}
+ }
 
 
-
-% \author{
-%     \IEEEauthorblockN{Zhaohui Yang}
-%     \IEEEauthorblockA{\textit{Department of Electrical \& Computer Engineering} \\
-%     \textit{University of Arizona}\\
-%     Tucson, AZ, USA\\
-%     zhy@arizona.edu}
-% }
-
-
-% \author{
-%     \IEEEauthorblockN{Zhaohui Yang\IEEEauthorrefmark{1}, David Ding\IEEEauthorrefmark{2}, Jianxin Chen\IEEEauthorrefmark{3}, Yuan Xie\IEEEauthorrefmark{1}}
+ \author{
+     \IEEEauthorblockN{Zhaohui Yang\IEEEauthorrefmark{1}, Dawei Ding\IEEEauthorrefmark{2}, Chenghong Zhu\IEEEauthorrefmark{3}, Jianxin Chen\IEEEauthorrefmark{4}, Yuan Xie\IEEEauthorrefmark{1}}
     
-%     \IEEEauthorblockA{\textit{\IEEEauthorrefmark{1}Department of Electronic and Computer Engineering, The Hong Kong University of Science and Technology, Hong Kong}}
+     \IEEEauthorblockA{\textit{\IEEEauthorrefmark{1}Department of Electronic and Computer Engineering, The Hong Kong University of Science and Technology, Hong Kong}}
 
-%     \IEEEauthorblockA{\textit{\IEEEauthorrefmark{2} Yau Mathematical Sciences Center, Tsinghua University, Beijing, China}}
+     \IEEEauthorblockA{\textit{\IEEEauthorrefmark{2} Yau Mathematical Sciences Center, Tsinghua University, Beijing, China}}
 
-%     \IEEEauthorblockA{\textit{\IEEEauthorrefmark{3}Department of Computer Science and Technology, Tsinghua University, Beijing, China}}
+     \IEEEauthorblockA{\textit{\IEEEauthorrefmark{3} The Hong Kong University of Science and Technology (Guangzhou), Guangzhou, China}}
 
+     \IEEEauthorblockA{\textit{\IEEEauthorrefmark{4}Department of Computer Science and Technology, Tsinghua University, Beijing, China}}
 
-%     % \IEEEauthorblockA{\{zhaohui\}@ucsb.edu, }
+ \IEEEauthorblockA{\{zhaohui\}@ucsb.edu, }
+ }
+\fi
+% \author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept.\ name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address or ORCID}
+% \and
+% \IEEEauthorblockN{2\textsuperscript{nd} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept.\ name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address or ORCID}
+% \and
+% \IEEEauthorblockN{3\textsuperscript{rd} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept.\ name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address or ORCID}
+% \and
+% \IEEEauthorblockN{4\textsuperscript{th} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept.\ name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address or ORCID}
+% \and
+% \IEEEauthorblockN{5\textsuperscript{th} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept.\ name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address or ORCID}
+% \and
+% \IEEEauthorblockN{6\textsuperscript{th} Given Name Surname}
+% \IEEEauthorblockA{\textit{dept.\ name of organization (of Aff.)} \\
+% \textit{name of organization (of Aff.)}\\
+% City, Country \\
+% email address or ORCID}
 % }
+
+
+
+
+
 
 
 \maketitle
 
 
 \begin{abstract}
-    Variational quantum algorithms (VQA) based on Hamilton simulation represent a specialized class of quantum programs well-suited for near-term quantum computing applications due to its modest resource requirements in terms of qubits and circuit depth. Unlike the conventional single-qubit/two-qubit gate sequence representation, Hamiltonian simulation programs are composed of disciplined subroutines known as Pauli exponentiations (Pauli strings with coefficients) that are variably arranged. To capitalize on these distinct program features, this study introduces \phoenix, a highly effective compilation framework that primarily operates at the high-level Pauli-based intermediate representation (IR) for generic Hamiltonian simulation programs. \phoenix\ exploits global program optimization opportunities to the largest extent, compared to existing SOTA methods despite some of them also utilizing similar IRs. \phoenix\ employs the binary symplectic form (BSF) to formally describe Pauli strings and reformulates IR synthesis as a sequence of Clifford transformations on BSF. It comes with a heuristic BSF simplification algorithm that simultaneously reduces Pauli strings' weights to two-qubit operations by identifying the most appropriate Clifford operators. \phoenix\ further performs a global ordering strategy in a Tetris-like fashion for these simplified IR groups, carefully balancing optimization opportunities for gate cancellation, minimizing circuit depth, and managing qubit routing overhead. Experimental results demonstrate that \phoenix\ outperforms SOTA VQA compilers across diverse program categories, backend ISAs, and hardware topologies.
-    
+    Variational quantum algorithms (VQA) based on Hamiltonian simulation represent a specialized class of quantum programs well-suited for near-term quantum computing applications due to its modest resource requirements in terms of qubits and circuit depth. Unlike the conventional single-qubit (1Q) and two-qubit (2Q) gate sequence representation, Hamiltonian simulation programs are essentially composed of disciplined subroutines known as Pauli exponentiations (Pauli strings with coefficients) that are variably arranged. To capitalize on these distinct program features, this study introduces \phoenix, a highly effective compilation framework that primarily operates at the high-level Pauli-based intermediate representation (IR) for generic Hamiltonian simulation programs. \phoenix\ exploits global program optimization opportunities to the greatest extent, compared to existing SOTA methods despite some of them also utilizing similar IRs. \phoenix\ employs the binary symplectic form (BSF) to formally describe Pauli strings and reformulates IR synthesis as reducing the column weights of BSF by appropriate Clifford transformations. It comes with a heuristic BSF simplification algorithm that searches for the most appropriate 2Q Clifford operators in sequence to maximally simplify the BSF at each step, until the BSF can be directly synthesized by basic 1Q and 2Q gates. \phoenix\ further performs a global ordering strategy in a Tetris-like fashion for these simplified IR groups, carefully balancing optimization opportunities for gate cancellation, minimizing circuit depth, and managing qubit routing overhead. Experimental results demonstrate that \phoenix\ outperforms SOTA VQA compilers across diverse program categories, backend ISAs, and hardware topologies.
     
 \end{abstract}
 
 % \begin{IEEEkeywords}
-% Entanglement distribution, network protocol design, platform-as-a-service, quantum communication, quantum internet service provider, quantum network, reconfigurable network architecture, routing, software-defined network.
+
 % \end{IEEEkeywords}
 
 
@@ -135,18 +181,55 @@
 
 \section{Introduction}
 
-    \ZY{Problem, Motivation, Insight starting point}
+    Quantum computing offers the potential to revolutionize various fields, driving decades of efforts to develop the required physical hardware. For instance, quantum algorithms can achieve exponential speedups in tasks such as integer factorization~\cite{shor1994algorithms}, solving linear equations~\cite{harrow2009quantum}, and quantum system simulation~\cite{lloyd1996universal}. In the noisy intermediate-scale quantum (NISQ) era where we have access to dozens or hundreds of qubits susceptible to noise (for example, qubit decoherence, gate imperfections, environmental coupling with qubits)~\cite{preskill2018quantum}, variational quantum algorithms (VQA) is a leading class of algorithms proposed to achieve the quantum advantage (e.g., VQE for chemistry simulation and condensed-matter physical system simulation~\cite{peruzzo2014variational}, QAOA for combinatorial optimization~\cite{farhi2014quantum}) due to its modest resource requirements in terms of qubit number and circuit depth as well as its noise-resilience.~\cite{cerezo2021variational}.
 
-    Quantum computing ...
 
-    Variational quantum algorithms (VQA) is a class of leading application in near-term quantum computing due to their modest resources requirements in terms of qubits and circuit depth and their noise-resillence.
-
-    \ZY{There should be 1 figure for illustration}
-    
+    % Specific algorithms include \JC{variational quantum eigensolver }(VQE) chemistry simulation \note{(ref)}, \JC{quantum approximate optimization algorithm} (QAOA) for combinatorial optimization \note{(ref)}, and condensed-matter physical system simulation \note{(ref)}). The circuits themselves are also by design noise-resilient \note{(ref)}.
 
 
 
-    % The rest of this paper is structured as follows. In Sec. \ref{sec:2:resutls}, we firstly describe the hardware infrastructures and their re-constructing approaches on basis of the existing fiber-based network at the University of Arizona (UA), and then explain how the QISP is implemented under a reconfigurable framework. Field-test evaluation results are also included in this section. We summarize our work in Sec. \ref{sec:3:discussion} with analysis of current limitations and future work directions. In Sec. \ref{sec:4:methods}, we will see in more detail the Quagent's architecture and the entanglement source characterization methods.
+    The construction of a VQA ansatz circuit is to simulate (approximate) a desired unitary evolution under the system Hamiltonian $ H $ and the evolution duration $ t $, through Trotterizing~\cite{cerezo2021variational} the evolution $ U(t) $ given $ H $ represented by a linear combination of Pauli strings:
+    \begin{align}
+        U(t) = e^{-iHt} \simeq  \left( S_{k}\left(\tau\right) \right)^r,\, \tau = \frac{t}{r},\\
+        H = \sum_{j=1}^L h_j P_j = \sum_{j=1}^L h_j \sigma_0^{(j)} \otimes \cdots \otimes \sigma_{n-1}^{(j)},
+    \end{align}
+    where $ k $ and $ r $ indicate the Trotter orders and steps, respectively. More fine-grained Trotterization procedures results in lower approximation errors. For example, 1st order and 2nd order Trotterization procedures are given by
+    \begin{align*}
+        S_1 = \prod_{j=1}^{L} \exp^{ -i h_j \tau P_j},\, S_2 = \prod_{j=1}^{L} \exp^{ -i h_j \frac{\tau}{2} P_j}\prod_{j=L}^1 \exp^{ -i h_j \frac{\tau}{2} P_j},
+    \end{align*}
+    respectively.
+Following Trotterization, each term $S_k$ is expressed as a product of individual Pauli exponentiations, which can conventionally be easily synthesized using basic 1Q and 2Q gates. The arrangement of these Pauli exponentiations within each Trotter step can be freely chosen without affecting the upper bound of Trotterization (approximation) error~\cite{cerezo2021variational}, which is usually not comparable to physical noise. However, different arrangements offer varying opportunities for optimizing quantum circuits, thereby dominating the accuracy of Hamiltonian simulations on noisy hardware. Consequently, the primary challenge of compiling VQA ansatz circuits lies in synthesizing these Pauli exponentiations from a global perspective, dubbed \emph{Pauli-based intermediate representations (IR)} throughout this paper.
+
+    \begin{figure}[tbp]
+        \centering   \includegraphics[width=\columnwidth]{figures/motivation.pdf}
+        \caption{Conventional Pauli exponentiation synthesis v.s. Simultaneous simplification by Clifford conjugation. (a) Pauli exponentiations are synthesized by gate set $ \{ H, S, S^\dagger, Z(\theta), \CNOT \} $, through variable $ \CNOT $-tree unrolling schemes. (b) Multiple 3Q Pauli exponentiations can be simultaneously simplified into 2Q Pauli exponentiations, through a 2Q Clifford conjugation, where $ C = (H\otimes S) \CNOT (H\otimes S^\dagger) $ in this example. (c) The simplified Pauli exponentiations can be rebased to versatile quantum gate sets, such as $ \CNOT $-based and $ \mathrm{B} $-based ISAs, with significantly reduced 2Q gate count.}
+        \label{fig:motivation}
+        
+    \end{figure}
+
+    Conventionally, a Pauli exponentiation is synthesized into a 1Q rotation $ Z(\theta) $ sandwiched by a pair of symmetric $ \CNOT $ trees, subsequently conjugated by some $ H $ and $ S $ gates, as exemplified in \Cref{fig:motivation}. Existing state-of-the-art (SOTA) compilers primarily exploit gate cancellation opportunities exposed by the already synthesized subcircuits, whether by means of the abstract ZX diagram~\cite{cowtan2019phase,van2023towards,paykin2023pcoast} representation or the variants of $ \CNOT $ trees~\cite{li2022paulihedral,jin2024tetris}. Although utilize the Pauli-based IR, the optimization process they formulate is limited to subcircuits and local IR patterns. Furthermore, it assumes the conventional $ \CNOT $-based quantum instruction set architecture (ISA). We present instead that a set of Pauli exponentiations \emph{can be simultaneously simplified} through approximate Clifford transformations. For example, \Cref{fig:motivation} (b) shows that the list of weight-3 Pauli strings $ [ZYY;\, ZZY;\, XYY;\, XXY] $ can be simplified into a weight-2 Pauli string list through the conjugation of a 2Q Clifford operator $ C = (H\otimes S) \CNOT (H\otimes S^\dagger) $. This opens a door to greater optimization opportunities \emph{totally at the level of Pauli-based IR}. It also does not make any assumptions on the quantum ISA being used.
+
+    In this work, we propose \phoenix\ \emph{(Pauli-based High-level Optimization ENgine for Instruction eXecution)}---a highly effective compilation framework for generic Hamiltonian simulation programs on near-term quantum devices. \phoenix\ follows the 
+    \begin{align*}
+        \text{\dquote{IR grouping$\to$ group-wise simplification$\to$ IR group ordering}}
+    \end{align*}
+    pipeline to compile real-world VQA programs into basic quantum gates. It is ISA-independent, routing-aware, and tailored to generic VQA programs such as molecular simulation involving heterogeneous-weight Pauli strings and QAOA including only weight-2 Pauli strings. Differing from existing SOTA methods, \phoenix\ utilizes an alternative formal description for Pauli-based IR and integrates heuristic optimization strategies to achieve global optimization primarily at the high-level semantic layer. We evaluate \phoenix\ across diverse VQA programs, backend ISAs, and hardware topologies, demonstrating its superior performance over existing SOTA compilers. Our main contributions are as follows:
+    \begin{enumerate}
+        \item We utilize the \emph{binary symplectic form} (BSF) as the formal description of Pauli-based IR and reformulate the IR synthesis process as simultaneous simplification on BSF by appropriate Clifford conjugations that simultaneously reduce the BSF's column weights, enabling global optimization to the largest extent while operating at the high-level IR.
+        \item We propose a heuristic \textit{BSF simplification} algorithm as the core optimization pass in \phoenix. It iteratively searches for the most appropriate 2Q Clifford operators to quickly lower the weight of the BSF, until the BSF can be directly synthesized by basic 1Q and 2Q gates.
+        \item We quantify the circuit depth overhead induced by assembling (ordering) simplified IR groups. Using this, we devise a uniform cost function that comprehensively accounts for circuit depth overhead, gate cancellation, and qubit routing overhead. Under the guidance of that, \phoenix\ integrates a \emph{Tetris-like IR group ordering} procedure to robustly achieve a good ordering scheme.
+    \end{enumerate}
+
+    Overall, \phoenix\ outperforms the best-known compilers (e.g., \tket~\cite{sivarajah2020t}, \paulihedral~\cite{li2022paulihedral}, \tetris~\cite{jin2024tetris}), achieving significant reductions in gate count and circuit depth. For example, for logical-level compilation, \phoenix\ results in 80.44\% reduction in $ \CNOT $ gate count and 82.71\% reduction in 2Q circuit depth on average, compared to the original logical circuits. For hardware-aware compilation with heavy-hex topology, \phoenix\ reduces by 35.9\% (22.3\%) in $ \CNOT $ gate count and 43.6\% (27.8\%) in 2Q circuit depth on average, compared to \paulihedral\ (\tetris). The reduction effect in 2Q gate count and circuit depth becomes even more impressive when targeting the newly introduced $ \SUfour $ ISA (the representative continuous ISA containing all 2Q gates)~\cite{chen2024one}.
+
+
+    % they cannot achieve deep compiler optimization 
+
+
+    % Problem:
+    % 1) limited global optimization, on finite subprogram patterns of Pauli exponentiations
+    % 2) refined IR cannot preserve global optimization when synthesizing in CNOT
+    % 3) CNOT-based .... and SWAP-based ... limited to specific ISAs
 
 
 
@@ -156,13 +239,56 @@
 
 \section{Related Works}
 
+    \textbf{Based on ZX diagram representations of Pauli gadgets.} Compilers such as \tket~\cite{sivarajah2020t,cowtan2019phase}, \pauliopt~\cite{van2023towards}, and \pcoast~\cite{paykin2023pcoast}\ resynthesize quantum circuits into its ZX diagram representation. ZX diagrams are used to visually represent and simplify the commutation relations and phase interactions between Pauli operators, facilitating the reduction of circuit depth and gate count through algebraic and graphical transformations. Although it can efficiently resynthesis Pauli gadgets, the commutation rules it leverages occur locally and it is hard to operate in a hardware-aware manner.
 
-\ZY{Efficient fermionic mapping v.s. efficient IR exponentiations}
 
-\ZY{Paulihedral first proposed VQA IR ... Pauli strings and Pauli blocks}
 
-\ZY{TKet, Paulihedral, PCOAST, Tetris, 2QAN, ...}
+    \textbf{Based on synthesis variants of Pauli-based IR.} Dedicated compilers like \paulihedral\cite{li2022paulihedral} and \tetris~\cite{jin2024tetris} leverage Pauli-based IR to identify gate cancellation opportunities between nearest-neighbor IRs, exposed by the variants of their synthesis schemes based on $\CNOT$-tree unrolling. They proposed sophisticated co-optimization techniques to minimize $ \CNOT $ gate for both logical-level synthesis and $\SWAP$-based routing, achieving good performance especially on limited-topology NISQ devices. However, their optimization scope is confined to a finite set of local subcircuit patterns, and they rely solely on the $ \CNOT $-based ISA.
+    % among different ways to synthesize the Pauli exponentiations
 
+% \textbf{For 2-local Hamiltonian simulation} \ZY{Paulihedral, Tetris, 2QAN}
+
+
+
+
+%  and proposed to 
+    
+%     aims to 
+    
+    
+%     That means they are limited to $ \CNOT $ ISA
+    
+    
+%     That is, despite the similar formal IR they used.
+
+%     while global optimization cannot be easily attained...
+    
+    
+%     .... global .... high-level ...
+    
+    
+%     variants of the specific unrolled in $ \CNOT $ tree, ZX diagrams \note{(ref tket, pauliopt)},
+
+%     - ZX diagram representation of synthesized circuits for Pauli exponentiations
+%     - variants of  
+
+
+
+
+
+
+% \NOTE{
+
+%     \textbf{Mathematical formulas:}
+
+
+%     \begin{align}
+%         \mathrm{U3}(\theta, \phi, \lambda) = R_Z(\phi) R_Y(\theta) R_Z(\lambda)
+%     \end{align}
+
+%     We use Pauli equivalence rules $X(\theta) = H\, Z(\theta)\, H$ and $Y(\theta) = SHS\, Z(\theta)\, S^\dagger H S^\dagger = \mathrm{U}3(-\frac{\pi}{2},-\frac{\pi}{2},\frac{\pi}{2})\, Z(\theta)\, \mathrm{U}3(\frac{\pi}{2}, -\frac{\pi}{2}, \frac{\pi}{2})$. 
+
+% }
 
 
 
@@ -170,76 +296,66 @@
 % BSF and Clifford
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{BSF and Clifford Formalism}
+\section{BSF and Clifford Formalism}\label{sec:bsf-clifford}
 
-\ZY{To illustrate the theoretic foundation and how we formulate Pauli IR synthesis problem}
+    \begin{figure}[tbp]
+        \centering
+        % \subfigure[$H$ transformation]{
+        %     \includegraphics[width=0.45\columnwidth]{figures/H.pdf}
+        % }\quad
+        % \subfigure[$S$ transformation]{
+        %     \includegraphics[width=0.45\columnwidth]{figures/S.pdf}
+        % }\\
+        % \subfigure[$C(Z,X)$ transformation]{
+        %     \includegraphics[width=0.45\columnwidth]{figures/C(Z,X).pdf}
+        % }\quad
+        % \subfigure[$C(X,X)$ transformation]{
+        %     \includegraphics[width=0.45\columnwidth]{figures/C(X,X).pdf}
+        % }
+        \includegraphics[width=\columnwidth]{figures/cliff_trans.pdf}
+        
+        \caption{Examples of Clifford transformations on BSF. Columns $a$ and $b$, corresponding to qubit $a$ and $b$, for $X$ and $Z$ blocks are indicated by $x_a$, $x_b$, $z_a$, $z_b$, respectively. (a) $H$ gate acting on qubit $a$ will exchanges $x_a$ and $z_a$. (b) $S$ gate acting on qubit $a$ results in $z_a \gets z_a \oplus x_a$. (c) $C(Z,X)_{a,b}$, i.e., the $\CNOT$ gate, results in $x_b \gets x_b \oplus x_a$ and $z_a \gets z_a \oplus z_b$. (d) $C(X,X)$ transformation is equivalent with successively applying $H$ on $a$, $C(Z,X)_{a,b}$, and $H$ on $a$, resulting in $x_a \gets x_a \oplus z_b$ and $x_b \gets x_b \oplus z_a$.}
+        \label{fig:clifford}
+    \end{figure}
 
+%    To formulate our synthesis scheme, we represent Pauli strings in binary symplectic form (BSF) \note{(ref)}. BSF is a tableau representation in which each row represents a single $ n $-qubit Pauli string. Columns of the tableau are partitioned as two parts $ [X\,|\,Z] $, such that $ [X_{i,j}\,|\, Z_{i,j}] $ represents the $ j $-th component of the $ i $-th Pauli operator. The value is $ [1 | 0 ] $ for $ X $, $ [0 | 1 ] $ for $ Z $, $ [1 | 1 ] $ for $ Y $, and $ [0 | 0 ] $ for $ I $. For instance, the Pauli strings simplification process in \Cref{fig:motivation} (b) is formulated as
 
-    BSF is a tableau representation in which each row represents a single $ n $-qubit Pauli string. Columns of the tableau are partitioned as two parts $ [X\,|\,Z] $, such that $ [X_{i,j}\,|\, Z_{i,j}] $ represents the $ j $-th component of the $ i $-th Pauli operator. The value is $ [1 | 0 ] $ for $ X $, $ [0 | 1 ] $ for $ Z $, $ [1 | 1 ] $ for $ Y $, and $ [0 | 0 ] $ for $ I $. For instance, the process in\Cref{fig:xxx-xyy-simp} that Pauli strings $ [XXX; XYY] $ is transformed into $ [IXX; IYY] $ is formulated as 
+We establish our synthesis scheme by representing Pauli strings in the binary symplectic form (BSF)~\cite{van2020circuit}. In the BSF, each $n$-qubit Pauli string is represented as a row in a tableau, with columns divided into two sections: $[X\,|\, Z]$. Here, $[X_{i,j} \,|\, Z_{i,j}]$ denotes the $j$-th component of the $i$-th Pauli operator. The encoding maps $X$ to $[1 \,|\, 0]$, $Z$ to $[0 \,|\, 1]$, $Y$ to $[1 \,|\, 1]$, and $I$ to $[0 \,|\, 0]$. For instance, the Pauli string simplification shown in \Cref{fig:motivation} (b) follows the formulation
     \begin{align*}
         \left[
             \begin{array}{ccc|ccc}
-            1 & 1 & 1 & 0 & 0 & 0 \\
-            1 & 1 & 1 & 0 & 1 & 1
+                0 & 1 & 1 & 1 & 1 & 1\\
+                0 & 0 & 1 & 1 & 1 & 1\\
+                1 & 1 & 1 & 0 & 1 & 1\\
+                1 & 0 & 1 & 0 & 1 & 1\\
             \end{array}
         \right]
-        \xrightarrow{C(Z,X)_{1,0}}
+        \xrightarrow{C(X,Y)_{1,2}}
         \left[
             \begin{array}{ccc|ccc}
-                0 & 1 & 1 & 0 & 0 & 0 \\
-                0 & 1 & 1 & 0 & 1 & 1
+                0 & 1 & 0 & 1 & 1 & 0\\
+                0 & 0 & 0 & 1 & 1 & 0\\
+                1 & 1 & 0 & 0 & 1 & 0\\
+                1 & 0 & 0 & 0 & 1 & 0\\
             \end{array}
-        \right].
+        \right],
     \end{align*}
-
-
-
-
-\note{
-
-    Different from sophisticated local optimization strategies for Pauli strings such as Paulihedral~\cite{li2022paulihedral} and Tetris~\cite{jin2024tetris} that exploits near-neighbor gate cancellation opportunities exposed by variants of Pauli exponentiations' synthesis schemes, we propose the \textit{BSF simplification} algorithm tailored to $\SUfour$ primitives to achieve considerable simultaneous optimization effects for each set of equal-weight Pauli strings, utilizing the formal description of Pauli strings --- \dquote{binary symplectic form} (BSF)~\cite{van2020circuit}. 
-
-    The example in XXX-XYY-Simp gives a taste of our synthesis approach for Type-II IRs. Trivially, $ e^{-i (\frac{\phi}{2}XYY + \frac{\theta}{2}XXX)} $ necessitates two V-shaped $\CNOT$ trees, resulting in 6 2Q gates. However, If the circuit is conjugated by the Clifford transformation $ \CNOT_{1,0} $, it is simplified into two successive Ising gates acting on $(q_1, q_2)$, equivalent with one $ \SUfour $. This case implies that a group of Pauli exponentiations can be simultaneously simplified by applying appropriate Clifford transformations. To formulate this scheme, we represent Pauli strings in BSF, a tableau representation in which each row represents a single $ n $-qubit Pauli string. Columns of the tableau are partitioned as two parts $ [X\,|\,Z] $, such that $ [X_{i,j}\,|\, Z_{i,j}] $ represents the $ j $-th component of the $ i $-th Pauli operator. The value is $ [1 | 0 ] $ for $ X $, $ [0 | 1 ] $ for $ Z $, $ [1 | 1 ] $ for $ Y $, and $ [0 | 0 ] $ for $ I $. For instance, the process in XXX-XYY-Simp that Pauli strings $ [XXX;\, XYY] $ is transformed into $ [IXX;\, IYY] $ is formulated as 
+    where $ C(X,Y)_{1,2} $ is the Clifford gate in \Cref{fig:motivation} (b) while written in the \emph{universal controlled gate} representation
     \begin{align*}
-        \left[
-            \begin{array}{ccc|ccc}
-            1 & 1 & 1 & 0 & 0 & 0 \\
-            1 & 1 & 1 & 0 & 1 & 1
-            \end{array}
-        \right]
-        \xrightarrow{\CNOT_{1,0}}
-        \left[
-            \begin{array}{ccc|ccc}
-                0 & 1 & 1 & 0 & 0 & 0 \\
-                0 & 1 & 1 & 0 & 1 & 1
-            \end{array}
-        \right].
+        C(\sigma_0, \sigma_1) = \frac{1}{2}((I + \sigma_0)\otimes I + (I - \sigma_0)\otimes \sigma_1),\, \sigma_j\in \left\{X,Y,Z\right\}.
     \end{align*}
+    Any universal controlled gate is equivalent to $ \CNOT $ up to local $ H $ and $ S $ conjugations. For example, $ C(Z,X) = \CNOT$, and $ C(X,Y)  =  (H\otimes S) \CNOT (H\otimes S^\dagger) $.
 
-    With BSF representation, searching appropriate Clifford operators to simplify Pauli strings means lowering BSF's weights. We quantitatively characterize this procedure by defining a heuristic cost function
+    By definition, any operator $ C $ from the Clifford group is unitary and has the property that $ C P C^\dagger $ is also a Pauli operator for any Pauli operator $ P $. The update rules of some Clifford operators in terms of the BSF are demonstrated in \Cref{fig:clifford}, in which only 2Q Clifford operators (Clifford2Q) potentially have nontrivial effects of reducing the Pauli strings' weights. For any $ C(\sigma_0, \sigma_1) $, its tableau update rule is a combinatorial sequence of $ H $, $ S $ and $ C(Z, X) $ (or $ C(Z, Z) $) transformations. For example, $C(X,Y)_{a,b}$ exhibits the rule
+    \begin{align*}
+    [x_a,\, x_b\, |\, z_a,\, z_b] \rightarrow [x_a\oplus x_b\oplus z_b,\, z_a\oplus z_b\, |\, z_a,\, z_a\oplus z_b].
+    \end{align*}
+        
+    Therefore, the basic approach of our synthesis scheme is to find an appropriate sequence of Clifford2Q operators to simplify the BSF\footnote{The BSF that needs to simplify does not contain any weight-1 Pauli string. } until it can be directly synthesized by basic 1Q and 2Q gates, i.e., the quantity
     \begin{align}
-        \textrm{cost} =  n_\textrm{nontrivial}^2 &* \left(\vphantom{\sum}\right. \sum_{\langle i,j \rangle} \lVert r_x^{(i)} \lor r_z^{(i)} \lor r_x^{(j)} \lor r_z^{(j)} \rVert  \notag\\
-        & + \frac{1}{2} \sum_{\langle i,j \rangle} (\lVert r_x^{(i)} \lor r_x^{(j)} \rVert + \lVert r_z^{(i)} \lor r_z^{(j)} \rVert)\left.\vphantom{\sum}\right)
+        \totalWeight := \lVert  \lor_i (r_x^{(i)}\lor r_z^{(i)})  \rVert
     \end{align}
-    which is the combined weight overlap of both $X$-part and $Z$-part among each pair of Pauli strings of a BSF involving \dquote{nontrivial} (nonlocal) Pauli strings. The ReQISC compiler greedily searches the most appropriate Clifford operator from a set of 2Q Clifford group generators~\cite{grier2022classification} with all possible qubit pairs in action. The Clifford operator that mostly minimizes the cost function is selected and the BSF gets updated accordingly. This process continues iteratively until the BSF can be directly synthesized by a single $\SUfour$.
-
-
-    In practice, the ReQISC compiler performs a \dquote{grouping -- simplification --- ordering} pipeline to compile real-world Type-II programs involving heterogeneous-weight Pauli strings. It first groups Pauli strings with the same non-identity-acted qubit indices and then simplifies each group of Pauli strings. Finally, it greedily finds the optimal ordering of these simplified IR groups by exploiting opportunities for 2Q gate cancellation and reducing circuit depth, similar to the \dquote{selectively assembling} approach discussed above.
-
-}
-
-
-\NOTE{
-
-
-    ................
-
-}
-
-
-
-
-
+    is no more than 2, where $r_{x/z}$ is the $r$-th row of $X$ or $Z$ block of the BSF, and the norm is the sum of all binary entries. The key lies in how to find the Clifford2Q that can reduce the weights of as many Pauli strings as possible within the BSF.
 
 
 
@@ -247,11 +363,13 @@
 % Our Proposal: Phoenix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Our Propsal: \phoenix}
+\section{Our Proposal: \phoenix}
+
+
 
 \subsection{Overview}
 
-
+    In the proposed framework \phoenix, Pauli-based IRs (exponentiations) are first grouped according to the set of qubit indices with non-zero weight. Then, the \emph{BSF simplification} algorithm is applied to the BSF representation of each IR group, generating the simplified subcircuit composed of $ \CNOT $-equivalent Clifford2Q operators and Pauli exponentiations with weights no more than 2. \phoenix\ further selectively assemble (order) these unarranged simplified IR groups in a Tetris-like style that minimizes a uniform subcircuit assembling cost function that incorporates gate cancellation, circuit depth increase, and qubit routing overhead. By defining appropriate metric functions and heuristic algorithms, \phoenix\ achieves superior optimization (less 2Q gate count and circuit depth) compared to SOTA methods, efficiently handling compilation for large-scale VQA programs. % compared to SOTA methods.
 
 
 
@@ -259,20 +377,95 @@
 
     \input{algorithms/bsf_simplification.tex}
 
+    To search for appropriate Clifford2Q operators in BSF simplification, it suffices to just focus on a set of Clifford2Q generators of the 2Q Clifford group. We choose the six universal controlled gates
+    \begin{align}
+        \left\{ C(X,X), C(Y,Y), C(Z,Z), C(X,Y), C(Y,Z), C(Z,X) \right\}\label{eq:clifford-generators}
+    \end{align}
+    that are independent of each other and span the entire 2Q Clifford group~\cite{grier2022classification}. It is a natural choice of sets of Clifford2Q generators, as each of them is Hermitian and equivalent to $ \CNOT $, and its corresponding BSF's tableau update rule can be defined as a combination of the update rules for $ H $, $ S $, and $ \CNOT $. 
 
-    To search suitable Clifford2Q operators, it suffices to just focus on a set of 2Q generators of the 2Q Clifford group. In Clifford group theory, the 6 universal controlled gates 
-    \begin{align*}
-        \left\{ C(X,X), C(Y,Y), C(Z,Z), C(X,Y), C(Y,Z), C(Z,X) \right\}
-    \end{align*}
-    are independent of each other and span the entire 2Q Clifford group~\cite{grier2022classification}. Each of them can reduce the weight of certain Pauli strings. For example, $C(X,Y)\, [0\, 0\, |\, 1\, 1] \,C(X,Y) = [0\, 0\, |\, 1\, 0] $ since $C(X,Y)_{a,b}$ exhibits the rule
-    \begin{align*}
-    [x_a,\, x_b\, |\, z_a,\, z_b] \rightarrow [x_a\oplus x_b\oplus z_b,\, z_a\oplus z_b\, |\, z_a,\, z_a\oplus z_b].
-    \end{align*}
+    To determine which Clifford2Q operator to select from \Cref{eq:clifford-generators}, we define a heuristic cost function%\footnote{Again, any local Pauli string within the BSF is not considered in the cost function.}
+    \begin{align}
+        \mathrm{cost}_{\mathrm{bsf}} :=  n_{\mathrm{nonlocal}}^2 &* \left(\vphantom{\sum}\right. \sum_{\langle i,j \rangle} \lVert r_x^{(i)} \lor r_z^{(i)} \lor r_x^{(j)} \lor r_z^{(j)} \rVert  \notag\\
+    & + \frac{1}{2} \sum_{\langle i,j \rangle} (\lVert r_x^{(i)} \lor r_x^{(j)} \rVert + \lVert r_z^{(i)} \lor r_z^{(j)} \rVert)\left.\vphantom{\sum}\right) \label{eq:cost-bsf}
+    \end{align}
+    to quantify the disparity of the current BSF from a desired BSF that requires no further simplification ($ \totalWeight \leq 2 $). $ \mathrm{cost}_{\mathrm{bsf}} $ is the combined overlap of both $ X $-part and $ Z $-part among each pair of Pauli strings of a BSF, with a factor considering the impact of the number of nonlocal (weight larger than 1) Pauli strings. %It guides global optimization mechanism.
+    
+    \Cref{algo:simplification} illustrates details of the BSF simplification procedure. Its input is a set of Pauli strings. The output is a configuration sequence \textit{cfg}, in which each component is either a Clifford2Q generator from \Cref{eq:clifford-generators} or a BSF with $ \totalWeight $ no more than 2. Specifically, \Cref{algo:simplification} identifies the Clifford 2Q generator from \Cref{eq:clifford-generators} and qubit pair to act upon that leads to the greatest reduction in the cost function defined in \Cref{eq:cost-bsf}, and the BSF is updated accordingly. This greedy process continues iteratively until the BSF's $ \totalWeight $ is no more than 2. Before each Clifford2Q search epoch, local Pauli strings are peeled from the BSF, as they represent 1Q Pauli rotations and do not induce synthesis overhead. The output \textit{cfg} represents a simplified IR group, while still in high-level semantics (Clifford2Q, 1Q Pauli-based IRs, and successive 2Q Pauli-based IRs), independent of any specific quantum ISA.
+
+    In theory, simplifying a BSF until $ \totalWeight \leq 2$ is always achievable, for example, we can always reduce an individual Pauli string's weight to 1, peel it off, then iterate. The efficacy of \Cref{algo:simplification} lies in its simultaneous simplification mechanism guided by the carefully defined global cost function in \Cref{eq:cost-bsf}. 
+
+
+
+\subsection{Ordering IR groups in a Tetris-like style}
+
+    \begin{figure}[tbp]
+        \centering        
+        \includegraphics[width=\columnwidth]{figures/empty_end.pdf}
+        \caption{Tetris-like circuits assembling. (a) Example of $ e_l $ and $ e_r $ vectors of a generic circuit. (b) In Scenario I, $ \mathrm{cost}_\mathrm{depth} = \textsc{sum}(\eRrightPre + \eLeftPost) $; In Scenario II, $ \mathrm{cost}_\mathrm{depth} = \textsc{sum}(\eRrightPre + \eLeftPost - 1)  $.}% $\eRrightPre$ ($\eLeftPost$) is the right-empty-end vector of the preceding (succeeding) citcuits.}
+        \label{fig:empty-end}
+    \end{figure}
+
+    With simplified IR groups compiled via BSF simplification, \phoenix\ further performs a \emph{Tetris-like IR group ordering} procedure that aims to minimize \textit{a uniform assembling cost metric}. This is unlike \cite{li2022paulihedral} and \cite{jin2024tetris} where the ordering is primarily determined by gate cancellation opportunities between IR groups. We can abstract the circuit structure exhibited by each simplified IR group into something resembling a Tetris block. Then, we choose the ordering based on the cost function of assembling Tetris blocks, with gate cancellation opportunities and qubit routing overhead also taken into account. We primarily have three ingredients:
+    \begin{enumerate}
+        \item \textit{Endian vectors of circuits and the depth cost function.} As shown in \Cref{fig:empty-end} (a), we define a pair of vectors $e_l$ and $e_r$ for each subcircuit (which would correspond to a simplified IR group in our case). The $i$-th entry of $e_l$ ($e_r$) refers to how many layers one has to traverse starting from the left (right) side before qubit $i$ is acted upon. The layers are defined by grouping neighboring 2Q gates that act on different qubits. See~\Cref{fig:empty-end} (a) for an example for a generic (not necessarily simplified IR group) circuit.
+        % It is calculated by layering the circuit in its directed acyclic graph (DAG) according to the nodes' topological orders.
+        With this definition, the depth overhead for assembling two subcircuits -- the proceeding subcircuit with left-endian vectors $e_r$ and the succeeding subcircuit with left-endian vector $e_l'$ is given by
+        \begin{align*}
+            \mathrm{cost}_\mathrm{depth} :=  
+                    \left\{
+                    \begin{array}{ll}
+                    \textsc{sum}(\eRrightPre + \eLeftPost),  \text{ if } \textsc{all}(\eRrightPre[\eLeftPost == 0] > 0) \\\qquad \text{    }\qquad\text{    }\qquad\text{   }\text{and }\textsc{all}(\eLeftPost[\eRrightPre == 0] > 0) \\
+                    \textsc{sum}(\eRrightPre + \eLeftPost - 1), \text{ otherwise    }
+                    \end{array}
+                    \right.
+        \end{align*}
+        See \Cref{fig:empty-end} (b) for an example. % The endian vectors combine in a way resembling Tetris blocks.
+        \item \emph{Clifford2Q cancellation.} The simplified IR group usually exposes Hermitian Clifford2Q operators at the two ends of the subcircuit. Therefore some Clifford2Q gate cancellation opportunities could be exploited, which may or may not decrease overall circuit depth, as depicted in \Cref{fig:gate-cancel} (a). We can add this consideration into $\mathrm{cost}_\mathrm{depth}$: if $m$ pairs Clifford2Q cancelled, while (a) without decreasing subcircuit depth, $\mathrm{cost}_\mathrm{depth} \gets \mathrm{cost}_\mathrm{depth} - 2m$; (b) with one side's subcircuit depth decreases, $\mathrm{cost}_\mathrm{depth} \gets \mathrm{cost}_\mathrm{depth} -2m -n$; (c) with both sides' subcircuit depths decrease, $\mathrm{cost}_\mathrm{depth} \gets \mathrm{cost}_\mathrm{depth} - 2m -2n$.
+        \item \emph{Consideration of qubit routing overhead.} %Hardware-aware compilation usually results in considerable 2Q gate count overhead during the qubit mapping stage which inserts necessary $\SWAP$ gates to route qubits within the connectivity-constrained topologies. 
+        We try to mitigate the routing overhead for hardware-aware compilation by comparing the qubit interaction graphs of subcircuits. This approach is not limited to specific routing schemes %(e.g. three-$\CNOT$ unrolling of $\SWAP$-based routing~\cite{li2019tackling}, bridge gate with ancilla~\cite{itoko2020optimization}) 
+        and hardware topologies. Intuitively, two subcircuits with more \dquote{similar} qubit interaction behaviors require less mapping transition overhead between them, as demonstrated by \Cref{fig:gate-cancel} (b). Therefore, we introduce a factor characterized by the similarity between the qubit interaction graphs of two subcircuits in the cost function:
+        \begin{align}
+            \mathrm{cost}_\mathrm{depth} \rightarrow \frac 1 s \cdot \mathrm{cost}_\mathrm{depth},\quad s = \sum_i \frac{\langle D_i, D_i'\rangle}{\lVert D_i \rVert_2 \lVert D_i' \rVert_2},
+        \end{align}
+        where $D$ ($D'$) is the distance matrix of the preceding (succeeding) subcircuit's qubit interaction graph of the tail (head) part. The tail (head) is defined as starting from the right (left) of the subcircuit and incorporating more and more 2Q gates until all qubits are acted upon. $D_{i,j}$ represents the shortest path length between qubit $i$ and qubit $j$. $D_i$ is the $i$-th row of $D$.
+        %This similarity metric is like the cosine-sine similarity metric, reflecting the similarity of both global topological structures and qubit-wise local topologies.
+    \end{enumerate}
+
+
+    \begin{figure}[tbp]
+        \centering
+        % \subfigure[Clifford2Q cancellation.]{
+        %     \includegraphics[width=0.46\columnwidth]{figures/gate_cancel_1.pdf}
+        % }
+        % \subfigure[Clifford2Q cancellation with reduced depth.]{
+        %     \includegraphics[width=0.46\columnwidth]{figures/gate_cancel_2.pdf}
+        % }
+        \includegraphics[width=\columnwidth]{figures/gate_cancel.pdf}
+        \caption{Gate cancellation opportunities and routing-aware assembling.  (a) Clifford2Q cancellation between the preceding and succeeding subcircuits may or may not induce circuit depth decrease.  (b) The subcircuit (upper right) whose qubit interaction graph is more similar to that of the already assembled subcircuit (left) is preferred over the other (lower right).}
+        \label{fig:gate-cancel}
+    \end{figure}
+
+    In practice, these IR groups are first pre-arranged in descending order of their weight (subcircuit width). \phoenix\ does lookahead for a certain number of subcircuits to find the one with the minimum $\mathrm{cost}_\mathrm{depth}$ with respect to the last assembled subcircuit. This process iterates until all subcircuits are assembled. %Overall, the Tetris-like IR group ordering strategy exhibits a globally depth-optimal ordering scheme under the guidance of uniform cost metrics, aware of both gate cancellation benefits and qubit routing overhead.
+    
+    % \begin{align*}
+    %     \mathrm{cost}_\mathrm{depth} \rightarrow \left\{
+    %         \begin{array}{ll}
+    %         \mathrm{cost}_\mathrm{depth} - 2m, \text{ if $m$-pair cancelled,} \\
+    %         			\qquad\qquad\qquad\qquad\text{no depth descrease} \\
+    %         \mathrm{cost}_\mathrm{depth} - 2m - n, \text{ if $m$-pair cancelled,} \\
+    %         			\qquad\qquad\qquad\qquad\text{with one-side depth decrease} \\
+    %         \mathrm{cost}_\mathrm{depth} - 2m - 2n, \text{ if $m$-pair cancelled,} \\
+			 %            \qquad\qquad\qquad\qquad\text{with two-side depth descrease} \\
+    %         \end{array}
+    %         \right.
+    % \end{align*}
 
 
 
 
-\subsection{Ordering of IR groups in a Tetris style}
+
+
+    % \input{algorithms/tetris_odering.tex}
 
 
 
@@ -283,17 +476,10 @@
 
 \section{Evaluation}
 
-We evaluate the effectiveness of \phoenix\ of across divere Hamiltonian simulation programs, quantum ISAs, and NISQ deive topologies. \phoenix\ is implemented in Python, capable of compiling large-scale VQA programs efficiently since the core algorithms of \phoenix\ exhibit linear computational complexity in terms of program size. All experiments are executed on a laptop (Apple M3 Max, 36GB memory).
+We evaluate the effectiveness of \phoenix\ across diverse Hamiltonian simulation programs, quantum ISAs, and device topologies. Although \phoenix\ is implemented in Python, it compiles VQA programs of thousands of Pauli strings and more than ten qubits (approximately corresponding to the program size with $10^4$-$10^6$ $\CNOT$ gates in conventional synthesis) in dozens of seconds. All experiments are executed on a laptop (Apple M3 Max, 36GB memory).
 
 \subsection{Experimental settings}
-    
-    \textbf{Metrics.} We evaluate the effectiveness of \phoenix\ using following metrics: 2Q gate count, 2Q circuit depth, algorithmic error for VQA synthesis, and circuit fidelity. Notably, we exclude 1Q gates and their count when calculating circuit depth. On one hand, 1Q gates are generally considered \dquote{free} resources compared to 2Q gates due to their lower error rates and shorter durations. On the other hand, $\CNOT$ is not an native operation in most NISQ platforms. Its implementation typically requires extra 1Q drives before/after the native 2Q gate (e.g., Cross-Resonance~\cite{rigetti2010fully} and Mølmer-Sørensen~\cite{bruzewicz2019trapped}). Including 1Q gates in the compilation metrics could therefore lead to misleading conclusions. Algorithmic error refers to the deviation between the synthesized circuit's unitary matrix and the ideal evolution under the original Hamiltonian, as measured by the infidelity between unitary matrices: $\mathrm{infid} = 1 - \frac{1}{N}|\mathrm{Tr}(U^\dagger V)|$. Circuit fidelity is assessed via the \dquote{Estimated Success Probability} (ESP)~\cite{magesan2011scalable}, which provides a theoretical estimation of the success probability based on the program and the hardware noise model.
-    
-    \textbf{Baselines.} \tket~\cite{sivarajah2020t}, \paulihedral~\cite{li2022paulihedral}, and \tetris~\cite{jin2024tetris} are primary baselines for comparison with our method. For \tket, the \code{PauliSimp} and \code{FullPeepholeOptimise} passes are adopted for logical circuit optimization, providing a similar procedure to its default O2 compilation is adopted, in which the \code{PauliSimp} pass is particularly effective at optimizing Pauli gadgets; for \paulihedral, \qiskit\ O2 pass is equipped because the numerous gate cancellation opportunities exposed by \paulihedral\ necessitate inverse cancellation and commutative cancellation operations. For hardwar-aware compilation, all baselines and \phoenix\ are followed by \qiskit\ O3 pass with SABRE qubit mapping~\cite{li2019tackling}. For QAOA benchmarking, \twoqan~\cite{lao20222qan} is used as the SOTA baseline.
-    % TKet O2: \footnote{\href{https://docs.quantinuum.com/tket/extensions/pytket-qiskit/}{https://docs.quantinuum.com/tket/extensions/pytket-qiskit/}}
 
-    \textbf{Benchmarks.} We carefully select two representative Hamiltonian simulation benchmarks --- (1) \emph{UCCSD}: A set of UCCSD ansatz including \CHtwo, \HtwoO, \LiH, and \NH\ four categories of molecule simulation programs, totally 16 benchmarks, supporting the primary evaluation in our study. Each category is generated with STO-3G orbitals~\cite{hehre1969self}, encoded by Jordan-Wiger (JW)~\cite{jordan1928paulische} and approximated by complete and frozen core, encoded by Bravyi-Kitaev (BK)~\cite{bravyi2002fermionic} transformations, respectively. Details are shown in \Cref{tab:uccsd}. (2) \emph{QAOA}: A set of 2-local Hamiltonian simulation programs corresponding to random graphs and regular graphs, for which description and evaluation is shown in \Cref{tab:qaoa}.
-    
 
     \begin{table}[tbp]
         \centering
@@ -306,7 +492,17 @@ We evaluate the effectiveness of \phoenix\ of across divere Hamiltonian simulati
         \label{tab:uccsd}
         
     \end{table}
+        
     
+    \textbf{Metrics.} We evaluate \phoenix\ using the following metrics: 2Q gate count, 2Q circuit depth, and the algorithmic error for VQA synthesis. Algorithmic error refers to the deviation between the synthesized circuit's unitary matrix and the ideal evolution under the original Hamiltonian, as measured by the infidelity between unitary matrices in our evaluation: $\mathrm{infid} = 1 - \frac{1}{N}|\mathrm{Tr}(U^\dagger V)|$. Notably, we exclude 1Q gates and their count in circuit depth, as 1Q gates are generally considered free resources due to their significantly lower error rates. Additionally, $\CNOT$ is not a native operation on most NISQ platforms, requiring extra 1Q drives before and/or after native 2Q gates (e.g., Cross-Resonance~\cite{rigetti2010fully}, Mølmer-Sørensen~\cite{bruzewicz2019trapped}), making 1Q gate inclusion in metrics potentially misleading.  %Circuit fidelity is assessed via the \dquote{Estimated Success Probability} (ESP)~\cite{magesan2011scalable}, which provides a theoretical estimation of the success probability based on the program and the hardware noise model.
+    
+    \textbf{Baselines.} \tket~\cite{sivarajah2020t}, \paulihedral~\cite{li2022paulihedral}, and \tetris~\cite{jin2024tetris} are primary baselines to be compared with our method. For \tket, the \code{PauliSimp} and \code{FullPeepholeOptimise} passes are adopted for logical circuit optimization. This is similar to \tket's O2 compilation pass in which the \code{PauliSimp} pass is particularly effective at optimizing Pauli gadgets. For \paulihedral, the \qiskit\ O2 pass is associated by default because the numerous gate cancellation opportunities exposed by \paulihedral\ necessitate inverse cancellation and commutative cancellation operations. For hardware-aware compilation, all baselines and \phoenix\ are followed by a \qiskit\ O3 pass with SABRE qubit mapping~\cite{li2019tackling}. For QAOA benchmarking, \twoqan~\cite{lao20222qan} is used as the SOTA baseline.
+    % TKet O2: \footnote{\href{https://docs.quantinuum.com/tket/extensions/pytket-qiskit/}{https://docs.quantinuum.com/tket/extensions/pytket-qiskit/}}
+
+    \textbf{Benchmarks.} We select two representative VQA benchmarks---(1) \emph{UCCSD}: A set of UCCSD ansatzes, including \CHtwo, \HtwoO, \LiH, and \NH: 4 categories of molecule simulation programs. Each category is generated with STO-3G orbitals~\cite{hehre1969self}, encoded by Jordan-Wigner (JW)~\cite{jordan1928paulische} and Bravyi-Kitaev (BK)~\cite{bravyi2002fermionic} transformations, in turn approximated by complete or frozen-core orbitals. Details are shown in \Cref{tab:uccsd}. (2) \emph{QAOA}: A set of 2-local Hamiltonian simulation programs corresponding to random graphs and regular graphs, for which the description and evaluation results are shown in \Cref{tab:qaoa}.
+    
+
+
 
 
 
@@ -332,9 +528,9 @@ We evaluate the effectiveness of \phoenix\ of across divere Hamiltonian simulati
 
     \Cref{fig:all2all} and \Cref{tab:uccsd-avg} illustrates the main benchmarking results regarding logical program synthesis:
     \begin{enumerate}
-        \item \phoenix\ significantly outperforms baselines across all benchmarks, with an average 21.15\% and 17.29\% optimization rate\footnote{For example, the \#$ \CNOT $ optimization rate is defined as $\frac{\#\CNOT_\textrm{after}}{\#\CNOT_\textrm{before}}$.} in \#$ \CNOT $ and Depth-2Q, respectively, relative to original circuits. That is mostly attributed to the group-wise BSF simplification mechanism, as \phoenix\ adopts the same IR grouping method as \paulihedral\ and \tetris.
-        \item In task of the logical-level synthesis, \tetris\ performs the worst, falling far behind \tket\ and the earlier \paulihedral, let alone \phoenix. This is because \tetris\ focuses primarily on co-optimization techniques to reduce $\SWAP$ gates during qubit routing.
-        \item We also compare \paulihedral/\tetris/\phoenix\ with and without \qiskit\ optimization, to evaluate their proposed high-level optimization capabilities. \qiskit\ O3 improves \paulihedral\ and \tetris\ a lot over our work. Therefore, \phoenix's high-level optimization strategy is more impressive and leaves much less gate cancellation workloads to \qiskit\ O3.
+        \item \phoenix\ significantly outperforms baselines across all benchmarks, with an average (geometric mean) 21.15\% and 17.29\% optimization rate in \#$ \CNOT $ and Depth-2Q, respectively, relative to original circuits.\footnote{For example, the \#$ \CNOT $ optimization rate is defined as $\frac{\#\CNOT_\textrm{after}}{\#\CNOT_\textrm{before}}$.} That is mostly attributed to the group-wise BSF simplification mechanism, as \phoenix\ adopts the same IR grouping method as \paulihedral\ and \tetris.
+        \item For the task of logical-level synthesis, \tetris\ performs the worst, falling far behind \tket\, \paulihedral, and \phoenix. This is because \tetris\ focuses primarily on co-optimization techniques to reduce $\SWAP$ gates during qubit routing.
+        \item We also compare \paulihedral/\tetris/\phoenix\ with and without \qiskit\ optimization, to evaluate their proposed high-level optimization capabilities. The improvement from using \qiskit\ O3 for \paulihedral\ and \tetris\ is more pronounced compared to that of \phoenix. Therefore, \phoenix's high-level optimization strategy is more impressive and \qiskit\ O3 cannot improve much upon it.
     \end{enumerate}
 
 
@@ -347,13 +543,7 @@ We evaluate the effectiveness of \phoenix\ of across divere Hamiltonian simulati
         \label{fig:manhattan}
     \end{figure}
 
-
-    We choose the heavy-hex topology, specifically a 64-qubit coupling graph corresponding to IBM's Manhattan processor~\cite{mooney2021whole}, as the limited-topology backend to perform hardware-aware compilation. Results are depicted in \Cref{fig:manhattan}. \tket's results are not comparable to \paulihedral/\tetris/\phoenix, so it is not shown in \Cref{fig:manhattan}. Although \phoenix\ focuses primarily on high-level logical program optimization while integrates limited efforts on hardware-aware co-optimization, it still outperforms \paulihedral\ and \tetris\ in terms of \#$ \CNOT $ and Depth-2Q of the ultimate mapped circuits, with an average 35.9\% (22.3\%) and 43.6\% (27.8\%) reduction, respectively, compared to \paulihedral\ (\tetris). 
-  
-    The consideration of integrating qubit mapping transition overhead into the heuristic IR group ordering functionality in \phoenix\ controls the routing overhead, resulting in 2.8x \#$ \CNOT $ on average. That is better than \paulihedral\ and worse than \tetris, since the latter specially exploits \#$\CNOT$ cancellation opportunities for $ \SWAP $-based routing. 
-
-    
-    Consequently, even for hardware mapping on limited-topology devices, \phoenix\ effectively controls qubit routing overhead and ultimately surpasses co-design local optimization strategies.
+    We use the heavy-hex topology, specifically a 64-qubit coupling graph from IBM's Manhattan processor~\cite{mooney2021whole}, as the limited-topology backend for hardware-aware compilation. Results are depicted in \Cref{fig:manhattan}, in which \tket's results are excluded due to significantly worse performance compared to \paulihedral/\tetris/\phoenix. Despite focusing primarily on high-level logical program optimization with limited hardware-aware co-optimization, \phoenix\ still outperforms baselines, reducing $\CNOT$ gate count by 35.9\% (22.3\%) and 2Q circuit depth by 43.6\% (27.8\%) on average, compared to \paulihedral\ (\tetris). With the qubit mapping transition overhead taken into account within its IR group ordering process, \phoenix\ induces 2.8x \#$ \CNOT $ on average after hardware mapping. It is better than \paulihedral\ while worse than \tetris, since \tetris\ specializes in \#$\CNOT$ cancellation for $ \SWAP $-based routing~\cite{jin2024tetris}. Consequently, even on limited-topology devices, \phoenix\ effectively manages routing overhead and surpasses co-design local optimization strategies.
 
 
 \subsection{Comparison in diverse ISAs}
@@ -367,23 +557,22 @@ We evaluate the effectiveness of \phoenix\ of across divere Hamiltonian simulati
     % \end{figure}
     \begin{table*}[tbp]
         \centering
-        \caption{Comparison for diverse ISAs with all-to-all and limited-topology.}
+        \caption{Comparison for diverse ISAs with all-to-all and limited topology.}
         \input{tables/isa.tex}
         \label{tab:isa}
     \end{table*}
 
-    Quantum instruction set architecture (ISA), or the native gate set in a narrow sense, serves as a contract between software and hardware implementation. The design of quantum ISA plays a crucial role in the performance of NISQ devices, in which the 2Q gate dominates its hardware accuracy and cost as well as the software expressivity. Although the conventional gate set includes 1Q gates and CNOT-based 2Q gates, recently some works propose integrating complex and continuous 2Q gates into the ISA design, such as the $\mathrm{XY}(\theta)$ gate family by Rigetti Computing~\cite{abrams2020implementation}, the fractional gates on IBM's Heron processors\footnote{\footnote{\href{https://www.ibm.com/quantum/blog/fractional-gates}{https://www.ibm.com/quantum/blog/fractional-gates}}}, and the AshN gate scheme~\cite{chen2024one} considering all possible 2Q gates within the $\SUfour$ group as the quantum ISA.    
+    Quantum ISA, or the native gate set, serves as an interface between software and hardware implementation. Quantum ISA design plays a crucial role in the performance of NISQ devices, in which the 2Q gate dominates the accuracy and difficulty of hardware implementation, as well as the theoretical circuit synthesis abilities. Although the conventional gate set includes 1Q gates and CNOT-based 2Q gates, recently some works propose integrating complex and even continuous 2Q gates into the ISA design, such as the $\mathrm{XY}(\theta)$ gate family~\cite{abrams2020implementation}, the fractional gates~\cite{ibm_fractional_gates}, and the AshN gate scheme~\cite{chen2024one} which considers all possible 2Q gates within the $\SUfour$ group as the quantum ISA.    
+    Therefore, we further compare \phoenix\ with baselines in different quantum ISAs to showcase its ISA-independent compilation advantage.
     
-    Therefore, we further compare \phoenix\ with baselines in different quantum ISAs, to showcase that \phoenix's ISA-independent synthesis strategies proves to be a generally powerful optimization engine accommodating diverse ISAs.
-    
-    Without loss of generality, we consider the most expressive $\SUfour$ ISA with all-to-all and heavy-hex qubit topologies, respectively, in addition to the benchmarking in $ \CNOT $ ISA above. For logical-level compilation, \phoenix\ can directly generate $ \SUfour $-based circuits through its BSF simplification algorithm, while for baselines (\paulihedral\ and \tetris\ are equipped with \qiskit\ O3 by default) an extra \dquote{rebase} (or \dquote{transpile}) procedure is required to convert the $ \CNOT $-based circuits to $ \SUfour $-based ones; for hardware-aware compilation, all compilers require the rebase procedure, following the \qiskit\ O3 hardware-aware compilation pass. Detailed outcomes are summarized in \Cref{tab:isa}, wherein we highlight the geometric-mean relative optimization rates of \phoenix compared to baselines' results.
+    This ISA-independent advantage is best shown by choosing the most expressive $\SUfour$ ISA. We evaluate it with both all-to-all and heavy-hex topologies, as the same as the evaluation above for $\CNOT$ ISA. For logical-level compilation, \phoenix\ directly generates $ \SUfour $-based circuits via its BSF simplification algorithm, while baselines (\paulihedral\ and \tetris\ equipped with \qiskit\ O3 by default) require an additional \dquote{rebase} (or \dquote{transpile}) step to convert $ \CNOT $-based circuits to $ \SUfour $-based ones. For hardware-aware compilation, all compilers include a rebase step, following the \qiskit\ O3 hardware-aware compilation pass. Detailed outcomes are summarized in \Cref{tab:isa}, highlighting the geometric-mean relative optimization rates of \phoenix\ compared to the baselines' results.
     % \begin{enumerate}
     %     \item Again, \phoenix\ significantly outperforms baselines when targeting $ \SUfour $ ISA. 
     %     \item The optimization rates relative to baselines are more impressive than those in $ \CNOT $ ISA, despite the baselines incorporating sophisticated optimization techniques specifically designed for the $ \CNOT $ ISA. For instance, the multiple of \phoenix's \#2Q relative to \paulihedral's in $ \CNOT $ ISA is 82.21\% (62.63\%), whereas this value decreases to 75.69\% (39.97\%) in $ \SUfour $ ISA for hardware-agnostic (hardware-aware) compilation. 
     %     \item One exception is the hardware-aware compilation comparison with \tket, as \tket's hardware-aware compilation in $ \CNOT $ ISA generates much larger 2Q gate count and circuit depth than other compilers, and there are many 2Q subcircuit fusing opportunities such that the rebased circuits involves much fewer $ \SUfour $ gates.
     % \end{enumerate}
 
-    Again, \phoenix\ significantly outperforms baselines when targeting $ \SUfour $ ISA. The optimization rates relative to baselines are more impressive than those in $ \CNOT $ ISA, despite the baselines incorporating sophisticated optimization techniques specifically designed for the $ \CNOT $ ISA. For instance, the multiple of \phoenix's \#2Q relative to \paulihedral's in $ \CNOT $ ISA is 82.21\% (62.63\%), whereas this value decreases to 75.69\% (39.97\%) in $ \SUfour $ ISA for hardware-agnostic (hardware-aware) compilation. One exception is the hardware-aware compilation comparison with \tket, as \tket's hardware-aware compilation in $ \CNOT $ ISA generates much larger 2Q gate count and circuit depth than other compilers, and there are many 2Q subcircuit fusing opportunities such that the rebased circuits involves much fewer $ \SUfour $ gates.
+    Again, \phoenix\ significantly outperforms baselines when targeting $ \SUfour $ ISA. The optimization rates relative to baselines are more impressive than those in $ \CNOT $ ISA, despite the baselines incorporating sophisticated optimization techniques specifically designed for the $ \CNOT $ ISA. For instance, the multiple of \phoenix's \#2Q relative to \paulihedral's in $ \CNOT $ ISA is 82.21\% (62.63\%), whereas this value decreases to 75.69\% (39.97\%) in $ \SUfour $ ISA for hardware-agnostic (hardware-aware) compilation. One exception is the hardware-aware compilation comparison with \tket, as \tket's hardware-aware compilation in the $ \CNOT $ ISA generates circuits with much larger 2Q gate count and circuit depth than other compilers, and there are numerous 2Q subcircuit fusing opportunities such that the rebased circuits involves much fewer $ \SUfour $ gates.
 
 
 % \subsection{Breakdown analysis}
@@ -412,13 +601,13 @@ We evaluate the effectiveness of \phoenix\ of across divere Hamiltonian simulati
         \centering
         \caption{QAOA benchmarking versus 2QAN.}
         \setlength{\tabcolsep}{3.8pt}
-        \scalebox{0.78}{
+        \scalebox{0.76}{
             \input{tables/qaoa.tex}
         }
         \label{tab:qaoa}
     \end{table}
 
-    For QAOA benchmarking, we focus on the the performance in hardware-aware compilation, since the 2Q gate count cannot be reduced and minimizing circuit depth is trivial in logical-level compilation, as both \twoqan\ and \phoenix\ can generate depth-optimal QAOA circuits at the logical level at the in our field test. \Cref{fig:qaoa} and \Cref{tab:qaoa} illustrate compilation results on heavy-hex topology, across six representative QAOA programs corresponding to both random graphs (each node with degree 4) and regular (each node with degree 3) graphs, with qubit sizes of 16, 20, and 24. \phoenix\ outperforms \twoqan\ across all benchmarks in all metrics (e.g., \#$ \CNOT $, \#$ \SWAP $), especially in Depth-2Q, with an average 40.8\% reduction compared to \twoqan. These results further demonstrate the effectiveness of the routing-aware IR group ordering method in \phoenix.
+    For QAOA benchmarking, we focus on the performance in hardware-aware compilation, since the 2Q gate count cannot be reduced and minimizing circuit depth is easy in logical-level compilation. Both \twoqan\ and \phoenix\ can generate depth-optimal QAOA circuits at the logical level in our field test. \Cref{fig:qaoa} and \Cref{tab:qaoa} illustrate compilation results on the heavy-hex topology, across six QAOA programs corresponding to both random graphs (each node with degree 4) and regular (each node with degree 3) graphs, with qubit sizes of 16, 20, and 24. \phoenix\ outperforms \twoqan\ across all benchmarks in all metrics (such as \#$ \CNOT $, \#$ \SWAP $), especially in Depth-2Q, with an average 40.8\% reduction compared to \twoqan. These results further demonstrate the effectiveness of the routing-aware IR group ordering method in \phoenix.
 
 \subsection{Algorithmic error analysis}
 
@@ -430,28 +619,28 @@ We evaluate the effectiveness of \phoenix\ of across divere Hamiltonian simulati
         \label{fig:algo-err}
     \end{figure}
 
-    We further highlight the advantage of \phoenix\ in reducing algorithmic errors for VQA programs, which limits the best accuracy of practical VQA's outcomes when executing on noisy hardware. From UCCSD benchmarks, we select those with qubit sizes no more than 10 for evaluation, given the matrix computation capabilities of standard PCs. We rescale the coefficients of Pauli strings to control their algorithmic errors within the range of 0.00005 to 0.01, which corresponds to different-scale evolution durations of molecular simulation, as suggested in \Cref{fig:algo-err}. In contrast to \tket, \phoenix\ typically leads to lower algorithmic errors for both JW and BK encoding schemes. Although this improvement is program-specific, it is more significant for Pauli string patterns of BK than those of JW, with 57\% (42.7\%) and 49.5\% (34.1\%) for \NH\ (\LiH) simulation, respectively. The algorithmic errors resulting from \paulihedral\ and \tetris\ are comparable to \phoenix\ and are not shown in \Cref{fig:algo-err}, as they adopt the same Pauli string blocking approach. As a result, the impressive algorithmic error reduction effect of \phoenix\ further pushes toward the quantum advantage on computational chemistry problems.
+    We further highlight \phoenix's advantage in reducing the algorithmic error. We select UCCSD benchmarks with qubits no more than 10 for evaluation, within the matrix computation capabilities of standard PCs. We rescale the coefficients of Pauli strings to control their algorithmic errors within $5\times 10^{-5}$ to $10^{-2}$, which corresponds to different evolution durations in molecular simulation, as suggested in \Cref{fig:algo-err}. In contrast to \tket, \phoenix\ typically leads to lower algorithmic errors for both JW and BK encoding schemes. Although this improvement is program-specific, it is more significant for the Pauli string patterns of BK than those of JW, with 57\% (42.7\%) and 49.5\% (34.1\%) for \NH\ (\LiH) simulation, respectively. As they adopt the same Pauli string blocking approach, we expect the algorithmic errors resulting from \paulihedral\ and \tetris\ to be comparable to \phoenix, and so are not shown in \Cref{fig:algo-err}. As a result, the impressive algorithmic error reduction effect of \phoenix\ brings us closer to a possible quantum advantage on computational chemistry problems.
 
 
-\subsection{Fidelity analysis}
+% \subsection{Fidelity analysis}
 
 
-\ZY{TODO or to delete}
+% \ZY{TODO or to delete}
 
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Conclustion and Outlook
+% Conclusion and Outlook
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Conclusion and Outlook}
+Mainstream circuit synthesis approaches rely on rewriting rules or patterns, often restricted to small-scale, local optimizations. In contrast, we present \phoenix, a framework that leverages a high-level Pauli-based IR for Hamiltonian simulation, one of the most prominent and widely studied applications in quantum computing. \phoenix\ outperforms all SOTA VQA compilers across diverse program types and target hardware platforms, showcasing its unmatched performance and versatility. This work not only bridges the gap between impactful quantum applications and physically implementable solutions but also prompts a re-evaluation of quantum compiler pipeline design.
 
-    \ZY{Summary of our work}
+% Beyond producing significantly optimized circuits, high-level IRs, as a refined abstraction layer on top of the traditional quantum instruction set, enable more efficient synthesis and more effective hardware mapping.
+% \DD{Taking a step further, they can also serve as intermediate building blocks: we can aim to develop multi-qubit gates and design quantum processors to optimize the implementation of such building blocks.}
 
-
-
-
+Beyond producing significantly optimized circuits, high-level IRs, as a refined abstraction layer on top of the traditional quantum ISA, create more opportunities for efficient synthesis and effective hardware mapping. Furthermore, they can act as intermediate building blocks, guiding the design of quantum processors and corresponding control schemes---potentially incorporating multi-qubit control---to implement these high-level IRs more efficiently.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -463,7 +652,7 @@ We evaluate the effectiveness of \phoenix\ of across divere Hamiltonian simulati
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Reference
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
+% \newpage
 \bibliographystyle{IEEEtran}
 \bibliography{reference}
 
