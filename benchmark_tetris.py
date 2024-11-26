@@ -14,6 +14,7 @@ import time, sys, os
 from tetris.t_arch import *
 import pdb
 import random
+from tetris.utils.hardware import load_coupling_map
 # from tetris.utils.synthesis_broccoli import synthesis
 # from tetris.utils.synthesis_max_cancel import synthesis_max_cancel
 from tetris.utils.synthesis_lookahead import synthesis_lookahead
@@ -100,32 +101,31 @@ def load_oplist(filename):
 
 # oplist = load_oplist("chem_json/CH2_cmplt_BK_sto3g.json")
 
-from qiskit.transpiler import CouplingMap
-from phoenix.utils import arch
-from tetris.utils.hardware import pGraph, load_coupling_map
+# from qiskit.transpiler import CouplingMap
+# from phoenix.utils import arch
+# from tetris.utils.hardware import pGraph, load_coupling_map
 
-Manhattan = CouplingMap(arch.read_device_topology('./experiments/manhattan.graphml').to_directed().edge_list())
-Sycamore = CouplingMap(arch.read_device_topology('./experiments/sycamore.graphml').to_directed().edge_list())
+# Manhattan = CouplingMap(arch.read_device_topology('./experiments/manhattan.graphml').to_directed().edge_list())
+# Sycamore = CouplingMap(arch.read_device_topology('./experiments/sycamore.graphml').to_directed().edge_list())
 
 
-def coupling_map_to_pGraph(coupling_map: CouplingMap) -> pGraph:
-    import rustworkx as rx
-    MAX_DIST = 1000000
-    G = rx.adjacency_matrix(coupling_map.graph)
-    C = np.ones((coupling_map.size(), coupling_map.size())) * MAX_DIST
-    np.fill_diagonal(C, 0)
-    for src, dst in coupling_map.get_edges():
-        C[src, dst] = 1
-    return pGraph(G, C)
+# def coupling_map_to_pGraph(coupling_map: CouplingMap) -> pGraph:
+#     import rustworkx as rx
+#     MAX_DIST = 1000000
+#     G = rx.adjacency_matrix(coupling_map.graph)
+#     C = np.ones((coupling_map.size(), coupling_map.size())) * MAX_DIST
+#     np.fill_diagonal(C, 0)
+#     for src, dst in coupling_map.get_edges():
+#         C[src, dst] = 1
+#     return pGraph(G, C)
 
 def Tetris_benchmark(oplist):
     print("----------------tetris_benchmark pass------------------")
     # lnq = len(oplist[0][0])
     coup = load_coupling_map('manhattan')
-    # coup = Manhattan
+
     a2 = oplist
     qc, metrics = synthesis_lookahead(a2,
-                                      # graph=coupling_map_to_pGraph(Manhattan),
                                       arch='manhattan',
                                       use_bridge=False, swap_coefficient=3, k=10)
     pnq = qc.num_qubits
@@ -159,11 +159,9 @@ def PH_benchmark(oplist):
     print("-----------------PH pass------------------")
     lnq = len(oplist[0][0])
     coup = load_coupling_map('manhattan')
-    # coup = Manhattan
 
     a2 = gate_count_oriented_scheduling(oplist)
     qc, total_swaps, total_cx = synthesis_SC.block_opt_SC(a2,
-                                                          # graph=coupling_map_to_pGraph(Manhattan),
                                                           arch='manhattan'
                                                           )
     pnq = qc.num_qubits

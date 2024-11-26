@@ -191,7 +191,10 @@ def load_coupling_map(code) -> List[List[int]]:
     if code == 'sycamore':
         return load_sycamore_coupling_map()
     reduced = is_code_reduced(code)
-    pth = os.path.join('../arch', 'data', 'ibmq_'+code+'_calibrations.csv')
+    # pth = os.path.join('../arch', 'data', 'ibmq_'+code+'_calibrations.csv')
+
+    pth = os.path.join('./tetris/arch', 'data', 'ibmq_'+code+'_calibrations.csv')
+
     cgs = []
     n = 0
     with open(pth, 'r') as cf:
