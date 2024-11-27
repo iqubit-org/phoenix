@@ -169,4 +169,6 @@ cython_debug/
 
 vqe_tetris/
 
+backup/
 
+tmp-ddd/
