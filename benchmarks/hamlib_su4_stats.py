@@ -14,7 +14,7 @@ from natsort import natsorted
 from bqskit.compiler import Compiler
 from bqskit.passes import QuickPartitioner
 from phoenix import Circuit, gates
-from phoenix.utils.operations import is_tensor_prod
+from phoenix.utils.ops import is_tensor_prod
 
 bqskit_compiler = Compiler()
 workflow = QuickPartitioner(2)

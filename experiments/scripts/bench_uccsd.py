@@ -49,7 +49,7 @@ console.print('compiler: {}'.format(args.compiler))
 console.print('output directory: {}'.format(output_dpath))
 
 if args.device == 'all2all':
-    coupling_map = bench_utils.All2all  # TODO: make a all2all topology
+    coupling_map = bench_utils.All2all
 elif args.device == 'manhattan':
     coupling_map = bench_utils.Manhattan
 elif args.device == 'sycamore':
@@ -82,7 +82,7 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
 
         elif args.compiler == 'paulihedral':
             circ = bench_utils.paulihedral_pass(data['paulis'], data['coeffs'], pre_gates,
-                                                coupling_map=coupling_map)  # TODO: do no return mappings?
+                                                coupling_map=coupling_map)  # TODO: do not return mappings?
 
             # circ_origin = qiskit.QuantumCircuit.from_qasm_file(
             #     os.path.join(INPUT_QASM_DPATH, os.path.basename(fname).replace('.json', '.qasm')))
@@ -113,7 +113,7 @@ if args.compiler in ['phoenix', 'paulihedral', 'tetris', 'pauliopt']:
             qiskit.qasm2.dump(circ, output_fname)
         elif args.compiler == 'pauliopt':
             circ = bench_utils.pauliopt_pass(data['paulis'], data['coeffs'], pre_gates,
-                                             coupling_map=coupling_map)  # TODO: do no return mappings?
+                                             coupling_map=coupling_map)  # TODO: do not return mappings?
             print_circ_info(circ)
             qiskit.qasm2.dump(circ, output_fname)
         else:

@@ -15,7 +15,7 @@ import bqskit
 from bqskit.compiler import Compiler
 from bqskit.passes import QuickPartitioner
 from phoenix import Circuit, gates
-from phoenix.utils.operations import is_tensor_prod
+from phoenix.utils.ops import is_tensor_prod
 
 BENCHMARK_DPATH = '../benchmarks/hamlib_qasm'
 OUTPUT_DPATH = './output_hamlib/'

@@ -140,7 +140,7 @@ def verify_mapped_circuit(circ: Circuit, mapped_circ: Circuit, init_mapping: Dic
     mapped_circ.append(*obtain_appended_swaps(init_final_mapping))
     mat2 = mapped_circ.unitary()
 
-    from phoenix.utils.operations import is_equiv_unitary
+    from phoenix.utils.ops import is_equiv_unitary
     return is_equiv_unitary(mat1, mat2)
 
 

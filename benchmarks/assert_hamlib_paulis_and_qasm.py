@@ -11,7 +11,7 @@ from qiskit.quantum_info import Pauli
 from phoenix.models import HamiltonianModel
 from phoenix import gates, Circuit
 from phoenix.utils.functions import infidelity
-from phoenix.utils.operations import tensor_1_slot
+from phoenix.utils.ops import tensor_1_slot
 
 circ_dir = 'hamlib_qasm/'
 

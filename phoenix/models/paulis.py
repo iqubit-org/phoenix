@@ -7,9 +7,8 @@ from typing import List, Union
 
 from phoenix.basic import gates
 from phoenix.basic.circuits import Circuit
-from phoenix import decompose
 from phoenix.models.cliffords import Clifford1Q, Clifford2Q
-from phoenix.utils.operations import params_u3
+from phoenix.utils.ops import params_u3
 
 from rich.console import Console
 
@@ -102,10 +101,6 @@ class BSF:
             return 0
         if not self.num_nonlocal_paulis:  # only 1Q rotations
             return 1
-        # if not self.num_nonlocal_paulis:
-        #     return 1  # TODO: what if all III or empty?
-        # if self.num
-        # TODO: delete "[self.which_nonlocal_paulis]" ???
         return reduce(np.bitwise_or, self.with_ops[self.which_nonlocal_paulis]).sum()
 
     @property
@@ -291,6 +286,8 @@ class BSF:
 
     def as_su4_circuit(self) -> Circuit:
         from phoenix.models.hamiltonians import HamiltonianModel
+        from phoenix.synthesis.utils import can_decompose
+
         circ = Circuit()
         if self.num_nonlocal_paulis == 0:
             # all are single-qubit rotation gates
@@ -331,7 +328,7 @@ class BSF:
                     coeffs_remain.append(self.coeffs[i])
                     signs_remain.append(self.signs[i])
             coeffs_part, signs_part = np.array(coeffs_part), np.array(signs_part)
-            circ += decompose.can_decompose(gates.UnivGate(
+            circ += can_decompose(gates.UnivGate(
                 HamiltonianModel(paulis_part, coeffs_part * (-1) ** signs_part).unitary_evolution()
             ).on(self.qubits_with_nonlocal_ops.tolist()))
 
@@ -359,19 +356,10 @@ def local_pauli_to_u3(paulistr: str, coeff: float, sign: float = 1):
         return gates.I.on(0)  # ! return identity gate
 
     if paulistr[idx] == 'X':
-        #     gate.H.on(idx),
-        #     gate.RZ(theta).on(idx),
-        #     gate.H.on(idx)
         return gates.U3(*params_u3(gates.RX(theta).data)).on(idx)
     elif paulistr[idx] == 'Y':
-        #     gate.SDG.on(idx),
-        #     gate.H.on(idx),
-        #     gate.RZ(theta).on(idx),
-        #     gate.H.on(idx),
-        #     gate.S.on(idx)
         return gates.U3(*params_u3(gates.RY(theta).data)).on(idx)
     elif paulistr[idx] == 'Z':
-        #     gate.RZ(theta).on(idx)
         return gates.U3(*params_u3(gates.RZ(theta).data)).on(idx)
     else:
         raise ValueError(f"Invalid Pauli string {paulistr}")

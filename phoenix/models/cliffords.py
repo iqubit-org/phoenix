@@ -8,8 +8,7 @@ from typing import List, Tuple
 from itertools import product
 from phoenix.basic import gates
 from phoenix.basic.circuits import Circuit
-from phoenix import decompose
-from phoenix.utils.operations import is_equiv_unitary
+from phoenix.utils.ops import is_equiv_unitary
 
 X = qi.Pauli('X')
 Y = qi.Pauli('Y')
@@ -196,10 +195,13 @@ class Clifford2Q:
             q_1: ─┤ U3(0,π/4,π/4) ├─┤1              ├┤ U3(π/2,0,-π/2) ├
                   └───────────────┘ └───────────────┘└────────────────┘
         """
-        return decompose.can_decompose(gates.UnivGate(self.data).on([self.ctrl, self.targ]))
+        from phoenix.synthesis.utils import can_decompose
+
+        return can_decompose(gates.UnivGate(self.data).on([self.ctrl, self.targ]))
 
     def as_gate(self) -> gates.Clifford2QGate:
         return gates.Clifford2QGate(self.pauli_0, self.pauli_1).on([self.ctrl, self.targ])
+
 
 def assemble_paulistr_with_sign(pauli, sign):
     if sign == 0:

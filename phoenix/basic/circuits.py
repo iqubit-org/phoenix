@@ -3,13 +3,14 @@ Quantum Circuit
 """
 import io
 import re
-import os
-import uuid
+import cirq
+import bqskit
 import qiskit
 import numpy as np
 import networkx as nx
 import rustworkx as rx
 from math import pi
+from scipy import linalg
 from functools import reduce
 from itertools import product
 from operator import add
@@ -19,6 +20,7 @@ from collections import Counter
 
 from phoenix.basic import gates
 from phoenix.basic.gates import Gate
+from phoenix.utils.ops import replace_close_to_zero_with_zero
 from phoenix.utils.functions import limit_angle
 from phoenix.utils.graphs import draw_circ_dag_mpl, draw_circ_dag_graphviz, rx_to_nx_graph, node_index
 
@@ -80,16 +82,11 @@ class Circuit(list):
         except ImportError:
             raise ImportError('qiskit is not installed')
         assert isinstance(qiskit_circ, QuantumCircuit), "Input should be a qiskit.QuantumCircuit instance"
-        # return cls.from_qasm(qiskit.qasm2.dumps(qiskit_circ))
         return _from_qiskit(qiskit_circ)
 
     def to_cirq(self):
         """Convert to cirq.Circuit instance"""
-        try:
-            from cirq.contrib.qasm_import import circuit_from_qasm
-        except ImportError:
-            raise ImportError('cirq is not installed')
-        return circuit_from_qasm(self.to_qasm())
+        return _to_cirq(self)
 
     @classmethod
     def from_cirq(cls, cirq_circ):
@@ -123,30 +120,12 @@ class Circuit(list):
 
     def to_bqskit(self):
         """Convert to bqskit.Circuit instance"""
-        try:
-            import bqskit
-        except ImportError:
-            raise ImportError('bqskit is not installed')
-        tmp_file = '{}.qasm'.format(uuid.uuid4())
-        self.to_qasm(fname=tmp_file)
-        bqskit_circ = bqskit.Circuit.from_file(tmp_file)
-        os.remove(tmp_file)
-        return bqskit_circ
+        return _to_bqskit(self)
 
     @classmethod
     def from_bqskit(cls, bqskit_circ):
         """Convert from bqskit.Circuit instance"""
-        try:
-            import bqskit
-        except ImportError:
-            raise ImportError('bqskit is not installed')
-        assert isinstance(bqskit_circ, bqskit.Circuit), "Input should be a bqskit.Circuit instance"
-        tmp_file = '{}.qasm'.format(uuid.uuid4())
-        bqskit_circ.save(tmp_file)
-        with open(tmp_file, 'r') as f:
-            qasm = f.read()
-        os.remove(tmp_file)
-        return cls.from_qasm(qasm)
+        return _from_bqskit(bqskit_circ)
 
     def to_qasm(self, fname: str = None):
         """Convert self to QSAM string"""
@@ -219,7 +198,7 @@ class Circuit(list):
         if qasm_str is None:
             with open(fname, 'r') as f:
                 qasm_str = f.read()
-        # print(qasm_str)
+
         input = io.StringIO(qasm_str)
         circ = Circuit()
         for line in input.readlines():
@@ -326,15 +305,12 @@ class Circuit(list):
         Returns:
             Matrix, Equivalent unitary matrix representation.
         """
-        from phoenix.utils.operations import tensor_slots, controlled_unitary_matrix, circuit_to_unitary
+        from phoenix.utils.ops import tensor_slots, controlled_unitary_matrix, circuit_to_unitary
 
         if self.num_qubits > 12:
             raise ValueError('Circuit to compute unitary matrix has too many qubits')
-        if self.num_qubits > 9:
-            # REMARK: Cirq only support common gates
+        if self.num_qubits > 7:
             return circuit_to_unitary(self, 'cirq')
-        if self.num_qubits > 6:
-            return circuit_to_unitary(self, 'qiskit')
 
         ops = []
         if with_dummy:
@@ -494,17 +470,12 @@ class Circuit(list):
 
     @property
     def depth(self):
-        """number of layers"""
-        # TODO: modify this function for performance
-        # return len(self.layer())
+        """number of circuit layers (i.e., length of critical path)"""
         return self.to_qiskit().depth()
 
     @property
     def depth_nonlocal(self):
-        """number of layers including nonlocal gates"""
-        # TODO: modify this function for performance
-        # circ_2q = Circuit([g for g in self if g.num_qregs > 1])
-        # return len(circ_2q.layer())
+        """number of circuit layers including only nonlocal gates"""
         return self.to_qiskit().depth(lambda instr: instr.operation.num_qubits > 1)
 
     @property
@@ -551,6 +522,61 @@ class QASMStringIO(io.StringIO):
     #     n_content = super().write(__s)
     #     n_tail = super().write(';\n')
     #     return n_content + n_tail
+
+    def write_qregs(self, n: int) -> int:
+        """
+        Write quantum register declarations into the string stream.
+
+        Args:
+            n: number of qubits
+        """
+        n = super().write('qreg q[{}];\n'.format(n))
+        return n
+
+    def write_operation(self, opr: str, qreg_name: str, *args) -> int:
+        """
+        Write computational gate operation into the string stream.
+
+        Args:
+            opr: e.g. 'cx'
+            qreg_name: e.g. 'q'
+            args: e.g. 0, 1
+        """
+        if len(args) == 0:
+            line = opr + ' ' + qreg_name + ';\n'
+        else:
+            line_list_qubits = []
+            for idx in args:
+                line_list_qubits.append(qreg_name + '[{}]'.format(idx))
+            line = opr + ' ' + ', '.join(line_list_qubits) + ';\n'
+        n = super().write(line)
+        return n
+
+    def write_line_gap(self, n: int = 1) -> int:
+        n = super().write('\n' * n)
+        return n
+
+    def write_comment(self, comment: str) -> int:
+        n = super().write('// ' + comment + '\n')
+        return n
+
+    def write_header(self) -> int:
+        """
+        Write the QASM text file header
+        """
+        n1 = super().write('OPENQASM 2.0;\n')
+        n2 = super().write('include "qelib1.inc";\n')
+        n3 = self.write_line_gap(2)
+        return n1 + n2 + n3
+
+
+class QASMStringIO(io.StringIO):
+    """
+    Specific StringIO extension class for QASM string generation
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def write_qregs(self, n: int) -> int:
         """
@@ -668,31 +694,270 @@ def parse_to_qasm_tuples(circuit: Circuit) -> List[Tuple[str, List[int]]]:
     return parsed_list
 
 
-def optimize_circuit(circuit: Circuit) -> Circuit:
-    """
-    Optimize the quantum circuit, i.e., removing identity operators.
-    Naive strategy: remove all identity operators.
-
-    Args:
-        circuit (Circuit): original input circuit.
-
-    Returns:
-        Circuit, the optimized quantum circuit.
-    """
-    from phoenix.utils.operations import is_equiv_unitary
-
-    circuit_opt = Circuit()
-    for g in circuit:
-        if not (g.num_qregs == 1 and is_equiv_unitary(g.data, gates.I.data)):
-            circuit_opt.append(g)
-    return circuit_opt
-
-
 def _sort_gates_on_qreg(circuit: List[Gate], descend=False) -> List[Gate]:
     if descend:
         return sorted(circuit, key=lambda g: max(g.qregs))
     else:
         return sorted(circuit, key=lambda g: min(g.qregs))
+
+
+def _bqskit_operation_to_phoenix_gate(op, params=None) -> Gate:
+    import bqskit.ir.gates as bqskit_gates
+
+    if params is None:
+        params = op.params
+
+    if isinstance(op.gate, bqskit_gates.ConstantUnitaryGate):
+        return gates.UnivGate(op.get_unitary().numpy).on(list(op.location))
+    elif isinstance(op.gate, bqskit_gates.CCXGate):
+        return gates.X.on(op.location[2], [op.location[0], op.location[1]])
+    elif isinstance(op.gate, bqskit_gates.XGate):
+        return gates.X.on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.YGate):
+        return gates.Y.on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.ZGate):
+        return gates.Z.on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.HGate):
+        return gates.H.on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.SGate):
+        return gates.S.on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.SdgGate):
+        return gates.SDG.on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.TGate):
+        return gates.T.on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.TdgGate):
+        return gates.TDG.on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.SwapGate):
+        return gates.SWAP.on(list(op.location))
+    elif isinstance(op.gate, bqskit_gates.ISwapGate):
+        return gates.ISWAP.on(list(op.location))
+    elif isinstance(op.gate, bqskit_gates.SqrtISwapGate):
+        return gates.SQiSW.on(list(op.location))
+    elif isinstance(op.gate, bqskit_gates.CXGate):
+        return gates.X.on(op.location[1], op.location[0])
+    elif isinstance(op.gate, bqskit_gates.CYGate):
+        return gates.Y.on(op.location[1], op.location[0])
+    elif isinstance(op.gate, bqskit_gates.CZGate):
+        return gates.Z.on(op.location[1], op.location[0])
+    elif isinstance(op.gate, bqskit_gates.RXGate):
+        return gates.RX(params[0]).on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.RYGate):
+        return gates.RY(params[0]).on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.RZGate):
+        return gates.RZ(params[0]).on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.U1Gate):
+        return gates.U1(params[0]).on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.U2Gate):
+        return gates.U2(*params).on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.U3Gate):
+        return gates.U3(*params).on(op.location[0])
+    elif isinstance(op.gate, bqskit_gates.CRXGate):
+        return gates.RX(params[0]).on(op.location[1], op.location[0])
+    elif isinstance(op.gate, bqskit_gates.CRYGate):
+        return gates.RY(params[0]).on(op.location[1], op.location[0])
+    elif isinstance(op.gate, bqskit_gates.CRZGate):
+        return gates.RZ(params[0]).on(op.location[1], op.location[0])
+    elif isinstance(op.gate, bqskit_gates.RXXGate):
+        return gates.RXX(params[0]).on(list(op.location))
+    elif isinstance(op.gate, bqskit_gates.RYYGate):
+        return gates.RYY(params[0]).on(list(op.location))
+    elif isinstance(op.gate, bqskit_gates.RZZGate):
+        return gates.RZZ(params[0]).on(list(op.location))
+    elif isinstance(op.gate, bqskit_gates.CanonicalGate):
+        return gates.Canonical(*params).on(list(op.location))
+    else:
+        raise ValueError(f'Unsupported gate {op.gate}')
+
+
+def _from_bqskit(circ_bqskit: bqskit.Circuit) -> Circuit:
+    return Circuit(list(map(_bqskit_operation_to_phoenix_gate, circ_bqskit.operations())))
+
+
+def _to_bqskit(circ: Circuit) -> bqskit.Circuit:
+    from bqskit.ir.circuit import Circuit as bqskit_Circuit
+    import bqskit.ir.gates as bqskit_gates
+
+    assert circ.max_gate_weight <= 3, 'Only support 1Q, 2Q or 3Q (CCX) gates with designated qubits'
+
+    n = circ.num_qubits_with_dummy
+    c = bqskit_Circuit(n)
+
+    for g in circ.gates:
+        if g.num_qregs == 3:
+            assert isinstance(g, gates.XGate) and len(g.cqs) == 2, 'The only supported 3Q gate is CCX gate'
+            c.append_gate(bqskit_gates.CCXGate(), g.qregs)
+        elif isinstance(g, gates.UnivGate):
+            c.append_gate(bqskit_gates.ConstantUnitaryGate(g.data), g.tqs)
+        elif isinstance(g, gates.XGate):
+            if g.cqs:
+                c.append_gate(bqskit_gates.CXGate(), g.qregs)
+            else:
+                c.append_gate(bqskit_gates.XGate(), g.tq)
+        elif isinstance(g, gates.YGate):
+            if g.cqs:
+                c.append_gate(bqskit_gates.CYGate(), g.qregs)
+            else:
+                c.append_gate(bqskit_gates.YGate(), g.tq)
+        elif isinstance(g, gates.ZGate):
+            if g.cqs:
+                c.append_gate(bqskit_gates.CZGate(), g.qregs)
+            else:
+                c.append_gate(bqskit_gates.ZGate(), g.tq)
+        elif isinstance(g, gates.HGate):
+            c.append_gate(bqskit_gates.HGate(), g.tq)
+        elif isinstance(g, gates.SGate):
+            c.append_gate(bqskit_gates.SGate(), g.tq)
+        elif isinstance(g, gates.SDGGate):
+            c.append_gate(bqskit_gates.SdgGate(), g.tq)
+        elif isinstance(g, gates.TGate):
+            c.append_gate(bqskit_gates.TGate(), g.tq)
+        elif isinstance(g, gates.TDGGate):
+            c.append_gate(bqskit_gates.TdgGate(), g.tq)
+        elif isinstance(g, gates.SWAPGate):
+            c.append_gate(bqskit_gates.SwapGate(), g.tqs)
+        elif isinstance(g, gates.RX):
+            if g.cqs:
+                c.append_gate(bqskit_gates.CRXGate(), g.qregs, [g.angle])
+            else:
+                c.append_gate(bqskit_gates.RXGate(), g.tq, [g.angle])
+        elif isinstance(g, gates.RY):
+            if g.cqs:
+                c.append_gate(bqskit_gates.CRYGate(), g.qregs, [g.angle])
+            else:
+                c.append_gate(bqskit_gates.RYGate(), g.tq, [g.angle])
+        elif isinstance(g, gates.RZ):
+            if g.cqs:
+                c.append_gate(bqskit_gates.CRZGate(), g.qregs, [g.angle])
+            else:
+                c.append_gate(bqskit_gates.RZGate(), g.tq, [g.angle])
+        elif isinstance(g, gates.U1):
+            c.append_gate(bqskit_gates.U1Gate(), g.tq, [g.angle])
+        elif isinstance(g, gates.U2):
+            c.append_gate(bqskit_gates.U2Gate(), g.tq, g.angles)
+        elif isinstance(g, gates.U3):
+            c.append_gate(bqskit_gates.U3Gate(), g.tq, g.angles)
+        elif isinstance(g, gates.RXX):
+            c.append_gate(bqskit_gates.RXXGate(), g.tqs, [g.angle])
+        elif isinstance(g, gates.RYY):
+            c.append_gate(bqskit_gates.RYYGate(), g.tqs, [g.angle])
+        elif isinstance(g, gates.RZZ):
+            c.append_gate(bqskit_gates.RZZGate(), g.tqs, [g.angle])
+        elif isinstance(g, gates.ISWAPGate):
+            c.append_gate(bqskit_gates.ISwapGate(), g.tqs)
+        elif isinstance(g, gates.SQiSWGate):
+            c.append_gate(bqskit_gates.SqrtISwapGate(), g.tqs)
+        elif isinstance(g, gates.Canonical):
+            c.append_gate(bqskit_gates.CanonicalGate(), g.tqs, g.angles)
+        else:
+            raise ValueError(f'Unsupported gate {g}')
+
+    return c
+
+
+def _to_cirq(circ: Circuit) -> cirq.Circuit:
+    class CirqClifford2QGate(cirq.Gate):
+        """Use universal controlled gates to represent generic 2Q Clifford gates"""
+
+        def __init__(self, pauli_0: str, pauli_1: str):
+            super(CirqClifford2QGate, self)
+            assert pauli_0 in ['X', 'Y', 'Z'] and pauli_1 in ['X', 'Y', 'Z']
+            self.pauli_0, self.pauli_1 = pauli_0, pauli_1
+
+        def _num_qubits_(self):
+            return 2
+
+        def _unitary_(self):
+            import qiskit.quantum_info as qi
+            I = qi.Pauli('I')
+            P0, P1 = qi.Pauli(self.pauli_0), qi.Pauli(self.pauli_1)
+            return qi.SparsePauliOp([I ^ I, P0 ^ I, I ^ P1, P0 ^ P1],
+                                    [1 / 2, 1 / 2, 1 / 2, -1 / 2]).to_matrix()
+
+        def _circuit_diagram_info_(self, args):
+            return [f"C({self.pauli_0}, {self.pauli_1})"] * self.num_qubits()
+
+    class CirqCanonical(cirq.Gate):
+        r"""
+        Canonical gate with respect to Weyl chamber
+
+        .. math::
+            \mathrm{Can}(x, y, z) = e^{- i \frac{\pi}{2}(x XX + y YY + z ZZ)}
+        """
+
+        def __init__(self, x, y, z):
+            super(CirqCanonical, self)
+            self.x, self.y, self.z = x, y, z
+
+        def _num_qubits_(self):
+            return 2
+
+        def _unitary_(self):
+            return linalg.expm(-1j * np.pi / 2 * (self.x * np.kron(cirq.unitary(cirq.X), cirq.unitary(cirq.X)) +
+                                                  self.y * np.kron(cirq.unitary(cirq.Y), cirq.unitary(cirq.Y)) +
+                                                  self.z * np.kron(cirq.unitary(cirq.Z), cirq.unitary(cirq.Z))))
+
+        def _circuit_diagram_info_(self, args):
+            x, y, z = replace_close_to_zero_with_zero(np.round([self.x, self.y, self.z], 3))
+            return [f"Can({x}, {y}, {z})"] * self.num_qubits()
+
+    c = cirq.Circuit()
+    qubits = cirq.LineQubit.range(circ.num_qubits_with_dummy)
+    for g in circ.gates:
+        if isinstance(g, (gates.XGate, gates.YGate, gates.ZGate,
+                          gates.HGate, gates.SWAPGate)):
+            acted = [qubits[cq] for cq in g.cqs] + [qubits[tq] for tq in g.tqs]
+            c.append(getattr(cirq, g.name).controlled(len(g.cqs)).on(*acted))
+        elif isinstance(g, gates.TGate):
+            c.append(cirq.T.on(qubits[g.tq]))
+        elif isinstance(g, gates.TDGGate):
+            c.append((cirq.T ** -1).on(qubits[g.tq]))
+        elif isinstance(g, gates.SGate):
+            c.append(cirq.S.on(qubits[g.tq]))
+        elif isinstance(g, gates.SDGGate):
+            c.append((cirq.S ** -1).on(qubits[g.tq]))
+        elif isinstance(g, gates.RX) and not np.allclose(g.angle, 0):
+            acted = [qubits[cq] for cq in g.cqs] + [qubits[g.tq]]
+            c.append(cirq.Rx(rads=g.angle).controlled(len(g.cqs)).on(*acted))
+        elif isinstance(g, gates.RY) and not np.allclose(g.angle, 0):
+            acted = [qubits[cq] for cq in g.cqs] + [qubits[g.tq]]
+            c.append(cirq.Ry(rads=g.angle).controlled(len(g.cqs)).on(*acted))
+        elif isinstance(g, gates.RZ) and not np.allclose(g.angle, 0):
+            acted = [qubits[cq] for cq in g.cqs] + [qubits[g.tq]]
+            c.append(cirq.Rz(rads=g.angle).controlled(len(g.cqs)).on(*acted))
+        elif isinstance(g, (gates.U1, gates.PhaseShift)) and not np.allclose(g.angle, 0):
+            c.append(cirq.ZPowGate(exponent=g.angle / pi).on(qubits[g.tq]))
+        elif isinstance(g, gates.U2):
+            if not np.allclose(g.angles[1], 0):
+                c.append(cirq.ZPowGate(exponent=g.angles[1] / pi, global_shift=-0.5).on(qubits[g.tq]))
+            c.append(cirq.YPowGate(exponent=0.5, global_shift=-0.5).on(qubits[g.tq]))
+            if not np.allclose(g.angles[0], 0):
+                c.append(cirq.ZPowGate(exponent=g.angles[0] / pi, global_shift=-0.5).on(qubits[g.tq]))
+        elif isinstance(g, gates.U3):
+            if not np.allclose(g.angles[2], 0):
+                c.append(cirq.ZPowGate(exponent=g.angles[2] / pi, global_shift=-0.5).on(qubits[g.tq]))
+            if not np.allclose(g.angles[0], 0):
+                c.append(cirq.YPowGate(exponent=g.angles[0] / pi, global_shift=-0.5).on(qubits[g.tq]))
+            if not np.allclose(g.angles[1], 0):
+                c.append(cirq.ZPowGate(exponent=g.angles[1] / pi, global_shift=-0.5).on(qubits[g.tq]))
+        elif isinstance(g, gates.RXX) and not np.allclose(g.angle, 0):
+            c.append(cirq.XXPowGate(exponent=g.angle / pi, global_shift=-0.5).on(qubits[g.tqs[0]], qubits[g.tqs[1]]))
+        elif isinstance(g, gates.RYY) and not np.allclose(g.angle, 0):
+            c.append(cirq.YYPowGate(exponent=g.angle / pi, global_shift=-0.5).on(qubits[g.tqs[0]], qubits[g.tqs[1]]))
+        elif isinstance(g, gates.RZZ) and not np.allclose(g.angle, 0):
+            c.append(cirq.ZZPowGate(exponent=g.angle / pi, global_shift=-0.5).on(qubits[g.tqs[0]], qubits[g.tqs[1]]))
+        elif isinstance(g, gates.ISWAPGate):
+            c.append(cirq.ISWAP.on(qubits[g.tqs[0]], qubits[g.tqs[1]]))
+        elif isinstance(g, gates.SQiSWGate):
+            c.append(cirq.SQRT_ISWAP.on(qubits[g.tqs[0]], qubits[g.tqs[1]]))
+        elif isinstance(g, gates.Clifford2QGate):
+            c.append(CirqClifford2QGate(g.pauli_0, g.pauli_1).on(qubits[g.tqs[0]], qubits[g.tqs[1]]))
+        elif isinstance(g, gates.Canonical):
+            c.append(CirqCanonical(
+                g.angles[0] / pi, g.angles[1] / pi, g.angles[2] / pi).on(qubits[g.tqs[0]], qubits[g.tqs[1]]))
+        else:
+            raise ValueError(f'Unsupported gate {g}')
+
+    return c
 
 
 def _from_qiskit(circ_qiskit: qiskit.QuantumCircuit) -> Circuit:
@@ -759,7 +1024,7 @@ def _from_qiskit(circ_qiskit: qiskit.QuantumCircuit) -> Circuit:
             circ.append(gates.S.on(qubits[1], qubits[0]))
         elif opr.name == 'cp':
             circ.append(gates.P(*params).on(qubits[1], qubits[0]))
-        elif opr.name == 'cu3':  # TODO: is cu3 the same as u3?
+        elif opr.name == 'cu3' or opr.name == 'cu':
             circ.append(gates.U3(*params).on(qubits[1], qubits[0]))
         elif opr.name == 'cswap':
             circ.append(gates.SWAP.on(qubits[1:], qubits[0]))

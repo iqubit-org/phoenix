@@ -146,19 +146,46 @@ def times_two_matrix(U: np.ndarray, V: np.ndarray) -> Optional[np.ndarray]:
 
 def is_equiv_unitary(U: np.ndarray, V: np.ndarray) -> bool:
     """Distinguish whether two unitary operators are equivalent, regardless of the global phase."""
-    if U.shape != V.shape:
-        raise ValueError(f'U and V have different dimensions: {U.shape}, {V.shape}.')
-    d = U.shape[0]
-    if not np.allclose(U @ U.conj().T, np.identity(d)):
-        raise ValueError('U is not unitary')
-    if not np.allclose(V @ V.conj().T, np.identity(d)):
-        raise ValueError('V is not unitary')
+    U, V = match_global_phase(U, V)
+    return np.allclose(U, V, atol=1e-7)
 
-    try:
-        cirq.testing.assert_allclose_up_to_global_phase(U, V, atol=1e-7)
-    except:
-        return False
-    return True
+
+def match_global_phase(a: np.ndarray, b: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Phases the given matrices so that they agree on the phase of one entry.
+
+    To maximize precision, the position with the largest entry from one of the
+    matrices is used when attempting to compute the phase difference between
+    the two matrices.
+
+    Args:
+        a: A numpy array.
+        b: Another numpy array.
+
+    Returns:
+        A tuple (a', b') where a' == b' implies a == b*exp(i t) for some t.
+    """
+
+    # Not much point when they have different shapes.
+    if a.shape != b.shape or a.size == 0:
+        return np.copy(a), np.copy(b)
+
+    # Find the entry with the largest magnitude in one of the matrices.
+    k = max(np.ndindex(*a.shape), key=lambda t: abs(b[t]))
+
+    def dephase(v):
+        r = np.real(v)
+        i = np.imag(v)
+
+        # Avoid introducing floating point error when axis-aligned.
+        if i == 0:
+            return -1 if r < 0 else 1
+        if r == 0:
+            return 1j if i < 0 else -1j
+
+        return np.exp(-1j * np.arctan2(i, r))
+
+    # Zero the phase at this entry in both matrices.
+    return a * dephase(a[k]), b * dephase(b[k])
 
 
 def so4_to_magic_su2s(U: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
@@ -184,101 +211,76 @@ def is_so4(U: np.ndarray) -> bool:
     return np.allclose(U @ U.conj().T, np.identity(4)) and np.allclose(linalg.det(U), 1)
 
 
-def kron_factor_4x4_to_2x2s(U: np.ndarray) -> Tuple[float, np.ndarray, np.ndarray]:
-    """
-    Splits a 4x4 matrix U = kron(A, B) into A, B, and a global factor.
-    Requires the matrix to be the kronecker product of two 2x2 unitaries.
-    Requires the matrix to have a non-zero determinant.
-    Giving an incorrect matrix will cause garbage output.
-
-    Args:
-        U: The 4x4 unitary matrix to factor.
-
-    Returns:
-        A scalar factor and a pair of 2x2 unit-determinant matrices. The
-        kronecker product of all three is equal to the given matrix.
-
-    Raises:
-        ValueError:
-            The given matrix can't be tensor-factored into 2x2 pieces.
-    """
-    # Use the entry with the largest magnitude as a reference point.
-    a, b = max(((i, j) for i in range(4) for j in range(4)), key=lambda t: abs(U[t]))
-
-    # Extract sub-factors touching the reference cell.
-    V1 = np.zeros((2, 2), dtype=np.complex128)
-    V2 = np.zeros((2, 2), dtype=np.complex128)
-    for i in range(2):
-        for j in range(2):
-            V1[(a >> 1) ^ i, (b >> 1) ^ j] = U[a ^ (i << 1), b ^ (j << 1)]
-            V2[(a & 1) ^ i, (b & 1) ^ j] = U[a ^ i, b ^ j]
-
-    # Rescale factors to have unit determinants.
-    V1 /= np.sqrt(np.linalg.det(V1)) or 1
-    V2 /= np.sqrt(np.linalg.det(V2)) or 1
-
-    # Determine global phase.
-    g = U[a, b] / (V1[a >> 1, b >> 1] * V2[a & 1, b & 1])
-    if np.real(g) < 0:
-        V1 *= -1
-        g = -g
-
-    return g, V1, V2
+def is_tensor_prod(U: np.ndarray) -> bool:
+    """Distinguish whether a 4x4 matrix is the tensor product of two 2x2 matrices."""
+    a, b = kron_decomp(U)
+    if a is None:
+        return False
+    elif np.allclose(U, np.kron(a, b)):
+        return True
+    return False
 
 
-def kron_decomp(M: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+def kron_decomp(M: np.ndarray, method: str = 'nearest') -> Tuple[Optional[np.ndarray], Optional[np.ndarray]]:
     """
     Kronecker product decomposition (KPD) algorithm for 4x4 4*4 matrix.
 
-    Note:
-        This function is not absolutely robust (without tolerance).
+    Args:
+        M: 4x4 matrix
+        method: 'nearest', 'new', or 'cirq'. Default is 'nearest'.
+            The 'new' method is not absolutely robust (without tolerance) sometimes.
 
     References:
-        'New Kronecker product decompositions and its applications.'
-        https://www.researchinventy.com/papers/v1i11/F0111025030.pdf
+        [1] Crooks, Gavin E. "Gates, states, and circuits." Gates states and circuits (2020).
+        [2] New Kronecker product decompositions and its applications. https://www.researchinventy.com/papers/v1i11/F0111025030.pdf
+        [3] https://quantumai.google/reference/python/cirq/kron_factor_4x4_to_2x2s
     """
     if M.shape != (4, 4):
         raise ValueError('Input matrix should be a 4*4 matrix')
-    M00, M01, M10, M11 = M[:2, :2], M[:2, 2:], M[2:, :2], M[2:, 2:]
-    K = np.vstack([M00.ravel(), M01.ravel(), M10.ravel(), M11.ravel()])
-    if np.linalg.matrix_rank(K) != 1:
-        return None, None
 
-    # If K is full-rank, the input matrix is in form of tensor product
-    l = [not np.allclose(np.zeros(4), K[i]) for i in range(4)]
-    idx = l.index(True)  # the first non-zero block
-    B = K[idx]
-    A = np.array([])
-    for i in range(4):
-        if l[i]:
-            a = times_two_matrix(K[i], B)
-        else:
-            a = 0
-        A = np.append(A, a)
-    A = A.reshape(2, 2)
-    B = B.reshape(2, 2)
-    return A, B
+    def nearest_kron_decomp(M: np.ndarray):
+        """
+        Acquire nearest KPD of a 4x4 matrix via Pitsianis-Van Loan algorithm.
+        """
+        if M.shape != (4, 4):
+            raise ValueError('Input matrix should be a 4*4 matrix')
+        M = M.reshape(2, 2, 2, 2).transpose(0, 2, 1, 3).reshape(4, 4)
+        u, d, vh = linalg.svd(M)
+        A = np.sqrt(d[0]) * u[:, 0].reshape(2, 2)
+        B = np.sqrt(d[0]) * vh[0, :].reshape(2, 2)
+        return A, B
 
+    def new_kron_decomp(M: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        M00, M01, M10, M11 = M[:2, :2], M[:2, 2:], M[2:, :2], M[2:, 2:]
+        K = np.vstack([M00.ravel(), M01.ravel(), M10.ravel(), M11.ravel()])
+        if np.linalg.matrix_rank(K) != 1:
+            return None, None
 
-def nearest_kron_decomp(M: np.ndarray):
-    """
-    Acquire nearest KPD of a 4x4 matrix via Pitsianis-Van Loan algorithm.
-    """
-    if M.shape != (4, 4):
-        raise ValueError('Input matrix should be a 4*4 matrix')
-    M = M.reshape(2, 2, 2, 2).transpose(0, 2, 1, 3).reshape(4, 4)
-    u, d, vh = linalg.svd(M)
-    A = np.sqrt(d[0]) * u[:, 0].reshape(2, 2)
-    B = np.sqrt(d[0]) * vh[0, :].reshape(2, 2)
-    return A, B
+        # If K is full-rank, the input matrix is in form of tensor product
+        l = [not np.allclose(np.zeros(4), K[i]) for i in range(4)]
+        idx = l.index(True)  # the first non-zero block
+        B = K[idx]
+        A = np.array([])
+        for i in range(4):
+            if l[i]:
+                a = times_two_matrix(K[i], B)
+            else:
+                a = 0
+            A = np.append(A, a)
+        A = A.reshape(2, 2)
+        B = B.reshape(2, 2)
+        return A, B
 
+    def cirq_kron_decomp(M: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+        g, A, B = cirq.kron_factor_4x4_to_2x2s(M)
+        return g * A, B
 
-def is_tensor_prod(U: np.ndarray) -> bool:
-    """Distinguish whether a 4x4 matrix is the tensor product of two 2x2 matrices."""
-    _, _ = kron_decomp(U)
-    if _ is None:
-        return False
-    return True
+    if method == 'nearest':
+        return nearest_kron_decomp(M)
+    elif method == 'new':
+        return new_kron_decomp(M)
+    elif method == 'cirq':
+        return cirq_kron_decomp(M)
 
 
 def params_zyz(U: np.ndarray) -> Tuple[float, Tuple[float, float, float]]:
@@ -330,137 +332,6 @@ def params_u3(U: np.ndarray, return_phase=False) -> Union[
     if return_phase:
         return phase, (theta, phi, lam)
     return theta, phi, lam
-
-
-def params_abc(U: np.ndarray) -> Tuple[float, Tuple[np.ndarray, np.ndarray, np.ndarray]]:
-    r"""
-    ABC decomposition of 2*2 unitary operator.
-
-    .. math::
-        \begin{align}
-            U &= e^{i\alpha} R_z(\phi) R_y(\theta) R_z(\lambda)\\
-              &= e^{i\alpha} [R_z(\phi)R_y(\frac{\theta}{2})] X
-                [R_y(-\frac{\theta}{2})R_z(-\frac{\phi+\lambda}{2})] X
-                [R_z(\frac{\lambda-\phi}{2})]\\
-              &=e^{i\alpha} A X B X C
-        \end{align}
-
-    Args:
-        U: 2x2 unitary matrix
-
-    Returns:
-        alpha (float), a (2x2 unitary), b (2x2 unitary), c (2x2 unitary).
-
-    """
-    if U.shape != (2, 2):
-        raise ValueError('Input matrix should be a 2*2 matrix')
-    alpha, (theta, phi, lam) = params_zyz(U)
-    a = gates.RZ(phi).data @ gates.RY(theta / 2).data
-    b = gates.RY(-theta / 2).data @ gates.RZ(-(phi + lam) / 2).data
-    c = gates.RZ((lam - phi) / 2).data
-    return alpha, (a, b, c)
-
-
-def glob_phase(U: np.ndarray) -> float:
-    r"""
-    Extract the global phase `\alpha` from a d*d matrix.
-
-    .. math::
-        U = e^{i\alpha} S
-
-    in which S is in SU(d).
-
-    Args:
-        U: d*d unitary matrix
-
-    Returns:
-        Global phase rad, in range of (-pi, pi].
-    """
-    d = U.shape[0]
-    exp_alpha = linalg.det(U) ** (1 / d)
-    alpha = np.angle(exp_alpha)
-    return alpha
-
-
-def remove_glob_phase(U: np.ndarray) -> np.ndarray:
-    r"""
-    Remove the global phase of a 2x2 unitary matrix by means of ZYZ decomposition.
-
-    That is, remove
-
-    .. math::
-
-        e^{i\alpha}
-
-    from
-
-    .. math::
-        U = e^{i\alpha} R_z(\phi) R_y(\theta) R_z(\lambda)
-
-    and return
-
-    .. math::
-        R_z(\phi) R_y(\theta) R_z(\lambda)
-
-    Args:
-        U: 2x2 unitary matrix
-
-    Returns:
-        SU(2) matrix without global phase.
-    """
-    alpha = glob_phase(U)
-    return U * np.exp(- 1j * alpha)
-
-
-def simult_svd(A: np.ndarray, B: np.ndarray) -> Tuple[Tuple[np.ndarray, np.ndarray], Tuple[np.ndarray, np.ndarray]]:
-    r"""
-    Simultaneous SVD of two matrices, based on Eckart-Young theorem.
-
-    Given two real matrices A and B who satisfy the condition of simultaneous SVD, then
-
-    .. math::
-        A=U D_1 V^{\dagger}, B=U D_2 V^{\dagger}
-
-    Args:
-        A: real matrix
-        B: real matrix
-
-    Returns:
-        Four real matrices: U, V, D1, D2. U an V are both in SO(2). D1 and D2 are diagonal.
-
-    References:
-        'An Introduction to Cartan's KAK Decomposition for QC Programmers'
-        https://arxiv.org/abs/quant-ph/0507171
-    """
-    if A.shape != B.shape:
-        raise ValueError(f'A and B have different dimensions: {A.shape}, {B.shape}.')
-    d = A.shape[0]
-    # real orthogonal matrices decomposition
-    Ua, Da, Vah = linalg.svd(A)
-    Uah = Ua.conj().T
-    Va = Vah.conj().T
-    # print(Uah)
-    # print(Da)
-    # print(Va)
-    # print()
-    # if np.count_nonzero(Da) != d:  # TODO: why it still works when this line is commented????
-    #     raise ValueError('Not implemented yet for the situation that A is not full-rank')
-    # G commutes with D
-    G = Uah @ B @ Va
-    # because G is hermitian, eigen-decomposition is its spectral decomposition
-    Dg, P = linalg.eigh(G)  # P is unitary or orthogonal
-    U = Ua @ P
-    V = Va @ P
-
-    # ensure det(Ua) == det(Va) == +1
-    if linalg.det(U) < 0:
-        U[:, 0] *= -1
-    if linalg.det(V) < 0:
-        V[:, 0] *= -1
-
-    D1 = U.conj().T @ A @ V
-    D2 = U.conj().T @ B @ V
-    return (U, V), (D1, D2)
 
 
 def controlled_unitary_matrix(U: np.ndarray, num_ctrl: int = 1) -> np.ndarray:

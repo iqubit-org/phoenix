@@ -165,7 +165,7 @@ cython_debug/
 
 .vscode/
 
-*.tmp.*
+*tmp.*
 
 vqe_tetris/
 

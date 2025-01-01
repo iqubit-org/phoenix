@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 import sys
+
 sys.path.append('../..')
 
-import os
 import json
-import pytket
 import qiskit
 import pytket.qasm
 import argparse
 import warnings
+from phoenix import Circuit, gates
+from phoenix.utils.ops import is_tensor_prod
 from phoenix.utils.display import print_circ_info, console
 import bench_utils
 
@@ -38,7 +39,7 @@ with open(json_fname, 'r') as f:
     data = json.load(f)
 
 if args.device == 'all2all':
-    coupling_map = bench_utils.All2all  # TODO: make a all2all topology
+    coupling_map = bench_utils.All2all
 elif args.device == 'chain':
     coupling_map = bench_utils.Chain
 elif args.device == 'manhattan':
@@ -49,25 +50,17 @@ else:
     raise ValueError('Unsupported device')
 
 
-import sys
-sys.path.append('..')
-from bqskit.compiler import Compiler
-import bqskit
-from bqskit.passes import QuickPartitioner
-from phoenix import Circuit, gates
-from phoenix.utils.operations import is_tensor_prod
-
-
-bqskit_compiler = Compiler()
-workflow = QuickPartitioner(2)
-
 def su4_circ_stats(circ):
     """Statistic of #2Q and Depth-2Q of SU(4)-based circuit."""
-    blocks = list(bqskit_compiler.compile(circ, workflow))
+    from bqskit.compiler import Compiler
+    from bqskit.passes import QuickPartitioner
+
+    with Compiler() as compiler:
+        blocks = list(compiler.compile(circ, QuickPartitioner(2)))
+
     fused_2q = Circuit([gates.UnivGate(blk.get_unitary().numpy).on(list(blk.location)) for blk in blocks])
     circ_su4 = Circuit([g for g in fused_2q if not is_tensor_prod(g.data)])
     return circ_su4.num_gates, len(circ_su4.layer())
-
 
 
 if args.compiler == 'tket':

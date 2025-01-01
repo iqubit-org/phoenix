@@ -1,6 +1,9 @@
 """
 Benchmarking utilities
 """
+import sys
+
+sys.path.append('../..')
 
 import qiskit
 import pytket
@@ -10,10 +13,6 @@ import numpy as np
 import rustworkx as rx
 from typing import Tuple, List
 from qiskit.transpiler import CouplingMap, PassManager
-
-import sys
-
-sys.path.append('../..')
 
 from phoenix import Circuit, Gate
 from phoenix.utils import arch
@@ -255,5 +254,3 @@ def is_all2all_coupling_map(coupling_map: CouplingMap) -> bool:
     if coupling_map.size() * (coupling_map.size() - 1) == len(coupling_map.get_edges()):
         return True
     return False
-
-# TODO: verify functionalities

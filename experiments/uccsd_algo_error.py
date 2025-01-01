@@ -13,7 +13,7 @@ from functools import reduce
 from phoenix import Circuit, gates
 from phoenix import models
 from natsort import natsorted
-from phoenix.utils.operations import tensor_slots
+from phoenix.utils.ops import tensor_slots
 from phoenix.utils.functions import infidelity
 
 benchmark_dpath = '../benchmarks/uccsd_json'
