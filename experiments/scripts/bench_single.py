@@ -23,7 +23,8 @@ parser = argparse.ArgumentParser(description='Run a single benchmark')
 parser.add_argument('filename', type=str, help='Filename of the benchmark')
 parser.add_argument('-d', '--device', default='all2all', type=str,
                     help='Device topology (default: all2all) (options: all2all, chain, manhattan, sycamore)')
-parser.add_argument('--no-order', action='store_true', help='Without IR group ordering procedure in Phoenix compiler (default: False)')
+parser.add_argument('--no-order', action='store_true',
+                    help='Without IR group ordering procedure in Phoenix compiler (default: False)')
 parser.add_argument('-c', '--compiler', default='phoenix', type=str,
                     help='Compiler (default: phoenix)')
 args = parser.parse_args()
