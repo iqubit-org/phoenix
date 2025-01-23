@@ -5,7 +5,8 @@ from operator import add
 
 from phoenix.basic.circuits import Circuit
 from phoenix.basic.gates import Clifford2QGate
-from phoenix.utils.passes import front_full_width_circuit, obtain_front_layer, obtain_last_layer
+from phoenix.utils.passes import front_full_width_circuit, last_full_width_circuit
+from phoenix.utils.passes import obtain_front_layer, obtain_last_layer
 from typing import List, Tuple, Union
 
 from rich.console import Console
@@ -134,7 +135,9 @@ def right_end_empty_layers(circ: Circuit, num_qubits: int = None) -> np.ndarray:
     if num_qubits is None:
         num_qubits = circ.num_qubits_with_dummy
     right_end = np.full(num_qubits, -1)
-    for num_layer, layer in enumerate(reversed(circ.nonlocal_structure.layer())):
+    # circ_part = circ.nonlocal_structure
+    circ_part = last_full_width_circuit(circ, lambda g: g.num_qregs > 1)
+    for num_layer, layer in enumerate(reversed(circ_part.layer())): # 正向分层，然后反向逐层遍历
         for q in reduce(add, [g.qregs for g in layer]):
             if right_end[q] < 0:
                 right_end[q] = num_layer

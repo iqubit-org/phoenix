@@ -281,12 +281,29 @@ def peel_first_and_last_1q_gates(circ: Circuit) -> Tuple[Circuit, List[Gate], Li
 
 def front_full_width_circuit(circ: Circuit, predicate: Callable = None) -> Circuit:
     """Get the front subcircuit whose qubits are fully occupied (only gates satisfying the predicate are counted)"""
+    n = circ.num_qubits
     if predicate is None:
         predicate = lambda _: True
     ffwc = Circuit()
-    for g in circ.gates:
+    for g in circ:
         if predicate(g):
             ffwc.append(g)
-            if ffwc.num_qubits == circ.num_qubits:
+            if ffwc.num_qubits == n:
                 break
     return ffwc
+
+def last_full_width_circuit(circ: Circuit, predicate: Callable = None, reverse: bool = False) -> Circuit:
+    """Get the last subcircuit whose qubits are fully occupied (only gates satisfying the predicate are counted)"""
+    n = circ.num_qubits
+    if predicate is None:
+        predicate = lambda _: True
+    lfwc = Circuit()
+    for g in circ[::-1]:
+        if predicate(g):
+            if reverse:
+                lfwc.append(g)
+            else:
+                lfwc.prepend(g)
+            if lfwc.num_qubits == n:
+                break
+    return lfwc
