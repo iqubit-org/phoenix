@@ -37,7 +37,6 @@ elif 'qasm' in args.filename:
 else:
     raise ValueError('Unsupported file type {}'.format(args.filename))
 
-# TODO: delete this
 console.rule('Benchmarking on {}'.format(args.filename))
 
 circ = qiskit.QuantumCircuit.from_qasm_file(qasm_fname)
