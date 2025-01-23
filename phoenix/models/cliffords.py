@@ -216,3 +216,4 @@ for pauli_0, pauli_1 in product(['X', 'Y', 'Z'], ['X', 'Y', 'Z']):
     cg = Clifford2Q(pauli_0, pauli_1)  # controlled gate
     _TRANSFORM_TABLE_2Q[cg.name] = [assemble_paulistr_with_sign(*cg.transform(pauli)) for pauli in _PAULIS_2Q]
 TRANSFORM_TABLE_2Q = pd.DataFrame(_TRANSFORM_TABLE_2Q, index=_PAULIS_2Q)
+CLIFFORD_2Q_SET = [Clifford2Q(pauli_0, pauli_1) for pauli_0, pauli_1 in product(['X', 'Y', 'Z'], ['X', 'Y', 'Z'])]

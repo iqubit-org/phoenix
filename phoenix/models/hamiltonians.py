@@ -181,38 +181,14 @@ class HamiltonianModel:
                     res.append(item)
             return res
 
-        def config_to_circuit(config: List[Union[BSF, Clifford2Q]]) -> Circuit:
-            circ = Circuit()
-            for item in config:
-                if isinstance(item, Clifford2Q):
-                    cliff = item
-                    if by == 'cnot':
-                        # circ += cliff.as_cnot_circuit()
-                        circ.append(cliff.as_gate())
-                    if by == 'su4':
-                        circ += cliff.as_su4_circuit()
-                if isinstance(item, BSF):
-                    bsf = item
-                    assert bsf.total_weight <= 2, "Only 2-weight and 1-weight Hamiltonians should be generated!!!"
-                    # TODO: ['XXIII', 'YYIII', 'ZZIII']
-                    if by == 'cnot':
-                        circ += bsf.as_cnot_circuit()
-                    if by == 'su4':
-                        # if bsf.num_local_paulis: # TODO: attempt to remove it? or modify it?
-                        #     local_bsf = bsf.pop_local_paulis()
-                        #     circ += local_bsf.as_su4_circuit()
-                        circ += bsf.as_su4_circuit()
-
-            # by default, we use Qiskit O2 to consolidate redundant 1Q and CNOT gates
-            return optimize_clifford_circuit_by_qiskit(circ, 2)
-
         def trotter_config(config: List[Union[BSF, Clifford2Q]], ord: int = 1, scale: float = 1) -> Circuit:
             """Similar to `trotterize` but trotterize (BSF with Clifford2Q) instead of (Paulis, Coeffs)"""
+            from phoenix.synthesis import utils
             if ord == 1:
-                return config_to_circuit(rescale_config(config, scale))
+                return utils.config_to_circuit(rescale_config(config, scale))
             elif ord == 2:
-                return (config_to_circuit(rescale_config(config, scale)) +
-                        config_to_circuit(rescale_config(reverse_config(config), scale)))
+                return (utils.config_to_circuit(rescale_config(config, scale)) +
+                        utils.config_to_circuit(rescale_config(reverse_config(config), scale)))
             else:
                 if ord % 2:
                     raise ValueError("Not implemented for odd order > 2")
@@ -225,14 +201,17 @@ class HamiltonianModel:
         # config = self.reconfigure()
         return trotter_config(self.reconfigure(), order)
 
-    def phoenix_circuit(self, efficient: bool = False) -> Circuit:
+    def phoenix_circuit(self, order: bool = True, efficient: bool = False) -> Circuit:
         from phoenix.synthesis import ordering, utils
         # grouping and group-wise simplification
         configs = self.phoenix_reconfigure()
 
         # ordering
         blocks = [utils.config_to_circuit(config) for config in configs]
-        circ = ordering.order_blocks(blocks, efficient=efficient)
+        if order:
+            circ = ordering.order_blocks(blocks, efficient=efficient)
+        else:
+            circ = reduce(add, blocks)
 
         return circ
 

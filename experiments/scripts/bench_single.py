@@ -17,10 +17,13 @@ warnings.filterwarnings('ignore')
 
 from rich.console import Console
 
+console = Console()
+
 parser = argparse.ArgumentParser(description='Run a single benchmark')
 parser.add_argument('filename', type=str, help='Filename of the benchmark')
 parser.add_argument('-d', '--device', default='all2all', type=str,
                     help='Device topology (default: all2all) (options: all2all, chain, manhattan, sycamore)')
+parser.add_argument('--no-order', action='store_true', help='Without IR group ordering procedure in Phoenix compiler (default: False)')
 parser.add_argument('-c', '--compiler', default='phoenix', type=str,
                     help='Compiler (default: phoenix)')
 args = parser.parse_args()
@@ -33,6 +36,9 @@ elif 'qasm' in args.filename:
     json_fname = args.filename.replace('qasm', 'json')
 else:
     raise ValueError('Unsupported file type {}'.format(args.filename))
+
+# TODO: delete this
+console.rule('Benchmarking on {}'.format(args.filename))
 
 circ = qiskit.QuantumCircuit.from_qasm_file(qasm_fname)
 with open(json_fname, 'r') as f:
@@ -81,7 +87,7 @@ elif args.compiler == 'tetris':
     print_circ_info(circ_opt, title='Optimized circuit')
 elif args.compiler == 'phoenix':
     circ = qiskit.QuantumCircuit.from_qasm_file(qasm_fname)
-    circ_opt = bench_utils.phoenix_pass(data['paulis'], data['coeffs'])
+    circ_opt = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], order=not args.no_order)
     print_circ_info(circ, title='Original circuit')
     print_circ_info(circ_opt, title='Optimized circuit')
 else:

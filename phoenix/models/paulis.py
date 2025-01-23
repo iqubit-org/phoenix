@@ -121,6 +121,7 @@ class BSF:
 
     def reverse(self) -> 'BSF':
         """Reverse the order of Pauli exponentiations."""
+        # bsf = deepcopy(self)
         bsf = deepcopy(self)
         bsf.mat = bsf.mat[::-1]
         bsf.coeffs = bsf.coeffs[::-1]
@@ -175,8 +176,7 @@ class BSF:
         bsf.mat[:, ctrl + self.num_qubits] = self.z[:, ctrl] ^ self.z[:, targ]
         bsf.signs ^= ((self.x[:, ctrl] == 1) & (self.x[:, targ] == 0) & (self.z[:, ctrl] == 0) &
                       (self.z[:, targ] == 1)) | ((self.x[:, ctrl] == 1) & (self.x[:, targ] == 1) &
-                                                 (self.z[:, ctrl] == 1 & self.z[:, targ] == 1))
-        # TODO: there is bug
+                                                 (self.z[:, ctrl] == 1) & (self.z[:, targ] == 1))
         return bsf
 
     def apply_cz(self, ctrl: int, targ: int) -> 'BSF':
@@ -235,7 +235,7 @@ class BSF:
 
         return bsf
 
-    def as_cnot_circuit(self) -> Circuit:
+    def as_cnot_circuit(self, high_level=False) -> Circuit:
         circ = Circuit()
         for paulistr, coeff, sign in zip(self.paulis, self.coeffs, self.signs):
             assert coeff.imag == 0, "Imaginary coefficients are not supported"
@@ -246,41 +246,61 @@ class BSF:
                 continue
             elif len(indices) == 1:
                 if paulistr[indices[0]] == 'X':
-                    circ.append(
-                        *[gates.H.on(i) for i in indices],
-                        gates.RZ(theta).on(indices),
-                        *[gates.H.on(i) for i in indices]
-                    )
+                    if high_level:
+                        circ.append(gates.RX(theta).on(indices))
+                    else:
+                        circ.append(
+                            *[gates.H.on(i) for i in indices],
+                            gates.RZ(theta).on(indices),
+                            *[gates.H.on(i) for i in indices]
+                        )
                 elif paulistr[indices[0]] == 'Y':
-                    circ.append(
-                        *[gates.SDG.on(i) for i in indices],
-                        *[gates.H.on(i) for i in indices],
-                        gates.RZ(theta).on(indices),
-                        *[gates.H.on(i) for i in indices],
-                        *[gates.S.on(i) for i in indices]
-                    )
+                    if high_level:
+                        circ.append(gates.RY(theta).on(indices))
+                    else:
+                        circ.append(
+                            *[gates.SDG.on(i) for i in indices],
+                            *[gates.H.on(i) for i in indices],
+                            gates.RZ(theta).on(indices),
+                            *[gates.H.on(i) for i in indices],
+                            *[gates.S.on(i) for i in indices]
+                        )
                 elif paulistr[indices[0]] == 'Z':
                     circ.append(gates.RZ(theta).on(indices))
                 else:
                     raise ValueError(f"Invalid Pauli string {paulistr}")
             else:
-                for idx in indices:
-                    if paulistr[idx] == 'X':
-                        circ.append(gates.H.on(idx))
-                    elif paulistr[idx] == 'Y':
-                        circ.append(gates.SDG.on(idx), gates.H.on(idx))
-                circ.append(*[
-                    gates.X.on(indices[i + 1], indices[i]) for i in range(len(indices) - 1)
-                ])
-                circ.append(gates.RZ(theta).on(indices[-1]))
-                circ.append(*[
-                    gates.X.on(indices[i], indices[i - 1]) for i in range(len(indices) - 1, 0, -1)
-                ])
-                for idx in indices:
-                    if paulistr[idx] == 'X':
-                        circ.append(gates.H.on(idx))
-                    elif paulistr[idx] == 'Y':
-                        circ.append(gates.H.on(idx), gates.S.on(idx))
+                if high_level:
+                    assert len(indices) == 2, "Only support 2-qubit Pauli strings"
+                    for idx in indices:
+                        if paulistr[idx] == 'X':
+                            circ.append(gates.H.on(idx))
+                        elif paulistr[idx] == 'Y':
+                            circ.append(gates.SDG.on(idx), gates.H.on(idx))
+                    circ.append(gates.RZZ(theta).on(indices))
+                    for idx in indices:
+                        if paulistr[idx] == 'X':
+                            circ.append(gates.H.on(idx))
+                        elif paulistr[idx] == 'Y':
+                            circ.append(gates.H.on(idx), gates.S.on(idx))
+                else:
+                    for idx in indices:
+                        if paulistr[idx] == 'X':
+                            circ.append(gates.H.on(idx))
+                        elif paulistr[idx] == 'Y':
+                            circ.append(gates.SDG.on(idx), gates.H.on(idx))
+                    circ.append(*[
+                        gates.X.on(indices[i + 1], indices[i]) for i in range(len(indices) - 1)
+                    ])
+                    circ.append(gates.RZ(theta).on(indices[-1]))
+                    circ.append(*[
+                        gates.X.on(indices[i], indices[i - 1]) for i in range(len(indices) - 1, 0, -1)
+                    ])
+                    for idx in indices:
+                        if paulistr[idx] == 'X':
+                            circ.append(gates.H.on(idx))
+                        elif paulistr[idx] == 'Y':
+                            circ.append(gates.H.on(idx), gates.S.on(idx))
 
         return circ
 

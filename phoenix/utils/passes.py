@@ -52,6 +52,13 @@ def obtain_front_layer(dag_or_circ: Union[Circuit, nx.DiGraph, rx.PyDiGraph],
     """
     if predicate is None:
         predicate = lambda _: True
+    # else:
+    #     if isinstance(dag_or_circ, Circuit):
+    #         if not any([predicate(g) for g in dag_or_circ.gates]):
+    #             return []
+    #     if isinstance(dag_or_circ, (nx.DiGraph, rx.PyDiGraph)):
+    #         if not any([predicate(node) for node in dag_or_circ.nodes()]):
+    #             return []
 
     if isinstance(dag_or_circ, Circuit):
         dag = dag_or_circ.to_dag()

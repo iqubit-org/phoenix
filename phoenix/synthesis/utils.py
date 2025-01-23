@@ -1,6 +1,7 @@
 import cirq
 import qiskit
 from math import sqrt, pi
+from typing import Union
 from scipy import linalg
 from itertools import product
 from phoenix.basic.circuits import Circuit
@@ -279,11 +280,23 @@ def optimize_clifford_circuit_by_qiskit(circ: Circuit, optimization_level=1) -> 
                                                 basis_gates=basis_gates))
 
 
-def config_to_circuit(config, by: str = 'cnot', optimize=True):
+def config_to_circuit(config: List[Union[BSF, Clifford2Q]], by: str = 'cnot', optimize=True):
+    """
+    Convert a BSF-simplified configuration to a Circuit instance.
+
+    Args:
+        config (List[Union[BSF, Clifford2Q]]): a list of BSF or Clifford2Q instances
+        by (str): gat set basis, 'cnot' or 'su4'
+        optimize (bool): whether to optimize the circuit
+    """
     circ = Circuit()
     for item in config:
         if isinstance(item, Clifford2Q):
             circ.append(item.as_gate())
+            # if by == 'cnot':
+            #     circ += item.as_cnot_circuit()
+            # if by == 'su4':
+            #     circ += item.as_su4_circuit()
         if isinstance(item, BSF):
             if by == 'cnot':
                 circ += item.as_cnot_circuit()

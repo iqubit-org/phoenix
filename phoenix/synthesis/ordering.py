@@ -12,6 +12,9 @@ from rich.console import Console
 
 console = Console()
 
+def has_clifford(circ: Circuit) -> bool:
+    """Check if a circuit has Clifford gates"""
+    return any(isinstance(g, Clifford2QGate) for g in circ.gates)
 
 class CircuitTetris:
     def __init__(self, circ: Circuit, num_qubits: int = None):
@@ -20,8 +23,12 @@ class CircuitTetris:
         self.left_end = left_end_empty_layers(self.circuit, self.num_qubits)
         self.right_end = right_end_empty_layers(self.circuit, self.num_qubits)
 
-        self.front_cliffs = obtain_front_layer(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
-        self.last_cliffs = obtain_last_layer(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
+        if has_clifford(self.circuit):
+            self.front_cliffs = obtain_front_layer(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
+            self.last_cliffs = obtain_last_layer(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
+        else:
+            self.front_cliffs = []
+            self.last_cliffs = []
 
     def copy(self):
         """Return a copy of the CircuitTetris instance (Copy all fields by reference copying)"""
@@ -33,8 +40,9 @@ class CircuitTetris:
         """Update the left_end, right_end, front_cliffs, and last_cliffs attributes"""
         self.left_end = left_end_empty_layers(self.circuit, self.num_qubits)
         self.right_end = right_end_empty_layers(self.circuit, self.num_qubits)
-        self.front_cliffs = obtain_front_layer(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
-        self.last_cliffs = obtain_last_layer(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
+        if has_clifford(self.circuit):
+            self.front_cliffs = obtain_front_layer(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
+            self.last_cliffs = obtain_last_layer(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
 
     def left_assemble(self, tetris: 'CircuitTetris'):
         """Assemble the left end of the CircuitTetris with another CircuitTetris instance"""
@@ -189,8 +197,9 @@ def order_blocks(blocks: List[Circuit], efficient: bool = False) -> Circuit:
 
     LOOKAHEAD = 40
     # LOOKAHEAD = 25
-    # TODO: what is the suitable number of blocks to look ahead?
     # ! after field test, 40 is a good lookahead length    LOOKAHEAD = 40
+    if not has_clifford(tetris.circuit): # if there is no Clifford gate (e.g., Heisenberg, QAOA), we forcefully use the efficient mode
+        efficient = True
     while tetris_list:
         costs = {i: assembling_overhead(tetris, tts, efficient=efficient) for i, tts in
                  enumerate(tetris_list[:LOOKAHEAD])}

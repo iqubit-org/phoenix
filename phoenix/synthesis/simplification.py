@@ -3,10 +3,10 @@ Simplification of Pauli Tableau using Clifford gates.
 """
 import numpy as np
 from copy import deepcopy
-from itertools import product, combinations
+from itertools import combinations
 from typing import Tuple, List
 from phoenix.models.paulis import BSF
-from phoenix.models.cliffords import Clifford2Q
+from phoenix.models.cliffords import Clifford2Q, CLIFFORD_2Q_SET
 
 
 def simplify_bsf(bsf: BSF) -> Tuple[BSF, List[Tuple[Clifford2Q, BSF]]]:
@@ -36,28 +36,28 @@ def simplify_bsf_with_weight(bsf: BSF, q: int):
 
 
 def search_cliffords(bsf: BSF, avoid: Tuple[int, int] = None) -> Tuple[BSF, float, Clifford2Q]:
-    bsfs = []
-    costs = []
-    clifford_candidates = []
-    for pauli_0, pauli_1 in product(['X', 'Y', 'Z'], ['X', 'Y', 'Z']):
-        cg = Clifford2Q(pauli_0, pauli_1)  # controlled gate
-        for i, j in combinations(bsf.qubits_with_ops.tolist(), 2):
-            if (i, j) == avoid or (j, i) == avoid:
-                continue
-            bsf_ = bsf.apply_clifford_2q(cg, i, j)
-            cost = heuristic_bsf_cost(bsf_)
-            bsfs.append(bsf_)
-            clifford_candidates.append((cg.on(i, j)))
-            costs.append(cost)
-            # console.print('searching C({},{}).on({},{}) --> cost={}'.format(pauli_0, pauli_1, i, j, cost))
+    avoid = set(avoid) if avoid is not None else set()
+    clifford_candidates = np.array([cg.on(qubits[0], qubits[1]) for cg in CLIFFORD_2Q_SET for qubits in
+                                    np.array(list(combinations(bsf.qubits_with_ops, 2))) if set(qubits) != set(avoid)])
 
-    # select the candidates with the minimum cost
-    which_candidates = np.where(np.array(costs) == np.min(costs))[0]
-    bsfs = [bsfs[i] for i in which_candidates]
-    costs = [costs[i] for i in which_candidates]
-    clifford_candidates = [clifford_candidates[i] for i in which_candidates]
-    # console.print(bsfs[0], costs[0], clifford_candidates[0])
-    return bsfs[0], costs[0], clifford_candidates[0]
+    # use numpy vectorization to accelerate computation
+    def trans_bsf(cliff):
+        return bsf.apply_clifford_2q(cliff, cliff.ctrl, cliff.targ)
+
+    trans_bsf = np.vectorize(trans_bsf)
+
+    bsfs = trans_bsf(clifford_candidates)
+    costs = heuristic_bsf_cost(bsfs)
+
+    # # select the candidates with the minimum cost
+    # min_cost = np.min(costs)
+    # which_candidates = np.where(np.array(costs) == min_cost)[0]
+    # bsfs = bsfs[which_candidates]
+    # costs = costs[which_candidates]
+    # clifford_candidates = clifford_candidates[which_candidates]
+    # return bsfs[0], costs[0], clifford_candidates[0]
+    argmin = np.argmin(costs)
+    return bsfs[argmin], costs[argmin], clifford_candidates[argmin]
 
 
 def is_simplified(bsf: BSF, q: int) -> bool:
@@ -67,19 +67,21 @@ def is_simplified(bsf: BSF, q: int) -> bool:
     return False
 
 
-def heuristic_bsf_cost(bsf: BSF, init_score: float = 0.0) -> float:
+def _heuristic_bsf_cost_func(bsf: BSF) -> float:
     """Heuristic cost for a 3-qubit Pauli Tableau, the smaller the simpler."""
-    cost = init_score
+    # cost = init_score
     # cost += np.linalg.norm(bsf.x, ord=1, axis=1).sum() * 0.25
     # cost += np.linalg.norm(bsf.z, ord=1, axis=1).sum() * 0.25
     # cost += np.linalg.norm(bsf.x | bsf.z, ord=1, axis=1).sum() * 0.5
-    for i, j in combinations(bsf.which_nonlocal_paulis, 2):
-        cost += np.linalg.norm(bsf.with_ops[i] | bsf.with_ops[j], ord=1)
-
-    for i, j in combinations(bsf.which_nonlocal_paulis, 2):
-        cost += np.linalg.norm(bsf.x[i] | bsf.x[j], ord=1) * 0.5
-        cost += np.linalg.norm(bsf.z[i] | bsf.z[j], ord=1) * 0.5
-
+    cost = 0.0
+    if bsf.which_nonlocal_paulis.size > 1:
+        row_combs = np.array(list(combinations(bsf.which_nonlocal_paulis, 2))).T
+        cost += np.linalg.norm(np.bitwise_or(bsf.with_ops[row_combs[0]],
+                                             bsf.with_ops[row_combs[1]]), ord=1, axis=1).sum()
+        cost += np.linalg.norm(np.bitwise_or(bsf.x[row_combs[0]], bsf.x[row_combs[1]]), ord=1, axis=1).sum() * 0.5
+        cost += np.linalg.norm(np.bitwise_or(bsf.z[row_combs[0]], bsf.z[row_combs[1]]), ord=1, axis=1).sum() * 0.5
     cost += bsf.total_weight * bsf.num_nonlocal_paulis ** 2
-
     return cost
+
+
+heuristic_bsf_cost = np.vectorize(_heuristic_bsf_cost_func)
