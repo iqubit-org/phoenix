@@ -244,7 +244,7 @@ def unroll_u3(circ: Circuit, by: str = 'zyz') -> Circuit:
     circ_unrolled = Circuit()
     for g in circ:
         if g.num_qregs == 1 and isinstance(g, (gates.U2, gates.U3)):
-            circ_unrolled += euler_decompose(g, basis=by, with_phase=False)
+            circ_unrolled.compose(euler_decompose(g, basis=by, with_phase=False))
         elif g.num_qregs == 1 and isinstance(g, gates.U1):
             circ_unrolled.append(gates.RZ(g.angle).on(g.tq))
         else:
@@ -299,9 +299,9 @@ def config_to_circuit(config: List[Union[BSF, Clifford2Q]], by: str = 'cnot', op
             #     circ += item.as_su4_circuit()
         if isinstance(item, BSF):
             if by == 'cnot':
-                circ += item.as_cnot_circuit()
+                circ.compose(item.as_cnot_circuit())
             elif by == 'su4':
-                circ += item.as_su4_circuit()
+                circ.compose(item.as_su4_circuit())
 
     # by default, we use Qiskit O2 to consolidate redundant 1Q and CNOT gates
     if by == 'cnot' and optimize:
@@ -320,9 +320,9 @@ def unroll_su4(circ: Circuit, by: str = 'can') -> Circuit:
     for g in circ:
         if g.num_qregs == 2 and not g.cqs:  # arbitrary two-qubit gate
             if by == 'can':
-                circ_unrolled += can_decompose(g)
+                circ_unrolled.compose(can_decompose(g))
             if by == 'cnot':
-                circ_unrolled += kak_decompose(g)
+                circ_unrolled.compose(kak_decompose(g))
         else:
             circ_unrolled.append(g)
 

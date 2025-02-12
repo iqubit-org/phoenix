@@ -5,8 +5,7 @@ sys.path.append('../')
 
 import os
 import json
-import numpy as np
-from functools import reduce
+import cirq
 from qiskit.quantum_info import Pauli
 from phoenix.models import HamiltonianModel
 from phoenix import gates, Circuit
@@ -37,7 +36,7 @@ for qasm_fname, json_fname in zip(qasm_fnames, json_fnames):
 
     front_x = [tensor_1_slot(Pauli('X').to_matrix(), circ.num_qubits, i) for i in data['front_x_on']]
     ham = HamiltonianModel(data['paulis'], data['coeffs'])
-    u_ideal = reduce(np.dot, front_x) @ ham.unitary_evolution()
+    u_ideal = cirq.dot(*front_x) @ ham.unitary_evolution()
 
     u_ref = circ.unitary()
 

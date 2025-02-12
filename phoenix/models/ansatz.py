@@ -27,12 +27,12 @@ class TrotterCNOT(AnsatzGenerator):
         for _ in range(self.num_steps):
             if self.order == 1:
                 for paulistr, coeff in zip(paulis, coeffs):
-                    circ += _paulistr_to_circuit_cnot(paulistr, coeff * scale)
+                    circ.compose(_paulistr_to_circuit_cnot(paulistr, coeff * scale))
             elif self.order == 2:
                 for paulistr, coeff in zip(paulis, coeffs):
-                    circ += _paulistr_to_circuit_cnot(paulistr, coeff * scale)
+                    circ.compose(_paulistr_to_circuit_cnot(paulistr, coeff * scale))
                 for paulistr, coeff in reversed(list(zip(paulis, coeffs))):
-                    circ += _paulistr_to_circuit_cnot(paulistr, coeff * scale)
+                    circ.compose(_paulistr_to_circuit_cnot(paulistr, coeff * scale))
             else:
                 raise ValueError("Not implemented for order > 2")
         return circ
@@ -52,12 +52,12 @@ class TrotterSU4(AnsatzGenerator):
         for _ in range(self.num_steps):
             if self.order == 1:
                 for paulistr, coeff in zip(paulis, coeffs):
-                    circ += _paulistr_to_circuit_su4(paulistr, np.array(coeff) * scale)
+                    circ.compose(_paulistr_to_circuit_su4(paulistr, np.array(coeff) * scale))
             elif self.order == 2:
                 for paulistr, coeff in zip(paulis, coeffs):
-                    circ += _paulistr_to_circuit_su4(paulistr, np.array(coeff) * scale)
+                    circ.compose(_paulistr_to_circuit_su4(paulistr, np.array(coeff) * scale))
                 for paulistr, coeff in reversed(list(zip(paulis, coeffs))):
-                    circ += _paulistr_to_circuit_su4(paulistr, np.array(coeff) * scale)
+                    circ.compose(_paulistr_to_circuit_su4(paulistr, np.array(coeff) * scale))
             else:
                 raise ValueError("Not implemented for order > 2")
         return circ

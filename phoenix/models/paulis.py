@@ -2,7 +2,6 @@
 
 import numpy as np
 from copy import deepcopy
-from functools import reduce
 from typing import List, Union
 
 from phoenix.basic import gates
@@ -75,7 +74,6 @@ class BSF:
     @property
     def qubits_with_ops(self):
         """Which qubits involve non-identity operations."""
-        # return np.where(reduce(np.bitwise_or, self.with_ops))[0]
         return np.where(self.with_ops.sum(axis=0) > 0)[0]
 
     @property
@@ -101,7 +99,13 @@ class BSF:
             return 0
         if not self.num_nonlocal_paulis:  # only 1Q rotations
             return 1
-        return reduce(np.bitwise_or, self.with_ops[self.which_nonlocal_paulis]).sum()
+        # For computational efficiency, we will not use "functools.reduce" here
+        # return reduce(np.bitwise_or, self.with_ops[self.which_nonlocal_paulis]).sum()
+        matrices = self.with_ops[self.which_nonlocal_paulis]
+        res = matrices[0]
+        for mat in matrices[1:]:
+            res = np.bitwise_or(res, mat)
+        return res.sum()
 
     @property
     def which_nonlocal_paulis(self) -> np.ndarray:
@@ -348,9 +352,9 @@ class BSF:
                     coeffs_remain.append(self.coeffs[i])
                     signs_remain.append(self.signs[i])
             coeffs_part, signs_part = np.array(coeffs_part), np.array(signs_part)
-            circ += can_decompose(gates.UnivGate(
+            circ.compose(can_decompose(gates.UnivGate(
                 HamiltonianModel(paulis_part, coeffs_part * (-1) ** signs_part).unitary_evolution()
-            ).on(self.qubits_with_nonlocal_ops.tolist()))
+            ).on(self.qubits_with_nonlocal_ops.tolist())))
 
             # 2) synthesize remaining local operations
             for i in range(self.num_paulis):

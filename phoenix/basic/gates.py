@@ -38,6 +38,7 @@ class Gate:
         self.angles = kwargs.get('angles', None)
         self.params = kwargs.get('params', None)
         self.exponent = kwargs.get('exponent', None)
+        self.properties = {}
 
     def __hash__(self):
         return hash(id(self))
@@ -55,12 +56,12 @@ class Gate:
 
         Returns: Quantum Gate with  qubit indices.
         """
-        if isinstance(tqs, int):
+        if isinstance(tqs, (int, np.integer)):
             tqs = [tqs]
 
         if cqs is None:
             cqs = []
-        elif isinstance(cqs, int):
+        elif isinstance(cqs, (int, np.integer)):
             cqs = [cqs]
 
         if not tqs:
@@ -80,8 +81,18 @@ class Gate:
 
         g.n_qubits = len(tqs)  # new number of target qubits
         g._targ_qubits = tqs
-        if cqs:
-            g._ctrl_qubits = cqs
+        g._ctrl_qubits = cqs
+
+        # compute its basic properties for efficient access
+        g.properties = {
+            'tq': g._targ_qubits[0] if len(g._targ_qubits) == 1 else None,
+            'cq': g._ctrl_qubits[0] if len(g._ctrl_qubits) == 1 else None,
+            'tqs': g._targ_qubits,
+            'cqs': g._ctrl_qubits,
+            'qregs': g._ctrl_qubits + g._targ_qubits,
+            'num_qregs': len(g._targ_qubits) + len(g._ctrl_qubits),
+        }
+
         return g
 
     def __call__(self, *args, **kwargs):
@@ -121,22 +132,19 @@ class Gate:
         if not self._ctrl_qubits:
             return '${}_{{{}}}$'.format(g_name, tqs_str)
         return '${}_{{{}←{}}}$'.format(g_name, tqs_str, cqs_str)
-
+    
     @property
     def tq(self):
-        if len(self._targ_qubits) > 1:
-            raise ValueError('Gate {} has more than 1 target qubit'.format(self.name))
-        if not self._targ_qubits:
-            raise ValueError('Gate {} has no target qubit'.format(self.name))
-        return self._targ_qubits[0]
+        # if len(self._targ_qubits) > 1:
+        #     raise ValueError('Gate {} has more than 1 target qubit'.format(self.name))
+        # if not self._targ_qubits:
+        #     raise ValueError('Gate {} has no target qubit'.format(self.name))
+        # return self._targ_qubits[0]
+        return self.properties['tq']
 
     @property
     def cq(self):
-        if len(self._ctrl_qubits) > 1:
-            raise ValueError('Gate {} has more than 1 control qubit'.format(self.name))
-        if not self._ctrl_qubits:
-            raise ValueError('Gate {} has no control qubit'.format(self.name))
-        return self._ctrl_qubits[0]
+        return self.properties['cq']
 
     @property
     def tqs(self):
@@ -148,12 +156,12 @@ class Gate:
 
     @property
     def qregs(self):
-        return self._targ_qubits if not self._ctrl_qubits else self._ctrl_qubits + self._targ_qubits
+        return self.properties['qregs']
 
     @property
     def num_qregs(self):
         """Number of qubits operated by the gate (both target and control qubits)"""
-        return len(self.qregs)
+        return self.properties['num_qregs']
 
     def hermitian(self):
         """

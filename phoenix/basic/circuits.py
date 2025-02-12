@@ -11,13 +11,10 @@ import networkx as nx
 import rustworkx as rx
 from math import pi
 from scipy import linalg
-from functools import reduce
-from itertools import product
-from operator import add
+from itertools import product, chain
 from typing import List, Tuple, Dict, Union
 from copy import deepcopy, copy
 from collections import Counter
-
 from phoenix.basic import gates
 from phoenix.basic.gates import Gate
 from phoenix.utils.ops import replace_close_to_zero_with_zero
@@ -59,6 +56,9 @@ class Circuit(list):
         # return 'Circuit(num_gates: {}, num_qubits: {}, with_measure: {})'.format(self.num_gates, self.num_qubits,
         #                                                                          self.with_measure)
         return 'Circuit(num_gates: {}, num_qubits: {})'.format(self.num_gates, self.num_qubits)
+
+    def compose(self, other):
+        self.extend(other)
 
     @property
     def nonlocal_structure(self):
@@ -129,7 +129,7 @@ class Circuit(list):
 
     def to_qasm(self, fname: str = None):
         """Convert self to QSAM string"""
-        if not self.gates:
+        if not self:
             return ''
 
         circuit = deepcopy(self)
@@ -213,7 +213,7 @@ class Circuit(list):
                 continue
             line = re.split(r'\s*,\s*|\s+', line)  # split according to ',' or '\s+'
             line = [re.split(r'\(|\)', s) for s in line]  # split each element according to '(' or ')'
-            line = reduce(add, line)
+            line = chain.from_iterable(line)  # flatten the list
             line = [s for s in line if s != '']
 
             def parse_qubit_index(s):
@@ -322,7 +322,7 @@ class Circuit(list):
         for g in circ:
             if g.n_qubits > int(np.log2(g.data.shape[0])) == 1:
                 # identical tensor-product gate expanded from single-qubit gate
-                data = reduce(np.kron, [g.data] * g.n_qubits)
+                data = cirq.kron(*([g.data] * g.n_qubit))
             else:
                 data = g.data
 
@@ -334,17 +334,32 @@ class Circuit(list):
 
             ops.append(mat)
 
-        unitary = reduce(np.dot, reversed(ops))
+        unitary = cirq.dot(*reversed(ops))
         if msb:
             unitary = tensor_slots(unitary, n, list(range(n - 1, -1, -1)))
         return unitary
 
-    def layer(self) -> List[List[Gate]]:
-        """Divide a circuit into different layers"""
-        from phoenix.utils.passes import dag_to_layers
-
-        layers = dag_to_layers(self.to_dag())
-        layers = list(map(_sort_gates_on_qreg, layers))
+    def layer(self, on_body='dag') -> List[List[Gate]]:
+        """
+        Divide a circuit into different layers
+        ---
+        For large-size circuit, it is recommended to use on_body='dag' for efficiency.
+        """
+        if on_body == 'circuit':
+            from phoenix.utils.passes import obtain_front_layer_from_circuit
+            layers = []
+            circ = self.clone()
+            while circ:
+                front_layer = obtain_front_layer_from_circuit(circ)
+                layers.append(front_layer)
+                for g in front_layer:
+                    circ.remove(g)
+        elif on_body == 'dag':
+            from phoenix.utils.passes import dag_to_layers
+            layers = dag_to_layers(self.to_dag())
+            layers = list(map(_sort_gates_on_qreg, layers))
+        else:
+            raise ValueError('Unsupported argument on_body (options: "circuit" or "dag")')
         return layers
 
     def to_dag(self, backend='rustworkx') -> Union[rx.PyDiGraph, nx.DiGraph]:
@@ -402,7 +417,7 @@ class Circuit(list):
         """
         dependency = nx.Graph()
         dependency.add_nodes_from(self.qubits)
-        for g in self.gates:
+        for g in self:
             if g.num_qregs > 2:
                 raise ValueError('Only support 1Q or 2Q gates with designated qubits')
             if g.num_qregs > 1:
@@ -440,7 +455,7 @@ class Circuit(list):
     @property
     def instr_seq(self) -> List[Tuple[str, Tuple[float], Tuple[int], Tuple[int]]]:
         instr_seq = []
-        for g in self.gates:
+        for g in self:
             if g.angle:
                 params = (g.angle,)
             elif g.angles:
@@ -457,8 +472,8 @@ class Circuit(list):
     @property
     def gates(self, with_measure: bool = True) -> List[Gate]:
         if with_measure:
-            return [g for g in self]
-        return [g for g in self if not isinstance(g, gates.Measurement)]
+            list(self)
+        return list(filter(lambda g: not isinstance(g, gates.Measurement), self))
 
     @property
     def num_gates(self):
@@ -471,20 +486,32 @@ class Circuit(list):
     @property
     def depth(self):
         """number of circuit layers (i.e., length of critical path)"""
-        return self.to_qiskit().depth()
+        wire_lengths = [0] * self.num_qubits_with_dummy
+        for g in self:
+            qubits = g.qregs
+            current_depth = max(wire_lengths[q] for q in qubits) + 1
+            for q in qubits:
+                wire_lengths[q] = current_depth
+        return max(wire_lengths)
+
 
     @property
     def depth_nonlocal(self):
         """number of circuit layers including only nonlocal gates"""
-        return self.to_qiskit().depth(lambda instr: instr.operation.num_qubits > 1)
+        wire_lengths = [0] * self.num_qubits_with_dummy
+        for g in self:
+            if g.num_qregs == 1:
+                continue
+            qubits = g.qregs
+            current_depth = max(wire_lengths[q] for q in qubits) + 1
+            for q in qubits:
+                wire_lengths[q] = current_depth
+        return max(wire_lengths)
 
     @property
     def qubits(self) -> List[int]:
         """qubits indices in the quantum circuit"""
-        idx = []
-        for g in self:
-            idx.extend(g.qregs)
-        return sorted(list(set(idx)))
+        return sorted(list(set(chain.from_iterable([g.qregs for g in self]))))
 
     @property
     def num_qubits(self):
@@ -494,7 +521,7 @@ class Circuit(list):
     @property
     def num_qubits_with_dummy(self):
         """number of qubits in the quantum circuit (including dummy qubits)"""
-        return max(self.qubits) + 1
+        return max(self.qubits) + 1 if self.gates else 0
 
     @property
     def max_gate_weight(self):
@@ -782,7 +809,7 @@ def _to_bqskit(circ: Circuit) -> bqskit.Circuit:
     n = circ.num_qubits_with_dummy
     c = bqskit_Circuit(n)
 
-    for g in circ.gates:
+    for g in circ:
         if g.num_qregs == 3:
             assert isinstance(g, gates.XGate) and len(g.cqs) == 2, 'The only supported 3Q gate is CCX gate'
             c.append_gate(bqskit_gates.CCXGate(), g.qregs)
@@ -902,7 +929,7 @@ def _to_cirq(circ: Circuit) -> cirq.Circuit:
 
     c = cirq.Circuit()
     qubits = cirq.LineQubit.range(circ.num_qubits_with_dummy)
-    for g in circ.gates:
+    for g in circ:
         if isinstance(g, (gates.XGate, gates.YGate, gates.ZGate,
                           gates.HGate, gates.SWAPGate)):
             acted = [qubits[cq] for cq in g.cqs] + [qubits[tq] for tq in g.tqs]

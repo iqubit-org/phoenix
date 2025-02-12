@@ -2,7 +2,6 @@
 Operator-related Utils functions
 """
 from typing import List, Tuple, Union, Optional
-from functools import reduce
 from math import sqrt, atan2
 
 import cirq
@@ -76,8 +75,7 @@ def tensor_1_slot(U: np.ndarray, n: int, tq: int) -> np.ndarray:
         raise ValueError('the qubit index is out of range')
     ops = [np.identity(2)] * n
     ops[tq] = U
-    return reduce(np.kron, ops)
-
+    return cirq.kron(*ops)
 
 def tensor_slots(U: np.ndarray, n: int, indices: List[int]) -> np.ndarray:
     """
@@ -100,7 +98,7 @@ def tensor_slots(U: np.ndarray, n: int, indices: List[int]) -> np.ndarray:
         return tensor_1_slot(U, n, indices[0])
     else:
         arr_list = [U] + [np.identity(2)] * (n - m)
-        res = reduce(np.kron, arr_list).reshape([2] * 2 * n)
+        res = cirq.kron(*arr_list).reshape([2] * 2 * n)
         idx = np.repeat(-1, n)
         for i, k in enumerate(indices):
             idx[k] = i
@@ -338,7 +336,7 @@ def controlled_unitary_matrix(U: np.ndarray, num_ctrl: int = 1) -> np.ndarray:
     """Construct the controlled-unitary matrix based on input unitary matrix."""
     proj_0, proj_1 = np.diag([1, 0]), np.diag([0, 1])
     for _ in range(num_ctrl):
-        ident = reduce(np.kron, [np.identity(2)] * int(np.log2(U.shape[0])))
+        ident = cirq.kron(*[np.identity(2)] * int(np.log2(U.shape[0])))
         U = np.kron(proj_0, ident) + np.kron(proj_1, U)
     return U
 

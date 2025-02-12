@@ -31,7 +31,6 @@ def su4_circ_stats(qasm_fname):
         [gates.X.on(blk.location[0], blk.location[1]) for blk in blocks if not is_tensor_prod(blk.get_unitary().numpy)])
     return circ_su4.num_gates, circ_su4.depth
 
-
 selected_benchmarks = [
     'CH2_cmplt_BK',
     'CH2_cmplt_JW',
@@ -39,8 +38,14 @@ selected_benchmarks = [
     'CH2_frz_JW',
     'H2O_cmplt_BK',
     'H2O_cmplt_JW',
-    'H2O_frz_BK',
-    'H2O_frz_JW'
+    'LiH_cmplt_BK',
+    'LiH_cmplt_JW',
+    'LiH_frz_BK',
+    'LiH_frz_JW',
+    'NH_cmplt_BK',
+    'NH_cmplt_JW',
+    'NH_frz_BK',
+    'NH_frz_JW'
 ]
 
 OUTPUT_DPATH = './output_uccsd/'

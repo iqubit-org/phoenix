@@ -3,13 +3,13 @@ import sys
 sys.path.append('..')
 
 import qiskit
+import cirq
 import os
 import json
 import numpy as np
 from phoenix import Circuit
 from phoenix.utils.ops import tensor_1_slot
 from scipy import linalg
-from functools import reduce
 from qiskit.quantum_info import SparsePauliOp, Pauli
 from phoenix.utils.functions import infidelity
 from natsort import natsorted
@@ -38,7 +38,7 @@ def ideal_evolution(json_fname):
 
     front_x = [tensor_1_slot(Pauli('X').to_matrix(), data['num_qubits'], i) for i in data['front_x_on']]
     ham = SparsePauliOp(data['paulis'], data['coeffs'])
-    evol = linalg.expm(-1j * ham.to_matrix()) @ reduce(np.dot, front_x)
+    evol = linalg.expm(-1j * ham.to_matrix()) @ cirq.dot(*front_x)
     return evol
 
 

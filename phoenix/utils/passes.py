@@ -1,14 +1,17 @@
 import networkx as nx
 import rustworkx as rx
 from typing import List, Union, Tuple, Callable
-from functools import reduce
-from operator import add
+from itertools import chain
 from phoenix.basic.gates import Gate
 from phoenix.basic.circuits import Circuit
 from phoenix.utils.graphs import find_predecessors_by_node, find_successors_by_node, node_index
 from rich.console import Console
 
 console = Console()
+
+def concatenate_subcircuits(subcircuits: List[Circuit]) -> Circuit:
+    """Construct a circuit from a list of subcircuits"""
+    return Circuit(list(chain.from_iterable([blk for blk in subcircuits])))
 
 
 def dag_to_layers(dag: Union[nx.DiGraph, rx.PyDiGraph]) -> List[List]:
@@ -34,12 +37,44 @@ def dag_to_circuit(dag: Union[nx.DiGraph, rx.PyDiGraph]) -> Circuit:
     node_is_block = isinstance(next(iter(dag.nodes())), Circuit)
     if isinstance(dag, rx.PyDiGraph):
         if node_is_block:
-            return Circuit(reduce(add, [dag[idx].gates for idx in rx.topological_sort(dag)]))
+            return concatenate_subcircuits([dag[idx] for idx in rx.topological_sort(dag)])
         return Circuit([dag[idx] for idx in rx.topological_sort(dag)])
     else:
         if node_is_block:
-            return Circuit(reduce(add, list(nx.topological_sort(dag))))
+            return concatenate_subcircuits(nx.topological_sort(dag))
         return Circuit(list(nx.topological_sort(dag)))
+
+
+def obtain_front_layer_from_circuit(circ: Circuit, predicate: Callable = None) -> List[Gate]:
+    if predicate is None:
+        predicate = lambda _: True
+    front_layer = []
+    visited_qubits = set()
+    n = circ.num_qubits
+    for g in circ:
+        if predicate(g):
+            if not any(q in visited_qubits for q in g.qregs):
+                front_layer.append(g)
+            visited_qubits.update(g.qregs)
+            if len(visited_qubits) == n:
+                break
+    return front_layer
+
+
+def obtain_last_layer_from_circuit(circ: Circuit, predicate: Callable = None) -> List[Gate]:
+    if predicate is None:
+        predicate = lambda _: True
+    last_layer = []
+    visited_qubits = set()
+    for g in circ[::-1]:
+        if predicate(g):
+            if not any(q in visited_qubits for q in g.qregs):
+                last_layer.append(g)
+            visited_qubits.update(g.qregs)
+            if len(visited_qubits) == circ.num_qubits:
+                break
+    last_layer.reverse()
+    return last_layer
 
 
 def obtain_front_layer(dag_or_circ: Union[Circuit, nx.DiGraph, rx.PyDiGraph],
@@ -150,7 +185,6 @@ def unify_blocks(blocks: List[Circuit], circ: Circuit) -> List[Circuit]:
             dag.contract_nodes([node_index(dag, block), node_index(dag, g)], block)
 
     # blocks_layers = list(map(sort_blocks_on_qregs, dag_to_layers(dag)))
-    # blocks = reduce(add, blocks_layers)
     # return blocks
     return [dag[idx] for idx in rx.topological_sort(dag)]
 
@@ -263,14 +297,14 @@ def peel_first_1q_gates(circ: Circuit) -> Tuple[Circuit, List[Gate]]:
 
 
 def peel_last_1q_gates(circ: Circuit) -> Tuple[Circuit, List[Gate]]:
-    circ_nl_rev = Circuit(circ.gates[::-1])
+    circ_nl_rev = Circuit(circ[::-1])
     last_1q_gates = []
     while last_layer_1q := [g for g in obtain_front_layer(circ_nl_rev) if g.num_qregs == 1]:
         last_1q_gates.extend(last_layer_1q)
         for g_1q in last_layer_1q:
             circ_nl_rev.remove(g_1q)
     last_1q_gates.reverse()
-    return Circuit(circ_nl_rev.gates[::-1]), last_1q_gates
+    return Circuit(circ_nl_rev[::-1]), last_1q_gates
 
 
 def peel_first_and_last_1q_gates(circ: Circuit) -> Tuple[Circuit, List[Gate], List[Gate]]:
@@ -285,25 +319,28 @@ def front_full_width_circuit(circ: Circuit, predicate: Callable = None) -> Circu
     if predicate is None:
         predicate = lambda _: True
     ffwc = Circuit()
+    ffwc_qubits = set()
     for g in circ:
         if predicate(g):
             ffwc.append(g)
-            if ffwc.num_qubits == n:
+            ffwc_qubits.update(g.qregs)
+            if len(ffwc_qubits) == n:
                 break
     return ffwc
 
-def last_full_width_circuit(circ: Circuit, predicate: Callable = None, reverse: bool = False) -> Circuit:
+
+def last_full_width_circuit(circ: Circuit, predicate: Callable = None) -> Circuit:
     """Get the last subcircuit whose qubits are fully occupied (only gates satisfying the predicate are counted)"""
     n = circ.num_qubits
     if predicate is None:
         predicate = lambda _: True
     lfwc = Circuit()
+    lfwc_qubtis = set()
     for g in circ[::-1]:
         if predicate(g):
-            if reverse:
-                lfwc.append(g)
-            else:
-                lfwc.prepend(g)
-            if lfwc.num_qubits == n:
+            lfwc.append(g)
+            lfwc_qubtis.update(g.qregs)
+            if len(lfwc_qubtis) == n:
                 break
+    lfwc.reverse()
     return lfwc

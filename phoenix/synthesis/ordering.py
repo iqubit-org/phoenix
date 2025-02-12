@@ -1,12 +1,10 @@
 import numpy as np
-from functools import reduce
 from copy import copy
-from operator import add
-
+from itertools import chain
 from phoenix.basic.circuits import Circuit
 from phoenix.basic.gates import Clifford2QGate
 from phoenix.utils.passes import front_full_width_circuit, last_full_width_circuit
-from phoenix.utils.passes import obtain_front_layer, obtain_last_layer
+from phoenix.utils.passes import obtain_front_layer_from_circuit, obtain_last_layer_from_circuit
 from typing import List, Tuple, Union
 
 from rich.console import Console
@@ -25,8 +23,8 @@ class CircuitTetris:
         self.right_end = right_end_empty_layers(self.circuit, self.num_qubits)
 
         if has_clifford(self.circuit):
-            self.front_cliffs = obtain_front_layer(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
-            self.last_cliffs = obtain_last_layer(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
+            self.front_cliffs = obtain_front_layer_from_circuit(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
+            self.last_cliffs = obtain_last_layer_from_circuit(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
         else:
             self.front_cliffs = []
             self.last_cliffs = []
@@ -42,8 +40,8 @@ class CircuitTetris:
         self.left_end = left_end_empty_layers(self.circuit, self.num_qubits)
         self.right_end = right_end_empty_layers(self.circuit, self.num_qubits)
         if has_clifford(self.circuit):
-            self.front_cliffs = obtain_front_layer(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
-            self.last_cliffs = obtain_last_layer(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
+            self.front_cliffs = obtain_front_layer_from_circuit(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
+            self.last_cliffs = obtain_last_layer_from_circuit(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
 
     def left_assemble(self, tetris: 'CircuitTetris'):
         """Assemble the left end of the CircuitTetris with another CircuitTetris instance"""
@@ -55,8 +53,8 @@ class CircuitTetris:
             for lhs_cliff, rhs_cliff in zip(*commons):
                 self.circuit.remove(lhs_cliff)
                 tetris.circuit.remove(rhs_cliff)
-            self.last_cliffs = obtain_last_layer(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
-            tetris.front_cliffs = obtain_front_layer(tetris.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
+            self.last_cliffs = obtain_last_layer_from_circuit(self.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
+            tetris.front_cliffs = obtain_front_layer_from_circuit(tetris.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
 
         self.circuit += tetris.circuit
         self.update()
@@ -99,10 +97,9 @@ def left_end_empty_layers(circ: Circuit, num_qubits: int = None) -> np.ndarray:
     if num_qubits is None:
         num_qubits = circ.num_qubits_with_dummy
     left_end = np.full(num_qubits, -1)
-    # circ_part = front_layer_circuit(circ, lambda g: g.num_qregs > 1)  # to efficiently compute left_end
     circ_part = front_full_width_circuit(circ, lambda g: g.num_qregs > 1)
-    for num_layer, layer in enumerate(circ_part.layer()):
-        for q in reduce(add, [g.qregs for g in layer]):
+    for num_layer, layer in enumerate(circ_part.layer(on_body='circuit')):
+        for q in chain.from_iterable([g.qregs for g in layer]):
             if left_end[q] < 0:
                 left_end[q] = num_layer
         if np.all(left_end >= 0):
@@ -135,10 +132,9 @@ def right_end_empty_layers(circ: Circuit, num_qubits: int = None) -> np.ndarray:
     if num_qubits is None:
         num_qubits = circ.num_qubits_with_dummy
     right_end = np.full(num_qubits, -1)
-    # circ_part = circ.nonlocal_structure
     circ_part = last_full_width_circuit(circ, lambda g: g.num_qregs > 1)
-    for num_layer, layer in enumerate(reversed(circ_part.layer())): # 正向分层，然后反向逐层遍历
-        for q in reduce(add, [g.qregs for g in layer]):
+    for num_layer, layer in enumerate(reversed(circ_part.layer(on_body='circuit'))): # 正向分层，然后反向逐层遍历
+        for q in chain.from_iterable([g.qregs for g in layer]):
             if right_end[q] < 0:
                 right_end[q] = num_layer
         if np.all(right_end >= 0):
@@ -176,8 +172,8 @@ def assembling_overhead(lhs: CircuitTetris, rhs: CircuitTetris, efficient: bool 
             lhs.circuit.remove(lhs_cliff)
             rhs.circuit.remove(rhs_cliff)
 
-        lhs.last_cliffs = obtain_last_layer(lhs.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
-        rhs.front_cliffs = obtain_front_layer(rhs.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
+        lhs.last_cliffs = obtain_last_layer_from_circuit(lhs.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
+        rhs.front_cliffs = obtain_front_layer_from_circuit(rhs.circuit, predicate=lambda g: isinstance(g, Clifford2QGate))
 
     return cost
 
@@ -194,7 +190,7 @@ def depth_overhead(lhs: np.ndarray, rhs: np.ndarray):
 
 def order_blocks(blocks: List[Circuit], efficient: bool = False) -> Circuit:
     """Order unarranged simplified subcircuits (blocks) in a tetris-heuristic strategy"""
-    num_qubits = max(reduce(add, [block.qubits for block in blocks])) + 1
+    num_qubits = max(chain.from_iterable([block.qubits for block in blocks])) + 1
     tetris = CircuitTetris(blocks.pop(0), num_qubits=num_qubits)
     tetris_list = [CircuitTetris(blk, num_qubits=num_qubits) for blk in blocks]
 

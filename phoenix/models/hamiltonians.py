@@ -4,17 +4,13 @@ from typing import List, Union, Tuple, Dict
 
 from scipy import linalg
 from copy import deepcopy
-from functools import reduce
-from operator import add
+from itertools import chain
 from phoenix.basic.circuits import Circuit
 from phoenix.models.paulis import BSF
 from phoenix.models.cliffords import Clifford2Q
-from phoenix.synthesis.utils import optimize_clifford_circuit_by_qiskit
-
 from rich.console import Console
 
 console = Console()
-
 
 
 class HamiltonianModel:
@@ -115,11 +111,9 @@ class HamiltonianModel:
                 post_cliffs_with_locals = [[cliff, local_bfs] if local_bfs.num_paulis > 0 else [cliff] for
                                            cliff, local_bfs
                                            in reversed(cliffords_with_locals)]
-                post_cliffs_with_locals = reduce(add, post_cliffs_with_locals)
-
                 res.extend([cliff for cliff, _ in cliffords_with_locals])  # pre-cliffs
                 res.append(bsf_)
-                res.extend(post_cliffs_with_locals)
+                res.extend([item for sublist in post_cliffs_with_locals for item in sublist])
             else:
                 res.append(bsf_)
 
@@ -142,11 +136,9 @@ class HamiltonianModel:
                 post_cliffs_with_locals = [[cliff, local_bfs] if local_bfs.num_paulis > 0 else [cliff] for
                                            cliff, local_bfs
                                            in reversed(cliffords_with_locals)]
-                post_cliffs_with_locals = reduce(add, post_cliffs_with_locals)
-
                 res.extend([cliff for cliff, _ in cliffords_with_locals])  # pre-cliffs
                 res.append(bsf_)
-                res.extend(post_cliffs_with_locals)
+                res.extend([item for sublist in post_cliffs_with_locals for item in sublist])
             else:
                 res.append(bsf_)
 
@@ -211,7 +203,9 @@ class HamiltonianModel:
         if order:
             circ = ordering.order_blocks(blocks, efficient=efficient)
         else:
-            circ = reduce(add, blocks)
+            circ = Circuit()
+            for blk in blocks:
+                circ.compose(blk)
 
         return circ
 
@@ -258,10 +252,11 @@ class Heisenberg1D(HamiltonianModel):
             return ''.join(res)
 
         if tile:
-            coupling_paulis = reduce(add, [[XX_str(i % self.num_qubits, (i + 1) % self.num_qubits),
-                                            YY_str(i % self.num_qubits, (i + 1) % self.num_qubits),
-                                            ZZ_str(i % self.num_qubits, (i + 1) % self.num_qubits)] for i in
-                                           range(self.num_qubits)])
+            coupling_paulis = list(chain.from_iterable(
+                [[XX_str(i % self.num_qubits, (i + 1) % self.num_qubits),
+                  YY_str(i % self.num_qubits, (i + 1) % self.num_qubits),
+                  ZZ_str(i % self.num_qubits, (i + 1) % self.num_qubits)] for i in range(self.num_qubits)]
+            ))
             coupling_coeffs = np.tile(self.couplings, self.num_qubits)
         else:
             coupling_paulis = [XX_str(i % self.num_qubits, (i + 1) % self.num_qubits) for i in

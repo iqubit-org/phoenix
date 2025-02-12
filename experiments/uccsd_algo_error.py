@@ -9,7 +9,6 @@ import json
 import numpy as np
 import cirq
 from cirq.contrib.qasm_import import circuit_from_qasm
-from functools import reduce
 from phoenix import Circuit, gates
 from phoenix import models
 from natsort import natsorted
@@ -30,7 +29,7 @@ def ideal_evolution(json_fname):
         data = json.load(f)
     ham = models.HamiltonianModel(data['paulis'], data['coeffs'])
     u = ham.unitary_evolution()
-    u = u @ tensor_slots(reduce(np.kron, [X for _ in data['front_x_on']]), ham.num_qubits, data['front_x_on'])
+    u = u @ tensor_slots(cirq.kron(*[X for _ in data['front_x_on']]), ham.num_qubits, data['front_x_on'])
 
     return u
 
