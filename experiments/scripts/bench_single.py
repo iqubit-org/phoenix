@@ -87,7 +87,7 @@ elif args.compiler == 'tetris':
     print_circ_info(circ_opt, title='Optimized circuit')
 elif args.compiler == 'phoenix':
     circ = qiskit.QuantumCircuit.from_qasm_file(qasm_fname)
-    circ_opt = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], order=not args.no_order)
+    circ_opt = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], order_blocks=not args.no_order)
     print_circ_info(circ, title='Original circuit')
     print_circ_info(circ_opt, title='Optimized circuit')
 else:

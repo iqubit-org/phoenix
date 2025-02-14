@@ -273,7 +273,7 @@ def unique_paulis_and_coeffs(paulis: List[str], coeffs: List[float]) -> Tuple[Li
 
 def optimize_clifford_circuit_by_qiskit(circ: Circuit, optimization_level=1) -> Circuit:
     """Topology-preserved optimization by Qiskit"""
-    basis_gates = ['h', 's', 'sdg', 'rz', 'u3', 'cx', 'can']
+    basis_gates = ['h', 's', 'sdg', 'rz', 'u3', 'cx']
     for p0, p1 in product(['x', 'y', 'z'], repeat=2):
         basis_gates.append(f'c{p0}{p1}')
     return Circuit.from_qiskit(qiskit.transpile(circ.to_qiskit(), optimization_level=optimization_level,

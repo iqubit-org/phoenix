@@ -19,8 +19,8 @@ from natsort import natsorted
 input_json_dpath = '../benchmarks/uccsd_json'
 input_qasm_dpath = '../benchmarks/uccsd_qasm'
 
-# output_dpath = './output_uccsd/phoenix/all2all'
-output_dpath = './output_uccsd/tket/all2all'
+output_dpath = './output_uccsd/phoenix/all2all'
+# output_dpath = './output_uccsd/tket/all2all'
 
 
 # output_dpath = 'qiskit_post_opt'

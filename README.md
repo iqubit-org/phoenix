@@ -24,11 +24,11 @@ If you make sure of Phoenix in your work, please cite the following publication:
 
 **E.g., Hardware-agnostic compilation:**
 
-![](./asset/num_2q_gates_all2all.png)
+![](./assets/num_2q_gates_all2all.png)
 
 **E.g., Hardware-aware compilation:**
 
-![](./asset/num_2q_gates_manhattan.png)
+![](./assets/num_2q_gates_manhattan.png)
 
 
 ## Requirements

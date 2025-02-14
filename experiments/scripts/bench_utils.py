@@ -43,11 +43,11 @@ def qiskit_O3_all2all(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
 
 def phoenix_pass(paulis: List[str], coeffs: List[float],
                  pre_gates: List[Gate] = None, post_gates: List[Gate] = None,
-                 order: bool = True,
+                 order_blocks: bool = True,
                  efficient: bool = False) -> qiskit.QuantumCircuit:
     """Phoenix's high-level optimization"""
     ham = HamiltonianModel(paulis, coeffs)
-    circ = ham.phoenix_circuit(order=order, efficient=efficient)
+    circ = ham.phoenix_circuit(order_blocks=order_blocks, efficient=efficient)
 
     if pre_gates is not None:
         circ.prepend(*pre_gates)

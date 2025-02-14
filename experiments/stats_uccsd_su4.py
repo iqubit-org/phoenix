@@ -38,6 +38,8 @@ selected_benchmarks = [
     'CH2_frz_JW',
     'H2O_cmplt_BK',
     'H2O_cmplt_JW',
+    'H2O_frz_BK',
+    'H2O_frz_JW',
     'LiH_cmplt_BK',
     'LiH_cmplt_JW',
     'LiH_frz_BK',
