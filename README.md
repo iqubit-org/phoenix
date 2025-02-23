@@ -8,8 +8,6 @@ Phoenix is a highly-effective VQA (variational quantum algorithm) application-sp
 
 This repo includes benchmarking scripts and results with other SOTA baselines -- TKet, Paulihedral, Tetris, and Rustiq (). Code of Paulihedral and Tetris are refactored and integrated in this repo.
 
-Backbone of this code repo builds on [unisys](https://github.com/Youngcius/unisys) and core functionalities of this Phoenix compiler are also integrated wihtin it. Another project [regulus](https://github.com/iqubit-org/regulus) (the reconfigurable quantum instruction set computers compiler) worth mentioning is also based on [unisys](https://github.com/Youngcius/unisys).
-
 If you make sure of Phoenix in your work, please cite the following publication:
 
 ```
