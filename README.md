@@ -6,7 +6,7 @@
 
 Phoenix is a highly-effective VQA (variational quantum algorithm) application-specifc compiler based on BSF (binary symplectic form) of Pauli exponentiations and Clifford formalism. Different from ZX-calculus-like approaches (e.g., [TKet](https://github.com/CQCL/pytket-docs), [PauliOpt](https://github.com/hashberg-io/pauliopt)) and local peephole optimization approaches (e.g., [Paulihedral](https://arxiv.org/abs/2109.03371), [TKet](https://arxiv.org/abs/2309.01905v2)), Phoenix exploits global optimization opportunities for VQA programs to the largest extent, when representing Pauli strings as BSF and employing Clifford formalism on the higher-level IR.
 
-This repo includes benchmarking scripts and results with other SOTA baselines -- TKet, Paulihedral, and Tetris. Code of Paulihedral and Tetris are refactored and integrated in this repo.
+This repo includes benchmarking scripts and results with other SOTA baselines -- TKet, Paulihedral, Tetris, and Rustiq (). Code of Paulihedral and Tetris are refactored and integrated in this repo.
 
 Backbone of this code repo builds on [unisys](https://github.com/Youngcius/unisys) and core functionalities of this Phoenix compiler are also integrated wihtin it. Another project [regulus](https://github.com/iqubit-org/regulus) (the reconfigurable quantum instruction set computers compiler) worth mentioning is also based on [unisys](https://github.com/Youngcius/unisys).
 
@@ -18,9 +18,9 @@ If you make sure of Phoenix in your work, please cite the following publication:
 
 ## Features
 
-- ...
-- ...
-- ...
+- High-level compilation
+- Global optimization
+- ISA-independent
 
 **E.g., Hardware-agnostic compilation:**
 
@@ -63,6 +63,8 @@ Basic library requirements are lists in `requirements.txt`.
 - `./experiments/output_uccsd/<compiler>/<device>`: Output circuits by some `<compiler>` (E.g., Tetris, Phoenix) for some kind of `<device>` (E.g.,  all2all,  manhattan) from the UCCSD benchmark suite
 
 - `./experiments/output_uccsd/<compiler>_opt/all2all`: Output circuits by some `<compiler>` (E.g., Tetris, Phoenix) when performing its logical-level synthesis with Qiskit O3 optimization procedure on logical circuits
+
+*Remarks: We developed in the early beginning of 2024. Suprisingly the BSF algorithm within Phoenix utilized similar data structures and heuristic-optimization philosophy to Rustiq. Despite the accidential similarly,  our simplification goal and search strategy are distinct and involves a more sophisticated cost function. Even the BSF simplification algorithm alone outperforms Rustiq according to our further benchmarking in [./experiments/rebuttal.ipynb](./experiments/rebuttal.ipynb).*
 
 ## Copyright and License
 
