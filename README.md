@@ -33,7 +33,7 @@ If you make sure of Phoenix in your work, please cite the following publication:
 
 Basic library requirements are lists in `requirements.txt`.
 
-- We align with the `1.2.4` version of  `qiskit`  across the published benchmarking results. Since `qiskit`'s O1/O2 has different built-in workflows, note that version 1.0+ are suitable for Phoenix.
+- We align with the `1.2.4` version of  `qiskit`  across the published benchmarking results, since `qiskit`'s O1/O2 has different built-in workflows within its 0.xx.x versions and 1.xx.x versions. Version 1.0+ is suitable for Phoenix.
 - Originally, Paulihedral and Tetris require version 0.23.x and version 0.43.x of Qiskit. In this code repo, they can also be soomthly tested under Qiskit-1.2.4.
 
 ## Benchmarking description
