@@ -4,9 +4,9 @@
 
 ## Overview
 
-Phoenix is a highly-effective VQA (variational quantum algorithm) application-specifc compiler based on BSF (binary symplectic form) of Pauli exponentiations and Clifford formalism. Different from ZX-calculus-like approaches (e.g., [TKet](https://github.com/CQCL/pytket-docs), [PauliOpt](https://github.com/hashberg-io/pauliopt)) and local peephole optimization approaches (e.g., [Paulihedral](https://arxiv.org/abs/2109.03371), [TKet](https://arxiv.org/abs/2309.01905v2)), Phoenix exploits global optimization opportunities for VQA programs to the largest extent, when representing Pauli strings as BSF and employing Clifford formalism on the higher-level IR.
+Phoenix is a highly-effective VQA (variational quantum algorithm) application-specifc compiler based on BSF (binary symplectic form) of Pauli exponentiations and Clifford formalism. Different from ZX-calculus-like approaches (e.g., [TKet](https://github.com/CQCL/pytket-docs), [PauliOpt](https://github.com/hashberg-io/pauliopt)) and local peephole optimization approaches (e.g., [Paulihedral](https://arxiv.org/abs/2109.03371), [Tetris](https://arxiv.org/abs/2309.01905v2)), Phoenix exploits global optimization opportunities for VQA programs to the largest extent, when representing Pauli strings as BSF and employing Clifford formalism on the higher-level IR.
 
-This repo includes benchmarking scripts and results with other SOTA baselines -- TKet, Paulihedral, Tetris, and Rustiq (). Code of Paulihedral and Tetris are refactored and integrated in this repo.
+This repo includes benchmarking scripts and results with other SOTA baselines -- TKet, Paulihedral, Tetris, and Rustiq. Code of Paulihedral and Tetris are refactored and integrated in this repo.
 
 If you make sure of Phoenix in your work, please cite the following publication:
 
