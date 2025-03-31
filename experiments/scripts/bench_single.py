@@ -10,7 +10,7 @@ import argparse
 import warnings
 from phoenix import Circuit, gates
 from phoenix.utils.ops import is_tensor_prod
-from phoenix.utils.display import print_circ_info, console
+from phoenix.utils.display import print_circ_info
 import bench_utils
 
 warnings.filterwarnings('ignore')

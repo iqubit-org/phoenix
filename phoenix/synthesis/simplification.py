@@ -30,11 +30,6 @@ def simplify_bsf(bsf: BSF) -> Tuple[BSF, List[Tuple[Clifford2Q, BSF]]]:
     return bsf, cliffords_with_locals
 
 
-def simplify_bsf_with_weight(bsf: BSF, q: int):
-    """Simplify a q-qubit Pauli Tableau, until its weights are simultaneously q."""
-    pass
-
-
 def search_cliffords(bsf: BSF, avoid: Tuple[int, int] = None) -> Tuple[BSF, float, Clifford2Q]:
     avoid = set(avoid) if avoid is not None else set()
     clifford_candidates = np.array([cg.on(qubits[0], qubits[1]) for cg in CLIFFORD_2Q_SET for qubits in
@@ -49,13 +44,7 @@ def search_cliffords(bsf: BSF, avoid: Tuple[int, int] = None) -> Tuple[BSF, floa
     bsfs = trans_bsf(clifford_candidates)
     costs = heuristic_bsf_cost(bsfs)
 
-    # # select the candidates with the minimum cost
-    # min_cost = np.min(costs)
-    # which_candidates = np.where(np.array(costs) == min_cost)[0]
-    # bsfs = bsfs[which_candidates]
-    # costs = costs[which_candidates]
-    # clifford_candidates = clifford_candidates[which_candidates]
-    # return bsfs[0], costs[0], clifford_candidates[0]
+    # select the candidates with the minimum cost
     argmin = np.argmin(costs)
     return bsfs[argmin], costs[argmin], clifford_candidates[argmin]
 
@@ -68,11 +57,15 @@ def is_simplified(bsf: BSF, q: int) -> bool:
 
 
 def _heuristic_bsf_cost_func(bsf: BSF) -> float:
-    """Heuristic cost for a 3-qubit Pauli Tableau, the smaller the simpler."""
-    # cost = init_score
-    # cost += np.linalg.norm(bsf.x, ord=1, axis=1).sum() * 0.25
-    # cost += np.linalg.norm(bsf.z, ord=1, axis=1).sum() * 0.25
-    # cost += np.linalg.norm(bsf.x | bsf.z, ord=1, axis=1).sum() * 0.5
+    r"""
+    Heuristic cost for a 3-qubit Pauli Tableau, the smaller the simpler.
+    
+    .. math::
+        \mathrm{cost}_{\mathrm{bsf}} := \mathrm{total\_weight} * n_{\mathrm{nonlocal}}^2 
+        + \sum_{\langle i,j \rangle} \lVert r_x^{(i)} \lor r_z^{(i)} \lor r_x^{(j)} \lor r_z^{(j)} \rVert  
+        + \frac{1}{2} \sum_{\langle i,j \rangle} (\lVert r_x^{(i)} \lor r_x^{(j)} \rVert + \lVert r_z^{(i)} \lor r_z^{(j)} \rVert)
+
+    """
     cost = 0.0
     if bsf.which_nonlocal_paulis.size > 1:
         row_combs = np.array(list(combinations(bsf.which_nonlocal_paulis, 2))).T

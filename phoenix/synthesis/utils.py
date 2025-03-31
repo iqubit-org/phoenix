@@ -293,10 +293,6 @@ def config_to_circuit(config: List[Union[BSF, Clifford2Q]], by: str = 'cnot', op
     for item in config:
         if isinstance(item, Clifford2Q):
             circ.append(item.as_gate())
-            # if by == 'cnot':
-            #     circ += item.as_cnot_circuit()
-            # if by == 'su4':
-            #     circ += item.as_su4_circuit()
         if isinstance(item, BSF):
             if by == 'cnot':
                 circ.compose(item.as_cnot_circuit())

@@ -7,9 +7,6 @@ from phoenix.utils.passes import front_full_width_circuit, last_full_width_circu
 from phoenix.utils.passes import obtain_front_layer_from_circuit, obtain_last_layer_from_circuit
 from typing import List, Tuple, Union
 
-from rich.console import Console
-
-console = Console()
 
 def has_clifford(circ: Circuit) -> bool:
     """Check if a circuit has Clifford gates"""
@@ -133,7 +130,8 @@ def right_end_empty_layers(circ: Circuit, num_qubits: int = None) -> np.ndarray:
         num_qubits = circ.num_qubits_with_dummy
     right_end = np.full(num_qubits, -1)
     circ_part = last_full_width_circuit(circ, lambda g: g.num_qregs > 1)
-    for num_layer, layer in enumerate(reversed(circ_part.layer(on_body='circuit'))): # 正向分层，然后反向逐层遍历
+    # Forward layering, then reverse layer by layer traversal 
+    for num_layer, layer in enumerate(reversed(circ_part.layer(on_body='circuit'))):
         for q in chain.from_iterable([g.qregs for g in layer]):
             if right_end[q] < 0:
                 right_end[q] = num_layer
@@ -196,7 +194,7 @@ def order_blocks(blocks: List[Circuit], efficient: bool = False) -> Circuit:
 
     LOOKAHEAD = 40
     # LOOKAHEAD = 25
-    # ! after field test, 40 is a good lookahead length    LOOKAHEAD = 40
+    # ! after field test, 40 is a good lookahead length: LOOKAHEAD = 40
     if not has_clifford(tetris.circuit): # if there is no Clifford gate (e.g., Heisenberg, QAOA), we forcefully use the efficient mode
         efficient = True
     while tetris_list:

@@ -179,7 +179,36 @@ class Gate:
         else:
             g.name = g.name + '†'
         return g
-
+    
+    @property
+    def qasm_def(self):
+        """OpenQASM definition"""
+        if isinstance(self, ISWAPGate):
+            return ISWAP_DEF_BY_CNOT
+        if isinstance(self, RYY):
+            return RYY_DEF
+        if isinstance(self, Canonical):
+            return RYY_DEF + '\n' + CAN_DEF_BY_CNOT
+        if isinstance(self, Clifford2QGate):
+            if self.name == 'C(X, X)':
+                return CXX_DEF_BY_CNOT
+            if self.name == 'C(X, Y)':
+                return CXY_DEF_BY_CNOT
+            if self.name == 'C(X, Z)':
+                return CXZ_DEF_BY_CNOT
+            if self.name == 'C(Y, X)':
+                return CYX_DEF_BY_CNOT
+            if self.name == 'C(Y, Y)':
+                return CYY_DEF_BY_CNOT
+            if self.name == 'C(Y, Z)':
+                return CYZ_DEF_BY_CNOT
+            if self.name == 'C(Z, X)':
+                return CZX_DEF_BY_CNOT
+            if self.name == 'C(Z, Y)':
+                return CZY_DEF_BY_CNOT
+            if self.name == 'C(Z, Z)':
+                return CZZ_DEF_BY_CNOT
+        return None
 
 class UnivGate(Gate):
     """Universal quantum gate"""
@@ -211,6 +240,14 @@ class ZGate(Gate):
 class IGate(Gate):
     def __init__(self, *args, **kwargs):
         super().__init__(np.identity(2).astype(complex), name='I', *args, **kwargs)
+
+
+class VGate(Gate):
+    """VGate equals to the SXGate in Qiskit"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(np.array([[1 + 1j, 1 - 1j],
+                                   [1 - 1j, 1 + 1j]]) / 2, name='V', *args, **kwargs)
 
 
 class SGate(Gate):
@@ -642,6 +679,7 @@ X = XGate()
 Y = YGate()
 Z = ZGate()
 I = IGate()
+V = VGate()
 S = SGate()
 SDG = SDGGate()
 T = TGate()
@@ -654,12 +692,12 @@ SQiSW = SQiSWGate()
 B = BGate()
 SYC = SycamoreGate()
 
-Can = Canonical  # its alias: Canonical gate
-P = PhaseShift
+Can = Canonical  # the alias of Canonical gate
+P = PhaseShift  # the alias of PhaseShift gate
 
 PAULI_ROTATION_GATES = ['rx', 'ry', 'rz', 'rxx', 'ryy', 'rzz']
 ROTATION_GATES = ['rx', 'ry', 'rz', 'u1', 'u2' 'u3', 'rxx', 'ryy', 'rzz', 'can']
-FIXED_GATES = ['x', 'y', 'z', 'i', 'id', 'h', 's', 't', 'sdg', 'tdg', 'cx', 'cz', 'swap', 'ch', 'iswap', 'ccx', 'ccz']
+FIXED_GATES = ['x', 'y', 'z', 'i', 'id', 'h', 'v', 'sx', 's', 't', 'sdg', 'tdg', 'cx', 'cz', 'swap', 'ch', 'iswap', 'ccx', 'ccz']
 CONTROLLABLE_GATES = ['x', 'y', 'z', 'h', 'swap', 'rx', 'ry', 'rz', 'u3']
 HERMITIAN_GATES = ['x', 'y', 'z', 'h', 'swap']
 

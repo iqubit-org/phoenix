@@ -3,14 +3,8 @@ Pauli string IR grouping.
 """
 import numpy as np
 from typing import List, Tuple, Dict
-
 from phoenix.basic import gates
 from phoenix.basic.gates import Gate
-
-from rich.console import Console
-
-console = Console()
-
 
 def group_paulis(paulis: List[str]) -> Dict[Tuple[int], List[str]]:
     """

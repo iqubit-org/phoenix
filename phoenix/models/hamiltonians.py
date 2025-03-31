@@ -204,19 +204,31 @@ class HamiltonianModel:
         # config = self.reconfigure()
         return trotter_config(self.reconfigure(), order)
 
-    def phoenix_circuit(self, order_blocks: bool = True, efficient: bool = False) -> Circuit:
+    def phoenix_circuit(self, by='cnot', order_blocks: bool = True, efficient: bool = False) -> Circuit:
+        """
+        In contrast to `reconfigure_and_generate_circuit`, this method uses phoenix_reconfigure() to
+            generate simplified subcircuits and perform ordering for these subscircuits.
+        If order_blocks is False, this method is equivalent to reconfigure_and_generate_circuit(order=1).
+
+        Args:
+            by: the basis ('cnot' or 'su4') of the generated circuit (default: 'cnot')
+            order_blocks: whether to order the blocks (default: True) to lower circuit depth
+            efficient: whether to use efficient ordering (default: False), i.e., without exploiting Clifford2Q cancellation
+        """
         from phoenix.synthesis import ordering, utils
+
         # grouping and group-wise simplification
         configs = self.phoenix_reconfigure()
 
         # ordering
-        blocks = [utils.config_to_circuit(config) for config in configs]
+        blocks = [utils.config_to_circuit(config, by=by) for config in configs]
         if order_blocks:
             circ = ordering.order_blocks(blocks, efficient=efficient)
         else:
             circ = concatenate_subcircuits(blocks)
 
         return circ
+    
 
 
 class Heisenberg1D(HamiltonianModel):

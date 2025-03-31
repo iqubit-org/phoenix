@@ -4,17 +4,17 @@ Quantum Circuit
 import io
 import re
 import cirq
-import bqskit
 import qiskit
 import numpy as np
 import networkx as nx
 import rustworkx as rx
 from math import pi
 from scipy import linalg
-from itertools import product, chain
+from itertools import chain
 from typing import List, Tuple, Dict, Union
 from copy import deepcopy, copy
 from collections import Counter
+from qiskit import QuantumCircuit
 from phoenix.basic import gates
 from phoenix.basic.gates import Gate
 from phoenix.utils.ops import replace_close_to_zero_with_zero
@@ -67,65 +67,41 @@ class Circuit(list):
 
     def to_qiskit(self):
         """Convert to qiskit.QuantumCircuit instance"""
-        try:
-            from qiskit import QuantumCircuit
-        except ImportError:
-            raise ImportError('qiskit is not installed')
         return QuantumCircuit.from_qasm_str(self.to_qasm())
 
     @classmethod
-    def from_qiskit(cls, qiskit_circ):
+    def from_qiskit(cls, qc: QuantumCircuit):
         """Convert from qiskit.QuantumCircuit instance"""
-        try:
-            import qiskit
-            from qiskit import QuantumCircuit
-        except ImportError:
-            raise ImportError('qiskit is not installed')
-        assert isinstance(qiskit_circ, QuantumCircuit), "Input should be a qiskit.QuantumCircuit instance"
-        return _from_qiskit(qiskit_circ)
+        return _from_qiskit(qc)
 
     def to_cirq(self):
         """Convert to cirq.Circuit instance"""
         return _to_cirq(self)
 
     @classmethod
-    def from_cirq(cls, cirq_circ):
+    def from_cirq(cls, circ: cirq.Circuit):
         """Convert from cirq.Circuit instance"""
-        try:
-            import cirq
-        except ImportError:
-            raise ImportError('cirq is not installed')
-        assert isinstance(cirq_circ, cirq.Circuit), "Input should be a cirq.Circuit instance"
-        return cls.from_qasm(cirq.qasm(cirq_circ))
+        return cls.from_qasm(cirq.qasm(circ))
 
     def to_tket(self):
         """Convert to pytket.circuit.Circuit instance"""
-        try:
-            from pytket.circuit import Circuit
-            from pytket.qasm import circuit_from_qasm_str
-        except ImportError:
-            raise ImportError('pytket is not installed')
+        from pytket.qasm import circuit_from_qasm_str
         return circuit_from_qasm_str(self.to_qasm())
-
+    
     @classmethod
-    def from_tket(cls, tket_circ):
+    def from_tket(cls, circ):
         """Convert from pytket.circuit.Circuit instance"""
-        try:
-            from pytket.circuit import Circuit
-            from pytket.qasm import circuit_to_qasm_str
-        except ImportError:
-            raise ImportError('pytket is not installed')
-        assert isinstance(tket_circ, Circuit), "Input should be a pytket.circuit.Circuit instance"
-        return cls.from_qasm(circuit_to_qasm_str(tket_circ))
+        from pytket.qasm import circuit_to_qasm_str
+        return cls.from_qasm(circuit_to_qasm_str(circ))
 
     def to_bqskit(self):
         """Convert to bqskit.Circuit instance"""
         return _to_bqskit(self)
 
     @classmethod
-    def from_bqskit(cls, bqskit_circ):
+    def from_bqskit(cls, circ):
         """Convert from bqskit.Circuit instance"""
-        return _from_bqskit(bqskit_circ)
+        return _from_bqskit(circ)
 
     def to_qasm(self, fname: str = None):
         """Convert self to QSAM string"""
@@ -137,27 +113,10 @@ class Circuit(list):
         output.write_header()
         n = self.num_qubits_with_dummy
 
-        if 'RYY' in self.gate_stats() or 'Can' in self.gate_stats():
-            output.write_comment("Customized 'ryy' gate definition")
-            output.write(gates.RYY_DEF)
+        # write customized gate OpenQASM definitions
+        for qasm_def in np.unique([g.qasm_def for g in self if g.qasm_def is not None]):
+            output.write(qasm_def)
             output.write_line_gap(2)
-
-        if 'Can' in self.gate_stats():
-            output.write_comment("Customized 'can' gate definition")
-            output.write(gates.CAN_DEF_BY_ISING)  # alternatively, can use "gate.CAN_DEF_BY_CNOT"
-            output.write_line_gap(2)
-
-        if 'ISWAP' in self.gate_stats():
-            output.write_comment("Customized 'iswap' gate definition")
-            output.write(gates.ISWAP_DEF_BY_CNOT)
-            output.write_line_gap(2)
-
-        for P0, P1 in product(['X', 'Y', 'Z'], ['X', 'Y', 'Z']):
-            if 'C({}, {})'.format(P0, P1) in self.gate_stats():
-                output.write_comment("Customized 'c{}{}' gate definition".format(P0.lower(), P1.lower()))
-                # output.write(gates.C2_DEF_BY_ISING[P0, P1])
-                output.write(getattr(gates, 'C{}{}_DEF_BY_CNOT'.format(P0, P1)))
-                output.write_line_gap(2)
 
         # no measurement, just computing gates
         output.write_comment('Qubits: {}'.format(list(range(n))))
@@ -195,80 +154,11 @@ class Circuit(list):
         """
         if qasm_str is None and fname is None:
             raise ValueError("Either qasm_str or fname should be given")
+        
+        # For performance and robustness, we use the qiskit parser to parse OpenQASM
         if qasm_str is None:
-            with open(fname, 'r') as f:
-                qasm_str = f.read()
-
-        input = io.StringIO(qasm_str)
-        circ = Circuit()
-        for line in input.readlines():
-            if (line.startswith('//') or line.startswith('OPENQASM') or line.startswith('include') or
-                    line.startswith('qreg') or line.startswith('creg') or line.startswith('barrier') or
-                    line.startswith('gate') or line.startswith('{') or line.startswith('}') or line.startswith(
-                        '    ') or line.startswith('\t') or
-                    line.startswith('measure')):
-                continue
-            line = line.strip().strip(';')
-            if line == '':
-                continue
-            line = re.split(r'\s*,\s*|\s+', line)  # split according to ',' or '\s+'
-            line = [re.split(r'\(|\)', s) for s in line]  # split each element according to '(' or ')'
-            line = chain.from_iterable(line)  # flatten the list
-            line = [s for s in line if s != '']
-
-            def parse_qubit_index(s):
-                """e.g., qubits[10] --> 10; q[5] --> 5"""
-                return int(re.findall(r'\d+', s)[0])
-
-            # parse gname, tq, cq
-            if line[0] == 'mcx':
-                gname = 'x'
-                tq = parse_qubit_index(line[-1])
-                cq = [parse_qubit_index(q) for q in line[1:-1]]
-            elif line[0] in ['ccx', 'ccz']:
-                gname = line[0][2:]
-                tq = parse_qubit_index(line[-1])
-                cq = [parse_qubit_index(line[-3]), parse_qubit_index(line[-2])]
-            elif re.match(r"c(x|y|z)(x|y|z)", line[0]):
-                gname = line[0]
-                tq = [parse_qubit_index(line[1]), parse_qubit_index(line[2])]
-            elif line[0].startswith('c') and line[0] != 'can':
-                gname = line[0][1:]
-                tq = parse_qubit_index(line[-1])
-                cq = parse_qubit_index(line[-2])
-            else:
-                gname = line[0]
-                if gname in ['swap', 'rxx', 'ryy', 'rzz', 'can', 'iswap']:
-                    tq = [parse_qubit_index(line[-2]), parse_qubit_index(line[-1])]
-                else:
-                    tq = parse_qubit_index(line[-1])
-                cq = None
-
-            if gname == 'id':
-                gname = 'i'
-
-            if gname == 'u':
-                gname = 'u3'
-
-            # create Gate instance
-            if gname in gates.FIXED_GATES:
-                g = getattr(gates, gname.upper()).on(tq, cq)
-            elif gname in ['u3', 'can']:
-                angles = [eval(line[1]), eval(line[2]), eval(line[3])]
-                g = getattr(gates, gname.capitalize())(*angles).on(tq, cq)
-            elif gname == 'u2':
-                angles = [eval(line[1]), eval(line[2])]
-                g = gates.U2(*angles).on(tq, cq)
-            elif gname in ['rx', 'ry', 'rz', 'rxx', 'ryy', 'rzz', 'u1', 'p']:
-                angle = eval(line[1])
-                g = getattr(gates, gname.upper())(angle).on(tq, cq)
-            elif match := re.match(r"c(x|y|z)(x|y|z)", gname):
-                g = gates.Clifford2QGate(match.groups()[0].upper(), match.groups()[1].upper()).on(tq)
-            else:
-                raise ValueError(f'Unsupported gate {gname}')
-            circ.append(g)
-
-        return circ
+            return cls.from_qiskit(QuantumCircuit.from_qasm_file(fname))
+        return cls.from_qiskit(QuantumCircuit.from_qasm_str(qasm_str))
 
     def rewire(self, mapping: Dict[int, int]):
         """
@@ -545,11 +435,6 @@ class QASMStringIO(io.StringIO):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    # def write(self, __s: str) -> int:
-    #     n_content = super().write(__s)
-    #     n_tail = super().write(';\n')
-    #     return n_content + n_tail
-
     def write_qregs(self, n: int) -> int:
         """
         Write quantum register declarations into the string stream.
@@ -593,62 +478,7 @@ class QASMStringIO(io.StringIO):
         """
         n1 = super().write('OPENQASM 2.0;\n')
         n2 = super().write('include "qelib1.inc";\n')
-        n3 = self.write_line_gap(2)
-        return n1 + n2 + n3
-
-
-class QASMStringIO(io.StringIO):
-    """
-    Specific StringIO extension class for QASM string generation
-    """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def write_qregs(self, n: int) -> int:
-        """
-        Write quantum register declarations into the string stream.
-
-        Args:
-            n: number of qubits
-        """
-        n = super().write('qreg q[{}];\n'.format(n))
-        return n
-
-    def write_operation(self, opr: str, qreg_name: str, *args) -> int:
-        """
-        Write computational gate operation into the string stream.
-
-        Args:
-            opr: e.g. 'cx'
-            qreg_name: e.g. 'q'
-            args: e.g. 0, 1
-        """
-        if len(args) == 0:
-            line = opr + ' ' + qreg_name + ';\n'
-        else:
-            line_list_qubits = []
-            for idx in args:
-                line_list_qubits.append(qreg_name + '[{}]'.format(idx))
-            line = opr + ' ' + ', '.join(line_list_qubits) + ';\n'
-        n = super().write(line)
-        return n
-
-    def write_line_gap(self, n: int = 1) -> int:
-        n = super().write('\n' * n)
-        return n
-
-    def write_comment(self, comment: str) -> int:
-        n = super().write('// ' + comment + '\n')
-        return n
-
-    def write_header(self) -> int:
-        """
-        Write the QASM text file header
-        """
-        n1 = super().write('OPENQASM 2.0;\n')
-        n2 = super().write('include "qelib1.inc";\n')
-        n3 = self.write_line_gap(2)
+        n3 = self.write_line_gap()
         return n1 + n2 + n3
 
 
@@ -674,6 +504,8 @@ def parse_to_qasm_tuples(circuit: Circuit) -> List[Tuple[str, List[int]]]:
 
         if isinstance(g, gates.IGate):
             gname = 'id'
+        elif isinstance(g, gates.VGate):
+            gname = 'sx'
         else:
             gname = g.name.lower()
 
@@ -796,14 +628,22 @@ def _bqskit_operation_to_phoenix_gate(op, params=None) -> Gate:
         raise ValueError(f'Unsupported gate {op.gate}')
 
 
-def _from_bqskit(circ_bqskit: bqskit.Circuit) -> Circuit:
-    return Circuit(list(map(_bqskit_operation_to_phoenix_gate, circ_bqskit.operations())))
+def _from_bqskit(circ) -> Circuit:
+    try:
+        import bqskit
+    except ImportError:
+        raise ImportError('bqskit is not installed')
+    assert isinstance(circ, bqskit.Circuit), 'Input should be an instance of bqskit.Circuit'
+    return Circuit(list(map(_bqskit_operation_to_phoenix_gate, circ.operations())))
 
 
-def _to_bqskit(circ: Circuit) -> bqskit.Circuit:
-    from bqskit.ir.circuit import Circuit as bqskit_Circuit
-    import bqskit.ir.gates as bqskit_gates
-
+def _to_bqskit(circ: Circuit):
+    try:
+        from bqskit.ir.circuit import Circuit as bqskit_Circuit
+        import bqskit.ir.gates as bqskit_gates
+    except ImportError:
+        raise ImportError('bqskit is not installed')
+    
     assert circ.max_gate_weight <= 3, 'Only support 1Q, 2Q or 3Q (CCX) gates with designated qubits'
 
     n = circ.num_qubits_with_dummy
@@ -831,9 +671,15 @@ def _to_bqskit(circ: Circuit) -> bqskit.Circuit:
             else:
                 c.append_gate(bqskit_gates.ZGate(), g.tq)
         elif isinstance(g, gates.HGate):
-            c.append_gate(bqskit_gates.HGate(), g.tq)
+            if g.cqs:
+                c.append_gate(bqskit_gates.CHGate(), g.qregs)
+            else:
+                c.append_gate(bqskit_gates.HGate(), g.tq)
         elif isinstance(g, gates.SGate):
-            c.append_gate(bqskit_gates.SGate(), g.tq)
+            if g.cqs:
+                c.append_gate(bqskit_gates.CSGate(), g.qregs)
+            else:
+                c.append_gate(bqskit_gates.SGate(), g.tq)
         elif isinstance(g, gates.SDGGate):
             c.append_gate(bqskit_gates.SdgGate(), g.tq)
         elif isinstance(g, gates.TGate):
@@ -875,6 +721,8 @@ def _to_bqskit(circ: Circuit) -> bqskit.Circuit:
             c.append_gate(bqskit_gates.SqrtISwapGate(), g.tqs)
         elif isinstance(g, gates.Canonical):
             c.append_gate(bqskit_gates.CanonicalGate(), g.tqs, g.angles)
+        elif isinstance(g, gates.Clifford2QGate):
+            c.append_gate(bqskit_gates.Clifford2QGate(g.pauli_0, g.pauli_1), g.qregs)
         else:
             raise ValueError(f'Unsupported gate {g}')
 
@@ -934,6 +782,8 @@ def _to_cirq(circ: Circuit) -> cirq.Circuit:
                           gates.HGate, gates.SWAPGate)):
             acted = [qubits[cq] for cq in g.cqs] + [qubits[tq] for tq in g.tqs]
             c.append(getattr(cirq, g.name).controlled(len(g.cqs)).on(*acted))
+        elif isinstance(g, gates.VGate):
+            c.append(cirq.XPowGate(exponent=0.5).on(qubits[g.tq]))
         elif isinstance(g, gates.TGate):
             c.append(cirq.T.on(qubits[g.tq]))
         elif isinstance(g, gates.TDGGate):
@@ -987,11 +837,11 @@ def _to_cirq(circ: Circuit) -> cirq.Circuit:
     return c
 
 
-def _from_qiskit(circ_qiskit: qiskit.QuantumCircuit) -> Circuit:
+def _from_qiskit(qc: qiskit.QuantumCircuit) -> Circuit:
     """Convert from qiskit.QuantumCircuit instance to Circuit instance"""
     # herein we do not use "qasm-based" conversion, to avoid precision loss
     circ = Circuit()
-    for instr in circ_qiskit.data:
+    for instr in qc.data:
         opr = instr.operation
         qubits = [q._index for q in list(instr.qubits)]
         params = opr.params
@@ -1003,6 +853,8 @@ def _from_qiskit(circ_qiskit: qiskit.QuantumCircuit) -> Circuit:
             circ.append(gates.Y.on(qubits))
         elif opr.name == 'z':
             circ.append(gates.Z.on(qubits))
+        elif opr.name == 'sx':
+            circ.append(gates.V.on(qubits))
         elif opr.name == 'h':
             circ.append(gates.H.on(qubits))
         elif opr.name == 't':
@@ -1062,9 +914,9 @@ def _from_qiskit(circ_qiskit: qiskit.QuantumCircuit) -> Circuit:
         elif opr.name == 'crz':
             circ.append(gates.RZ(*params).on(qubits[1], qubits[0]))
         elif opr.name == 'ccx':
-            circ.append(gates.X.on(qubits[1:], qubits[0]))
+            circ.append(gates.X.on(qubits[2], qubits[:2]))
         elif opr.name == 'ccz':
-            circ.append(gates.Z.on(qubits[1:], qubits[0]))
+            circ.append(gates.Z.on(qubits[2], qubits[:2]))
         elif match := re.match(r"c(x|y|z)(x|y|z)", opr.name):
             circ.append(gates.Clifford2QGate(match.groups()[0].upper(), match.groups()[1].upper()).on(qubits))
         else:
