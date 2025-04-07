@@ -1,6 +1,6 @@
 # 🐦‍🔥 𝑷𝑯𝑶𝑬𝑵𝑰𝑿: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices
 
-[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue)
+[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue) [![a](https://img.shields.io/static/v1?label=arXiv&message=2504.03529&color=red)](https://arxiv.org/abs/2504.03529)
 
 ## Overview
 
@@ -10,8 +10,13 @@ This repo includes benchmarking scripts and results with other SOTA baselines --
 
 If you make sure of Phoenix in your work, please cite the following publication:
 
-```
-......
+```tex
+@article{yang2025phoenix,
+  title={PHOENIX: Pauli-Based High-Level Optimization Engine for Instruction Execution on NISQ Devices},
+  author={Yang, Zhaohui and Ding, Dawei and Zhu, Chenghong and Chen, Jianxin and Xie, Yuanx},
+  journal={arXiv preprint arXiv:2504.03529},
+  year={2025}
+}
 ```
 
 ## Features
