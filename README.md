@@ -67,7 +67,7 @@ Basic library requirements are lists in `requirements.txt`.
 
 - `./experiments/output_uccsd/<compiler>_opt/all2all`: Output circuits by some `<compiler>` (E.g., Tetris, Phoenix) when performing its logical-level synthesis with Qiskit O3 optimization procedure on logical circuits
 
-*Remarks: We developed in the early beginning of 2024. Suprisingly the BSF algorithm within Phoenix utilized similar data structures and heuristic-optimization philosophy to Rustiq. Despite the accidential similarly,  our simplification goal and search strategy are distinct and involves a more sophisticated cost function. Even the BSF simplification algorithm alone outperforms Rustiq according to our further benchmarking in [./experiments/rebuttal.ipynb](./experiments/rebuttal.ipynb).*
+*Remarks: We developed in the early beginning of 2024. Suprisingly the BSF algorithm within Phoenix utilized similar data structures and heuristic-optimization philosophy to Rustiq. Despite the accidential similarity, our simplification goal and search strategy are distinct and involves a more sophisticated cost function. Even the BSF simplification algorithm alone outperforms Rustiq according to our further benchmarking in [./experiments/rebuttal.ipynb](./experiments/rebuttal.ipynb).*
 
 ## Copyright and License
 
