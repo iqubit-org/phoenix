@@ -13,7 +13,7 @@ If you make sure of Phoenix in your work, please cite the following publication:
 ```tex
 @article{yang2025phoenix,
   title={PHOENIX: Pauli-Based High-Level Optimization Engine for Instruction Execution on NISQ Devices},
-  author={Yang, Zhaohui and Ding, Dawei and Zhu, Chenghong and Chen, Jianxin and Xie, Yuanx},
+  author={Yang, Zhaohui and Ding, Dawei and Zhu, Chenghong and Chen, Jianxin and Xie, Yuan},
   journal={arXiv preprint arXiv:2504.03529},
   year={2025}
 }
