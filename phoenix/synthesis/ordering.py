@@ -57,18 +57,43 @@ class CircuitTetris:
         self.update()
 
 
-def clifford_equal(lhs: Clifford2QGate, rhs: Clifford2QGate):
-    """Define the value-equality of Clifford2QGate instances rather than the original reference-equality criterion"""
-    return lhs.pauli_0 == rhs.pauli_0 and lhs.pauli_1 == rhs.pauli_1 and lhs.tqs == rhs.tqs and lhs.cqs == rhs.cqs
+def _hash_clifford(cliff: Clifford2QGate) -> int:
+    """Encode a Clifford2QGate instance into a hashable integer."""
+    return hash((cliff.pauli_0, cliff.pauli_1, *cliff.tqs, *cliff.cqs))
+    
+
+# def clifford_equal(lhs: Clifford2QGate, rhs: Clifford2QGate):
+#     """Define the value-equality of Clifford2QGate instances rather than the original reference-equality criterion"""
+#     return lhs.pauli_0 == rhs.pauli_0 and lhs.pauli_1 == rhs.pauli_1 and lhs.tqs == rhs.tqs and lhs.cqs == rhs.cqs
+
+# def common_cliffords(lhs: List[Clifford2QGate], rhs: List[Clifford2QGate]) -> Union[
+#     Tuple[List[Clifford2QGate], List[Clifford2QGate]], None]:
+#     """Get the common 2Q Clifford gates from two lists of Clifford2QGate instances"""
+#     lhs_common = [cliff for cliff in lhs if any(clifford_equal(cliff, c) for c in rhs)]
+#     if lhs_common:
+#         return lhs_common, [cliff for cliff in rhs if any(clifford_equal(cliff, c) for c in lhs)]
 
 
-def common_cliffords(lhs: List[Clifford2QGate], rhs: List[Clifford2QGate]) -> Union[
-    Tuple[List[Clifford2QGate], List[Clifford2QGate]], None]:
-    """Get the common 2Q Clifford gates from two lists of Clifford2QGate instances"""
-    lhs_common = [cliff for cliff in lhs if any(clifford_equal(cliff, c) for c in rhs)]
-    if lhs_common:
-        return lhs_common, [cliff for cliff in rhs if any(clifford_equal(cliff, c) for c in lhs)]
+def common_cliffords(
+    lhs: List[Clifford2QGate], rhs: List[Clifford2QGate]
+) -> Union[Tuple[List[Clifford2QGate], List[Clifford2QGate]], None]:
+    """Get the common 2Q Clifford gates from two lists of Clifford2QGate instances."""
 
+    
+    # Create hash maps for lhs and rhs
+    lhs_hash_map = {_hash_clifford(cliff): idx for idx, cliff in enumerate(lhs)}
+    rhs_hash_map = {_hash_clifford(cliff): idx for idx, cliff in enumerate(rhs)}
+    
+    # Find common hash keys
+    common_hashes = set(lhs_hash_map.keys()) & set(rhs_hash_map.keys())
+    if not common_hashes:
+        return None
+
+    # Use hash keys to extract common gates
+    lhs_common = [lhs[lhs_hash_map[h]] for h in common_hashes]
+    rhs_common = [rhs[rhs_hash_map[h]] for h in common_hashes]
+
+    return lhs_common, rhs_common
 
 def left_end_empty_layers(circ: Circuit, num_qubits: int = None) -> np.ndarray:
     """
@@ -150,11 +175,14 @@ def assembling_overhead(lhs: CircuitTetris, rhs: CircuitTetris, efficient: bool 
     """
     lhs, rhs = lhs.copy(), rhs.copy()
 
+
+    # basic depth cost
     cost = depth_overhead(lhs.right_end, rhs.left_end)
 
     if efficient:
         return cost
 
+    # cost involving gate cancellation
     while commons := common_cliffords(lhs.last_cliffs, rhs.front_cliffs):
         indices = np.unique([cliff.qregs for cliff in commons[0]])
         cost -= indices.size  # ! a pair of 2Q Cliffords are canceled, but we do not use *2 factor

@@ -18,13 +18,13 @@ def simplify_bsf(bsf: BSF) -> Tuple[BSF, List[Tuple[Clifford2Q, BSF]]]:
         local_bsf = bsf.pop_local_paulis()
         # if local_bsf.total_weight > 0:
         #     console.print(local_bsf)
-        #     console.print(local_bsf.paulilist)
-        # local_paulis, local_coeffs = local_bsf.paulilist, local_bsf.coeffs
+        #     console.print(local_bsf.paulis)
+        # local_paulis, local_coeffs = local_bsf.paulis, local_bsf.coeffs
         t, c, cliff = search_cliffords(bsf, avoid)
         avoid = cliff.ctrl, cliff.targ
         # cliffords_with_locals.append((cliff, list(zip(local_paulis, local_coeffs))))
         cliffords_with_locals.append((cliff, local_bsf))
-        # console.print('applied {} --> {} cost: {} (is_simplified: {})'.format(cliff, t.paulilist, c, t.total_weight <= 2))
+        # console.print('applied {} --> {} cost: {} (is_simplified: {})'.format(cliff, t.paulis, c, t.total_weight <= 2))
         bsf = t
     # console.print('Now BSF: {}, cliff_with_locals: {}'.format(bsf, cliffords_with_locals))
     return bsf, cliffords_with_locals

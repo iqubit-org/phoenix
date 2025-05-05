@@ -55,9 +55,9 @@ def obtain_front_layer_from_circuit(circ: Circuit, predicate: Callable = None) -
         if predicate(g):
             if not any(q in visited_qubits for q in g.qregs):
                 front_layer.append(g)
-            visited_qubits.update(g.qregs)
-            if len(visited_qubits) == n:
-                break
+        visited_qubits.update(g.qregs)
+        if len(visited_qubits) == n:
+            break
     return front_layer
 
 
@@ -66,13 +66,14 @@ def obtain_last_layer_from_circuit(circ: Circuit, predicate: Callable = None) ->
         predicate = lambda _: True
     last_layer = []
     visited_qubits = set()
+    n = circ.num_qubits
     for g in circ[::-1]:
         if predicate(g):
             if not any(q in visited_qubits for q in g.qregs):
                 last_layer.append(g)
-            visited_qubits.update(g.qregs)
-            if len(visited_qubits) == circ.num_qubits:
-                break
+        visited_qubits.update(g.qregs)
+        if len(visited_qubits) == n:
+            break
     last_layer.reverse()
     return last_layer
 
