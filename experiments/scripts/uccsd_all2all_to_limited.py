@@ -16,6 +16,10 @@ import argparse
 import bench_utils
 from phoenix.utils.display import print_circ_info
 
+from rich.console import Console
+
+console = Console()
+
 warnings.filterwarnings('ignore')
 
 parser = argparse.ArgumentParser(description='Map logical circuits to physical qubits with limited connectivity')
@@ -43,7 +47,7 @@ for fname in fnames:
     all2all_circ_file = os.path.join(all2all_dpath, fname)
     limited_circ_file = os.path.join(limited_dpath, fname)
 
-    print('Converting {} to {}'.format(all2all_circ_file, limited_circ_file))
+    console.print('Converting {} to {}'.format(all2all_circ_file, limited_circ_file))
 
     circ = qiskit.QuantumCircuit.from_qasm_file(all2all_circ_file)
     circ = bench_utils.optimize_with_mapping(circ, coupling_map)

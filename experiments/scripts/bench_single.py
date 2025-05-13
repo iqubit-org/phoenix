@@ -74,7 +74,7 @@ if args.compiler == 'tket':
     circ_opt = bench_utils.tket_pass(circ)
     print_circ_info(circ, title='Original circuit')
     print_circ_info(circ_opt, title='Optimized circuit')
-    console.print(su4_circ_stats(Circuit.from_tket(circ_opt).to_bqskit()))
+    # console.print(su4_circ_stats(Circuit.from_tket(circ_opt).to_bqskit()))
 elif args.compiler == 'paulihedral':
     circ = qiskit.QuantumCircuit.from_qasm_file(qasm_fname)
     circ_opt = bench_utils.paulihedral_pass(data['paulis'], data['coeffs'], coupling_map=coupling_map)
@@ -87,8 +87,10 @@ elif args.compiler == 'tetris':
     print_circ_info(circ_opt, title='Optimized circuit')
 elif args.compiler == 'phoenix':
     circ = qiskit.QuantumCircuit.from_qasm_file(qasm_fname)
-    circ_opt = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], order_blocks=not args.no_order)
+    circ_opt = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], pre_gates=[gates.X.on(q) for q in data['front_x_on']], order_blocks=not args.no_order)
     print_circ_info(circ, title='Original circuit')
     print_circ_info(circ_opt, title='Optimized circuit')
+    # from phoenix.utils.functions import infidelity
+    # console.print('Infidelity:', infidelity(bench_utils.qiskit_to_unitary(circ), bench_utils.qiskit_to_unitary(circ_opt)))
 else:
     raise ValueError('Unsupported compiler')
