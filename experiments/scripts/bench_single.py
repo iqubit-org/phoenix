@@ -71,7 +71,7 @@ def su4_circ_stats(circ):
 
 if args.compiler == 'tket':
     circ = pytket.qasm.circuit_from_qasm(qasm_fname)
-    circ_opt = bench_utils.tket_pass(circ)
+    circ_opt = bench_utils.tket_pass(data['paulis'], data['coeffs'])
     print_circ_info(circ, title='Original circuit')
     print_circ_info(circ_opt, title='Optimized circuit')
     # console.print(su4_circ_stats(Circuit.from_tket(circ_opt).to_bqskit()))

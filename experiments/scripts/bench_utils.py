@@ -5,6 +5,7 @@ import sys
 
 sys.path.append('../..')
 
+import pytket.circuit
 import qiskit
 import pytket
 import pytket.qasm
@@ -137,24 +138,19 @@ def pauliopt_pass(paulis: List[str], coeffs: List[float],
     ...
 
 
-def tket_pass(circ: pytket.Circuit) -> pytket.Circuit:
-    from phoenix.synthesis.utils import unroll_u3
+def tket_greedy_pass(paulis: List[str], coeffs: List[float]) -> pytket.Circuit:
+    circ = constr_tket_circuit(paulis, coeffs)
+    pytket.passes.PauliSimp().apply(circ)
 
-    # unroll U3
-    circ = unroll_u3(Circuit.from_tket(circ)).to_tket()
+    # ! full peephole optimization: because when allow_swaps=True there might be fault synthesis results
+    pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
 
-    # adaptive PauliSimp
-    circ_tmp = circ.copy()
-    best_depth_2q = circ.depth_2q()
-    best_num_2q_gates = circ.n_2qb_gates()
-    while True:
-        pytket.passes.PauliSimp().apply(circ_tmp)
-        if best_depth_2q > circ_tmp.depth_2q() and best_num_2q_gates > circ_tmp.n_2qb_gates():
-            best_depth_2q = circ_tmp.depth_2q()
-            best_num_2q_gates = circ_tmp.n_2qb_gates()
-            circ = circ_tmp.copy()
-        else:
-            break
+    return circ
+
+
+def tket_pass(paulis: List[str], coeffs: List[float]) -> pytket.Circuit:
+    circ = constr_tket_circuit(paulis, coeffs)
+    pytket.passes.PauliSimp().apply(circ)
 
     # ! full peephole optimization: because when allow_swaps=True there might be fault synthesis results
     pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
@@ -247,6 +243,32 @@ def constr_mypauli_blocks(paulis, coeffs) -> List[List[pauliString]]:
         for p, c in zip(paulis, coeffs):
             mypauli_blocks[-1].append(pauliString(p, c))
     return mypauli_blocks
+
+
+def constr_tket_circuit(paulis: List[str], coeffs: List[float]) -> pytket.Circuit:
+    from pytket.circuit import PauliExpBox
+    from pytket.pauli import Pauli
+
+    pauli_str_map = {
+        'X': Pauli.X,
+        'Y': Pauli.Y,
+        'Z': Pauli.Z,
+    }
+    
+    def get_qubits_acted(pauli: str) -> List[int]:
+        """Get the qubits acted by a Pauli string."""
+        return [i for i, p in enumerate(pauli) if p != 'I']
+
+    circ = pytket.Circuit(len(paulis[0]))
+    
+    for pauli, coeff in zip(paulis, coeffs):
+        qubits = get_qubits_acted(pauli)
+        if len(qubits) == 0:
+            continue
+        pauli_box = PauliExpBox([pauli_str_map[pauli[q]] for q in qubits], coeff)
+        circ.add_gate(pauli_box, qubits)
+    
+    return circ
 
 
 def is_all2all_coupling_map(coupling_map: CouplingMap) -> bool:
