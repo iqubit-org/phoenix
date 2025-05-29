@@ -138,23 +138,9 @@ def pauliopt_pass(paulis: List[str], coeffs: List[float],
     ...
 
 
-def tket_greedy_pass(paulis: List[str], coeffs: List[float]) -> pytket.Circuit:
-    circ = constr_tket_circuit(paulis, coeffs)
-    pytket.passes.PauliSimp().apply(circ)
-
-    # ! full peephole optimization: because when allow_swaps=True there might be fault synthesis results
-    pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
-
-    return circ
-
-
 def tket_pass(paulis: List[str], coeffs: List[float]) -> pytket.Circuit:
     circ = constr_tket_circuit(paulis, coeffs)
-    pytket.passes.PauliSimp().apply(circ)
-
-    # ! full peephole optimization: because when allow_swaps=True there might be fault synthesis results
-    pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
-
+    pytket.passes.PauliSquash().apply(circ)
     return circ
 
 
