@@ -251,7 +251,7 @@ def constr_tket_circuit(paulis: List[str], coeffs: List[float]) -> pytket.Circui
         qubits = get_qubits_acted(pauli)
         if len(qubits) == 0:
             continue
-        pauli_box = PauliExpBox([pauli_str_map[pauli[q]] for q in qubits], coeff)
+        pauli_box = PauliExpBox([pauli_str_map[pauli[q]] for q in qubits], t=coeff * 2 / np.pi)
         circ.add_gate(pauli_box, qubits)
     
     return circ
