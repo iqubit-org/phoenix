@@ -138,8 +138,11 @@ def pauliopt_pass(paulis: List[str], coeffs: List[float],
     ...
 
 
-def tket_pass(paulis: List[str], coeffs: List[float]) -> pytket.Circuit:
-    circ = constr_tket_circuit(paulis, coeffs)
+def tket_pass(paulis: List[str], coeffs: List[float], front_x_on: List[int] = None) -> pytket.Circuit:
+    circ = pytket.Circuit(len(paulis[0]))
+    for q in front_x_on:
+        circ.X(q)
+    circ.append(constr_tket_circuit(paulis, coeffs))
     pytket.passes.PauliSquash().apply(circ)
     return circ
 
