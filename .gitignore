@@ -174,3 +174,14 @@ backup/
 docs/
 
 tmp/
+
+experiments/
+exploration/
+benchmarks/
+assets/
+
+phoenix/
+paulihedral/
+tetris/
+pauliopt/
+quclear/
