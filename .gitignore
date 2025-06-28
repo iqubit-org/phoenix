@@ -175,13 +175,13 @@ docs/
 
 tmp/
 
-experiments/
-exploration/
-benchmarks/
-assets/
+/experiments/
+/exploration/
+/benchmarks/
+/assets/
 
-phoenix/
-paulihedral/
-tetris/
-pauliopt/
-quclear/
+/phoenix/
+/paulihedral/
+/tetris/
+/pauliopt/
+/quclear/
