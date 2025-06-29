@@ -12,7 +12,7 @@ import argparse
 import qiskit.qasm2
 import bench_utils
 from natsort import natsorted
-from phoenix.utils.display import print_circ_info
+from phoenix.utils.render import print_circ_info
 
 warnings.filterwarnings('ignore')
 

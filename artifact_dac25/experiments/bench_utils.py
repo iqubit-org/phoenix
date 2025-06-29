@@ -130,79 +130,9 @@ def tetris_pass(paulis: List[str], coeffs: List[float],
     return qc
 
 
-def quclear_pass(paulis: List[str], coeffs: List[float],
-                 coupling_map: CouplingMap = All2all, with_O3: bool = False) -> qiskit.QuantumCircuit:
-    from quclear.CE_module import construct_qcc_circuit, CE_recur_tree
-
-    qc, append_clifford, sorted_entanglers = CE_recur_tree(entanglers=paulis, params=coeffs, barrier=False)
-    append_clifford = append_clifford.decompose('swap')
-    qc.compose(append_clifford, inplace=True)
-
-    if is_all2all_coupling_map(coupling_map):
-        if with_O3:
-            qc = qiskit_O3_all2all(qc)
-    else:
-        qc = optimize_with_mapping(qc, coupling_map)
-
-    return qc
-
-
-def pauliopt_pass(paulis: List[str], coeffs: List[float], method='steiner_gray',
-                  coupling_map: CouplingMap = All2all, with_O3: bool = False) -> qiskit.QuantumCircuit:
-    """Optional method: annealing, steiner_gray, divide_and_conquer (The default steiner_gray which performs the best in fidel tests)"""
-    from pauliopt.pauli.pauli_polynomial import PauliPolynomial
-    from pauliopt.pauli.pauli_gadget import PPhase
-    from pauliopt.pauli_strings import I, X, Y, Z
-    from pauliopt.topologies import Topology
-    from pauliopt.pauli.synthesis.annealing import annealing_synthesis
-    from pauliopt.pauli.synthesis.steiner_gray_synthesis import pauli_polynomial_steiner_gray_clifford
-    from pauliopt.pauli.synthesis.synthesis_divide_and_conquer import synthesis_divide_and_conquer
-
-    def apply_permutation(qc: qiskit.QuantumCircuit, permutation: list) -> qiskit.QuantumCircuit:
-        """Apply a permutation to a qiskit quantum circuit."""
-        register = qc.qregs[0]
-        qc_out = qiskit.QuantumCircuit(register)
-        for instruction in qc:
-            op_qubits = [
-                register[permutation[register.index(q)]] for q in instruction.qubits
-            ]
-            qc_out.append(instruction.operation, op_qubits)
-        return qc_out
-
-    pauli_str_map = {'I': I, 'X': X, 'Y': Y, 'Z': Z}
-    topology = Topology.complete(len(paulis[0]))
-    pp = PauliPolynomial(num_qubits=len(paulis[0]))
-    for pauli_str, coeff in zip(paulis, coeffs):
-        pp >>= (PPhase(coeff * 2) @ [pauli_str_map[p] for p in pauli_str])
-
-    # TODO: check the correctness of the generated circuit
-    if method == 'annealing':
-        qc = annealing_synthesis(pp.copy(), topology).to_qiskit()
-    elif method == 'steiner_gray':
-        qc, gadget_perm, perm = pauli_polynomial_steiner_gray_clifford(pp.copy(), topology)
-        qc = apply_permutation(qc.to_qiskit(), perm)
-    elif method == 'divide_and_conquer':
-        qc, perm = synthesis_divide_and_conquer(pp.copy(), topology)
-        qc = apply_permutation(qc.to_qiskit(), perm)
-    else:
-        raise ValueError(f"Unknown method: {method}")
-
-    if is_all2all_coupling_map(coupling_map):
-        if with_O3:
-            qc = qiskit_O3_all2all(qc)
-    else:
-        qc = optimize_with_mapping(qc, coupling_map)
-
-    return qc
-
-
-def tket_pass(paulis: List[str], coeffs: List[float], greedy: bool = True) -> pytket.Circuit:
+def tket_pass(paulis: List[str], coeffs: List[float]) -> pytket.Circuit:
     circ = constr_tket_circuit(paulis, coeffs)
-    if greedy:
-        pytket.passes.GreedyPauliSimp().apply(circ)
-        pytket.passes.FullPeepholeOptimise().apply(circ)
-    else:
-        pytket.passes.PauliSquash().apply(circ)
+    pytket.passes.PauliSquash().apply(circ)
     return circ
 
 

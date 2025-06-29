@@ -14,7 +14,7 @@ from natsort import natsorted
 import qiskit.qasm2
 import argparse
 import bench_utils
-from phoenix.utils.display import print_circ_info
+from phoenix.utils.render import print_circ_info
 
 from rich.console import Console
 
@@ -24,17 +24,17 @@ warnings.filterwarnings('ignore')
 
 parser = argparse.ArgumentParser(description='Map logical circuits to physical qubits with limited connectivity')
 parser.add_argument('-d', '--device', type=str,
-                    help='Device topology (options: manhattan, sycamore)')
+                    help='Device topology (options: hhex, square)')
 parser.add_argument('-c', '--compiler', default='phoenix', type=str,
                     help='Compiler (default: phoenix)')
 args = parser.parse_args()
 
 all2all_dpath = './output_uccsd/{}/all2all'.format(args.compiler)
-fnames = natsorted(os.listdir(all2all_dpath), reverse=True)
+fnames = natsorted(os.listdir(all2all_dpath))
 
-if args.device == 'manhattan':
+if args.device == 'hhex':
     coupling_map = bench_utils.Manhattan
-elif args.device == 'sycamore':
+elif args.device == 'square':
     coupling_map = bench_utils.Sycamore
 else:
     raise ValueError('Unsupported topology')

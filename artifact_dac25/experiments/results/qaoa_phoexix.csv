@@ -1,0 +1,7 @@
+fname,num_qubits,num_paulis,num_cnot(all2all),depth_2q(all2all),num_cnot(manhattan),depth_2q(manhattan),num_swap(manhatten)
+rand_16,16,32,64,18,148,50,29
+rand_20,20,40,80,14,189,53,39
+rand_24,24,48,96,16,249,64,54
+reg3_16,16,24,48,8,98,27,17
+reg3_20,20,30,60,10,125,29,23
+reg3_24,24,36,72,10,155,34,30

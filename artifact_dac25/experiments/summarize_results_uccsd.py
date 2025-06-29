@@ -1,5 +1,5 @@
 """
-Summarize UCCSD hardware-aware (all2all, manhattan, sycamore) benchmarking results from some compiler
+Summarize UCCSD hardware-aware (all2all, hhex, square) benchmarking results from some compiler
 """
 
 import sys
@@ -29,12 +29,12 @@ result_fname = './results/result_uccsd_{}.csv'.format(args.compiler)
 results = {
     'all2all': pd.DataFrame(columns=['program', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q']),
     'all2all_opt': pd.DataFrame(columns=['program', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q']),
-    'manhattan': pd.DataFrame(columns=['program', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q']),
-    'sycamore': pd.DataFrame(columns=['program', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q'])
+    'hhex': pd.DataFrame(columns=['program', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q']),
+    'square': pd.DataFrame(columns=['program', 'num_gates', 'num_2q_gates', 'depth', 'depth_2q'])
 }
 
 
-for dir in ['all2all', 'all2all_opt', 'manhattan', 'sycamore']:
+for dir in ['all2all', 'all2all_opt', 'hhex', 'square']:
     output_dpath = os.path.join(OUTPUT_DPATH, dir)
     print('Processing', output_dpath)
     for fname in natsorted(os.listdir(output_dpath)):
@@ -72,8 +72,8 @@ for fname in natsorted(os.listdir(BENCHMARK_DPATH)):
 
 result = pd.merge(result, results['all2all'], on='program', suffixes=('', '(all2all)'))
 result = pd.merge(result, results['all2all_opt'], on='program', suffixes=('', '(all2all_opt)'))
-result = pd.merge(result, results['manhattan'], on='program', suffixes=('', '(manhattan)'))
-result = pd.merge(result, results['sycamore'], on='program', suffixes=('', '(sycamore)'))
+result = pd.merge(result, results['hhex'], on='program', suffixes=('', '(hhex)'))
+result = pd.merge(result, results['square'], on='program', suffixes=('', '(square)'))
 
 result.to_csv(result_fname, index=False)
 print('Saved to', result_fname)

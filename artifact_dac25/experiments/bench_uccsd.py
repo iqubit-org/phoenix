@@ -11,12 +11,11 @@ import os
 import json
 import argparse
 import warnings
-import pytket.qasm
 import qiskit.qasm2
+import pytket.qasm
 from natsort import natsorted
 import bench_utils
-from phoenix.utils.functions import infidelity
-from phoenix.utils.display import print_circ_info
+from phoenix.utils.render import print_circ_info
 
 warnings.filterwarnings('ignore')
 
@@ -29,7 +28,7 @@ OUTPUT_DPATH = './output_uccsd'
 
 parser = argparse.ArgumentParser(description='Benchmarking on UCCSD chemistry benchmarks')
 parser.add_argument('-d', '--device', default='all2all', type=str,
-                    help='Device topology (default: all2all) (options: all2all, manhattan, sycamore)')
+                    help='Device topology (default: all2all) (options: all2all, hhex, square)')
 parser.add_argument('-c', '--compiler', default='phoenix', type=str,
                     help='Compiler (default: phoenix)')
 args = parser.parse_args()
@@ -47,9 +46,9 @@ console.print('output directory: {}'.format(output_dpath))
 
 if args.device == 'all2all':
     coupling_map = bench_utils.All2all
-elif args.device == 'manhattan':
+elif args.device == 'hhex':
     coupling_map = bench_utils.Manhattan
-elif args.device == 'sycamore':
+elif args.device == 'square':
     coupling_map = bench_utils.Sycamore
 else:
     raise ValueError('Unsupported device')
@@ -62,60 +61,25 @@ for fname in json_fnames:
 
     if args.compiler == 'phoenix':
         circ = bench_utils.phoenix_pass(data['paulis'], data['coeffs'], coupling_map=coupling_map)
-        print_circ_info(circ)
-        qiskit.qasm2.dump(circ, output_fname)
-
-        # circ_origin = qiskit.QuantumCircuit.from_qasm_file(
-        #     os.path.join(INPUT_QASM_DPATH, os.path.basename(fname).replace('.json', '.qasm')))
-
-        # console.print('Infidelity:',
-        #               infidelity(bench_utils.qiskit_to_unitary(circ_origin),
-        #                          bench_utils.qiskit_to_unitary(circ)))
-
     elif args.compiler == 'paulihedral':
         circ = bench_utils.paulihedral_pass(data['paulis'], data['coeffs'],
-                                            coupling_map=coupling_map)  # TODO: do not return mappings?
-
-        # circ_origin = qiskit.QuantumCircuit.from_qasm_file(
-        #     os.path.join(INPUT_QASM_DPATH, os.path.basename(fname).replace('.json', '.qasm')))
-
-        # if circ.num_qubits <= 10:
-
-        # console.print('Infidelity:',
-        #               infidelity(bench_utils.qiskit_to_unitary(circ_origin),
-        #                          bench_utils.qiskit_to_unitary(circ)))
-
-        print_circ_info(circ)
-        qiskit.qasm2.dump(circ, output_fname)
+                                            coupling_map=coupling_map)
     elif args.compiler == 'tetris':
         circ = bench_utils.tetris_pass(data['paulis'], data['coeffs'],
-                                       coupling_map=coupling_map)  # TODO: do no return mappings?
-        # circ_origin = qiskit.QuantumCircuit.from_qasm_file(
-        # os.path.join(INPUT_QASM_DPATH, os.path.basename(fname).replace('.json', '.qasm')))
-
-        # if circ.num_qubits <= 10:
-        # import sys
-        # sys.path.append('../..')
-        # from phoenix import Circuit
-        # c1 = Circuit.from_qiskit(circ)
-        # c2 = Circuit.from_qiskit(circ_origin)
-        print_circ_info(circ)
-        # console.print('Infidelity:',
-        #               infidelity(c1.unitary(), c2.unitary()))
-        qiskit.qasm2.dump(circ, output_fname)
+                                       coupling_map=coupling_map)
     elif args.compiler == 'pauliopt':
         circ = bench_utils.pauliopt_pass(data['paulis'], data['coeffs'],
-                                         coupling_map=coupling_map)  # TODO: do not return mappings?
-        print_circ_info(circ)
-        qiskit.qasm2.dump(circ, output_fname)
+                                         coupling_map=coupling_map)
     elif args.compiler == 'quclear':
         circ = bench_utils.quclear_pass(data['paulis'], data['coeffs'],
                                         coupling_map=coupling_map)
-        print_circ_info(circ)
-        qiskit.qasm2.dump(circ, output_fname)
     elif args.compiler == 'tket':
         circ = bench_utils.tket_pass(data['paulis'], data['coeffs'])
-        print_circ_info(circ)
-        pytket.qasm.circuit_to_qasm(circ, output_fname)
     else:
         raise ValueError('Unsupported compiler')
+
+    print_circ_info(circ)
+    if args.compiler == 'tket':
+        pytket.qasm.circuit_to_qasm(circ, output_fname)
+    else:
+        qiskit.qasm2.dump(circ, output_fname)
