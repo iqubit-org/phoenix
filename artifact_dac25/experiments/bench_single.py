@@ -24,7 +24,7 @@ parser.add_argument('-d', '--device', default='all2all', type=str,
 parser.add_argument('--no-order', action='store_true',
                     help='Without IR group ordering procedure in Phoenix compiler (default: False)')
 parser.add_argument('--O3', action='store_true',
-                    help='With Qisit O3 for further local optimization in Phoenix compiler (default: False)')
+                    help='With Qiskit O3 for further local optimization in Phoenix compiler (default: False)')
 parser.add_argument('-c', '--compiler', default='phoenix', type=str,
                     help='Compiler (default: phoenix)')
 args = parser.parse_args()
