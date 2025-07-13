@@ -1,0 +1,6 @@
+../../benchmarks/qaoa_text/qaoa_rand_16.txt CNOT gate count by 2QAN: 190
+../../benchmarks/qaoa_text/qaoa_rand_20.txt CNOT gate count by 2QAN: 234
+../../benchmarks/qaoa_text/qaoa_rand_24.txt CNOT gate count by 2QAN: 294
+../../benchmarks/qaoa_text/qaoa_reg3_16.txt CNOT gate count by 2QAN: 178
+../../benchmarks/qaoa_text/qaoa_reg3_20.txt CNOT gate count by 2QAN: 198
+../../benchmarks/qaoa_text/qaoa_reg3_24.txt CNOT gate count by 2QAN: 248

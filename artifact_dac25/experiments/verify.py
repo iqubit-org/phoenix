@@ -14,6 +14,7 @@ from natsort import natsorted
 input_json_dpath = '../benchmarks/uccsd'
 output_dpath = sys.argv[1] if len(sys.argv) > 1 else '../benchmarks/uccsd_qasm'
 
+
 def ideal_evolution(json_fname):
     with open(json_fname, 'r') as f:
         data = json.load(f)

@@ -1,4 +1,4 @@
-This folder is the artifact for the [DAC'25 paper](https://arxiv.org/abs/2504.03529).
+This folder is the artifact for the [DAC'25 paper -- PHOENIX: Pauli-Based High-Level Optimization Engine for Instruction Execution on NISQ Devices](https://arxiv.org/abs/2504.03529).
 
 
 
