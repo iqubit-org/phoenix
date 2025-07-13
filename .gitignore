@@ -167,6 +167,10 @@ cython_debug/
 
 *tmp.*
 
+
+/quclear/
+/pauliopt/
+
 vqe_tetris/
 
 backup/
@@ -179,5 +183,3 @@ tmp/
 /exploration/
 /benchmarks/
 
-/quclear_hidden/
-/pauliopt_hidden/
