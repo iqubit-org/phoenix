@@ -10,12 +10,16 @@ This repo includes benchmarking scripts and results with other SOTA baselines --
 
 If you make sure of Phoenix in your work, please cite the following publication:
 
-```tex
-@article{yang2025phoenix,
-  title={PHOENIX: Pauli-Based High-Level Optimization Engine for Instruction Execution on NISQ Devices},
+```
+@inproceedings{yang2025phoenix,
   author={Yang, Zhaohui and Ding, Dawei and Zhu, Chenghong and Chen, Jianxin and Xie, Yuan},
-  journal={arXiv preprint arXiv:2504.03529},
-  year={2025}
+  booktitle={2025 62nd ACM/IEEE Design Automation Conference (DAC)}, 
+  title={PHOENIX: Pauli-Based High-Level Optimization Engine for Instruction Execution on NISQ Devices}, 
+  year={2025},
+  volume={},
+  number={},
+  pages={1-7},
+  doi={10.1109/DAC63849.2025.11133028}
 }
 ```
 
