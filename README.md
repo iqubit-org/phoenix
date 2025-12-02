@@ -1,6 +1,13 @@
 # 🐦‍🔥 𝑷𝑯𝑶𝑬𝑵𝑰𝑿: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices
 
-[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue) [![a](https://img.shields.io/static/v1?label=arXiv&message=2504.03529&color=red)](https://arxiv.org/abs/2504.03529)
+[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue) [![](https://img.shields.io/static/v1?label=Conference&message=DAC%202025&color=red)](https://arxiv.org/abs/2504.03529)
+
+
+
+<!-- [![a](https://img.shields.io/static/v1?label=arXiv&message=2504.03529&color=red)](https://arxiv.org/abs/2504.03529) -->
+
+
+
 
 ## Overview
 
