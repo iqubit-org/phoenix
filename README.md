@@ -1,7 +1,6 @@
 # 🐦‍🔥 𝑷𝑯𝑶𝑬𝑵𝑰𝑿: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices
 
-[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue) [![](https://img.shields.io/badge/Slides-PPTX-orange)]([LINK_TO_SLIDES](https://fact-lab.hkust.edu.hk/publication/conference-paper/2025/yang-2025-phoenix/Phoenix-ZY%20%2862DAC_Presentation%29.pdf)) [![](https://img.shields.io/static/v1?label=Conference&message=DAC%202025&color=red)](https://arxiv.org/abs/2504.03529) 
-
+[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue) [![](https://img.shields.io/badge/Slides-PPTX-orange)](https://fact-lab.hkust.edu.hk/publication/conference-paper/2025/yang-2025-phoenix/Phoenix-ZY%20%2862DAC_Presentation%29.pdf) [![](https://img.shields.io/static/v1?label=Conference&message=DAC%202025&color=red)](https://arxiv.org/abs/2504.03529) 
 
 
 <!-- [![a](https://img.shields.io/static/v1?label=arXiv&message=2504.03529&color=red)](https://arxiv.org/abs/2504.03529) -->
