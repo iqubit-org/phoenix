@@ -1,6 +1,6 @@
 # 🐦‍🔥 𝑷𝑯𝑶𝑬𝑵𝑰𝑿: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices
 
-[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue) [![](https://img.shields.io/static/v1?label=Conference&message=DAC%202025&color=red)](https://arxiv.org/abs/2504.03529)
+[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue) [![](https://img.shields.io/badge/Slides-PPTX-orange)]([LINK_TO_SLIDES](https://fact-lab.hkust.edu.hk/publication/conference-paper/2025/yang-2025-phoenix/Phoenix-ZY%20%2862DAC_Presentation%29.pdf)) [![](https://img.shields.io/static/v1?label=Conference&message=DAC%202025&color=red)](https://arxiv.org/abs/2504.03529) 
 
 
 
@@ -15,7 +15,22 @@ Phoenix is a highly-effective VQA (variational quantum algorithm) application-sp
 
 This repo includes benchmarking scripts and results with other SOTA baselines -- TKet, Paulihedral, Tetris, and Rustiq. Code of Paulihedral and Tetris are refactored and integrated in this repo.
 
-If you make sure of Phoenix in your work, please cite the following publication:
+## `phoenix_qiskit`: native qiskit 2.x workflow
+
+The new `phoenix_qiskit` package re-implements the Phoenix compilation pipeline directly on top of qiskit 2.x data structures. Instead of the bespoke circuit and gate abstractions that powered the original prototype, the module exposes a lightweight façade over qiskit's `SparsePauliOp`, `PauliList`, and `QuantumCircuit` primitives:
+
+```python
+from qiskit.quantum_info import SparsePauliOp
+from phoenix_qiskit import PhoenixCompiler
+
+op = SparsePauliOp(['XXIII', 'YYIII', 'ZZIII'], [0.5, 0.5, 0.5])
+compiler = PhoenixCompiler(optimization_level=2)
+optimized_trotter_step = compiler.compile(op, trotter_steps=1)
+```
+
+Internally the compiler groups Pauli terms by their non-trivial support, simplifies each group via Clifford conjugation in binary symplectic form, turns the resulting configurations into `QuantumCircuit` blocks, and finally schedules/optimizes those blocks with qiskit's transpiler passes. The current implementation targets the CNOT-native basis and exposes a `trotter_steps` knob for repeating the synthesized blocks; support for higher-order Trotterization and additional basis choices can be layered on top of the same API.
+
+If you make use of Phoenix in your work, please cite the following publication:
 
 ```
 @inproceedings{yang2025phoenix,
