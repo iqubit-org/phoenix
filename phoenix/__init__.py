@@ -1,9 +1,10 @@
-"""
-Phoenix is a Python package for compiling VQA programs whose high-level IR is Pauli strings with coefficients.
-"""
-from .basic import gates, circuits
-from .basic.gates import Gate
-from .basic.circuits import Circuit, QASMStringIO
-from . import primitive
-from . import models
-from . import utils
+from .basics import CNOTEquivCliffordGate
+from .compiler import compile_hamiltonian_simulation
+from .hamiltonian import Hamiltonian
+
+__all__ = [
+    "Hamiltonian",
+    "compile_hamiltonian_simulation",
+    "CNOTEquivCliffordGate",
+    'fSwapEquivCliffordGate',
+]
