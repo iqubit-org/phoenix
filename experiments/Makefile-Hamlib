@@ -1,0 +1,55 @@
+OUTPUT_QASM_PATH = output_hamlib
+BENCH_SCRIPT = bench_hamlib.py
+ALL_COMPILERS := qiskit tket paulihedral tetris pauliopt quclear phoenix phoenix++
+HAMLIB_TYPES := binaryoptimization chemistry condensedmatter discreteoptimization
+
+
+.PHONY: all clean
+
+all:
+	@echo "This is the comprehensive Makefile for benchmarking Phoenix and baselines on Hamlib benchmarks."
+
+phoenix:
+	@echo "Running Phoenix benchmarks on Hamlib..."
+	@cd scripts && parallel --bar --group './$(BENCH_SCRIPT) -c phoenix -t {}' ::: $(HAMLIB_TYPES)
+	@echo "✅ Phoenix benchmarking completed."
+phoenix++:
+	@echo "Running Phoenix++ benchmarks on Hamlib..."
+	@cd scripts && parallel --bar --group './$(BENCH_SCRIPT) -c phoenix++ -t {}' ::: $(HAMLIB_TYPES)
+	@echo "✅ Phoenix++ benchmarking completed."
+tket:
+	@echo "Running TKet benchmarks on Hamlib..."
+	@cd scripts && parallel --bar --group './$(BENCH_SCRIPT) -c tket -t {}' ::: $(HAMLIB_TYPES)
+	@echo "✅ TKet benchmarking completed."
+qiskit:
+	@echo "Running Qiskit benchmarks on Hamlib..."
+	@cd scripts && parallel --bar --group './$(BENCH_SCRIPT) -c qiskit -t {}' ::: $(HAMLIB_TYPES)
+	@echo "✅ Qiskit benchmarking completed."
+quclear:
+	@echo "Running QuCLEAR benchmarks on Hamlib..."
+	@cd scripts && parallel --bar --group './$(BENCH_SCRIPT) -c quclear -t {}' ::: $(HAMLIB_TYPES)
+	@echo "✅ QuCLEAR benchmarking completed."
+paulihedral:
+	@echo "Running Paulihedral benchmarks on Hamlib..."
+	@cd scripts && parallel --bar --group './$(BENCH_SCRIPT) -c paulihedral -t {}' ::: $(HAMLIB_TYPES)
+	@echo "✅ Paulihedral benchmarking completed."
+tetris:
+	@echo "Running Tetris benchmarks on Hamlib..."
+	@cd scripts && parallel --bar --group './$(BENCH_SCRIPT) -c tetris -t {}' ::: $(HAMLIB_TYPES)
+	@echo "✅ Tetris benchmarking completed."
+pauliopt:
+	@echo "Running PauliOpt benchmarks on Hamlib..."
+	@cd scripts && parallel --bar --group './$(BENCH_SCRIPT) -c pauliopt -t {}' ::: $(HAMLIB_TYPES)
+	@echo "✅ PauliOpt benchmarking completed."
+
+sum_result:
+	@echo "Summarizing benchmarking results..."
+	@parallel --bar --group 'python summarize_results_hamlib.py -c {}' ::: $(ALL_COMPILERS)
+	@echo "\n✅ All summaries finished."
+
+disp_result:
+	@python display_results_hamlib.py
+
+clean:
+	@echo "Cleaning up .QASM files..."
+	@find ./$(OUTPUT_QASM_PATH)/ -type f -name "*.qasm" -exec rm -f {} +

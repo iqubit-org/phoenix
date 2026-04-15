@@ -76,7 +76,7 @@ class Hamiltonian(SparsePauliOp):
                 table.add_row([pauli[::-1], ' '.join(x_part), ' '.join(z_part), sign])
             else:
                 table.add_row([pauli[::-1], ' '.join(z_part), ' '.join(x_part), sign])
-
+        table.title = f'Display index: q0...q{self.num_qubits-1}'
         print(table)
 
     @property

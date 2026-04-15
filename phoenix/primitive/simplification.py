@@ -24,10 +24,10 @@ from ..primitive.utils import SimplificationStep
 # ]
 
 # TODO: 为什么这个五个元素的效果比下面六个元素的效果要好
-CLIFFORD_OPTIONS = [
-    CNOTEquivCliffordGate('X', 'X'), CNOTEquivCliffordGate('Y', 'Y'), CNOTEquivCliffordGate('Z', 'Z'),
-    CNOTEquivCliffordGate('X', 'Z'), CNOTEquivCliffordGate('Z', 'X'),
-]
+# CLIFFORD_OPTIONS = [
+#     CNOTEquivCliffordGate('X', 'X'), CNOTEquivCliffordGate('Y', 'Y'), CNOTEquivCliffordGate('Z', 'Z'),
+#     CNOTEquivCliffordGate('X', 'Z'), CNOTEquivCliffordGate('Z', 'X'),
+# ]
 
 
 # CLIFFORD_OPTIONS = [

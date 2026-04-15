@@ -1,11 +1,14 @@
 import os
 import json
 import time
-import re
 
 from phoenix import Hamiltonian, CNOTEquivCliffordGate
 from phoenix.primitive import ordering, simplification, utils
-from phoenix.compiler import compile_hamiltonian_simulation
+from phoenix.compiler import (
+    _optimize_phoenix_circuit_by_qiskit_each_group,
+    compile_hamiltonian_simulation,
+    optimize_phoenix_circuit_by_qiskit,
+)
 from phoenix.utils import infidelity, print_circ_info
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Operator
@@ -59,9 +62,56 @@ def test_cancellation_bonus():
 
 
 def count_2q_gates(qc: QuantumCircuit) -> int:
-    """Count CNOT-equivalent 2-qubit gates."""
-    pattern = re.compile(r'^c[xyz]{2}$')
-    return sum(v for k, v in qc.count_ops().items() if pattern.match(k))
+    """Count all nonlocal gates in an optimized Qiskit circuit."""
+    return sum(1 for instr in qc.data if instr.operation.num_qubits >= 2)
+
+
+def test_qiskit_post_optimization_synthesizes_pauli_block():
+    qc = QuantumCircuit(2)
+    qc.rzx(0.1, 0, 1)
+    qc.ryy(0.2, 0, 1)
+    qc.rzz(0.3, 0, 1)
+
+    optimized = optimize_phoenix_circuit_by_qiskit(qc)
+
+    assert Operator(qc).equiv(Operator(optimized))
+    assert optimized.count_ops().get("cx", 0) <= 3
+
+
+def test_qiskit_each_group_synthesizes_successive_pauli_block():
+    qc = QuantumCircuit(2)
+    qc.rzx(0.1, 0, 1)
+    qc.ryy(0.2, 0, 1)
+    qc.rzz(0.3, 0, 1)
+
+    optimized = _optimize_phoenix_circuit_by_qiskit_each_group(qc)
+
+    assert Operator(qc).equiv(Operator(optimized))
+    assert optimized.count_ops().get("cx", 0) <= 3
+    assert set(optimized.count_ops()).issubset({"cx", "rz", "sx", "x"})
+
+
+def test_qiskit_each_group_preserves_non_pauli_rotation_gates():
+    qc = QuantumCircuit(2)
+    qc.rzx(0.1, 0, 1)
+    qc.ryy(0.2, 0, 1)
+    qc.append(CNOTEquivCliffordGate("y", "y"), [0, 1])
+
+    optimized = _optimize_phoenix_circuit_by_qiskit_each_group(qc)
+
+    assert Operator(qc).equiv(Operator(optimized))
+    assert "cyy" in optimized.count_ops()
+
+
+def test_qiskit_post_optimization_unrolls_custom_clifford_gates():
+    qc = QuantumCircuit(2)
+    qc.append(CNOTEquivCliffordGate("y", "y"), [0, 1])
+
+    optimized = optimize_phoenix_circuit_by_qiskit(qc)
+
+    assert Operator(qc).equiv(Operator(optimized))
+    assert "cyy" not in optimized.count_ops()
+    assert optimized.count_ops().get("cx", 0) == 1
 
 
 def test_ordering_methods():
@@ -102,7 +152,11 @@ def test_ordering_methods():
         
         # Use compile_hamiltonian_simulation which includes optimize_phoenix_circuit_by_qiskit
         start = time.process_time()
-        qc = compile_hamiltonian_simulation(hamiltonian, order_method=method_name)
+        qc = compile_hamiltonian_simulation(
+            hamiltonian,
+            order_method=method_name,
+            backend="sequential",
+        )
         elapsed = time.process_time() - start
         
         # Calculate metrics

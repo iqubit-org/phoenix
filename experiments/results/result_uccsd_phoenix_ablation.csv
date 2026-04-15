@@ -1,0 +1,17 @@
+program,num_2q_gates(phoenix_bsf),depth_2q(phoenix_bsf),num_2q_gates(phoenix_bsf_order),depth_2q(phoenix_bsf_order)
+CH2_cmplt_BK_sto3g,4560,3940,4438,3734
+CH2_cmplt_JW_sto3g,4812,4216,4718,4106
+CH2_frz_BK_sto3g,2462,2141,2408,2045
+CH2_frz_JW_sto3g,2498,2220,2446,2166
+H2O_cmplt_BK_sto3g,3198,2763,3134,2633
+H2O_cmplt_JW_sto3g,3268,2884,3222,2830
+H2O_frz_BK_sto3g,1520,1286,1490,1240
+H2O_frz_JW_sto3g,1944,1731,1904,1686
+LiH_cmplt_BK_sto3g,1602,1387,1584,1330
+LiH_cmplt_JW_sto3g,1944,1750,1900,1707
+LiH_frz_BK_sto3g,460,428,452,403
+LiH_frz_JW_sto3g,424,397,416,390
+NH_cmplt_BK_sto3g,1520,1286,1490,1240
+NH_cmplt_JW_sto3g,1944,1731,1904,1686
+NH_frz_BK_sto3g,1110,994,1092,937
+NH_frz_JW_sto3g,1008,913,990,894

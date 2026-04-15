@@ -175,8 +175,7 @@ class CNOTEquivCliffordGate(Gate):
 
     def inverse(self, annotated: bool = False):
         """Return the inverse gate (self-inverse)."""
-        self.copy()
-        return CNOTEquivCliffordGate(self.pauli_0, self.pauli_1)
+        return self.copy()
 
     def reverse_ops(self):
         return self.copy()

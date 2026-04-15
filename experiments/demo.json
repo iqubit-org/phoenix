@@ -1,0 +1,14 @@
+{
+    "num_qubits": 6,
+    "front_x_on": [],
+    "paulis": [
+        "XXXZYZ",
+        "YXXZYY",
+        "ZXXZYZ"
+    ],
+    "coeffs": [
+        -0.0125,
+        -0.0125,
+        -0.0125
+    ]
+}

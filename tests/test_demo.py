@@ -18,6 +18,10 @@ import time
 # DEMO_FILE = 'CH2_frz_JW_sto3g.json'
 DEMO_FILE = 'LiH_frz_JW_sto3g.json'
 
+
+def count_2q_gates(qc) -> int:
+    return sum(1 for instr in qc.data if instr.operation.num_qubits >= 2)
+
 def test_simp():
     ham = Hamiltonian(['XXXZIYZI', 'YXXZIYYI', 'ZXXZIYZI'], [-0.0125, -0.0125, -0.0125])
     ham.print_tableau()
@@ -53,7 +57,7 @@ def test_simp_with_trivial_order(with_O3=False):
     print_circ_info(qc_trivial, title='Original circuit')
 
     start = time.process_time()
-    qc = compile_hamiltonian_simulation(hamiltonian)
+    qc = compile_hamiltonian_simulation(hamiltonian, backend='sequential')
     end = time.process_time()
 
     # with Qiskit O3
@@ -63,13 +67,7 @@ def test_simp_with_trivial_order(with_O3=False):
     print_circ_info(qc, title='Compiled circuit (trivial order)')
     print(qc.count_ops())
 
-    import re
-    pattern = re.compile(r'^c[xyz]{2}$')
-    total = sum(
-        v for k, v in qc.count_ops().items()
-        if pattern.match(k)
-    )
-    print('Total CNOT-equivalent gates:', total)    
+    print('Total 2Q gates:', count_2q_gates(qc))
 
     # v = Operator(qc).to_matrix()
     # print('Infidelity (trivial order):', infidelity(u, v))
@@ -86,7 +84,7 @@ def test_simp_with_greedy_order(with_O3=False):
     print_circ_info(qc_trivial, title='Original circuit')
 
     start = time.process_time()
-    qc = compile_hamiltonian_simulation(hamiltonian, order_method='greedy')
+    qc = compile_hamiltonian_simulation(hamiltonian, order_method='greedy', backend='sequential')
     end = time.process_time()
     
     # with Qiskit O3
@@ -96,13 +94,7 @@ def test_simp_with_greedy_order(with_O3=False):
     print_circ_info(qc, title='Compiled circuit (greedy order)')
     print(qc.count_ops())
 
-    import re
-    pattern = re.compile(r'^c[xyz]{2}$')
-    total = sum(
-        v for k, v in qc.count_ops().items()
-        if pattern.match(k)
-    )
-    print('Total CNOT-equivalent gates:', total)
+    print('Total 2Q gates:', count_2q_gates(qc))
 
     # v = Operator(qc).to_matrix()
     # print('Infidelity (greedy order):', infidelity(u, v))
@@ -119,7 +111,7 @@ def test_simp_with_greedy_multistart_order(with_O3=False):
     print_circ_info(qc_trivial, title='Original circuit')
 
     start = time.process_time()
-    qc = compile_hamiltonian_simulation(hamiltonian, order_method='greedy_multistart')
+    qc = compile_hamiltonian_simulation(hamiltonian, order_method='greedy_multistart', backend='sequential')
     end = time.process_time()
     
     # with Qiskit O3
@@ -129,13 +121,7 @@ def test_simp_with_greedy_multistart_order(with_O3=False):
     print_circ_info(qc, title='Compiled circuit (greedy multistart order)')
     print(qc.count_ops())
 
-    import re
-    pattern = re.compile(r'^c[xyz]{2}$')
-    total = sum(
-        v for k, v in qc.count_ops().items()
-        if pattern.match(k)
-    )
-    print('Total CNOT-equivalent gates:', total)
+    print('Total 2Q gates:', count_2q_gates(qc))
 
     # v = Operator(qc).to_matrix()
     # print('Infidelity (greedy multistart order):', infidelity(u, v))
@@ -152,7 +138,7 @@ def test_simp_with_tsp_order(with_O3=False):
     print_circ_info(qc_trivial, title='Original circuit')
 
     start = time.process_time()
-    qc = compile_hamiltonian_simulation(hamiltonian, order_method='tsp')
+    qc = compile_hamiltonian_simulation(hamiltonian, order_method='tsp', backend='sequential')
     end = time.process_time()
     
     # with Qiskit O3
@@ -162,13 +148,7 @@ def test_simp_with_tsp_order(with_O3=False):
     print_circ_info(qc, title='Compiled circuit (tsp order)')
     print(qc.count_ops())
 
-    import re
-    pattern = re.compile(r'^c[xyz]{2}$')
-    total = sum(
-        v for k, v in qc.count_ops().items()
-        if pattern.match(k)
-    )
-    print('Total CNOT-equivalent gates:', total)
+    print('Total 2Q gates:', count_2q_gates(qc))
 
     # v = Operator(qc).to_matrix()
     # print('Infidelity (tsp order):', infidelity(u, v))
@@ -185,7 +165,7 @@ def test_simp_with_tsp_2opt_order(with_O3=False):
     print_circ_info(qc_trivial, title='Original circuit')
 
     start = time.process_time()
-    qc = compile_hamiltonian_simulation(hamiltonian, order_method='tsp_2opt')
+    qc = compile_hamiltonian_simulation(hamiltonian, order_method='tsp_2opt', backend='sequential')
     end = time.process_time()
     
     # with Qiskit O3
@@ -194,13 +174,7 @@ def test_simp_with_tsp_2opt_order(with_O3=False):
 
     print_circ_info(qc, title='Compiled circuit (tsp 2opt order)')
     print(qc.count_ops())
-    import re
-    pattern = re.compile(r'^c[xyz]{2}$')
-    total = sum(
-        v for k, v in qc.count_ops().items()
-        if pattern.match(k)
-    )
-    print('Total CNOT-equivalent gates:', total)
+    print('Total 2Q gates:', count_2q_gates(qc))
 
     # v = Operator(qc).to_matrix()
     # print('Infidelity (tsp 2opt order):', infidelity(u, v))
