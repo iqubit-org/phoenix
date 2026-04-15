@@ -1,0 +1,186 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "phoenix"
+version = "1.0.0"
+description = "PHOENIX: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices"
+readme = "README.md"
+requires-python = ">=3.8,<3.13"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "Zhaohui Yang", email = "youngcius007@gmail.com"},
+]
+maintainers = [
+    {name = "Zhaohui Yang", email = "youngcius007@gmail.com"},
+]
+keywords = [
+    "quantum computing",
+    "quantum compiler",
+    "VQA",
+    "Pauli strings",
+    "Clifford",
+    "Hamiltonian simulation",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Software Development :: Compilers",
+]
+dependencies = [
+    "qiskit>=1.0.0",
+    "numpy>=1.21.0",
+    "scipy>=1.7.0",
+    "joblib>=1.1.0",
+    "prettytable>=3.0.0",
+]
+
+
+[project.urls]
+Homepage = "https://github.com/iqubit-org/phoenix"
+Documentation = "https://github.com/iqubit-org/phoenix/blob/master/README.md"
+Repository = "https://github.com/iqubit-org/phoenix"
+"Bug Tracker" = "https://github.com/iqubit-org/phoenix/issues"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["phoenix*"]
+
+[tool.setuptools.package-data]
+phoenix = ["py.typed"]
+
+[tool.black]
+line-length = 100
+target-version = ["py38", "py39", "py310", "py311", "py312"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | obsolete\.phoenix
+  | obsolete\.phoenix\.2
+  | phoenixV2
+  | paulihedral
+  | tetris
+  | artifact_dac25
+)/
+'''
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--showlocals",
+]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+ignore_missing_imports = true
+exclude = [
+    "obsolete\\.phoenix",
+    "obsolete\\.phoenix\\.2",
+    "phoenixV2",
+    "paulihedral",
+    "tetris",
+    "artifact_dac25",
+]
+
+[tool.coverage.run]
+source = ["phoenix"]
+omit = [
+    "*/tests/*",
+    "*/test_*.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py38"
+exclude = [
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".tox",
+    ".venv",
+    "build",
+    "dist",
+    "obsolete.phoenix",
+    "obsolete.phoenix.2",
+    "phoenixV2",
+    "paulihedral",
+    "tetris",
+    "artifact_dac25",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "SIM",    # flake8-simplify
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "B008",   # do not perform function calls in argument defaults
+    "C901",   # too complex
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # unused imports in __init__.py
+
+[tool.ruff.lint.isort]
+known-first-party = ["phoenix"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
