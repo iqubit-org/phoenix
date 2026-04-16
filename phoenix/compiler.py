@@ -5,8 +5,6 @@ from qiskit import QuantumCircuit
 from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
 from qiskit.circuit import Parameter
 from qiskit.synthesis import LieTrotter, SuzukiTrotter
-from concurrent.futures import ProcessPoolExecutor
-from joblib import Parallel, delayed
 
 from .basics import CNOTEquivCliffordGate
 from .hamiltonian import Hamiltonian
@@ -32,17 +30,10 @@ def compile_hamiltonian_simulation(
     time: float | Parameter = 1.0,
     order: int = 1,
     trotter_steps: int = 1,
+    grouping: bool = True,
     optimize: bool = True,
-    max_workers: int | None = None,
     order_method: str = "trivial",
-    backend: str = "concurrent.futures",
-    method: str = "greedy",
-    smt_min_depth: int = 1,
-    smt_max_depth: int = 30,
-    smt_timeout_ms: int = 60_000,
-    smt_verbose: bool = True,
-    smt_progress_callback: callable | None = None,
-    smt_optimize_total_cx: bool = True,
+    backend: str = "sequential",
 ) -> QuantumCircuit:
     """Compile a Hamiltonian simulation circuit using the Phoenix framework.
 
@@ -52,46 +43,26 @@ def compile_hamiltonian_simulation(
         order: Trotter-Suzuki order (1 or 2).
         trotter_steps: Number of Trotter steps.
         optimize: Whether to apply Qiskit post-optimization.
-        max_workers: Maximum number of parallel workers. If None, uses the number of CPUs.
         order_method: Ordering method for subcircuits.
         backend: Parallelization backend ("joblib", "concurrent.futures", or "sequential").
-        method: Compilation method — "greedy" (default, fast heuristic) or "smt" (optimal, slower).
-        smt_min_depth: Minimum CNOT depth to start searching from (only used when method="smt").
-        smt_max_depth: Maximum CNOT depth for the SMT solver (only used when method="smt").
-        smt_timeout_ms: Z3 solver timeout per depth level in ms (only used when method="smt").
-        smt_verbose: Print SMT solver progress (only used when method="smt").
-        smt_progress_callback: Optional ``fn(depth, status)`` for custom SMT progress display.
-        smt_optimize_total_cx: If True, run additional Optimize passes to minimize
-            total CX cost (only used when method="smt").
 
     Returns:
         The compiled quantum circuit.
     """
-    if method == "smt":
-        from .primitive.simplification_smt import compile_hamiltonian_smt
-        qc = compile_hamiltonian_smt(
-            hamiltonian, time=time,
-            min_depth=smt_min_depth, max_depth=smt_max_depth,
-            timeout_ms=smt_timeout_ms,
-            verbose=smt_verbose, progress_callback=smt_progress_callback,
-            optimize_total_cx=smt_optimize_total_cx,
-        )
-        if optimize:
-            qc = optimize_phoenix_circuit_by_qiskit(qc)
-        return qc
-
-    # ── greedy method ──
-    hams = hamiltonian.group_same_weights()
-    # hams = [hamiltonian]
+    if grouping:
+        hams = hamiltonian.group_same_weights()
+    else:
+        hams = [hamiltonian]
 
     if len(hams) <= 1:
         circuits = [_process_same_weight_hamiltonian(ham) for ham in hams]
     elif backend == "concurrent.futures":
-        with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        from concurrent.futures import ProcessPoolExecutor
+        with ProcessPoolExecutor() as executor:
             circuits = list(executor.map(_process_same_weight_hamiltonian, hams))
     elif backend == "joblib":
-        n_jobs = -1 if max_workers is None else max_workers
-        circuits = Parallel(n_jobs=n_jobs)(delayed(_process_same_weight_hamiltonian)(ham) for ham in hams)
+        from joblib import Parallel, delayed
+        circuits = Parallel(n_jobs=-1)(delayed(_process_same_weight_hamiltonian)(ham) for ham in hams)
     elif backend == "sequential":
         circuits = [_process_same_weight_hamiltonian(ham) for ham in hams]
     else:
