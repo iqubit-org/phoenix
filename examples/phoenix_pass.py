@@ -9,6 +9,7 @@ and prints original / optimized circuit statistics.
 Usage:
     ./phoenix_pass.py path/to/benchmark.json [-d {all2all,chain,hhex,square}]
                                              [--backend BACKEND]
+                                             [--no-grouping]
                                              [--O3]
 """
 import sys
@@ -43,6 +44,8 @@ def main():
                         help='Apply Qiskit O3 post-optimization (default: False)')
     parser.add_argument('--no-optimize', action='store_true',
                         help='Disable the internal optimize pass inside Phoenix (default: False)')
+    parser.add_argument('--no-grouping', action='store_true',
+                        help='Disable the grouping of Pauli strings (default: False)')
     args = parser.parse_args()
 
     console.rule('Phoenix compiling {}'.format(args.filename))
@@ -67,6 +70,7 @@ def main():
     circ_opt = phoenix.compile_hamiltonian_simulation(
         ham,
         backend=args.backend,
+        grouping=not args.no_grouping,
     )
     if args.O3:
         circ_opt = phoenix.utils.qiskit_O3_all2all(circ_opt)

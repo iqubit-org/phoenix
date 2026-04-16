@@ -17,6 +17,7 @@ def load_hamiltonian(path):
 
 def benchmark():
     ham = load_hamiltonian('benchmarks/uccsd_json/LiH_frz_BK_sto3g.json')
+    # ham = load_hamiltonian('benchmarks/qaoa_json/qaoa_rand_16.json')
     print(f"Hamiltonian: {len(ham.paulis)} Pauli terms, {ham.paulis.num_qubits} qubits")
     print(f"Groups (same-weight): {len(ham.group_same_weights())}")
     print("=" * 60)

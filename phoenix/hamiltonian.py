@@ -91,6 +91,12 @@ class Hamiltonian(SparsePauliOp):
         mat = self.with_ops[self.which_nonlocal_paulis]
         return np.bitwise_or.reduce(mat, axis=0).sum()
 
+    @property
+    def max_weight(self) -> int:
+        if not self.size:
+            return 0
+        return np.max(self.with_ops.sum(axis=1))
+
     @cached_property
     def with_ops(self) -> np.ndarray:
         return self.paulis.x | self.paulis.z

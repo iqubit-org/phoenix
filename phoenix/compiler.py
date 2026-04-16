@@ -49,7 +49,7 @@ def compile_hamiltonian_simulation(
     Returns:
         The compiled quantum circuit.
     """
-    if grouping:
+    if grouping or hamiltonian.max_weight <= 2:
         hams = hamiltonian.group_same_weights()
     else:
         hams = [hamiltonian]
