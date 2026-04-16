@@ -1,4 +1,4 @@
-# PHOENIX: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices
+# 🐦‍🔥 PHOENIX: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices
 
 [![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue) [![](https://img.shields.io/badge/Slides-PPTX-orange)](https://fact-lab.hkust.edu.hk/publications/conference-paper/2025/yang-2025-phoenix/Phoenix-ZY%20%2862DAC_Presentation%29.pdf) [![](https://img.shields.io/static/v1?label=Conference&message=DAC%202025&color=purple)](https://arxiv.org/abs/2504.03529)
 
@@ -49,7 +49,7 @@ Core optimization strategy (BSF simplification via Clifford conjugation):
 
 ## Benchmarking Results
 
-### UCCSD Benchmarks (18 molecule simulation programs)
+### UCCSD Benchmarks (18 molecule simulation programs, 3 device topologies)
 
 ```
 >>> Num2Q Opt Rate
