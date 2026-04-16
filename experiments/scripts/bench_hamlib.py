@@ -38,17 +38,6 @@ COMPILER_PASSES = {
     'qiskit': bench_utils.qiskit_pass,
 }
 
-# Compiler-specific per-benchmark size cap on num_nonlocal_gates in the origin circuit
-# (None means no cap). Matches the skip logic in the original serial script.
-COMPILER_NONLOCAL_CAPS = {
-    'phoenix': 3000,
-}
-
-# Extra keyword arguments per compiler (beyond with_O3=True)
-COMPILER_EXTRA_KWARGS = {
-    'tket': {'greedy': True},
-}
-
 
 def process_one(fname, compiler, output_dpath):
     """Compile a single Hamlib benchmark and dump the result. Returns (fname, status, circ_or_msg)."""
@@ -60,20 +49,11 @@ def process_one(fname, compiler, output_dpath):
     # if os.path.exists(output_fname):
     #     return fname, 'cached', output_fname
 
-    cap = COMPILER_NONLOCAL_CAPS.get(compiler)
-    if cap is not None:
-        qasm_file = fname.replace('json', 'qasm')
-        if qiskit.QuantumCircuit.from_qasm_file(qasm_file).num_nonlocal_gates() > cap:
-            return fname, 'skipped', 'nonlocal_gates > {}'.format(cap)
-
     with open(fname, 'r') as f:
         data = json.load(f)
 
-    kwargs = {'with_O3': True}
-    kwargs.update(COMPILER_EXTRA_KWARGS.get(compiler, {}))
-
     compiler_pass = COMPILER_PASSES[compiler]
-    circ = compiler_pass(data['paulis'], data['coeffs'], **kwargs)
+    circ = compiler_pass(data['paulis'], data['coeffs'], with_O3=True)
 
     qiskit.qasm2.dump(circ, output_fname)
     return fname, 'ok', circ
