@@ -12,12 +12,11 @@ set -u
 
 cd "$(dirname "$0")"
 
-BENCHMARK="${1:-../benchmarks/uccsd_json/LiH_frz_BK_sto3g.json}"
+BENCHMARK="${1:-../benchmarks/uccsd_json/CH2_cmplt_BK_sto3g.json}"
 DEVICE="${2:-all2all}"
 
 # All ordering methods supported by phoenix/primitive/ordering.py::order_circuits.
-# 'beam' and 'mcts' are intentionally last because they are very slow.
-METHODS=(trivial greedy greedy_multistart tsp tsp_2opt mcts beam)
+METHODS=(trivial greedy tsp)
 
 LOG_DIR="./_ordering_logs"
 mkdir -p "$LOG_DIR"

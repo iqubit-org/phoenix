@@ -18,8 +18,8 @@ def main():
     # ham = phoenix.Hamiltonian(['XXXZIYZI', 'YXXZIYYI', 'ZXXZIYZI'], [-0.0125, -0.0125, -0.0125])
     # u = ham.unitary_evolution()
 
-    with open('../benchmarks/uccsd_json/NH_frz_JW_sto3g.json', 'r') as f:
-    # with open(_DIR / 'hams/BeH2_as_4e_4o_JW_sto3g.json', 'r') as f:
+    # with open('../benchmarks/uccsd_json/NH_frz_JW_sto3g.json', 'r') as f:
+    with open(_DIR / 'hams/BeH2_as_4e_4o_JW_sto3g.json', 'r') as f:
         data = json.load(f)
 
 
@@ -56,31 +56,31 @@ def main():
     qc_trivial = ham.generate_circuit()
     console.rule("Trivial synthesis")
     phoenix.utils.print_circ_info(qc_trivial, title='Trivial synthesized circuit')
-    # print('Infidelity', phoenix.utils.infidelity(u, Operator(qc_trivial).to_matrix()))
+    print('Infidelity', phoenix.utils.infidelity(u, Operator(qc_trivial).to_matrix()))
 
     smt_min_depth = 1
     # smt_min_depth = max(1, phoenix.utils.tket_pass(ham.paulis.to_labels(), ham.coeffs, little_endian=True).count_ops().get('cx', 0) // 2 - ham.num_nonlocal_paulis * 2)
 
     console.rule("Phoenix synthesis")
     # qc_phoenix = phoenix.compile_hamiltonian_simulation(ham, method='smt', smt_min_depth=smt_min_depth, smt_max_depth=50)
-    qc_phoenix = phoenix.compile_hamiltonian_simulation(ham)
+    qc_phoenix = phoenix.compile_hamiltonian_simulation(ham, order_method='greedy')
     # print(phoenix.utils.remove_1q_fixed_gates(qc_phoenix))
     # print(qc_phoenix)
     phoenix.utils.print_circ_info(qc_phoenix, title='Phoenix synthesized circuit')
-    # print('Infidelity', phoenix.utils.infidelity(u, Operator(qc_phoenix).to_matrix()))
+    print('Infidelity', phoenix.utils.infidelity(u, Operator(qc_phoenix).to_matrix()))
 
 
     console.rule("Qiskit synthesis")
     qc_qiskit = phoenix.utils.qiskit_pass(ham.paulis.to_labels(), ham.coeffs)
     # print(phoenix.utils.remove_1q_fixed_gates(qc_qiskit))
     phoenix.utils.print_circ_info(qc_qiskit, title='Qiskit synthesized circuit')
-    # print('Infidelity', phoenix.utils.infidelity(u, Operator(qc_qiskit).to_matrix()))
+    print('Infidelity', phoenix.utils.infidelity(u, Operator(qc_qiskit).to_matrix()))
 
 
     console.rule("TKet synthesis")
     qc_tket = phoenix.utils.tket_pass(ham.paulis.to_labels(), ham.coeffs, little_endian=True)
     phoenix.utils.print_circ_info(qc_tket, title='TKet synthesized circuit')
-    # print('Infidelity', phoenix.utils.infidelity(u, Operator(qc_tket).to_matrix()))
+    print('Infidelity', phoenix.utils.infidelity(u, Operator(qc_tket).to_matrix()))
 
 
 if __name__ == '__main__':
