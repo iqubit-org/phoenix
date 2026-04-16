@@ -63,7 +63,7 @@ def main():
 
     console.rule("Phoenix synthesis")
     # qc_phoenix = phoenix.compile_hamiltonian_simulation(ham, method='smt', smt_min_depth=smt_min_depth, smt_max_depth=50)
-    qc_phoenix = phoenix.compile_hamiltonian_simulation(ham, order_method='greedy')
+    qc_phoenix = phoenix.compile_hamiltonian_simulation(ham)
     # print(phoenix.utils.remove_1q_fixed_gates(qc_phoenix))
     # print(qc_phoenix)
     phoenix.utils.print_circ_info(qc_phoenix, title='Phoenix synthesized circuit')
