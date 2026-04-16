@@ -1,4 +1,5 @@
 import numpy as np
+from functools import cached_property
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
 from qiskit.circuit.library import PauliEvolutionGate
@@ -81,16 +82,16 @@ class Hamiltonian(SparsePauliOp):
 
     @property
     def total_weight(self) -> int:
-        if not self.size:  # it is an empty tableau
+        if not self.size:
             return 0
-        if ''.join(self.paulis.to_labels()).count('I') == self.size * self.num_qubits:  # all are I
+        if not np.any(self.with_ops):
             return 0
-        if not self.num_nonlocal_paulis:  # only 1Q rotations
+        if not self.num_nonlocal_paulis:
             return 1
         mat = self.with_ops[self.which_nonlocal_paulis]
         return np.bitwise_or.reduce(mat, axis=0).sum()
 
-    @property
+    @cached_property
     def with_ops(self) -> np.ndarray:
         return self.paulis.x | self.paulis.z
     
@@ -123,9 +124,10 @@ class Hamiltonian(SparsePauliOp):
     def apply_clifford(self, cliff, *qubits, inplace=False, frame='s') -> 'Hamiltonian':
         qc = QuantumCircuit(self.num_qubits)
         qc.append(cliff, qubits)
-        
+
         if inplace:
-            self.paulis =  self.paulis.evolve(qc, frame=frame)
+            self.paulis = self.paulis.evolve(qc, frame=frame)
+            self.__dict__.pop('with_ops', None)
             return self
         else:
             return Hamiltonian(self.paulis.evolve(qc, frame=frame), self.coeffs)

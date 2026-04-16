@@ -48,7 +48,7 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
     paulis = [p[::-1] for p in paulis]  # ! PHOENIX uses little-endian convention for Pauli strings, reverse the input strings here
 
     ham = phoenix.Hamiltonian(paulis, coeffs)
-    qc = phoenix.compile_hamiltonian_simulation(ham, optimize=with_O3)
+    qc = phoenix.compile_hamiltonian_simulation(ham)
     # circ = ham.phoenix_circuit(order_blocks=order_blocks, efficient=efficient)
 
     if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
@@ -214,6 +214,8 @@ def qiskit_pass(paulis: List[str], coeffs: List[float], coupling_map: CouplingMa
     from qiskit.circuit.library import PauliEvolutionGate
     from qiskit.quantum_info import SparsePauliOp
     from qiskit.transpiler.passes import HighLevelSynthesis, HLSConfig  
+
+    paulis = [p[::-1] for p in paulis]  # ! Qiskit uses little-endian convention for Pauli strings, reverse the input strings here
 
     n = len(paulis[0])  # number of qubits
     op = SparsePauliOp(paulis, coeffs)

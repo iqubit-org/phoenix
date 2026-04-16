@@ -57,8 +57,8 @@ def process_one(fname, compiler, output_dpath):
 
     output_fname = os.path.join(output_dpath, os.path.basename(fname).replace('.json', '.qasm'))
 
-    if os.path.exists(output_fname):
-        return fname, 'cached', output_fname
+    # if os.path.exists(output_fname):
+    #     return fname, 'cached', output_fname
 
     cap = COMPILER_NONLOCAL_CAPS.get(compiler)
     if cap is not None:

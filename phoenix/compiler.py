@@ -32,7 +32,7 @@ def compile_hamiltonian_simulation(
     trotter_steps: int = 1,
     grouping: bool = True,
     optimize: bool = True,
-    order_method: str = "trivial",
+    order_method: str | None = None,
     backend: str = "sequential",
 ) -> QuantumCircuit:
     """Compile a Hamiltonian simulation circuit using the Phoenix framework.
@@ -43,7 +43,7 @@ def compile_hamiltonian_simulation(
         order: Trotter-Suzuki order (1 or 2).
         trotter_steps: Number of Trotter steps.
         optimize: Whether to apply Qiskit post-optimization.
-        order_method: Ordering method for subcircuits.
+        order_method: Ordering method for subcircuits (None defaults to 'tsp').
         backend: Parallelization backend ("joblib", "concurrent.futures", or "sequential").
 
     Returns:
@@ -68,7 +68,7 @@ def compile_hamiltonian_simulation(
     else:
         raise ValueError(f"Unknown backend: {backend}. Use 'joblib', 'concurrent.futures', or 'sequential'.")
 
-    qc = order_circuits(circuits, method=order_method)
+    qc = order_circuits(circuits, method=order_method or 'tsp')
 
     if optimize:
         qc = optimize_phoenix_circuit_by_qiskit(qc)

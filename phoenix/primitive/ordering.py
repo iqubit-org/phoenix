@@ -9,128 +9,78 @@ from ..basics import CNOTEquivCliffordGate, fSwapEquivCliffordGate
 
 
 class CircuitTetris:
-    """A simplified IR group represented as a circuit with Tetris structure and metadata.    """
+    """A simplified IR group represented as a circuit with Tetris structure and metadata."""
 
     def __init__(
-        self, 
+        self,
         circuit: QuantumCircuit,
         left_end: np.ndarray,
         right_end: np.ndarray,
         head_cliffs: list[CircuitInstruction],
-        tail_cliffs: list[CircuitInstruction]
+        tail_cliffs: list[CircuitInstruction],
     ):
         self.circuit = circuit
         self.left_end = left_end
         self.right_end = right_end
         self.head_cliffs = head_cliffs
         self.tail_cliffs = tail_cliffs
+        self.head_depth2q = _compute_cliff_depth2q(head_cliffs)
+        self.tail_depth2q = _compute_cliff_depth2q(tail_cliffs)
 
     @classmethod
     def from_circuit(cls, qc: QuantumCircuit) -> CircuitTetris:
-        # Make a copy to avoid modifying the original circuit
         qc_copy = qc.copy()
-        left_end = compute_left_end(qc_copy)
-        right_end = compute_right_end(qc_copy)
+        left_end, right_end = compute_endian_vectors(qc_copy)
         head_cliffs = extract_head_cliffs(qc_copy)
         tail_cliffs = extract_tail_cliffs(qc_copy)
         return cls(qc_copy, left_end, right_end, head_cliffs, tail_cliffs)
 
 
-    def copy(self) -> CircuitTetris:
-        """Return a copy of this CircuitTetris instance."""
-        return CircuitTetris(
-            circuit=self.circuit.copy(),
-            left_end=self.left_end.copy(),
-            right_end=self.right_end.copy(),
-            head_cliffs=self.head_cliffs.copy(),
-            tail_cliffs=self.tail_cliffs.copy()
-        )
-    
-    def update_metadata(self) -> None:
-        """Recompute all metadata after circuit modification."""
-        self.left_end = compute_left_end(self.circuit)
-        self.right_end = compute_right_end(self.circuit)
-        self.head_cliffs = extract_head_cliffs(self.circuit)
-        self.tail_cliffs = extract_tail_cliffs(self.circuit)
 
 
-def compute_left_end(circuit: QuantumCircuit) -> np.ndarray:
-    """
-    Compute left-endian vector: how many 2Q layers from left until each qubit is touched.
-    
+def compute_endian_vectors(circuit: QuantumCircuit) -> tuple[np.ndarray, np.ndarray]:
+    """Compute left_end and right_end vectors with a single DAG conversion.
+
+    left_end[q]: how many 2Q layers from the left until qubit q is first touched.
+    right_end[q]: how many 2Q layers from the right until qubit q is last touched.
+
     Example:
-        q0: ─────────────●──     left_end[0] = 2
-        q1: ──●──────────┼──     left_end[1] = 0
-        q2: ──X────●─────X──     left_end[2] = 0
-        q3: ───────X────────     left_end[3] = 1
+        q0: ─────────────●──     left_end[0] = 2,  right_end[0] = 0
+        q1: ──●──────────┼──     left_end[1] = 0,  right_end[1] = 2
+        q2: ──X────●─────X──     left_end[2] = 0,  right_end[2] = 0
+        q3: ───────X────────     left_end[3] = 1,  right_end[3] = 1
     """
     num_qubits = circuit.num_qubits
-    left_end = np.full(num_qubits, -1, dtype=int)
-    
     if num_qubits == 0:
-        return np.zeros(num_qubits, dtype=int)
-    
+        empty = np.zeros(num_qubits, dtype=int)
+        return empty, empty.copy()
+
     dag = circuit_to_dag(circuit)
     layers = list(dag.layers())
-    
-    layer_idx = 0
-    for layer in layers:
-        has_2q = False
-        for node in layer["graph"].op_nodes():
-            if node.op.num_qubits >= 2:
-                has_2q = True
-                for qubit in node.qargs:
-                    q_idx = circuit.find_bit(qubit).index
-                    if q_idx < num_qubits and left_end[q_idx] < 0:
-                        left_end[q_idx] = layer_idx
-        
-        if has_2q:
-            layer_idx += 1
-        
-        if np.all(left_end >= 0):
-            break
-    
-    # Qubits never touched get the maximum layer + 1
-    max_layer = left_end.max() + 1 if layer_idx > 0 else 0
-    left_end[left_end < 0] = max_layer
-    
-    return left_end
 
+    def _scan(layer_iter):
+        end = np.full(num_qubits, -1, dtype=int)
+        layer_idx = 0
+        for layer in layer_iter:
+            has_2q = False
+            for node in layer["graph"].op_nodes():
+                if node.op.num_qubits >= 2:
+                    has_2q = True
+                    for qubit in node.qargs:
+                        q_idx = circuit.find_bit(qubit).index
+                        if q_idx < num_qubits and end[q_idx] < 0:
+                            end[q_idx] = layer_idx
+            if has_2q:
+                layer_idx += 1
+            if np.all(end >= 0):
+                break
+        max_layer = end.max() + 1 if layer_idx > 0 else 0
+        end[end < 0] = max_layer
+        return end
 
-def compute_right_end(circuit: QuantumCircuit) -> np.ndarray:
-    """
-    Compute right-endian vector: how many 2Q layers from right until each qubit is touched.
-    """
-    num_qubits = circuit.num_qubits
-    right_end = np.full(num_qubits, -1, dtype=int)
-    
-    if num_qubits == 0:
-        return np.zeros(num_qubits, dtype=int)
-    
-    dag = circuit_to_dag(circuit)
-    layers = list(dag.layers())
-    
-    layer_idx = 0
-    for layer in reversed(layers):
-        has_2q = False
-        for node in layer["graph"].op_nodes():
-            if node.op.num_qubits >= 2:
-                has_2q = True
-                for qubit in node.qargs:
-                    q_idx = circuit.find_bit(qubit).index
-                    if q_idx < num_qubits and right_end[q_idx] < 0:
-                        right_end[q_idx] = layer_idx
-        
-        if has_2q:
-            layer_idx += 1
-        
-        if np.all(right_end >= 0):
-            break
-    
-    max_layer = right_end.max() + 1 if layer_idx > 0 else 0
-    right_end[right_end < 0] = max_layer
-    
-    return right_end
+    left_end = _scan(iter(layers))
+    right_end = _scan(reversed(layers))
+    return left_end, right_end
 
 
 def extract_head_cliffs(qc: QuantumCircuit) -> list[CircuitInstruction]:
@@ -150,7 +100,6 @@ def extract_head_cliffs(qc: QuantumCircuit) -> list[CircuitInstruction]:
         
         if isinstance(gate, (CNOTEquivCliffordGate, fSwapEquivCliffordGate)):
             if not (qubits[0] in blocked_qubits or qubits[1] in blocked_qubits):
-                # cliffs.append((gate.pauli_0, gate.pauli_1, qubits[0], qubits[1]))
                 cliffs.append(instr)
             else:
                 blocked_qubits.update(qubits)
@@ -186,7 +135,6 @@ def extract_tail_cliffs(qc: QuantumCircuit) -> list[CircuitInstruction]:
         if isinstance(gate, (CNOTEquivCliffordGate, fSwapEquivCliffordGate)):
             # 2Q Clifford: only collect if both qubits are not blocked
             if not (qubits[0] in blocked_qubits or qubits[1] in blocked_qubits):
-                # cliffs.append((gate.pauli_0, gate.pauli_1, qubits[0], qubits[1]))
                 cliffs.append(instr)
             else:
                 # This gate is blocked, mark its qubits as blocked (to prevent earlier gates)
@@ -208,18 +156,26 @@ def extract_tail_cliffs(qc: QuantumCircuit) -> list[CircuitInstruction]:
 
 
 
+def _compute_cliff_depth2q(cliffs: list[CircuitInstruction]) -> int:
+    """Compute 2Q depth of Clifford instructions via qubit-occupation tracking (no QuantumCircuit construction)."""
+    if not cliffs:
+        return 0
+    qubit_depth: dict = {}
+    for instr in cliffs:
+        q0, q1 = instr.qubits[0], instr.qubits[1]
+        d = max(qubit_depth.get(q0, 0), qubit_depth.get(q1, 0)) + 1
+        qubit_depth[q0] = d
+        qubit_depth[q1] = d
+    return max(qubit_depth.values())
+
+
 def assembling_cost(lhs: CircuitTetris, rhs: CircuitTetris) -> float:
     cost = depth_cost(lhs.right_end, rhs.left_end)
     bonus, lhs_tail_simplified, rhs_head_simplified = cancellation_bonus(lhs.tail_cliffs, rhs.head_cliffs, return_simplified_blocks=True)
 
-    def _get_depth2q(instructions: list[CircuitInstruction]) -> int:
-        return QuantumCircuit.from_instructions(instructions).depth(lambda instr: instr.operation.num_qubits == 2)
-    
     if bonus > 0:
-        # Check if gate cancellation reduces subcircuit depth
-        lhs_depth_reduced = _get_depth2q(lhs.tail_cliffs) - _get_depth2q(lhs_tail_simplified)
-        rhs_depth_reduced = _get_depth2q(rhs.head_cliffs) - _get_depth2q(rhs_head_simplified)
-
+        lhs_depth_reduced = lhs.tail_depth2q - _compute_cliff_depth2q(lhs_tail_simplified)
+        rhs_depth_reduced = rhs.head_depth2q - _compute_cliff_depth2q(rhs_head_simplified)
         bonus += lhs_depth_reduced * lhs.circuit.num_qubits + rhs_depth_reduced * rhs.circuit.num_qubits
 
     cost -= bonus
@@ -275,13 +231,12 @@ def cancellation_bonus(lhs_tail: list[CircuitInstruction],
         
         return True
     
-    # Greedy matching: try to find a cancellable head gate for each tail gate
     for i, t in enumerate(lhs_tail):
         for j, h in enumerate(rhs_head):
-            if i in used_tail or j in used_head:
+            if j in used_head:
                 continue
 
-            if t == h: # all Pauli types and qubits must match --> can cancel
+            if t == h:
                 # Check if both sides can move to the boundary
                 if (_is_reachable(lhs_tail, i, used_tail) and 
                     _is_reachable(rhs_head, j, used_head)):
@@ -296,8 +251,6 @@ def cancellation_bonus(lhs_tail: list[CircuitInstruction],
         return bonus, lhs_tail_simplified, rhs_head_simplified
     
     return bonus
-
-
 
 
 
@@ -339,9 +292,29 @@ def _order_circuit_trivial(circuits: list[QuantumCircuit]) -> QuantumCircuit:
         qc_final.compose(qc, inplace=True)
     return qc_final
 
+def _cancel_matching_cliffs(qc: QuantumCircuit,
+                            lhs_tail: list[CircuitInstruction],
+                            rhs_head: list[CircuitInstruction]) -> bool:
+    """Remove matching Clifford pairs at the junction of two composed circuits (in-place).
+
+    Returns True if any gates were removed.
+    """
+    _, lhs_remaining, rhs_remaining = cancellation_bonus(
+        lhs_tail, rhs_head, return_simplified_blocks=True)
+
+    remaining_ids = set(id(t) for t in lhs_remaining) | set(id(h) for h in rhs_remaining)
+    all_ids = set(id(t) for t in lhs_tail) | set(id(h) for h in rhs_head)
+    to_remove = all_ids - remaining_ids
+
+    if to_remove:
+        qc.data = [instr for instr in qc.data if id(instr) not in to_remove]
+        return True
+    return False
+
+
 def _order_circuit_greedy(circuits: list[QuantumCircuit], lookahead: int = 40, **kwargs) -> QuantumCircuit:
     """Order circuits using a greedy algorithm with lookahead."""
-    circuits = circuits.copy()  # Don't modify the input list
+    circuits = circuits.copy()
     tetris = CircuitTetris.from_circuit(circuits.pop(0))
     tetris_list = [CircuitTetris.from_circuit(circ) for circ in circuits]
 
@@ -349,10 +322,18 @@ def _order_circuit_greedy(circuits: list[QuantumCircuit], lookahead: int = 40, *
         costs = {i: assembling_cost(tetris, tts) for i, tts in enumerate(tetris_list[:lookahead])}
         i = min(costs, key=costs.get)
         next_tetris = tetris_list.pop(i)
+
+        old_tail = tetris.tail_cliffs
         tetris.circuit.compose(next_tetris.circuit, inplace=True)
-        # Efficiently update metadata (don't recompute from scratch)
+
+        cancelled = _cancel_matching_cliffs(tetris.circuit, old_tail, next_tetris.head_cliffs)
+        if cancelled:
+            tetris.tail_cliffs = extract_tail_cliffs(tetris.circuit)
+            tetris.tail_depth2q = _compute_cliff_depth2q(tetris.tail_cliffs)
+        else:
+            tetris.tail_cliffs = next_tetris.tail_cliffs
+            tetris.tail_depth2q = next_tetris.tail_depth2q
         tetris.right_end = next_tetris.right_end.copy()
-        tetris.tail_cliffs = next_tetris.tail_cliffs.copy()
 
     return tetris.circuit
 
@@ -486,51 +467,36 @@ def _tsp_2opt_improve(ordering: list[int], cost_matrix: np.ndarray,
         return ordering, cost
     
     ordering = list(ordering)  # Make a copy
-    
-    def compute_total_cost(order):
-        return sum(cost_matrix[order[i]][order[i+1]] for i in range(len(order)-1))
-    
-    current_cost = compute_total_cost(ordering)
-    
+
+    current_cost = sum(cost_matrix[ordering[k]][ordering[k+1]] for k in range(n - 1))
+
     for _ in range(max_iterations):
         improved = False
-        
-        # Try all 2-opt swaps
-        # 2-opt reverses the segment between i and j
-        for i in range(1, n - 1):  # Start from 1 to keep first element fixed
+
+        for i in range(1, n - 1):
             for j in range(i + 1, n):
-                # Compute cost change from reversing segment [i, j]
-                # Old edges: (i-1, i) and (j, j+1 if exists)
-                # New edges: (i-1, j) and (i, j+1 if exists)
-                
-                old_cost = cost_matrix[ordering[i-1]][ordering[i]]
-                new_cost = cost_matrix[ordering[i-1]][ordering[j]]
-                
+                # Compute cost delta for reversing segment [i, j]: O(j-i) instead of O(n)
+                delta = (cost_matrix[ordering[i-1]][ordering[j]]
+                         - cost_matrix[ordering[i-1]][ordering[i]])
                 if j < n - 1:
-                    old_cost += cost_matrix[ordering[j]][ordering[j+1]]
-                    new_cost += cost_matrix[ordering[i]][ordering[j+1]]
-                
-                # Cost of reversed internal segment
-                # This is trickier - we need to account for direction reversal
-                # Actually for a general TSP (not symmetric), we need to recompute
-                # the reversed segment cost
-                
-                # For simplicity in asymmetric case, just try the swap and see
-                new_ordering = ordering[:i] + ordering[i:j+1][::-1] + ordering[j+1:]
-                new_total_cost = compute_total_cost(new_ordering)
-                
-                if new_total_cost < current_cost - 1e-10:
-                    ordering = new_ordering
-                    current_cost = new_total_cost
+                    delta += (cost_matrix[ordering[i]][ordering[j+1]]
+                              - cost_matrix[ordering[j]][ordering[j+1]])
+                for k in range(i, j):
+                    delta += (cost_matrix[ordering[k+1]][ordering[k]]
+                              - cost_matrix[ordering[k]][ordering[k+1]])
+
+                if delta < -1e-10:
+                    ordering[i:j+1] = ordering[i:j+1][::-1]
+                    current_cost += delta
                     improved = True
                     break
-            
+
             if improved:
                 break
-        
+
         if not improved:
             break
-    
+
     return ordering, current_cost
 
 
@@ -612,11 +578,18 @@ def _order_circuit_tsp(
         ordering = _tsp_greedy_initial(cost_matrix, start_idx)
         ordering, total_cost = _tsp_2opt_improve(ordering, cost_matrix, max_2opt_iterations)
     
-    # Assemble circuits in the optimized order
+    # Assemble circuits in the optimized order with gate cancellation
     qc_final = QuantumCircuit(circuits[0].num_qubits)
+    tail_cliffs: list[CircuitInstruction] = []
     for idx in ordering:
-        qc_final.compose(tetris_list[idx].circuit, inplace=True)
-    
+        t = tetris_list[idx]
+        qc_final.compose(t.circuit, inplace=True)
+        cancelled = _cancel_matching_cliffs(qc_final, tail_cliffs, t.head_cliffs)
+        if cancelled:
+            tail_cliffs = extract_tail_cliffs(qc_final)
+        else:
+            tail_cliffs = t.tail_cliffs
+
     return qc_final
 
 

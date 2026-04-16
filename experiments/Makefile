@@ -126,7 +126,7 @@ quclear_square:
 
 # PauliRL compiler
 paulirl:
-	@echo "Testing PauliRL on UCCSD benchmarks (all2all topology)...
+	@echo "Testing PauliRL on UCCSD benchmarks (all2all topology)..."
 	@cd scripts && ./$(BENCH_SCRIPT) -c paulirl
 paulirl_o3:
 	@echo "Testing PauliRL with O3 optimization on UCCSD benchmarks (all2all topology)..."

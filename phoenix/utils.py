@@ -35,10 +35,6 @@ def remove_1q_fixed_gates(qc: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
     return qc_new
 
 
-def qc2mat(qc: qiskit.QuantumCircuit) -> np.ndarray:
-    return Operator(qc).reverse_qargs().to_matrix()
-
-
 def infidelity(u: np.ndarray, v: np.ndarray) -> float:
     """Infidelity between two matrices"""
     if u.shape[0] > 2**10:

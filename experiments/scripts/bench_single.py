@@ -22,8 +22,6 @@ def main():
                         help='Filename of the benchmark (a JSON file containing Pauli strings and coefficients)')
     parser.add_argument('-d', '--device', default='all2all', type=str,
                         help='Device topology (default: all2all) (options: all2all, chain, hhex, square)')
-    parser.add_argument('--no-order', action='store_true',
-                        help='Without IR group ordering procedure in Phoenix compiler (default: False)')
     parser.add_argument('--O3', action='store_true',
                         help='With Qiskit O3 for further local optimization in Phoenix compiler (default: False)')
     parser.add_argument('--tket-greedy', action='store_true',
