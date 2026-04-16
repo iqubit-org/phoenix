@@ -1,10 +1,6 @@
 # 🐦‍🔥 𝑷𝑯𝑶𝑬𝑵𝑰𝑿: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices
 
-[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue) [![](https://img.shields.io/badge/Slides-PPTX-orange)](https://fact-lab.hkust.edu.hk/publication/conference-paper/2025/yang-2025-phoenix/Phoenix-ZY%20%2862DAC_Presentation%29.pdf) [![](https://img.shields.io/static/v1?label=Conference&message=DAC%202025&color=red)](https://arxiv.org/abs/2504.03529) 
-
-
-<!-- [![a](https://img.shields.io/static/v1?label=arXiv&message=2504.03529&color=red)](https://arxiv.org/abs/2504.03529) -->
-
+[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue) [![](https://img.shields.io/badge/Slides-PPTX-orange)](https://fact-lab.hkust.edu.hk/publications/conference-paper/2025/yang-2025-phoenix/Phoenix-ZY%20%2862DAC_Presentation%29.pdf) [![](https://img.shields.io/static/v1?label=Conference&message=DAC%202025&color=purple)](https://arxiv.org/abs/2504.03529) 
 
 
 
@@ -12,19 +8,18 @@
 
 Phoenix is a highly-effective VQA (variational quantum algorithm) application-specifc compiler based on BSF (binary symplectic form) of Pauli exponentiations and Clifford formalism. Different from ZX-calculus-like approaches (e.g., [TKet](https://github.com/CQCL/pytket-docs), [PauliOpt](https://github.com/hashberg-io/pauliopt)) and local peephole optimization approaches (e.g., [Paulihedral](https://arxiv.org/abs/2109.03371), [Tetris](https://arxiv.org/abs/2309.01905v2)), Phoenix exploits global optimization opportunities for VQA programs to the largest extent, when representing Pauli strings as BSF and employing Clifford formalism on the higher-level IR.
 
-This repo includes benchmarking scripts and results with other SOTA baselines -- TKet, Paulihedral, Tetris, and Rustiq. Code of Paulihedral and Tetris are refactored and integrated in this repo.
+This repo includes benchmarking scripts and results with other SOTA baselines -- TKet, Paulihedral, Tetris, QuCLEAR, and Rustiq. Code of Paulihedral and Tetris are refactored and integrated in this repo.
 
-## `phoenix_qiskit`: native qiskit 2.x workflow
+## Usage
 
-The new `phoenix_qiskit` package re-implements the Phoenix compilation pipeline directly on top of qiskit 2.x data structures. Instead of the bespoke circuit and gate abstractions that powered the original prototype, the module exposes a lightweight façade over qiskit's `SparsePauliOp`, `PauliList`, and `QuantumCircuit` primitives:
+
 
 ```python
-from qiskit.quantum_info import SparsePauliOp
-from phoenix_qiskit import PhoenixCompiler
+import phoenix
 
-op = SparsePauliOp(['XXIII', 'YYIII', 'ZZIII'], [0.5, 0.5, 0.5])
-compiler = PhoenixCompiler(optimization_level=2)
-optimized_trotter_step = compiler.compile(op, trotter_steps=1)
+ham = phoenix.Hamiltonian(['XXIII', 'YYIII', 'ZZIII'], [0.5, 0.5, 0.5])
+qc = phoenix.compile_hamiltonian_simulation(ham)
+qc = phoenix.optimize_phoenix_circuit_by_qiskit(qc) # perform post-optimization (circuit-level) after high0=-level optimization
 ```
 
 Internally the compiler groups Pauli terms by their non-trivial support, simplifies each group via Clifford conjugation in binary symplectic form, turns the resulting configurations into `QuantumCircuit` blocks, and finally schedules/optimizes those blocks with qiskit's transpiler passes. The current implementation targets the CNOT-native basis and exposes a `trotter_steps` knob for repeating the synthesized blocks; support for higher-order Trotterization and additional basis choices can be layered on top of the same API.
@@ -65,12 +60,32 @@ If you make use of Phoenix in your work, please cite the following publication:
 ![](./assets/num_2q_gates_manhattan.png)
 
 
+## Installation
+
+```bash
+pip install .
+```
+
+or 
+
+```bash
+pip install -e .
+```
+
+
 ## Requirements
 
-Basic library requirements are lists in `requirements.txt`.
+Core dependencies (automatically installed):
 
-- We align with the `1.2.4` version of  `qiskit`  across the published benchmarking results, since `qiskit`'s O1/O2 has different built-in workflows within its 0.xx.x versions and 1.xx.x versions. Version 1.0+ is suitable for Phoenix.
-- Originally, Paulihedral and Tetris require version 0.23.x and version 0.43.x of Qiskit. In this code repo, they can also be soomthly tested under Qiskit-1.2.4.
+- `qiskit >= 1.0.0`
+- `numpy >= 1.21.0`
+- `scipy >= 1.7.0`
+- `joblib >= 1.1.0`
+- `prettytable >= 3.0.0`
+
+We align with the `1.2.4` version of `qiskit` across the published benchmarking results, since `qiskit`'s O1/O2 has different built-in workflows within its 0.xx.x versions and 1.xx.x versions. Version 1.0+ is suitable for Phoenix.
+
+Originally, Paulihedral and Tetris require version 0.23.x and version 0.43.x of Qiskit. In this code repo, they can also be smoothly tested under Qiskit-1.2.4.
 
 ## Benchmarking description
 

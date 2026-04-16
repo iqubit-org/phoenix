@@ -101,33 +101,6 @@ def test_simp_with_greedy_order(with_O3=False):
     print('Time (greedy order):', end - start)
 
 
-def test_simp_with_greedy_multistart_order(with_O3=False):
-    with open(os.path.join(_PROJECT_ROOT, f'benchmarks/uccsd_json/{DEMO_FILE}'), 'r') as f:
-        data = json.load(f)
-
-    hamiltonian = Hamiltonian(data['paulis'], data['coeffs'])
-    # u = hamiltonian.unitary_evolution()
-    qc_trivial = hamiltonian.generate_circuit()
-    print_circ_info(qc_trivial, title='Original circuit')
-
-    start = time.process_time()
-    qc = compile_hamiltonian_simulation(hamiltonian, order_method='greedy_multistart', backend='sequential')
-    end = time.process_time()
-    
-    # with Qiskit O3
-    if with_O3:
-        qc = qiskit.transpile(qc, basis_gates=['cx', 'u1', 'u2', 'u3'], optimization_level=3)
-
-    print_circ_info(qc, title='Compiled circuit (greedy multistart order)')
-    print(qc.count_ops())
-
-    print('Total 2Q gates:', count_2q_gates(qc))
-
-    # v = Operator(qc).to_matrix()
-    # print('Infidelity (greedy multistart order):', infidelity(u, v))
-    print('Time (greedy multistart order):', end - start)
-
-
 def test_simp_with_tsp_order(with_O3=False):
     with open(os.path.join(_PROJECT_ROOT, f'benchmarks/uccsd_json/{DEMO_FILE}'), 'r') as f:
         data = json.load(f)
@@ -155,37 +128,7 @@ def test_simp_with_tsp_order(with_O3=False):
     print('Time (tsp order):', end - start)
 
 
-def test_simp_with_tsp_2opt_order(with_O3=False):
-    with open(os.path.join(_PROJECT_ROOT, f'benchmarks/uccsd_json/{DEMO_FILE}'), 'r') as f:
-        data = json.load(f)
-
-    hamiltonian = Hamiltonian(data['paulis'], data['coeffs'])
-    # u = hamiltonian.unitary_evolution()
-    qc_trivial = hamiltonian.generate_circuit()
-    print_circ_info(qc_trivial, title='Original circuit')
-
-    start = time.process_time()
-    qc = compile_hamiltonian_simulation(hamiltonian, order_method='tsp_2opt', backend='sequential')
-    end = time.process_time()
-    
-    # with Qiskit O3
-    if with_O3:
-        qc = qiskit.transpile(qc, basis_gates=['cx', 'u1', 'u2', 'u3'], optimization_level=3)
-
-    print_circ_info(qc, title='Compiled circuit (tsp 2opt order)')
-    print(qc.count_ops())
-    print('Total 2Q gates:', count_2q_gates(qc))
-
-    # v = Operator(qc).to_matrix()
-    # print('Infidelity (tsp 2opt order):', infidelity(u, v))
-    print('Time (tsp 2opt order):', end - start)
-
-
-
-
 if __name__ == '__main__':
     test_simp_with_trivial_order(with_O3=True)
     test_simp_with_greedy_order(with_O3=True)
-    test_simp_with_greedy_multistart_order(with_O3=True)
     test_simp_with_tsp_order(with_O3=True)
-    test_simp_with_tsp_2opt_order(with_O3=True)

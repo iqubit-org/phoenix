@@ -119,7 +119,7 @@ def test_ordering_methods():
     Compare all ordering methods using the complete compile_hamiltonian_simulation flow.
     
     This tests that:
-    1. beam search and MCTS should have lower Num2Q and Depth2Q than greedy
+    1. Advanced methods should have lower Num2Q and Depth2Q than trivial
     2. All methods should produce circuits with similar infidelity (verifies correctness)
     """
     # Load benchmark
@@ -140,9 +140,11 @@ def test_ordering_methods():
     methods = [
         ('trivial', {}),
         ('greedy', {}),
-        ('greedy_multistart', {'num_starts': 10}),
+
+
         ('tsp', {}),  # TSP-based ordering
-        ('tsp_2opt', {}),  # TSP with 2-opt only
+
+
     ]
     
     results = []
