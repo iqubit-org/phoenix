@@ -15,7 +15,7 @@ from phoenix import Hamiltonian, compile_hamiltonian_simulation
 
 def load_test_hamiltonian():
     """Load test Hamiltonian from JSON."""
-    with open('benchmarks/uccsd_json/LiH_frz_BK_sto3g.json', 'r') as f:
+    with open('benchmarks/uccsd_json/CH2_cmplt_BK_sto3g.json', 'r') as f:
         data = json.load(f)
     return Hamiltonian(data['paulis'], data['coeffs'])
 
@@ -31,14 +31,14 @@ def benchmark():
     # Baseline: Sequential
     print("\n1. SEQUENTIAL (baseline)")
     start = time.perf_counter()
-    qc_seq = compile_hamiltonian_simulation(hamiltonian)
+    qc_seq = compile_hamiltonian_simulation(hamiltonian, optimize=False)
     time_seq = time.perf_counter() - start
     print(f"   Time: {time_seq:.4f}s")
     
     # Backend 1: concurrent.futures (default)
     print("\n2. concurrent.futures + map()")
     start = time.perf_counter()
-    qc1 = compile_hamiltonian_simulation(hamiltonian, backend='concurrent.futures')
+    qc1 = compile_hamiltonian_simulation(hamiltonian, backend='concurrent.futures', optimize=False)
     time_cf = time.perf_counter() - start
     speedup_cf = time_seq / time_cf
     print(f"   Time: {time_cf:.4f}s")
@@ -49,7 +49,7 @@ def benchmark():
     # Backend 2: joblib
     print("\n3. joblib.Parallel()")
     start = time.perf_counter()
-    qc2 = compile_hamiltonian_simulation(hamiltonian, backend='joblib')
+    qc2 = compile_hamiltonian_simulation(hamiltonian, backend='joblib', optimize=False)
     time_jl = time.perf_counter() - start
     speedup_jl = time_seq / time_jl
     print(f"   Time: {time_jl:.4f}s")
