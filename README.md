@@ -22,6 +22,8 @@ qc = phoenix.compile_hamiltonian_simulation(ham)
 phoenix.utils.print_circ_info(qc)
 ```
 
+*Also, see [examples/phoenix_pass.py](examples/phoenix_pass.py) for reference.*
+
 The compiler pipeline:
 
 1. **Grouping** -- group Pauli terms by their non-trivial support
