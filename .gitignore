@@ -168,8 +168,6 @@ cython_debug/
 *tmp.*
 
 
-/quclear/
-/pauliopt/
 
 vqe_tetris/
 
@@ -179,7 +177,5 @@ docs/
 
 tmp/
 
-/experiments/
 /exploration/
-/benchmarks/
 
