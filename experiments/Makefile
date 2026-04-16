@@ -1,8 +1,8 @@
 OUTPUT_QASM_PATH = output_uccsd
 BENCH_SCRIPT = bench_uccsd.py
-ALL_COMPILERS := qiskit tket paulihedral tetris pauliopt quclear phoenix
-HIGH_LEVEL_COMPILERS := tket paulihedral tetris pauliopt quclear phoenix
-NON_TOPO_AWARE_COMPILERS := tket pauliopt quclear phoenix
+ALL_COMPILERS := qiskit tket paulihedral tetris pauliopt quclear phoenix phoenix+
+HIGH_LEVEL_COMPILERS := tket paulihedral tetris pauliopt quclear phoenix phoenix+
+NON_TOPO_AWARE_COMPILERS := tket pauliopt quclear phoenix phoenix+
 TOPOLOGY_TYPES := hhex square
 
 
@@ -26,19 +26,19 @@ phoenix_square:
 	@echo "Testing Phoenix on UCCSD benchmarks (square topology)..."
 	@cd scripts && ./uccsd_all2all_to_limited.py -c phoenix -d square
 
-# Phoenix++ compiler
-phoenix++:
-	@echo "Testing Phoenix++ on UCCSD benchmarks (all2all topology)..."
-	@cd scripts && ./$(BENCH_SCRIPT) -c phoenix++
-phoenix++_o3:
-	@echo "Testing Phoenix++ with O3 optimization on UCCSD benchmarks (all2all topology)..."
-	@cd scripts && ./$(BENCH_SCRIPT) -c phoenix++ --O3
-phoenix++_hhex:
-	@echo "Testing Phoenix++ on UCCSD benchmarks (heavy-hexagonal topology)..."
-	@cd scripts && ./uccsd_all2all_to_limited.py -c phoenix++ -d hhex
-phoenix++_square:
-	@echo "Testing Phoenix++ on UCCSD benchmarks (square topology)..."
-	@cd scripts && ./uccsd_all2all_to_limited.py -c phoenix++ -d square
+# Phoenix+ compiler
+phoenix+:
+	@echo "Testing Phoenix+ on UCCSD benchmarks (all2all topology)..."
+	@cd scripts && ./$(BENCH_SCRIPT) -c phoenix+
+phoenix+_o3:
+	@echo "Testing Phoenix+ with O3 optimization on UCCSD benchmarks (all2all topology)..."
+	@cd scripts && ./$(BENCH_SCRIPT) -c phoenix+ --O3
+phoenix+_hhex:
+	@echo "Testing Phoenix+ on UCCSD benchmarks (heavy-hexagonal topology)..."
+	@cd scripts && ./uccsd_all2all_to_limited.py -c phoenix+ -d hhex
+phoenix+_square:
+	@echo "Testing Phoenix+ on UCCSD benchmarks (square topology)..."
+	@cd scripts && ./uccsd_all2all_to_limited.py -c phoenix+ -d square
 
 # Paulihedral compiler
 paulihedral:

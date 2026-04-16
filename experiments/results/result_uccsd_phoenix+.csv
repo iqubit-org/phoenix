@@ -1,0 +1,3 @@
+program,num_qubits,num_gates,num_2q_gates,depth,depth_2q,num_gates(all2all),num_2q_gates(all2all),depth(all2all),depth_2q(all2all),num_gates(all2all_opt),num_2q_gates(all2all_opt),depth(all2all_opt),depth_2q(all2all_opt),num_gates(hhex),num_2q_gates(hhex),depth(hhex),depth_2q(hhex),num_gates(square),num_2q_gates(square),depth(square),depth_2q(square)
+LiH_frz_BK,10,3566,1442,2064,1438,840,278,406,203,803,278,401,203,1766,1086,890,680,1272,668,692,469
+LiH_frz_JW,10,3392,1616,2137,1576,691,227,317,158,663,227,310,158,1428,856,746,566,983,478,513,342

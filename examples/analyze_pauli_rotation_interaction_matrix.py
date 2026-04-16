@@ -1,3 +1,8 @@
+"""
+E.g., 
+    python analyze_pauli_rotation_interaction_matrix.py ZX YY ZZ YX --coeffs 0.1 0.2 0.3 0.4
+    python analyze_pauli_rotation_interaction_matrix.py ZX YY ZZ YX
+"""
 from __future__ import annotations
 
 import argparse

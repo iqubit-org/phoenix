@@ -35,17 +35,12 @@ def opt_rate(df, col_opt, col_orig):
     return gmean(df[col_opt] / df[col_orig]).round(3)
 
 
-def topology_label(label):
-    n = max(len(df) for df in compilers.values())
-    return "{} ({})".format(label, n)
-
-
 # >>> Num2Q Opt Rate
 table = PrettyTable()
 table.field_names = ["Num2Q Opt Rate"] + list(compilers.keys())
 
 for label, topo in topologies:
-    row = [topology_label(label)]
+    row = [label]
     for name, df in compilers.items():
         row.append(opt_rate(df, 'num_2q_gates({})'.format(topo), 'num_2q_gates'))
     table.add_row(row)
@@ -58,7 +53,7 @@ table = PrettyTable()
 table.field_names = ["Depth2Q Opt Rate"] + list(compilers.keys())
 
 for label, topo in topologies:
-    row = [topology_label(label)]
+    row = [label]
     for name, df in compilers.items():
         row.append(opt_rate(df, 'depth_2q({})'.format(topo), 'depth_2q'))
     table.add_row(row)

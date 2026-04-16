@@ -1,28 +1,156 @@
-# 🐦‍🔥 𝑷𝑯𝑶𝑬𝑵𝑰𝑿: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices
+# PHOENIX: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices
 
-[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue) [![](https://img.shields.io/badge/Slides-PPTX-orange)](https://fact-lab.hkust.edu.hk/publications/conference-paper/2025/yang-2025-phoenix/Phoenix-ZY%20%2862DAC_Presentation%29.pdf) [![](https://img.shields.io/static/v1?label=Conference&message=DAC%202025&color=purple)](https://arxiv.org/abs/2504.03529) 
-
+[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue) [![](https://img.shields.io/badge/Slides-PPTX-orange)](https://fact-lab.hkust.edu.hk/publications/conference-paper/2025/yang-2025-phoenix/Phoenix-ZY%20%2862DAC_Presentation%29.pdf) [![](https://img.shields.io/static/v1?label=Conference&message=DAC%202025&color=purple)](https://arxiv.org/abs/2504.03529)
 
 
 ## Overview
 
-Phoenix is a highly-effective VQA (variational quantum algorithm) application-specifc compiler based on BSF (binary symplectic form) of Pauli exponentiations and Clifford formalism. Different from ZX-calculus-like approaches (e.g., [TKet](https://github.com/CQCL/pytket-docs), [PauliOpt](https://github.com/hashberg-io/pauliopt)) and local peephole optimization approaches (e.g., [Paulihedral](https://arxiv.org/abs/2109.03371), [Tetris](https://arxiv.org/abs/2309.01905v2)), Phoenix exploits global optimization opportunities for VQA programs to the largest extent, when representing Pauli strings as BSF and employing Clifford formalism on the higher-level IR.
+Phoenix is a high-level VQA (variational quantum algorithm) compiler built on top of [Qiskit](https://github.com/Qiskit/qiskit). It compiles Hamiltonian simulation circuits by exploiting global optimization opportunities through the BSF (binary symplectic form) representation of Pauli exponentiations and Clifford formalism.
 
-This repo includes benchmarking scripts and results with other SOTA baselines -- TKet, Paulihedral, Tetris, QuCLEAR, and Rustiq. Code of Paulihedral and Tetris are refactored and integrated in this repo.
+Different from ZX-calculus-like approaches (e.g., [TKet](https://github.com/CQCL/pytket-docs), [PauliOpt](https://github.com/hashberg-io/pauliopt)) and local peephole optimization approaches (e.g., [Paulihedral](https://arxiv.org/abs/2109.03371), [Tetris](https://arxiv.org/abs/2309.01905v2)), Phoenix performs global optimization on the Pauli-string IR level before lowering to gate-level circuits.
+
+This repo includes benchmarking scripts and results with other SOTA baselines -- TKet, Paulihedral, Tetris, PauliOpt, and QuCLEAR. Code of Paulihedral and Tetris are refactored and integrated in this repo.
+
 
 ## Usage
-
-
 
 ```python
 import phoenix
 
 ham = phoenix.Hamiltonian(['XXIII', 'YYIII', 'ZZIII'], [0.5, 0.5, 0.5])
 qc = phoenix.compile_hamiltonian_simulation(ham)
-qc = phoenix.optimize_phoenix_circuit_by_qiskit(qc) # perform post-optimization (circuit-level) after high0=-level optimization
+phoenix.utils.print_circ_info(qc)
 ```
 
-Internally the compiler groups Pauli terms by their non-trivial support, simplifies each group via Clifford conjugation in binary symplectic form, turns the resulting configurations into `QuantumCircuit` blocks, and finally schedules/optimizes those blocks with qiskit's transpiler passes. The current implementation targets the CNOT-native basis and exposes a `trotter_steps` knob for repeating the synthesized blocks; support for higher-order Trotterization and additional basis choices can be layered on top of the same API.
+The compiler pipeline:
+
+1. **Grouping** -- group Pauli terms by their non-trivial support
+2. **Simplification** -- simplify each group via Clifford conjugation in binary symplectic form
+3. **Circuit construction** -- convert simplified configurations into `QuantumCircuit` blocks
+4. **Ordering** -- schedule blocks to minimize depth overhead and maximize gate cancellation (TSP-based or greedy)
+5. **Post-optimization** -- apply Qiskit transpiler passes for Clifford cancellation and unitary resynthesis
+
+Key parameters of `compile_hamiltonian_simulation`:
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `grouping` | `True` | Group Pauli terms by non-trivial support before simplification |
+| `optimize` | `True` | Apply Qiskit post-optimization |
+| `order_method` | `None` (=`'tsp'`) | Block ordering: `'trivial'`, `'greedy'`, or `'tsp'` |
+| `backend` | `'sequential'` | Parallelization: `'sequential'`, `'concurrent.futures'`, or `'joblib'` |
+
+
+## Illustration
+
+Core optimization strategy (BSF simplification via Clifford conjugation):
+
+![](./assets/bsf_simp_example.svg)
+
+
+## Benchmarking Results
+
+### UCCSD Benchmarks (18 molecule simulation programs)
+
+```
+>>> Num2Q Opt Rate
++----------------+--------+-------+-------------+--------+----------+---------+---------+
+| Num2Q Opt Rate | Qiskit |  TKet | Paulihedral | Tetris | PauliOpt | QuCLEAR | Phoenix |
++----------------+--------+-------+-------------+--------+----------+---------+---------+
+|    All2all     | 0.177  | 0.126 |    0.317    | 0.556  |  0.426   |   0.16  |  0.191  |
+|   All2all O3   | 0.175  | 0.125 |    0.292    | 0.388  |  0.426   |  0.158  |  0.191  |
+|     Square     | 0.505  | 0.306 |    0.459    | 0.618  |  0.904   |  0.395  |   0.42  |
+|      HHex      |  0.86  | 0.475 |    0.839    | 0.676  |  1.419   |  0.609  |  0.586  |
++----------------+--------+-------+-------------+--------+----------+---------+---------+
+
+>>> Depth2Q Opt Rate
++------------------+--------+-------+-------------+--------+----------+---------+---------+
+| Depth2Q Opt Rate | Qiskit |  TKet | Paulihedral | Tetris | PauliOpt | QuCLEAR | Phoenix |
++------------------+--------+-------+-------------+--------+----------+---------+---------+
+|     All2all      | 0.124  | 0.075 |    0.321    | 0.549  |  0.236   |  0.104  |  0.165  |
+|    All2all O3    | 0.122  | 0.074 |    0.296    | 0.381  |  0.236   |  0.102  |  0.165  |
+|      Square      | 0.344  |  0.21 |     0.4     | 0.501  |  0.573   |  0.279  |   0.34  |
+|       HHex       | 0.522  | 0.304 |    0.698    | 0.531  |  0.827   |  0.397  |   0.44  |
++------------------+--------+-------+-------------+--------+----------+---------+---------+
+```
+
+Lower is better. Opt Rate = geometric mean of (optimized / original) across all benchmarks.
+
+### HamLib Benchmarks (100 programs across 4 categories)
+
+```
+>>> Num2Q Opt Rate
++---------------------------+--------+-------+-------------+--------+---------+---------+
+|       Num2Q Opt Rate      | Qiskit |  TKet | Paulihedral | Tetris | QuCLEAR | Phoenix |
++---------------------------+--------+-------+-------------+--------+---------+---------+
+|  binaryoptimization (15)  | 1.252  | 0.886 |    0.669    | 0.715  |  1.598  |  0.718  |
+| discreteoptimization (15) | 0.542  | 0.556 |    0.524    | 0.751  |  0.578  |  0.885  |
+|       chemistry (35)      | 0.292  | 0.276 |    0.346    | 0.496  |  0.354  |  0.357  |
+|    condensedmatter (35)   | 1.084  | 0.855 |    0.527    | 0.678  |  0.747  |  0.499  |
+|         All (100)         |  0.63  | 0.542 |     0.47    | 0.622  |  0.607  |  0.509  |
++---------------------------+--------+-------+-------------+--------+---------+---------+
+
+>>> Depth2Q Opt Rate
++---------------------------+--------+-------+-------------+--------+---------+---------+
+|      Depth2Q Opt Rate     | Qiskit |  TKet | Paulihedral | Tetris | QuCLEAR | Phoenix |
++---------------------------+--------+-------+-------------+--------+---------+---------+
+|  binaryoptimization (15)  | 1.257  | 0.617 |    0.304    | 0.521  |  1.578  |  0.212  |
+| discreteoptimization (15) | 0.588  | 0.346 |    0.408    | 1.707  |  0.631  |  0.329  |
+|       chemistry (35)      |  0.21  | 0.175 |     0.34    | 0.382  |  0.262  |  0.243  |
+|    condensedmatter (35)   | 0.345  | 0.772 |    0.614    | 0.118  |  0.606  |  0.042  |
+|         All (100)         | 0.381  | 0.394 |    0.421    | 0.332  |  0.513  |  0.131  |
++---------------------------+--------+-------+-------------+--------+---------+---------+
+```
+
+
+## Installation
+
+```bash
+pip install .
+```
+
+or for development:
+
+```bash
+pip install -e .
+```
+
+
+## Requirements
+
+Core dependencies (automatically installed):
+
+- `qiskit >= 1.0.0`
+- `numpy >= 1.21.0`
+- `scipy >= 1.7.0`
+- `prettytable >= 3.0.0`
+
+We align with the `1.2.4` version of `qiskit` across the published benchmarking results. Version 1.0+ is required for Phoenix.
+
+
+## Benchmarking Scripts
+
+All benchmarking scripts are under [`./experiments/`](./experiments/).
+
+| Script | Description |
+|--------|-------------|
+| `bench_single.py` | Run a single benchmark given a compiler and input JSON file |
+| `bench_uccsd.py` | Batch benchmark on UCCSD suite for a given compiler |
+| `bench_hamlib.py` | Batch benchmark on HamLib suite for a given compiler and category |
+| `bench_utils.py` | Standard compilation passes for Phoenix and all baselines |
+| `uccsd_all2all_to_limited.py` | Map all-to-all results to limited-connectivity topologies (square, heavy-hex) |
+| `uccsd_all2all_qiskit_opt.py` | Apply Qiskit O3 post-optimization to logical-level synthesis results |
+
+Use `make` targets for batch execution:
+
+```bash
+cd experiments
+make phoenix          # Run Phoenix on UCCSD (all2all)
+make phoenix_square   # Map Phoenix results to square topology
+make sum_result       # Summarize all results to CSV
+make disp_result      # Display comparison tables
+```
+
+## Citation
 
 If you make use of Phoenix in your work, please cite the following publication:
 
@@ -39,75 +167,6 @@ If you make use of Phoenix in your work, please cite the following publication:
 }
 ```
 
-## Features
-
-- High-level compilation
-- Global optimization
-- ISA-independent
-
-
-**E.g., Illustration of the core optimization strategy**
-
-![](./assets/bsf_simp_example.svg)
-
-
-**E.g., Hardware-agnostic compilation:**
-
-![](./assets/num_2q_gates_all2all.png)
-
-**E.g., Hardware-aware compilation:**
-
-![](./assets/num_2q_gates_manhattan.png)
-
-
-## Installation
-
-```bash
-pip install .
-```
-
-or 
-
-```bash
-pip install -e .
-```
-
-
-## Requirements
-
-Core dependencies (automatically installed):
-
-- `qiskit >= 1.0.0`
-- `numpy >= 1.21.0`
-- `scipy >= 1.7.0`
-- `joblib >= 1.1.0`
-- `prettytable >= 3.0.0`
-
-We align with the `1.2.4` version of `qiskit` across the published benchmarking results, since `qiskit`'s O1/O2 has different built-in workflows within its 0.xx.x versions and 1.xx.x versions. Version 1.0+ is suitable for Phoenix.
-
-Originally, Paulihedral and Tetris require version 0.23.x and version 0.43.x of Qiskit. In this code repo, they can also be smoothly tested under Qiskit-1.2.4.
-
-## Benchmarking description
-
-**Benchmark suites:**
-
-- UCCSD: 16 molecule simulation programs from benchmarks from [TKet benchmarking](https://github.com/CQCL/tket_benchmarking). We use this suite for fine-grain benchmarking and real system analysis.
-
-**Benchmarking scripts:** (under [./artifact_dac25/experiments/](./artifact_dac25/experiments/))
-
-- `bench_single.py`: Benchmarking given a compiler and input file (`.qasm` file for TKet, `.json` file for Paulihedral/Tetris/Phoenix)
-- `bench_hamlib.py`: Benchmarking given a compiler and a category of Hamlib benchmarks
-- `bench_uccsd.py`: Benchmarking given a compiler and a physical-qubit topology type (E.g., all2all, manhattan, sycamore) (Since TKet/Phoenix does no make hardware-ware co-optimization, manually set topology execept "all2all" are invalid. Instead, the hardware-ware compilation are conducted by executing another script `uccsd_all2all_to_limited.py`)
-- `bench_utils.py`: Utils used in benchmarking, within which the standard compilation passes of Phoenix and baselines are specified
-- `uccsd_all2lall_to_limited.py`: Compile all-to-all compilation results from TKet/Phoenix for UCCSD benchmarks to limited-connectivity topology (manhattan, sycamore)
-- `uccsd_all2all_qiskit_opt.py`: Further perform Qiskit O3 for logical-level synthesis results of Paulihedral/Tetris/Phoenix
-
-**Result files:**
-
-- `./artifact_dac25/experiments/output_uccsd/<compiler>/<device>`: Output circuits by some `<compiler>` (E.g., Tetris, Phoenix) for some kind of `<device>` (E.g.,  all2all,  manhattan) from the UCCSD benchmark suite
-
-- `./artifact_dac25/experiments/output_uccsd/<compiler>_opt/all2all`: Output circuits by some `<compiler>` (E.g., Tetris, Phoenix) when performing its logical-level synthesis with Qiskit O3 optimization procedure on logical circuits
-
-## Copyright and License
+## License
 
 This project is licensed under the Apache License 2.0 -- see the [LICENSE](LICENSE) file for details.

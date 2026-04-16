@@ -112,9 +112,9 @@ def search_best_clifford(ham: Hamiltonian, avoid: tuple[int, int]) -> tuple[
     return best_ham, best_cliff, best_qubit_pair
 
 
-def heuristic_bsf_cost(x: np.ndarray, z: np.ndarray) -> float:
+def _heuristic_bsf_cost(x: np.ndarray, z: np.ndarray) -> float:
     r"""
-    Heuristic cost for a Pauli Tableau, the smaller the simpler.
+    Original heuristic cost for a Pauli Tableau, the smaller the simpler.
 
     .. math::
         \mathrm{cost}_{\mathrm{bsf}} := \mathrm{total\_weight} * n_{\mathrm{nonlocal}}^2
@@ -141,4 +141,46 @@ def heuristic_bsf_cost(x: np.ndarray, z: np.ndarray) -> float:
         cost += np.bitwise_or(z[row_combs[0]], z[row_combs[1]]).sum() * 0.5
 
     cost += total_weight * num_nonlocal_paulis ** 2
+    return cost
+
+
+def heuristic_bsf_cost(x: np.ndarray, z: np.ndarray) -> float:
+    r"""
+    Optimized heuristic cost for a Pauli Tableau.
+
+    Uses matmul-based pairwise OR counting:
+        ``sum_{i<j} |a_i OR a_j| = (m-1)*sum|a_i| - (A·Aᵀ upper-triangle sum)``
+    which replaces explicit ``combinations`` + fancy indexing for large m.
+    """
+    with_ops = np.logical_or(x, z)
+    row_weights = with_ops.sum(axis=1)
+    which_nl = np.where(row_weights > 1)[0]
+    num_nl = which_nl.size
+
+    if not np.any(with_ops):
+        return 0.0
+    elif not num_nl:
+        return 0.0
+
+    total_weight = np.bitwise_or.reduce(with_ops[which_nl], axis=0).sum()
+
+    cost = 0.0
+    if num_nl > 1:
+        nl_ops = with_ops[which_nl].astype(np.int32)
+        nl_x = x[which_nl].astype(np.int32)
+        nl_z = z[which_nl].astype(np.int32)
+
+        # sum_{i<j} |a_i OR a_j| = (m-1)*sum(|a_i|) - sum-upper-tri(A @ A.T)
+        def _pairwise_or_sum(a: np.ndarray) -> float:
+            m = a.shape[0]
+            row_sums = a.sum(axis=1)
+            aat = a @ a.T
+            and_upper = (aat.sum() - np.trace(aat)) * 0.5
+            return (m - 1) * row_sums.sum() - and_upper
+
+        cost += _pairwise_or_sum(nl_ops)
+        cost += _pairwise_or_sum(nl_x) * 0.5
+        cost += _pairwise_or_sum(nl_z) * 0.5
+
+    cost += total_weight * num_nl ** 2
     return cost

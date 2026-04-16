@@ -13,8 +13,8 @@ import argparse
 import warnings
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import qiskit.qasm2
-import pytket.qasm
 from natsort import natsorted
+from functools import partial
 import bench_utils
 import phoenix
 
@@ -35,6 +35,7 @@ COMPILER_PASSES = {
     'pauliopt': bench_utils.pauliopt_pass,
     'quclear': bench_utils.quclear_pass,
     'phoenix': bench_utils.phoenix_pass,
+    'phoenix+': partial(bench_utils.phoenix_pass, grouping=False),
 }
 
 COUPLING_MAP_GENS = {

@@ -8,8 +8,8 @@ paulis = data['paulis']
 coeffs = data['coeffs']
 
 
-# Use phoenix_qiskit to work out a compilation example
-from phoenix_qiskit import Hamiltonian, compile_hamiltonian_simulation
+# Use phoenix to work out a compilation example
+from phoenix import Hamiltonian, compile_hamiltonian_simulation
 import numpy as np
 
 print(f"Loaded Hamiltonian data: {len(paulis)} terms, {num_qubits} qubits")

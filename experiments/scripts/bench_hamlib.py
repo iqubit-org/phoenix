@@ -17,6 +17,7 @@ import qiskit.qasm2
 from natsort import natsorted
 import phoenix
 import bench_utils
+from functools import partial
 
 from rich.console import Console
 
@@ -30,6 +31,7 @@ CATEGORIES = ['binaryoptimization', 'chemistry', 'condensedmatter', 'discreteopt
 
 COMPILER_PASSES = {
     'phoenix': bench_utils.phoenix_pass,
+    'phoenix+': partial(bench_utils.phoenix_pass, grouping=False),
     'paulihedral': bench_utils.paulihedral_pass,
     'tetris': bench_utils.tetris_pass,
     'pauliopt': bench_utils.pauliopt_pass,

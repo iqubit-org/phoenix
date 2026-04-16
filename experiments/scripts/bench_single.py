@@ -69,6 +69,11 @@ def main():
         circ_opt = bench_utils.phoenix_pass(data['paulis'], data['coeffs'],
                                             coupling_map=coupling_map,
                                             with_O3=args.O3)
+    elif args.compiler == 'phoenix+':
+        circ_opt = bench_utils.phoenix_pass(data['paulis'], data['coeffs'],
+                                            grouping=False,
+                                            coupling_map=coupling_map,
+                                            with_O3=args.O3)
     else:
         raise ValueError('Unsupported compiler')
 
