@@ -8,7 +8,10 @@ start_time = time.time()
 json_fname = sys.argv[1]
 with open(json_fname, 'r') as f:
     data = json.load(f)
+
 print(f'Loaded {json_fname} in {time.time() - start_time:.2f} seconds.')
+print(f'Number of Paulis: {len(data["paulis"])}')
+print(f'Number of Qubits: {data["num_qubits"]}')
 
 start_time = time.time()
 groups = phoenix.primitive.group_paulis(data['paulis'])

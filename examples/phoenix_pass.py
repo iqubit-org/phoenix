@@ -62,7 +62,6 @@ def main():
     else:
         u = None
 
-    print('#grouped terms: {}'.format(len(ham.group_same_weights())))
     phoenix.utils.print_circ_info(circ, title='Original circuit')
 
     import time

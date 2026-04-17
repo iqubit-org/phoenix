@@ -50,7 +50,7 @@ def simplify_hamiltonian(ham: Hamiltonian) -> tuple[Hamiltonian, list[Simplifica
         local_ham, nonlocal_ham = current_ham.separate_local_nonlocal()
         visited.add(_tableau_key(nonlocal_ham.paulis.x, nonlocal_ham.paulis.z))
 
-        best_ham, best_cliff, qubits, cost = search_best_clifford(nonlocal_ham, visited)
+        best_ham, best_cliff, qubits = search_best_clifford(nonlocal_ham, visited)
 
         simp_steps.append(SimplificationStep(
             clifford=best_cliff,
@@ -90,9 +90,8 @@ def _apply_cliff_to_tableau(x: np.ndarray, z: np.ndarray,
     return new_x, new_z
 
 
-def search_best_clifford(ham: Hamiltonian, visited: set[bytes] = None, 
-                         last_layer: np.ndarray = None, depth_weight: float = None) -> tuple[
-    Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int], float]:
+def search_best_clifford(ham: Hamiltonian, visited: set[bytes] = None, parallel: bool = False) -> tuple[
+    Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]]:
     """Search for the best Clifford gate to apply."""
     # n = ham.num_qubits
     # if last_layer is None:
@@ -110,10 +109,9 @@ def search_best_clifford(ham: Hamiltonian, visited: set[bytes] = None,
     best_cost = float('inf')
     best_cliff_idx = 0
     best_pair_idx = 0
-    from tqdm import tqdm
     for ci, cliff in enumerate(CLIFFORD_OPTIONS):
         block = _CLIFFORD_BLOCKS[id(cliff)]
-        for pi, (q0, q1) in tqdm(enumerate(qubit_pairs), total=len(qubit_pairs), desc=f"Searching Cliff {ci+1}/{len(CLIFFORD_OPTIONS)}"):
+        for pi, (q0, q1) in enumerate(qubit_pairs):
             new_x, new_z = _apply_cliff_to_tableau(x, z, block, q0, q1)
             
             if visited is not None and _tableau_key(new_x, new_z) in visited:
@@ -123,7 +121,7 @@ def search_best_clifford(ham: Hamiltonian, visited: set[bytes] = None,
 
             cost = heuristic_bsf_cost(new_x, new_z)
             # new_layer   = max(last_layer[q0], last_layer[q1]) + 1            
-            # delta_depth = max(0, new_layer - current_depth)   # 恒为 0 或 1
+            # delta_depth = max(0, new_layer - current_depth)
             # cost += delta_depth * depth_weight  
 
             if cost < best_cost:
@@ -131,12 +129,12 @@ def search_best_clifford(ham: Hamiltonian, visited: set[bytes] = None,
                 best_cliff_idx = ci
                 best_pair_idx = pi
     
-    print(f"Best Clifford: {CLIFFORD_OPTIONS[best_cliff_idx]}, qubits: {qubit_pairs[best_pair_idx]}, cost: {best_cost:.2f}")
+    # print(f"Best Clifford: {CLIFFORD_OPTIONS[best_cliff_idx]}, qubits: {qubit_pairs[best_pair_idx]}, cost: {best_cost:.2f}")
 
     best_cliff = CLIFFORD_OPTIONS[best_cliff_idx]
     best_qubit_pair = qubit_pairs[best_pair_idx]
     best_ham = ham.apply_clifford(best_cliff, *best_qubit_pair)
-    return best_ham, best_cliff, best_qubit_pair, best_cost
+    return best_ham, best_cliff, best_qubit_pair
 
 
 def _tableau_key(x: np.ndarray, z: np.ndarray) -> bytes:

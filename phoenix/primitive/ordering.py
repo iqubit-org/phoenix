@@ -30,6 +30,11 @@ class CircuitTetris:
         self.tail_depth2q = _compute_cliff_depth2q(tail_cliffs)
         self.head_signature = _encode_cliffs(head_cliffs)
         self.tail_signature = _encode_cliffs(tail_cliffs)
+        # Cached sets for O(1) intersection tests used by assembling_cost /
+        # _compute_cost_matrix. Must be kept in sync when tail_signature or
+        # head_signature is reassigned (see _order_circuit_greedy).
+        self.head_sig_set: frozenset = frozenset(self.head_signature)
+        self.tail_sig_set: frozenset = frozenset(self.tail_signature)
 
     @classmethod
     def from_circuit(cls, qc: QuantumCircuit) -> CircuitTetris:
@@ -251,16 +256,23 @@ def _cancellation_bonus_signature(
 
 def assembling_cost(lhs: CircuitTetris, rhs: CircuitTetris) -> float:
     cost = depth_cost(lhs.right_end, rhs.left_end)
+
+    # Fast-skip: if lhs.tail and rhs.head share no (gate_name, q0, q1) triple,
+    # bonus is necessarily 0 — avoid the LRU-cache lookup and the O(T·H·(T+H))
+    # inner loop of `_cancellation_bonus_signature`.
+    ts = lhs.tail_sig_set
+    hs = rhs.head_sig_set
+    if not ts or not hs or ts.isdisjoint(hs):
+        return cost
+
     bonus, lhs_tail_simplified, rhs_head_simplified = _cancellation_bonus_signature(
         lhs.tail_signature, rhs.head_signature
     )
-
     if bonus > 0:
         lhs_depth_reduced = lhs.tail_depth2q - _compute_cliff_depth2q_signature(lhs_tail_simplified)
         rhs_depth_reduced = rhs.head_depth2q - _compute_cliff_depth2q_signature(rhs_head_simplified)
         bonus += lhs_depth_reduced * lhs.circuit.num_qubits + rhs_depth_reduced * rhs.circuit.num_qubits
-
-    cost -= bonus
+        cost -= bonus
 
     return cost
 
@@ -415,6 +427,11 @@ def _order_circuit_greedy(circuits: list[QuantumCircuit], lookahead: int = 40, *
         else:
             tetris.tail_cliffs = next_tetris.tail_cliffs
             tetris.tail_depth2q = next_tetris.tail_depth2q
+        # Keep signature (and its cached frozenset) in sync with tail_cliffs:
+        # `assembling_cost` reads tail_signature in subsequent iterations, so a
+        # stale value would give wrong cancellation-bonus estimates.
+        tetris.tail_signature = _encode_cliffs(tetris.tail_cliffs)
+        tetris.tail_sig_set = frozenset(tetris.tail_signature)
         tetris.right_end = next_tetris.right_end.copy()
 
     return tetris.circuit
@@ -452,15 +469,11 @@ def _compute_cost_matrix(tetris_list: list[CircuitTetris]) -> np.ndarray:
     cost_matrix = cost_matrix - (zero_overlap == 0) * num_qubits
     cost_matrix = cost_matrix.astype(np.float64, copy=False)
 
-    # Precompute signature sets so most (i, j) pairs can be skipped by an O(1)
-    # intersection test: if lhs.tail and rhs.head share no (gate_name, q0, q1)
-    # triple, bonus is necessarily 0 and we avoid both the LRU-cache lookup
-    # and the O(T·H·(T+H)) inner loop of `_cancellation_bonus_signature`.
-    tail_sig_sets: list[frozenset] = [frozenset(t.tail_signature) for t in tetris_list]
-    head_sig_sets: list[frozenset] = [frozenset(t.head_signature) for t in tetris_list]
-
+    # O(1) intersection test via cached frozensets on CircuitTetris — skips the
+    # LRU-cache lookup and the O(T·H·(T+H)) inner loop of
+    # `_cancellation_bonus_signature` for pairs with no common Clifford triple.
     for i, lhs in enumerate(tetris_list):
-        ts = tail_sig_sets[i]
+        ts = lhs.tail_sig_set
         if not ts:
             continue
         lhs_sig = lhs.tail_signature
@@ -470,11 +483,11 @@ def _compute_cost_matrix(tetris_list: list[CircuitTetris]) -> np.ndarray:
         for j in range(n):
             if i == j:
                 continue
-            hs = head_sig_sets[j]
+            rhs = tetris_list[j]
+            hs = rhs.head_sig_set
             if not hs or ts.isdisjoint(hs):
                 continue
 
-            rhs = tetris_list[j]
             bonus, lhs_tail_simplified, rhs_head_simplified = _cancellation_bonus_signature(
                 lhs_sig, rhs.head_signature
             )
