@@ -4,6 +4,7 @@ import pytket.passes
 import pytket.qasm
 import qiskit
 import rustworkx as rx
+import matplotlib.pyplot as plt
 from prettytable import PrettyTable
 from qiskit.transpiler import CouplingMap
 from qiskit.quantum_info import Operator
@@ -106,11 +107,11 @@ def qiskit_pass(paulis: list[str], coeffs: list[float], coupling_map: CouplingMa
 
     hls_config = HLSConfig(PauliEvolution=[
         ("rustiq", {
-            "optimize_count": True,  # 优化双量子比特门数量
-            "preserve_order": False,  # 不保持 Pauli 项顺序
-            "upto_phase": True,  # 允许全局相位差异
-            "upto_clifford": False,  # 合成最终 Clifford 算子 (If True, 类似把尾端Clifford吸收进最终measurement)
-            "resynth_clifford_method": 1  # 使用 Qiskit 贪心合成 （If 2，类似把尾端Clifford吸收进最终measurement）
+            "optimize_count": True,  # Optimize the two-qubit gate count
+            "preserve_order": False,  # Allow reordering of Pauli terms
+            "upto_phase": True,  # Allow a global phase difference
+            "upto_clifford": False,  # Resynthesize the final Clifford operator
+            "resynth_clifford_method": 1  # Use Qiskit's greedy Clifford resynthesis
         })
     ])
     hls_pass = HighLevelSynthesis(hls_config=hls_config)
@@ -244,3 +245,63 @@ def gene_hhex_coupling_map(size) -> CouplingMap:
     for qubit in range(coupling_map.size(), size):
         coupling_map.add_physical_qubit(qubit)
     return coupling_map
+
+
+def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), title="Pauli Strings", output_filename=None):
+    """
+    Visualize a set of equal-length Pauli strings.
+
+    X-axis: qubit index
+    Y-axis: Pauli string index
+    R/G/B/Gray color: X/Y/Z/I
+    """
+    if not paulis:
+        raise ValueError("paulis list cannot be empty")
+
+    n_rows = len(paulis)
+    n_cols = len(paulis[0])
+
+    if any(len(p) != n_cols for p in paulis):
+        raise ValueError("All Pauli strings must have the same length")
+
+    if little_endian:
+        paulis = [p[::-1] for p in paulis]
+
+    color_map = {
+        "X": np.array([0.89, 0.58, 0.58]),  # soft red
+        "Y": np.array([0.55, 0.75, 0.55]),  # soft green
+        "Z": np.array([0.55, 0.67, 0.87]),  # soft blue
+        "I": np.array([0.78, 0.78, 0.78]),  # soft gray
+    }
+
+    img = np.zeros((n_rows, n_cols, 3), dtype=float)
+
+    for i, p in enumerate(paulis):
+        for j, ch in enumerate(p):
+            if ch not in color_map:
+                raise ValueError(f"Unsupported Pauli character: {ch}")
+            img[i, j] = color_map[ch]
+
+    fig, ax = plt.subplots(figsize=figsize)
+    ax.imshow(img, aspect="auto", interpolation="nearest", origin="upper")
+
+    ax.set_xlabel("Qubit index")
+    ax.set_ylabel("Pauli string index")
+    ax.set_title(title)
+
+    ax.set_xticks(np.arange(n_cols))
+    ax.set_xticklabels([f"q{i}" for i in range(n_cols)])
+
+    step = max(1, n_rows // 12)
+    ax.set_yticks(np.arange(0, n_rows, step))
+    ax.set_yticklabels(np.arange(0, n_rows, step))
+
+    ax.set_xticks(np.arange(-0.5, n_cols, 1), minor=True)
+    ax.set_yticks(np.arange(-0.5, n_rows, 1), minor=True)
+    ax.grid(which="minor", color="white", linewidth=0.5)
+    ax.tick_params(which="minor", bottom=False, left=False)
+
+    plt.tight_layout()
+    if output_filename:
+        plt.savefig(output_filename, dpi=350)
+    plt.show()

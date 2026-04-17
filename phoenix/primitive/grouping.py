@@ -2,24 +2,56 @@ import numpy as np
 
 
 def _reorder_by_least_overlap(groups: dict[tuple[int, ...], list[str]]) -> dict[tuple[int, ...], list[str]]:
-    """Reorder groups so that consecutive groups have minimal qubit overlap."""
+    """Reorder groups so that consecutive groups have minimal qubit overlap.
+
+    Within each length class, greedily select the index tuple whose qubit-set
+    has minimum overlap with the union of already-selected tuples. Ties are
+    broken by original insertion order (same as the previous implementation).
+
+    Complexity: for a class of k equal-length tuples over a qubit support of
+    size s (s <= q), this runs in O(k² · s) numpy ops (single matmul per
+    iteration instead of per-pair set intersection), vs the prior
+    O(k³ · q) Python-level set operations.
+    """
     groups_on_length: dict[int, dict[tuple[int, ...], list[str]]] = {}
     for idx, pls in groups.items():
         groups_on_length.setdefault(len(idx), {})[idx] = pls
 
-    def least_overlap(indices, existing_indices):
-        overlaps = [sum(len(set(idx) & set(eidx)) for eidx in existing_indices) for idx in indices]
-        return indices[np.argmin(overlaps)]
+    final: dict[tuple[int, ...], list[str]] = {}
+    INT_MAX = np.iinfo(np.int64).max
 
-    final = {}
     for equal_len_groups in groups_on_length.values():
-        selected = []
         keys = list(equal_len_groups.keys())
-        while keys:
-            idx = least_overlap(keys, selected)
-            selected.append(idx)
-            final[idx] = equal_len_groups[idx]
-            keys.remove(idx)
+        k = len(keys)
+        if k == 1:
+            final[keys[0]] = equal_len_groups[keys[0]]
+            continue
+
+        # Compact qubit support for this length class (union of used qubits)
+        support = sorted({q for idx in keys for q in idx})
+        q2col = {q: c for c, q in enumerate(support)}
+        s = len(support)
+
+        # Membership matrix M[r, c] = 1 iff qubit support[c] is in keys[r]
+        M = np.zeros((k, s), dtype=np.int32)
+        for r, idx in enumerate(keys):
+            for q in idx:
+                M[r, q2col[q]] = 1
+
+        # use[c] = # of already-selected indices that touch qubit support[c]
+        use = np.zeros(s, dtype=np.int64)
+        alive = np.ones(k, dtype=bool)
+
+        for _ in range(k):
+            overlap = M @ use                           # shape (k,)
+            # Mask out already-selected rows so argmin only sees the alive ones.
+            # np.argmin returns the smallest index on ties, matching the prior
+            # list-based `indices[np.argmin(overlaps)]` tie-break exactly.
+            overlap_masked = np.where(alive, overlap, INT_MAX)
+            r = int(np.argmin(overlap_masked))
+            final[keys[r]] = equal_len_groups[keys[r]]
+            use += M[r]
+            alive[r] = False
     return final
 
 

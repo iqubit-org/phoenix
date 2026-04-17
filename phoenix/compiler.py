@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
 from qiskit.circuit import Parameter
 from qiskit.synthesis import LieTrotter, SuzukiTrotter
+from functools import partial
 
 from .basics import CNOTEquivCliffordGate
 from .hamiltonian import Hamiltonian
@@ -17,10 +17,10 @@ _UNROLL_BASIS_GATES = ["cx", "h", "s", "sdg", "rzx", "rxx", "ryy", "rzz"]
 # _SYNTHESIS_BASIS_GATES = ["cx", "rz", "sx", "x"]
 _SYNTHESIS_BASIS_GATES = ["cx", "u"]
 
-def _process_same_weight_hamiltonian(ham: Hamiltonian) -> QuantumCircuit:
+def _process_same_weight_hamiltonian(ham: Hamiltonian, parallel: bool = False) -> QuantumCircuit:
     """Helper function to process a single Hamiltonian group (used for parallel execution)."""
-    ham_, simp_steps = simplify_hamiltonian(ham)
-    qc = constr_circuit_from_simp_steps(ham_, simp_steps, optimize=True)
+    ham_, simp_steps = simplify_hamiltonian(ham, parallel=parallel)
+    qc = constr_circuit_from_simp_steps(ham_, simp_steps)
     return qc
 
 
@@ -30,6 +30,7 @@ def compile_hamiltonian_simulation(
     order: int = 1,
     trotter_steps: int = 1,
     grouping: bool = True,
+    parallel_search: bool = False,
     optimize: bool = True,
     order_method: str | None = None,
     backend: str = "sequential",
@@ -54,20 +55,18 @@ def compile_hamiltonian_simulation(
         hams = [hamiltonian]
 
     if len(hams) <= 1:
-        circuits = [_process_same_weight_hamiltonian(ham) for ham in hams]
+        circuits = [_process_same_weight_hamiltonian(ham, parallel=parallel_search) for ham in hams]
     elif backend == "concurrent.futures":
         from concurrent.futures import ProcessPoolExecutor
         with ProcessPoolExecutor() as executor:
-            circuits = list(executor.map(_process_same_weight_hamiltonian, hams))
+            circuits = list(executor.map(partial(_process_same_weight_hamiltonian, parallel=parallel_search), hams))
     elif backend == "joblib":
         from joblib import Parallel, delayed
-        circuits = Parallel(n_jobs=-1)(delayed(_process_same_weight_hamiltonian)(ham) for ham in hams)
+        circuits = Parallel(n_jobs=-1)(delayed(_process_same_weight_hamiltonian)(ham, parallel=parallel_search) for ham in hams)
     elif backend == "sequential":
-        circuits = [_process_same_weight_hamiltonian(ham) for ham in hams]
+        circuits = [_process_same_weight_hamiltonian(ham, parallel=parallel_search) for ham in hams]
     else:
         raise ValueError(f"Unknown backend: {backend}. Use 'joblib', 'concurrent.futures', or 'sequential'.")
-
-    print(f"Generated {len(circuits)} subcircuits for Hamiltonian simulation")
     qc = order_circuits(circuits, method=order_method or 'tsp')
 
     if optimize:

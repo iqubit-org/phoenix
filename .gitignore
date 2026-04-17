@@ -177,6 +177,8 @@ docs/
 
 tmp/
 
+debug/
+
 /exploration/
 
 .claude/

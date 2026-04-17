@@ -18,5 +18,7 @@ groups = phoenix.primitive.group_paulis(data['paulis'])
 print(f'Grouped paulis in {time.time() - start_time:.2f} seconds.')
 
 print(f'Number of groups: {len(groups)}')
+group_weights = Counter([len(paulis[0]) - (paulis[0]).count('I') for paulis in groups.values()])
 group_sizes = Counter([len(paulis) for paulis in groups.values()])
+print(f'Group weights: {group_weights}')
 print(f'Group sizes: {group_sizes}')

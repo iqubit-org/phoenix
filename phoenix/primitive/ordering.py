@@ -9,7 +9,6 @@ from qiskit.converters import circuit_to_dag
 from ..basics import CNOTEquivCliffordGate, fSwapEquivCliffordGate
 
 
-
 class CircuitTetris:
     """A simplified IR group represented as a circuit with Tetris structure and metadata."""
 
