@@ -1,0 +1,45 @@
+name: Publish to PyPI
+
+# Triggered when a GitHub Release is published.
+# Uses PyPI Trusted Publishing (OIDC) — no API token required.
+# Setup (one-time): https://pypi.org/manage/project/phoenix-quantum/settings/publishing/
+#   Owner: iqubit-org   Repository: phoenix
+#   Workflow: release.yml   Environment: pypi
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:            # allow manual trigger from the Actions tab
+
+jobs:
+  build:
+    name: Build distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install --upgrade build twine
+      - run: python -m build
+      - run: twine check --strict dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/phoenix-quantum
+    permissions:
+      id-token: write           # required for Trusted Publishing (OIDC)
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1

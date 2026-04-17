@@ -1,14 +1,15 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=77.0", "setuptools-scm>=8", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "phoenix"
-version = "1.0.0"
+name = "phoenix-quantum"
+dynamic = ["version"]
 description = "PHOENIX: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices"
 readme = "README.md"
 requires-python = ">=3.8,<3.13"
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 authors = [
     {name = "Zhaohui Yang", email = "youngcius007@gmail.com"},
 ]
@@ -24,11 +25,11 @@ keywords = [
     "Hamiltonian simulation",
 ]
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
-    "Operating System :: MacOS",
+    "Operating System :: OS Independent",
+    "Operating System :: MacOS :: MacOS X",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
@@ -39,6 +40,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: Physics",
     "Topic :: Software Development :: Compilers",
+    "Typing :: Typed",
 ]
 dependencies = [
     "qiskit>=1.0.0",
@@ -46,8 +48,19 @@ dependencies = [
     "scipy>=1.7.0",
     "joblib>=1.1.0",
     "prettytable>=3.0.0",
+    "rustworkx",
 ]
 
+[project.optional-dependencies]
+viz = ["matplotlib>=3.5.0"]
+tket = ["pytket"]
+dev = [
+    "build>=1.0",
+    "twine>=5.0",
+    "ruff>=0.4",
+    "black>=24.0",
+]
+all = ["matplotlib>=3.5.0", "pytket"]
 
 [project.urls]
 Homepage = "https://github.com/iqubit-org/phoenix"
@@ -63,6 +76,15 @@ include = ["phoenix*"]
 
 [tool.setuptools.package-data]
 phoenix = ["py.typed"]
+
+[tool.setuptools_scm]
+# Version is derived from the nearest git tag (e.g. `v0.1.0` → `0.1.0`).
+# Untagged dev builds produce `0.1.1.dev<n>+g<sha>[.dYYYYMMDD]` (PEP 440).
+# When building from an sdist (no .git), falls back to the static version below.
+fallback_version = "0.1.0"
+# Write the resolved version into `phoenix/_version.py` at build time so it
+# survives editable installs and bundled sdists.
+version_file = "phoenix/_version.py"
 
 [tool.black]
 line-length = 100
@@ -88,19 +110,6 @@ extend-exclude = '''
 )/
 '''
 
-[tool.pytest.ini_options]
-minversion = "7.0"
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = [
-    "-ra",
-    "--strict-markers",
-    "--strict-config",
-    "--showlocals",
-]
-
 [tool.mypy]
 python_version = "3.8"
 warn_return_any = true
@@ -114,25 +123,6 @@ exclude = [
     "paulihedral",
     "tetris",
     "artifact_dac25",
-]
-
-[tool.coverage.run]
-source = ["phoenix"]
-omit = [
-    "*/tests/*",
-    "*/test_*.py",
-]
-
-[tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "def __repr__",
-    "raise AssertionError",
-    "raise NotImplementedError",
-    "if __name__ == .__main__.:",
-    "if TYPE_CHECKING:",
-    "class .*\\bProtocol\\):",
-    "@(abc\\.)?abstractmethod",
 ]
 
 [tool.ruff]

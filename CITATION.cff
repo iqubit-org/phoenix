@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: >-
+  If you use Phoenix in your research, please cite the software
+  and the DAC 2025 paper listed below.
+title: "Phoenix: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices"
+type: software
+authors:
+  - given-names: Zhaohui
+    family-names: Yang
+    email: youngcius007@gmail.com
+    affiliation: "HKUST"
+repository-code: "https://github.com/iqubit-org/phoenix"
+url: "https://pypi.org/project/phoenix-quantum/"
+license: Apache-2.0
+keywords:
+  - quantum computing
+  - quantum compiler
+  - variational quantum algorithms
+  - Pauli strings
+  - Clifford
+  - Hamiltonian simulation
+version: 0.1.0
+date-released: "2026-04-18"
+
+preferred-citation:
+  type: conference-paper
+  title: "Phoenix: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices"
+  authors:
+    - given-names: Zhaohui
+      family-names: Yang
+  year: 2025
+  conference:
+    name: "62nd ACM/IEEE Design Automation Conference (DAC 2025)"
+  url: "https://arxiv.org/abs/2504.03529"

@@ -1,6 +1,11 @@
 # 🐦‍🔥 PHOENIX: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices
 
-[![](https://img.shields.io/badge/license-Apache%202.0-green)](./LICENSE) [![](https://img.shields.io/badge/build-passing-green)]() ![](https://img.shields.io/badge/Python-3.8--3.12-blue) ![](https://img.shields.io/badge/dev-v1.0.0-blue) [![](https://img.shields.io/badge/Slides-PPTX-orange)](https://fact-lab.hkust.edu.hk/publications/conference-paper/2025/yang-2025-phoenix/Phoenix-ZY%20%2862DAC_Presentation%29.pdf) [![](https://img.shields.io/static/v1?label=Conference&message=DAC%202025&color=purple)](https://arxiv.org/abs/2504.03529)
+[![PyPI](https://img.shields.io/pypi/v/phoenix-quantum)](https://pypi.org/project/phoenix-quantum/)
+[![Python](https://img.shields.io/pypi/pyversions/phoenix-quantum)](https://pypi.org/project/phoenix-quantum/)
+[![License](https://img.shields.io/pypi/l/phoenix-quantum)](./LICENSE)
+[![CI](https://github.com/iqubit-org/phoenix/actions/workflows/ci.yml/badge.svg)](https://github.com/iqubit-org/phoenix/actions/workflows/ci.yml)
+[![Slides](https://img.shields.io/badge/Slides-PPTX-orange)](https://fact-lab.hkust.edu.hk/publications/conference-paper/2025/yang-2025-phoenix/Phoenix-ZY%20%2862DAC_Presentation%29.pdf)
+[![Conference](https://img.shields.io/static/v1?label=Conference&message=DAC%202025&color=purple)](https://arxiv.org/abs/2504.03529)
 
 
 ## Overview
@@ -38,6 +43,7 @@ Key parameters of `compile_hamiltonian_simulation`:
 |-----------|---------|-------------|
 | `grouping` | `True` | Group Pauli terms by non-trivial support before simplification |
 | `optimize` | `True` | Apply Qiskit post-optimization |
+| `parallel_search` | `False` | Perform Clifford search in parallel or sequentially on each BSF |
 | `order_method` | `None` (=`'tsp'`) | Block ordering: `'trivial'`, `'greedy'`, or `'tsp'` |
 | `backend` | `'sequential'` | Parallelization: `'sequential'`, `'concurrent.futures'`, or `'joblib'` |
 
@@ -85,10 +91,10 @@ Lower is better. Opt Rate = geometric mean of (optimized / original) across all 
 |       Num2Q Opt Rate      | Qiskit |  TKet | Paulihedral | Tetris | QuCLEAR | Phoenix |
 +---------------------------+--------+-------+-------------+--------+---------+---------+
 |  binaryoptimization (15)  | 1.252  | 0.886 |    0.669    | 0.715  |  1.598  |  0.718  |
-| discreteoptimization (15) | 0.542  | 0.556 |    0.524    | 0.751  |  0.578  |  0.766  |
+| discreteoptimization (15) | 0.542  | 0.556 |    0.524    | 0.751  |  0.578  |  0.749  |
 |       chemistry (35)      | 0.292  | 0.276 |    0.346    | 0.496  |  0.354  |  0.334  |
-|    condensedmatter (35)   | 1.084  | 0.855 |    0.527    | 0.678  |  0.758  |  0.496  |
-|         All (100)         |  0.63  | 0.542 |     0.47    | 0.622  |  0.611  |  0.485  |
+|    condensedmatter (35)   | 1.084  | 0.855 |    0.527    | 0.678  |  0.758  |  0.498  |
+|         All (100)         |  0.63  | 0.542 |     0.47    | 0.622  |  0.611  |  0.486  |
 +---------------------------+--------+-------+-------------+--------+---------+---------+
 
 >>> Depth2Q Opt Rate
@@ -96,15 +102,26 @@ Lower is better. Opt Rate = geometric mean of (optimized / original) across all 
 |      Depth2Q Opt Rate     | Qiskit |  TKet | Paulihedral | Tetris | QuCLEAR | Phoenix |
 +---------------------------+--------+-------+-------------+--------+---------+---------+
 |  binaryoptimization (15)  | 1.257  | 0.617 |    0.304    | 0.521  |  1.578  |  0.212  |
-| discreteoptimization (15) | 0.588  | 0.346 |    0.408    | 1.707  |  0.631  |  0.292  |
+| discreteoptimization (15) | 0.588  | 0.346 |    0.408    | 1.707  |  0.631  |  0.296  |
 |       chemistry (35)      |  0.21  | 0.175 |     0.34    | 0.382  |  0.262  |  0.231  |
-|    condensedmatter (35)   | 0.345  | 0.772 |    0.614    | 0.118  |  0.615  |  0.044  |
-|         All (100)         | 0.381  | 0.394 |    0.421    | 0.332  |  0.517  |  0.133  |
+|    condensedmatter (35)   | 0.345  | 0.772 |    0.614    | 0.118  |  0.615  |  0.046  |
+|         All (100)         | 0.381  | 0.394 |    0.421    | 0.332  |  0.517  |  0.134  |
 +---------------------------+--------+-------+-------------+--------+---------+---------+
+
 ```
 
 
 ## Installation
+
+
+### 1. From PyPI
+
+```bash
+pip install phoenix-quantum
+```
+
+
+### 2. From Source
 
 ```bash
 pip install .
@@ -124,9 +141,8 @@ Core dependencies (automatically installed):
 - `qiskit >= 1.0.0`
 - `numpy >= 1.21.0`
 - `scipy >= 1.7.0`
-- `prettytable >= 3.0.0`
+- `matplotlib >= 3.0.0`
 
-We align with the `1.2.4` version of `qiskit` across the published benchmarking results. Version 1.0+ is required for Phoenix.
 
 
 ## Benchmarking Scripts
@@ -142,8 +158,9 @@ All benchmarking scripts are under [`./experiments/`](./experiments/).
 | `uccsd_all2all_to_limited.py` | Map all-to-all results to limited-connectivity topologies (square, heavy-hex) |
 | `uccsd_all2all_qiskit_opt.py` | Apply Qiskit O3 post-optimization to logical-level synthesis results |
 
-Use `make` targets for batch execution:
+Use `make` targets for batch execution across UCCSB benchmark suite while use `make -f Makefile-Hamlib` for HamLib benchmarking:
 
+For example,
 ```bash
 cd experiments
 make phoenix          # Run Phoenix on UCCSD (all2all)

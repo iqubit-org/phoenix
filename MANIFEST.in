@@ -1,0 +1,42 @@
+# What to include in the source distribution.
+# The wheel is already scoped to `phoenix/` via [tool.setuptools.packages.find];
+# this file keeps the sdist tar.gz equally lean.
+
+include LICENSE
+include README.md
+include CHANGELOG.md
+include CITATION.cff
+include pyproject.toml
+recursive-include phoenix *.py
+recursive-include phoenix *.typed
+
+# Development scaffolding, benchmarks, experiments, third-party baselines,
+# editor configs, and scratch files should not ship in the source dist.
+prune benchmarks
+prune experiments
+prune examples
+prune docs
+prune backup
+prune debug
+prune assets
+prune paulihedral
+prune pauliopt
+prune quclear
+prune tetris
+prune exploration
+prune .idea
+prune .vscode
+prune .ropeproject
+prune .pytest_cache
+prune .claude
+prune __pycache__
+prune phoenix_quantum.egg-info
+
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude *.ipynb
+global-exclude tmp.*
+global-exclude *.tmp.*
+exclude rm.DS_Store.tmp.sh
