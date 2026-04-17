@@ -27,8 +27,7 @@ console = Console()
 
 def find_missing_jsons(input_root: Path, output_root: Path) -> list[Path]:
     compiled_relpaths = {
-        qasm_path.relative_to(output_root).with_suffix("")
-        for qasm_path in output_root.rglob("*.qasm")
+        qasm_path.relative_to(output_root).with_suffix("") for qasm_path in output_root.rglob("*.qasm")
     }
     return [
         json_path

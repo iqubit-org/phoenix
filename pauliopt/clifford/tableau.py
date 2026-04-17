@@ -131,14 +131,8 @@ class CliffordTableau:
             CliffordTableau: CliffordTableau object.
         """
         n_qubits = tableau.shape[0] // 2
-        if not (
-            tableau.shape == (2 * n_qubits, 2 * n_qubits)
-            and signs.shape == (2 * n_qubits,)
-        ):
-            raise ValueError(
-                "Tableau and signs must have shape "
-                "(2 * n_qubits, 2 * n_qubits) and (2 * n_qubits,)"
-            )
+        if not (tableau.shape == (2 * n_qubits, 2 * n_qubits) and signs.shape == (2 * n_qubits,)):
+            raise ValueError("Tableau and signs must have shape (2 * n_qubits, 2 * n_qubits) and (2 * n_qubits,)")
         ct = CliffordTableau(n_qubits)
         ct.tableau = tableau
         ct.signs = signs
@@ -197,10 +191,7 @@ class CliffordTableau:
             row (int): Row index.
             col (int): Column index.
         """
-        return (
-            self.tableau[row + self.n_qubits, col]
-            + 2 * self.tableau[row + self.n_qubits, col + self.n_qubits]
-        )
+        return self.tableau[row + self.n_qubits, col] + 2 * self.tableau[row + self.n_qubits, col + self.n_qubits]
 
     @property
     def x_matrix(self):
@@ -461,9 +452,7 @@ class CliffordRegion(AbstractCircuit):
     def _check_gate(self, gate):
         n_qubits = self.n_qubits
         if not isinstance(gate, CliffordGate):
-            raise TypeError(
-                f"{gate} is not a valid gate. All gates must be clifford gates."
-            )
+            raise TypeError(f"{gate} is not a valid gate. All gates must be clifford gates.")
 
         if len(set(gate.qubits)) != len(gate.qubits):
             raise ValueError(f"{gate.qubits} are not unique.")
@@ -484,7 +473,6 @@ class CliffordRegion(AbstractCircuit):
         return circ
 
     def to_tableau(self, append: bool = True) -> CliffordTableau:
-
         ct = CliffordTableau(self.n_qubits)
 
         for gate in self._gates:

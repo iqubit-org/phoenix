@@ -43,9 +43,7 @@ def find_minimal_cx_assignment(column: np.array, arch: Topology, q0=None):
         incident[fst].add((fst, snd))
         incident[snd].add((snd, fst))
     if q0 is None:
-        q0 = np.argmax(
-            column
-        )  # Assume that 0 is always the first qubit aka first non zero
+        q0 = np.argmax(column)  # Assume that 0 is always the first qubit aka first non zero
     visited = set()
     queue = deque([q0])
     cnot_ladder = []
@@ -133,17 +131,14 @@ class PauliGadget:
         if col_id in leg_cache.keys():
             return leg_cache[col_id]
         else:
-            cnot_amount = 2 * len(
-                find_minimal_cx_assignment(np.asarray(col_binary), topology)[0]
-            )
+            cnot_amount = 2 * len(find_minimal_cx_assignment(np.asarray(col_binary), topology)[0])
             leg_cache[col_id] = cnot_amount
         return cnot_amount
 
     def mutual_legs(self, other: "PauliGadget"):
         if len(self.paulis) != len(other.paulis):
             raise Exception(
-                f"Paulis must be of equal length to have mutual legs. But are {len(self.paulis)}, "
-                f"{len(other.paulis)}"
+                f"Paulis must be of equal length to have mutual legs. But are {len(self.paulis)}, {len(other.paulis)}"
             )
 
         match_count = 0
@@ -161,8 +156,7 @@ class PauliGadget:
     def commutes(self, other: "PauliGadget"):
         if len(self.paulis) != len(other.paulis):
             raise Exception(
-                f"Paulis must be of equal length to commute. But are {len(self.paulis)}, "
-                f"{len(other.paulis)}"
+                f"Paulis must be of equal length to commute. But are {len(self.paulis)}, {len(other.paulis)}"
             )
 
         mismatchcount = 0

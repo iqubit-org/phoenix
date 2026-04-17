@@ -43,7 +43,7 @@ def _reorder_by_least_overlap(groups: dict[tuple[int, ...], list[str]]) -> dict[
         alive = np.ones(k, dtype=bool)
 
         for _ in range(k):
-            overlap = M @ use                           # shape (k,)
+            overlap = M @ use  # shape (k,)
             # Mask out already-selected rows so argmin only sees the alive ones.
             # np.argmin returns the smallest index on ties, matching the prior
             # list-based `indices[np.argmin(overlaps)]` tie-break exactly.
@@ -74,12 +74,12 @@ def group_paulis(paulis: list[str]) -> dict[tuple[int, ...], list[str]]:
           (2,): ['IIZII'],
           (3,): ['IIIZI'],
           (4,): ['IIIIZ']}
-    """    
+    """
     nontrivial = []
     for pauli in paulis:
         # Find indices where pauli is not 'I'
-        # Note: qiskit Pauli strings are little-endian (qubit 0 is rightmost), 
-        indices = tuple(np.where(np.array(list(pauli)) != 'I')[0])
+        # Note: qiskit Pauli strings are little-endian (qubit 0 is rightmost),
+        indices = tuple(np.where(np.array(list(pauli)) != "I")[0])
         nontrivial.append(indices)
 
     groups: dict[tuple[int, ...], list[str]] = {}
@@ -139,16 +139,18 @@ def group_paulis(paulis: list[str]) -> dict[tuple[int, ...], list[str]]:
 #     return result
 
 
-def group_paulis_and_coeffs(paulis: list[str], coeffs: np.ndarray) -> dict[tuple[int, ...], tuple[list[str], np.ndarray]]:
+def group_paulis_and_coeffs(
+    paulis: list[str], coeffs: np.ndarray
+) -> dict[tuple[int, ...], tuple[list[str], np.ndarray]]:
     """Group Pauli strings (with coefficients) by their nontrivial parts."""
     groups = {}
     grouped_paulis = group_paulis(paulis)
-    
-    # We need to map back to coefficients. 
+
+    # We need to map back to coefficients.
     # Since paulis might contain duplicates in general, we should be careful.
     # However, group_paulis returns lists of strings.
     # We assume the input `paulis` and `coeffs` are aligned.
-    
+
     # Create a mapping from pauli string to list of indices in the original array
     # to handle duplicate strings if necessary.
     pauli_to_indices = {}
@@ -156,7 +158,7 @@ def group_paulis_and_coeffs(paulis: list[str], coeffs: np.ndarray) -> dict[tuple
         if p not in pauli_to_indices:
             pauli_to_indices[p] = []
         pauli_to_indices[p].append(i)
-        
+
     # Consume indices
     pauli_to_indices_iter = {p: iter(idxs) for p, idxs in pauli_to_indices.items()}
 
@@ -166,5 +168,5 @@ def group_paulis_and_coeffs(paulis: list[str], coeffs: np.ndarray) -> dict[tuple
             original_idx = next(pauli_to_indices_iter[p])
             group_coeffs.append(coeffs[original_idx])
         groups[idx] = (pls, np.array(group_coeffs))
-        
+
     return groups

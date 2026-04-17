@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append('../')
+sys.path.append("../")
 import os
 from natsort import natsorted
 import json
@@ -15,7 +15,7 @@ json_fnames = [os.path.join(INPUT_JSON_DPATH, fname) for fname in natsorted(os.l
 
 for fname in json_fnames:
     print(f"Processing {fname}...")
-    output_fname = os.path.join(OUTPUT_QASM_PATH, os.path.basename(fname).replace('.json', '.qasm'))
-    with open(fname, 'r') as f:
+    output_fname = os.path.join(OUTPUT_QASM_PATH, os.path.basename(fname).replace(".json", ".qasm"))
+    with open(fname, "r") as f:
         data = json.load(f)
-    HamiltonianModel(data['paulis'], data['coeffs']).generate_circuit().to_qasm(output_fname)
+    HamiltonianModel(data["paulis"], data["coeffs"]).generate_circuit().to_qasm(output_fname)

@@ -4,7 +4,7 @@ This script is to generate .json and .qasm files from the original 100_represent
 
 import sys
 
-sys.path.append('..')
+sys.path.append("..")
 
 import os
 import json
@@ -12,37 +12,36 @@ from phoenix.utils.functions import infidelity
 from phoenix.models import HamiltonianModel
 
 
-QASM_DIR = 'hamlib_qasm'
-JSON_DIR = 'hamlib_json'
+QASM_DIR = "hamlib_qasm"
+JSON_DIR = "hamlib_json"
 
 
-with open('100_representative.json', 'r') as f:
+with open("100_representative.json", "r") as f:
     data = json.load(f)
 
 
 for ham in data:
-    program_name = '{}-{}'.format(ham['ham_problem'], ham['ham_instance'].strip('/'))
-    program_name = program_name.split(',')[0]
-    program_name = program_name.replace('ham_', '')
-    program_name = program_name.replace('ham-', '')
+    program_name = "{}-{}".format(ham["ham_problem"], ham["ham_instance"].strip("/"))
+    program_name = program_name.split(",")[0]
+    program_name = program_name.replace("ham_", "")
+    program_name = program_name.replace("ham-", "")
     print(program_name)
 
-    qasm_fname = os.path.join(QASM_DIR, ham['ham_category'], program_name + '.qasm')
-    json_fname = os.path.join(JSON_DIR, ham['ham_category'], program_name + '.json')
-
+    qasm_fname = os.path.join(QASM_DIR, ham["ham_category"], program_name + ".qasm")
+    json_fname = os.path.join(JSON_DIR, ham["ham_category"], program_name + ".json")
 
     # save to json
-    with open(json_fname, 'w') as f:
+    with open(json_fname, "w") as f:
         json_body = {
-            'num_qubits': ham['ham_qubits'],
-            'num_terms': ham['ham_terms'],
-            'paulis': ham['ham_hamlib_hamiltonian_terms'],
-            'coeffs': ham['ham_hamlib_hamiltonian_coefficients']
+            "num_qubits": ham["ham_qubits"],
+            "num_terms": ham["ham_terms"],
+            "paulis": ham["ham_hamlib_hamiltonian_terms"],
+            "coeffs": ham["ham_hamlib_hamiltonian_coefficients"],
         }
         json.dump(json_body, f, indent=4)
 
     # save to qasm
-    ham_model = HamiltonianModel(ham['ham_hamlib_hamiltonian_terms'], ham['ham_hamlib_hamiltonian_coefficients'])
+    ham_model = HamiltonianModel(ham["ham_hamlib_hamiltonian_terms"], ham["ham_hamlib_hamiltonian_coefficients"])
     circ = ham_model.generate_circuit()
     circ.to_qasm(qasm_fname)
 

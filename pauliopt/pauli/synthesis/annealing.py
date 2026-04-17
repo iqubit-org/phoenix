@@ -23,9 +23,7 @@ def pick_random_control_and_target(num_qubits: int) -> Tuple[int, int]:
     return control, target
 
 
-def compute_effect(
-    pp: PauliPolynomial, gate: CliffordGate, topology: Topology, leg_cache: dict = None
-) -> int:
+def compute_effect(pp: PauliPolynomial, gate: CliffordGate, topology: Topology, leg_cache: dict = None) -> int:
     """
     Compute the effect on the PauliPolynomial as: #CX_prev - #CX_new
     :param pp:
@@ -36,9 +34,7 @@ def compute_effect(
     """
     pp_ = pp.copy()
     pp_ = pp_.propagate(gate)
-    return pp_.two_qubit_count(topology, leg_cache=leg_cache) - pp.two_qubit_count(
-        topology, leg_cache=leg_cache
-    )
+    return pp_.two_qubit_count(topology, leg_cache=leg_cache) - pp.two_qubit_count(topology, leg_cache=leg_cache)
 
 
 def get_best_gate(
@@ -109,17 +105,13 @@ def annealing_synthesis(
     for it in range(nr_iterations):
         t = schedule(it, nr_iterations)
         ctrl, trg = pick_random_control_and_target(pp.num_qubits)
-        gate, effect = get_best_gate(
-            pp, ctrl, trg, gate_set, topology, leg_cache=leg_cache
-        )
+        gate, effect = get_best_gate(pp, ctrl, trg, gate_set, topology, leg_cache=leg_cache)
         accept_step = effect < 0 or random_nrs[it] < np.exp(-np.log(2) * effect / t)
         if accept_step:
             clifford_tableau.append_gate(gate)
             pp.propagate_inplace(gate)
 
-    clifford_circ, _ = synthesize_tableau(
-        clifford_tableau, topology, include_swaps=False
-    )
+    clifford_circ, _ = synthesize_tableau(clifford_tableau, topology, include_swaps=False)
     pp_circuit = pp.to_circuit(topology)
 
     qc = Circuit(pp.num_qubits)

@@ -1,5 +1,5 @@
 """
-    This module contains utility code to deal with qubit topologies.
+This module contains utility code to deal with qubit topologies.
 """
 
 import re
@@ -145,9 +145,7 @@ class Topology:
         if not isinstance(couplings, Collection):
             raise TypeError("Couplings must be a collection of pairs of qubits.")
         self._num_qubits = num_qubits
-        self._couplings = frozenset(
-            _validate_coupling(num_qubits, c) for c in couplings
-        )
+        self._couplings = frozenset(_validate_coupling(num_qubits, c) for c in couplings)
         _adjacent: Tuple[Set[int], ...] = tuple(set() for _ in range(num_qubits))
         for fst, snd in self.couplings:
             _adjacent[fst].add(snd)
@@ -262,8 +260,7 @@ class Topology:
         if "pos" not in kwargs:
             if layout not in layouts:
                 raise ValueError(
-                    f"Invalid layout found: {layout}. "
-                    f"Valid layouts: {', '.join(repr(l) for l in layouts)}"
+                    f"Invalid layout found: {layout}. Valid layouts: {', '.join(repr(l) for l in layouts)}"
                 )
             kwargs["pos"] = getattr(nx, layout + "_layout")(G)
         if "node_color" not in kwargs:
@@ -314,33 +311,21 @@ class Topology:
         """
         if isinstance(mapping, Sequence):
             if len(mapping) < self.num_qubits:
-                raise ValueError(
-                    f"Expected mapping keys [0,...,{self._num_qubits}], "
-                    f"found {sorted(mapping)} instead."
-                )
+                raise ValueError(f"Expected mapping keys [0,...,{self._num_qubits}], found {sorted(mapping)} instead.")
             _mapping = list(mapping)
         elif isinstance(mapping, Mapping):
             _mapping = []
             for i in range(self._num_qubits):
                 if i not in mapping:
                     raise ValueError(
-                        f"Expected mapping keys [0,...,{self._num_qubits}], "
-                        f"found {sorted(mapping.keys())} instead."
+                        f"Expected mapping keys [0,...,{self._num_qubits}], found {sorted(mapping.keys())} instead."
                     )
                 _mapping.append(mapping[i])
         else:
-            raise TypeError(
-                f"Expected Sequence[int] or Mapping[int, int], "
-                f"found {type(mapping)} instead."
-            )
+            raise TypeError(f"Expected Sequence[int] or Mapping[int, int], found {type(mapping)} instead.")
         if set(_mapping) != set(range(self._num_qubits)):
-            raise ValueError(
-                f"Expected mapping values [0,...,{self._num_qubits}], "
-                f"found {sorted(_mapping)} instead."
-            )
-        mapped_couplings = [
-            {_mapping[x] for x in coupling} for coupling in self._couplings
-        ]
+            raise ValueError(f"Expected mapping values [0,...,{self._num_qubits}], found {sorted(_mapping)} instead.")
+        mapped_couplings = [{_mapping[x] for x in coupling} for coupling in self._couplings]
         return Topology(self.num_qubits, mapped_couplings)
 
     def shortest_path(self, fro: int, to: int):
@@ -395,33 +380,23 @@ class Topology:
         """
         if isinstance(mapping, Sequence):
             if len(mapping) < self.num_qubits:
-                raise ValueError(
-                    f"Expected mapping keys [0,...,{self._num_qubits}], "
-                    f"found {sorted(mapping)} instead."
-                )
+                raise ValueError(f"Expected mapping keys [0,...,{self._num_qubits}], found {sorted(mapping)} instead.")
             _rev_mapping = {mapping[i]: i for i in mapping}
         elif isinstance(mapping, Mapping):
             _rev_mapping = {}
             for i in range(self._num_qubits):
                 if i not in mapping:
                     raise ValueError(
-                        f"Expected mapping keys [0,...,{self._num_qubits}], "
-                        f"found {sorted(mapping.keys())} instead."
+                        f"Expected mapping keys [0,...,{self._num_qubits}], found {sorted(mapping.keys())} instead."
                     )
                 _rev_mapping[mapping[i]] = i
         else:
-            raise TypeError(
-                f"Expected Sequence[int] or Mapping[int, int], "
-                f"found {type(mapping)} instead."
-            )
+            raise TypeError(f"Expected Sequence[int] or Mapping[int, int], found {type(mapping)} instead.")
         if set(_rev_mapping.keys()) != set(range(self._num_qubits)):
             raise ValueError(
-                f"Expected mapping values [0,...,{self._num_qubits}], "
-                f"found {sorted(_rev_mapping.keys())} instead."
+                f"Expected mapping values [0,...,{self._num_qubits}], found {sorted(_rev_mapping.keys())} instead."
             )
-        mapped_couplings = [
-            {_rev_mapping[x] for x in coupling} for coupling in self._couplings
-        ]
+        mapped_couplings = [{_rev_mapping[x] for x in coupling} for coupling in self._couplings]
         return Topology(self.num_qubits, mapped_couplings)
 
     def __contains__(self, x: Union[int, Coupling, Tuple[int, int]]) -> bool:
@@ -437,10 +412,7 @@ class Topology:
 
     def __repr__(self) -> str:
         if self.couplings:
-            return (
-                f"Topology({self.num_qubits}, "
-                f"[{', '.join(str(c) for c in self.couplings)}])"
-            )
+            return f"Topology({self.num_qubits}, [{', '.join(str(c) for c in self.couplings)}])"
         return f"Topology({set(self.qubits)})"
 
     def __hash__(self) -> int:
@@ -518,9 +490,7 @@ class Topology:
         """
         if not isinstance(num_qubits, int) or num_qubits <= 0:
             raise TypeError("Number of qubits must be positive integer.")
-        couplings = [
-            [i, j] for i in range(num_qubits) for j in range(i + 1, num_qubits)
-        ]
+        couplings = [[i, j] for i in range(num_qubits) for j in range(i + 1, num_qubits)]
         top = Topology(num_qubits, couplings)
         top._named = f"complete({num_qubits})"  # pylint: disable = protected-access
         return top
@@ -548,9 +518,7 @@ class Topology:
                 if c < num_cols - 1:
                     couplings.append([qubit(r, c), qubit(r, c + 1)])
         top = Topology(num_qubits, couplings)
-        top._named = (
-            f"grid({num_rows},{num_cols})"  # pylint: disable = protected-access
-        )
+        top._named = f"grid({num_rows},{num_cols})"  # pylint: disable = protected-access
         return top
 
     @staticmethod
@@ -618,9 +586,7 @@ class Topology:
         except ModuleNotFoundError as _:
             raise ModuleNotFoundError("You must install the 'qiskit' library.")
         if not isinstance(backend, Backend):
-            raise TypeError(
-                "Argument backend must be of type " "`qiskit.providers.Backend`."
-            )
+            raise TypeError("Argument backend must be of type `qiskit.providers.Backend`.")
         return Topology.from_qiskit_config(backend.configuration())
 
 
@@ -727,10 +693,7 @@ class Matching:
 
     def _flip(self, coupling: Coupling) -> "Matching":
         if not self._is_flippable(coupling):
-            raise ValueError(
-                f"Cannot add coupling {coupling} to matching:"
-                f"one of the qubits is already matched. "
-            )
+            raise ValueError(f"Cannot add coupling {coupling} to matching:one of the qubits is already matched. ")
         fst, snd = coupling
         if coupling in self._matched_couplings:
             self._matched_couplings.remove(coupling)

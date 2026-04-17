@@ -107,9 +107,7 @@ class Gate(ABC):
         if not hasattr(self, "decomp"):
             raise NotImplementedError
 
-        gadgets = [
-            g if isinstance(g, (ZHead, XHead)) else g.gadgets for g in self.decomp
-        ]
+        gadgets = [g if isinstance(g, (ZHead, XHead)) else g.gadgets for g in self.decomp]
         return gadgets
 
     @abstractmethod
@@ -122,9 +120,7 @@ class Gate(ABC):
 
     def apply_permutation(self, permutation: list) -> None:
         register = list(range(len(permutation)))
-        self.qubits = tuple(
-            [permutation[register.index(qubit)] for qubit in self.qubits]
-        )
+        self.qubits = tuple([permutation[register.index(qubit)] for qubit in self.qubits])
 
     def copy(self):
         return self.__class__(*self.qubits)
@@ -228,9 +224,7 @@ class CliffordGate(Gate, ABC):
                     gadget.angle *= phase_change
             elif gate.name == "CX":
                 assert isinstance(gate, TwoQubitClifford)
-                p_string = (
-                    gadget.paulis[gate.control].value + gadget.paulis[gate.target].value
-                )
+                p_string = gadget.paulis[gate.control].value + gadget.paulis[gate.target].value
                 p_c, p_t, phase_change = PROPAGATION_CX[p_string]
                 gadget.paulis[gate.control] = p_c
                 gadget.paulis[gate.target] = p_t
@@ -241,7 +235,6 @@ class CliffordGate(Gate, ABC):
 
 
 class SingleQubitClifford(CliffordGate, ABC):
-
     def __init__(self, qubit: int):
         super().__init__((qubit))
 
@@ -464,11 +457,7 @@ class Vdg(SingleQubitClifford):
         return V(*self.qubits)
 
     def get_h_s_cx_decomposition(self) -> List[Union["H", "S", "CX"]]:
-        return (
-            [H(*self.qubits)]
-            + Sdg(*self.qubits).get_h_s_cx_decomposition()
-            + [H(*self.qubits)]
-        )
+        return [H(*self.qubits)] + Sdg(*self.qubits).get_h_s_cx_decomposition() + [H(*self.qubits)]
 
 
 class T(Gate):

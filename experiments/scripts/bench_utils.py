@@ -1,9 +1,10 @@
 """
 Benchmarking utilities
 """
+
 import sys
 
-sys.path.append('../..')
+sys.path.append("../..")
 
 import qiskit
 import pytket
@@ -32,19 +33,25 @@ console = Console()
 
 def qiskit_O3_all2all(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
     from itertools import combinations
+
     for q0, q1 in combinations(range(circ.num_qubits), 2):
         circ.cx(q0, q1)
         circ.cx(q0, q1)
-    circ = qiskit.transpile(circ, optimization_level=3, basis_gates=['u1', 'u2', 'u3', 'cx'])
+    circ = qiskit.transpile(circ, optimization_level=3, basis_gates=["u1", "u2", "u3", "cx"])
     return circ
 
 
-def phoenix_pass(paulis: List[str], coeffs: List[float],
-                 grouping: bool = True,
-                 coupling_map: CouplingMap = None,
-                 with_O3: bool = False) -> qiskit.QuantumCircuit:
+def phoenix_pass(
+    paulis: List[str],
+    coeffs: List[float],
+    grouping: bool = True,
+    coupling_map: CouplingMap = None,
+    with_O3: bool = False,
+) -> qiskit.QuantumCircuit:
     """Phoenix's high-level optimization"""
-    paulis = [p[::-1] for p in paulis]  # ! PHOENIX uses little-endian convention for Pauli strings, reverse the input strings here
+    paulis = [
+        p[::-1] for p in paulis
+    ]  # ! PHOENIX uses little-endian convention for Pauli strings, reverse the input strings here
 
     ham = phoenix.Hamiltonian(paulis, coeffs)
     qc = phoenix.compile_hamiltonian_simulation(ham, grouping=grouping)
@@ -59,9 +66,9 @@ def phoenix_pass(paulis: List[str], coeffs: List[float],
     return qc
 
 
-def paulihedral_pass(paulis: List[str], coeffs: List[float],
-                     coupling_map: CouplingMap = None,
-                     with_O3: bool = False) -> qiskit.QuantumCircuit:
+def paulihedral_pass(
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, with_O3: bool = False
+) -> qiskit.QuantumCircuit:
     from tetris.utils.parallel_bl import gate_count_oriented_scheduling
     from tetris.synthesis_SC import block_opt_SC
 
@@ -72,18 +79,20 @@ def paulihedral_pass(paulis: List[str], coeffs: List[float],
 
     qc, total_swaps, total_cx = block_opt_SC(a2, graph=coupling_map_to_pGraph(coupling_map))
 
-    qc = qiskit.transpile(qc, optimization_level=2, basis_gates=['u1', 'u2', 'u3', 'cx'])
+    qc = qiskit.transpile(qc, optimization_level=2, basis_gates=["u1", "u2", "u3", "cx"])
 
     if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
         if with_O3:
             qc = qiskit_O3_all2all(qc)
     else:
-        qc = qiskit.transpile(qc,
-                              basis_gates=['u1', 'u2', 'u3', 'cx'],
-                              coupling_map=coupling_map,
-                              initial_layout=list(range(qc.num_qubits)),
-                              layout_method='sabre',
-                              optimization_level=3)
+        qc = qiskit.transpile(
+            qc,
+            basis_gates=["u1", "u2", "u3", "cx"],
+            coupling_map=coupling_map,
+            initial_layout=list(range(qc.num_qubits)),
+            layout_method="sabre",
+            optimization_level=3,
+        )
 
     # console.print({
     #     'PH_swap_count': total_swaps,
@@ -96,45 +105,55 @@ def paulihedral_pass(paulis: List[str], coeffs: List[float],
     return qc
 
 
-def tetris_pass(paulis: List[str], coeffs: List[float],
-                coupling_map: CouplingMap = None,
-                with_O3: bool = False) -> qiskit.QuantumCircuit:
+def tetris_pass(
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, with_O3: bool = False
+) -> qiskit.QuantumCircuit:
     from tetris.utils.synthesis_lookahead import synthesis_lookahead
 
     if coupling_map is None:
         coupling_map = phoenix.utils.gene_all2all_coupling_map(len(paulis[0]))
 
-    qc, metrics = synthesis_lookahead(constr_mypauli_blocks(paulis, coeffs),
-                                      graph=coupling_map_to_pGraph(coupling_map),
-                                      use_bridge=False,
-                                      swap_coefficient=3, k=10)
+    qc, metrics = synthesis_lookahead(
+        constr_mypauli_blocks(paulis, coeffs),
+        graph=coupling_map_to_pGraph(coupling_map),
+        use_bridge=False,
+        swap_coefficient=3,
+        k=10,
+    )
 
     if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
         if with_O3:
             qc = qiskit_O3_all2all(qc)
     else:
-        qc = qiskit.transpile(qc,
-                              basis_gates=['u1', 'u2', 'u3', 'cx'],
-                              coupling_map=coupling_map,
-                              initial_layout=list(range(qc.num_qubits)),
-                              layout_method='sabre',
-                              optimization_level=3)
+        qc = qiskit.transpile(
+            qc,
+            basis_gates=["u1", "u2", "u3", "cx"],
+            coupling_map=coupling_map,
+            initial_layout=list(range(qc.num_qubits)),
+            layout_method="sabre",
+            optimization_level=3,
+        )
 
-    metrics.update({'CNOT': qc.num_nonlocal_gates(),
-                    'Single': qc.size() - qc.num_nonlocal_gates(),
-                    'Total': qc.size(),
-                    'Depth': qc.depth()})
+    metrics.update(
+        {
+            "CNOT": qc.num_nonlocal_gates(),
+            "Single": qc.size() - qc.num_nonlocal_gates(),
+            "Total": qc.size(),
+            "Depth": qc.depth(),
+        }
+    )
     # console.print(metrics)
 
     return qc
 
 
-def quclear_pass(paulis: List[str], coeffs: List[float],
-                 coupling_map: CouplingMap = None, with_O3: bool = False) -> qiskit.QuantumCircuit:
+def quclear_pass(
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, with_O3: bool = False
+) -> qiskit.QuantumCircuit:
     from quclear.CE_module import construct_qcc_circuit, CE_recur_tree
 
     qc, append_clifford, sorted_entanglers = CE_recur_tree(entanglers=paulis, params=coeffs, barrier=False)
-    append_clifford = append_clifford.decompose('swap')
+    append_clifford = append_clifford.decompose("swap")
     qc.compose(append_clifford, inplace=True)
 
     if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
@@ -146,8 +165,13 @@ def quclear_pass(paulis: List[str], coeffs: List[float],
     return qc
 
 
-def pauliopt_pass(paulis: List[str], coeffs: List[float], method='steiner_gray',
-                  coupling_map: CouplingMap = None, with_O3: bool = False) -> qiskit.QuantumCircuit:
+def pauliopt_pass(
+    paulis: List[str],
+    coeffs: List[float],
+    method="steiner_gray",
+    coupling_map: CouplingMap = None,
+    with_O3: bool = False,
+) -> qiskit.QuantumCircuit:
     """Optional method: annealing, steiner_gray, divide_and_conquer (The default steiner_gray which performs the best in fidel tests)"""
     from pauliopt.pauli.pauli_polynomial import PauliPolynomial
     from pauliopt.pauli.pauli_gadget import PPhase
@@ -162,25 +186,23 @@ def pauliopt_pass(paulis: List[str], coeffs: List[float], method='steiner_gray',
         register = qc.qregs[0]
         qc_out = qiskit.QuantumCircuit(register)
         for instruction in qc:
-            op_qubits = [
-                register[permutation[register.index(q)]] for q in instruction.qubits
-            ]
+            op_qubits = [register[permutation[register.index(q)]] for q in instruction.qubits]
             qc_out.append(instruction.operation, op_qubits)
         return qc_out
 
-    pauli_str_map = {'I': I, 'X': X, 'Y': Y, 'Z': Z}
+    pauli_str_map = {"I": I, "X": X, "Y": Y, "Z": Z}
     topology = Topology.complete(len(paulis[0]))
     pp = PauliPolynomial(num_qubits=len(paulis[0]))
     for pauli_str, coeff in zip(paulis, coeffs):
-        pp >>= (PPhase(coeff * 2) @ [pauli_str_map[p] for p in pauli_str])
+        pp >>= PPhase(coeff * 2) @ [pauli_str_map[p] for p in pauli_str]
 
     # TODO: check the correctness of the generated circuit
-    if method == 'annealing':
+    if method == "annealing":
         qc = annealing_synthesis(pp.copy(), topology).to_qiskit()
-    elif method == 'steiner_gray':
+    elif method == "steiner_gray":
         qc, gadget_perm, perm = pauli_polynomial_steiner_gray_clifford(pp.copy(), topology)
         qc = apply_permutation(qc.to_qiskit(), perm)
-    elif method == 'divide_and_conquer':
+    elif method == "divide_and_conquer":
         qc, perm = synthesis_divide_and_conquer(pp.copy(), topology)
         qc = apply_permutation(qc.to_qiskit(), perm)
     else:
@@ -195,8 +217,9 @@ def pauliopt_pass(paulis: List[str], coeffs: List[float], method='steiner_gray',
     return qc
 
 
-def tket_pass(paulis: List[str], coeffs: List[float], 
-              greedy: bool = True, coupling_map: CouplingMap = None, with_O3: bool = False) -> qiskit.QuantumCircuit:
+def tket_pass(
+    paulis: List[str], coeffs: List[float], greedy: bool = True, coupling_map: CouplingMap = None, with_O3: bool = False
+) -> qiskit.QuantumCircuit:
     qc = phoenix.utils.tket_pass(paulis, coeffs, greedy=greedy)
 
     if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
@@ -208,28 +231,37 @@ def tket_pass(paulis: List[str], coeffs: List[float],
     return qc
 
 
-def qiskit_pass(paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, with_O3: bool = False) -> qiskit.QuantumCircuit:
+def qiskit_pass(
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, with_O3: bool = False
+) -> qiskit.QuantumCircuit:
     from qiskit import QuantumCircuit
     from qiskit.circuit.library import PauliEvolutionGate
     from qiskit.quantum_info import SparsePauliOp
-    from qiskit.transpiler.passes import HighLevelSynthesis, HLSConfig  
+    from qiskit.transpiler.passes import HighLevelSynthesis, HLSConfig
 
-    paulis = [p[::-1] for p in paulis]  # ! Qiskit uses little-endian convention for Pauli strings, reverse the input strings here
+    paulis = [
+        p[::-1] for p in paulis
+    ]  # ! Qiskit uses little-endian convention for Pauli strings, reverse the input strings here
 
     n = len(paulis[0])  # number of qubits
     op = SparsePauliOp(paulis, coeffs)
     qc = QuantumCircuit(n)
-    qc.append(PauliEvolutionGate(op), reversed(range(n)))  
+    qc.append(PauliEvolutionGate(op), reversed(range(n)))
 
-    hls_config = HLSConfig(PauliEvolution=[  
-        ("rustiq", {  
-            "optimize_count": True,      # 优化双量子比特门数量  
-            "preserve_order": False,     # 不保持 Pauli 项顺序  
-            "upto_phase": True,         # 允许全局相位差异  
-            "upto_clifford": False,     # 合成最终 Clifford 算子 (If True, 类似把尾端Clifford吸收进最终measurement) 
-            "resynth_clifford_method": 1  # 使用 Qiskit 贪心合成 （If 2，类似把尾端Clifford吸收进最终measurement）
-        })  
-    ])
+    hls_config = HLSConfig(
+        PauliEvolution=[
+            (
+                "rustiq",
+                {
+                    "optimize_count": True,  # 优化双量子比特门数量
+                    "preserve_order": False,  # 不保持 Pauli 项顺序
+                    "upto_phase": True,  # 允许全局相位差异
+                    "upto_clifford": False,  # 合成最终 Clifford 算子 (If True, 类似把尾端Clifford吸收进最终measurement)
+                    "resynth_clifford_method": 1,  # 使用 Qiskit 贪心合成 （If 2，类似把尾端Clifford吸收进最终measurement）
+                },
+            )
+        ]
+    )
     hls_pass = HighLevelSynthesis(hls_config=hls_config)
     qc = hls_pass(qc)
 
@@ -242,12 +274,11 @@ def qiskit_pass(paulis: List[str], coeffs: List[float], coupling_map: CouplingMa
     return qc
 
 
-def paulirl_pass(paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None,
-                 with_O3: bool = False) -> qiskit.QuantumCircuit:
+def paulirl_pass(
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, with_O3: bool = False
+) -> qiskit.QuantumCircuit:
     """https://quantum.cloud.ibm.com/docs/en/guides/ai-transpiler-passes"""
     # TODO: perform PauliRL synthesis
-
-
 
     if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
         if with_O3:
@@ -256,7 +287,6 @@ def paulirl_pass(paulis: List[str], coeffs: List[float], coupling_map: CouplingM
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
 
     return qc
-
 
 
 # def sabre_map(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap) -> Tuple[
@@ -298,7 +328,6 @@ def paulirl_pass(paulis: List[str], coeffs: List[float], coupling_map: CouplingM
 #     return circ
 
 
-
 def coupling_map_to_pGraph(coupling_map: CouplingMap) -> pGraph:
     """Used in Paulihedral/Tetris primitive"""
     G = rx.adjacency_matrix(coupling_map.graph)
@@ -309,7 +338,7 @@ def coupling_map_to_pGraph(coupling_map: CouplingMap) -> pGraph:
 def constr_mypauli_blocks(paulis, coeffs) -> List[List[pauliString]]:
     """Used in Paulihedral/Tetris primitive"""
     groups = phoenix.primitive.group_paulis_and_coeffs(paulis, coeffs)
-    
+
     mypauli_blocks = []
     for paulis, coeffs in groups.values():
         mypauli_blocks.append([])
@@ -323,6 +352,6 @@ def su4_circ_stats(qc: qiskit.QuantumCircuit) -> Tuple[int, int]:
     from canopus import rebase_to_canonical
 
     qc = rebase_to_canonical(qc)
-    num_su4 = qc.count_ops().get('can', 0)
-    depth_su4 = qc.depth(lambda instr: instr.operation.name == 'can')
+    num_su4 = qc.count_ops().get("can", 0)
+    depth_su4 = qc.depth(lambda instr: instr.operation.name == "can")
     return num_su4, depth_su4

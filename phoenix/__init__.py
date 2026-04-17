@@ -1,4 +1,4 @@
-from . import utils, primitive
+from . import primitive, utils
 from .basics import CNOTEquivCliffordGate, fSwapEquivCliffordGate
 from .compiler import compile_hamiltonian_simulation, optimize_phoenix_circuit_by_qiskit
 from .hamiltonian import Hamiltonian
@@ -10,6 +10,7 @@ try:
     from ._version import __version__
 except ImportError:
     from importlib.metadata import PackageNotFoundError, version
+
     try:
         __version__ = version("phoenix-quantum")
     except PackageNotFoundError:
@@ -21,5 +22,5 @@ __all__ = [
     "compile_hamiltonian_simulation",
     "optimize_phoenix_circuit_by_qiskit",
     "CNOTEquivCliffordGate",
-    'fSwapEquivCliffordGate',
+    "fSwapEquivCliffordGate",
 ]

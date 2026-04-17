@@ -1,6 +1,6 @@
 """
-    This module contains code to optimize circuits of mixed ZX phase gadgets
-    using topologically-aware circuits of CNOTs.
+This module contains code to optimize circuits of mixed ZX phase gadgets
+using topologically-aware circuits of CNOTs.
 """
 
 from collections import deque
@@ -72,24 +72,17 @@ class AnnealingLoggers(TypedDict, total=False):
     log_end: AnnealingCostLogger
 
 
-def _validate_temp_schedule(
-    schedule: Union[StandardTempSchedule, TempSchedule]
-) -> TempSchedule:
+def _validate_temp_schedule(schedule: Union[StandardTempSchedule, TempSchedule]) -> TempSchedule:
     if not isinstance(schedule, TempSchedule):
         if not isinstance(schedule, tuple) or len(schedule) != 3:
-            raise TypeError(
-                f"Expected triple (schedule_name, t_init, t_final), "
-                f"found {schedule}"
-            )
+            raise TypeError(f"Expected triple (schedule_name, t_init, t_final), found {schedule}")
         schedule_name, t_init, t_final = schedule
         if schedule_name not in StandardTempSchedules:
             raise TypeError(
                 f"Invalid standard temperature schedule name {schedule_name}, "
                 f"allowed names are: {list(StandardTempSchedules.keys())}"
             )
-        if not isinstance(t_init, (int, float)) or not isinstance(
-            t_final, (int, float)
-        ):
+        if not isinstance(t_init, (int, float)) or not isinstance(t_final, (int, float)):
             raise TypeError("Expected t_init and t_final to be int or float.")
         schedule = StandardTempSchedules[schedule_name](t_init, t_final)
     return schedule
@@ -189,18 +182,12 @@ class OptimizedPhaseCircuit:
         if not isinstance(circuit_rep, int) or circuit_rep <= 0:
             raise TypeError(f"Expected positive integer, found {circuit_rep}.")
         if not isinstance(cx_block, (int, CXCircuit, CXCircuitView)):
-            raise TypeError(
-                f"Expected int, CXCircuit or CXCircuitView, found {type(cx_block)}."
-            )
+            raise TypeError(f"Expected int, CXCircuit or CXCircuitView, found {type(cx_block)}.")
         if isinstance(cx_block, int) and cx_block <= 0:
-            raise TypeError(
-                f"Expected positive integer number of CX layers, found {cx_block}."
-            )
+            raise TypeError(f"Expected positive integer number of CX layers, found {cx_block}.")
         if rng_seed is not None and not isinstance(rng_seed, int):
             raise TypeError("RNG seed must be integer or None.")
-        self._qubit_mapping = (
-            qubit_mapping if qubit_mapping else range(topology.num_qubits)
-        )
+        self._qubit_mapping = qubit_mapping if qubit_mapping else range(topology.num_qubits)
         self._topology = topology.mapped_fwd(self._qubit_mapping)
         self._circuit_rep = circuit_rep
         self._phase_block = phase_block.cloned()
@@ -223,9 +210,7 @@ class OptimizedPhaseCircuit:
         self._cx_count = self._init_cx_count
         self._cx_blocks_count = self._init_cx_blocks_count
         if isinstance(fresh_angle_vars, str):
-            self._fresh_angle_vars = lambda i: AngleVar(
-                f"{fresh_angle_vars}[{i}]", f"{fresh_angle_vars}_{i}"
-            )
+            self._fresh_angle_vars = lambda i: AngleVar(f"{fresh_angle_vars}[{i}]", f"{fresh_angle_vars}_{i}")
         else:
             self._fresh_angle_vars = fresh_angle_vars
 
@@ -340,9 +325,7 @@ class OptimizedPhaseCircuit:
             self.simplify()
         circuit = QuantumCircuit(self.num_qubits)
         front_cx_block = CXCircuit(self.topology, self._cx_block)
-        synthesized_cx_block1 = front_cx_block.to_qiskit(
-            self._cx_method, reallocate=self._reallocate
-        )
+        synthesized_cx_block1 = front_cx_block.to_qiskit(self._cx_method, reallocate=self._reallocate)
         synthesized_phase_block, cxs = self._phase_block.to_qiskit(
             self.topology,
             simplified=simplified,
@@ -351,23 +334,15 @@ class OptimizedPhaseCircuit:
         )
         for layer in self._cx_block:
             cxs >>= layer
-        synthesized_cx_block2 = cxs.to_qiskit(
-            self._cx_method, reallocate=self._reallocate
-        )
+        synthesized_cx_block2 = cxs.to_qiskit(self._cx_method, reallocate=self._reallocate)
         circuit.compose(synthesized_cx_block1.inverse(), inplace=True)
         for _ in range(self._circuit_rep):
             circuit.compose(synthesized_phase_block, inplace=True)
         circuit.compose(synthesized_cx_block2, inplace=True)
         if self._reallocate:
-            undo_mapping = [
-                self._qubit_mapping.index(i) for i in range(self.num_qubits)
-            ]
-            initial_layout = [
-                undo_mapping[i] for i in synthesized_cx_block1.metadata["final_layout"]
-            ]
-            final_layout = [
-                undo_mapping[i] for i in synthesized_cx_block2.metadata["final_layout"]
-            ]
+            undo_mapping = [self._qubit_mapping.index(i) for i in range(self.num_qubits)]
+            initial_layout = [undo_mapping[i] for i in synthesized_cx_block1.metadata["final_layout"]]
+            final_layout = [undo_mapping[i] for i in synthesized_cx_block2.metadata["final_layout"]]
             circuit.metadata = {
                 "initial_layout": initial_layout,
                 "final_layout": final_layout,
@@ -422,9 +397,7 @@ class OptimizedPhaseCircuit:
             layer_idx, (ctrl, trgt) = self.random_flip_cx()
             new_cx_count, new_cx_blocks_count = self._compute_cx_count()
             cx_count_diff = new_cx_count - self._cx_count
-            accept_step = cx_count_diff < 0 or rand[it] < np.exp(
-                -np.log(2) * cx_count_diff / t
-            )
+            accept_step = cx_count_diff < 0 or rand[it] < np.exp(-np.log(2) * cx_count_diff / t)
             if log_iter is not None:
                 log_iter(
                     it,
@@ -459,9 +432,7 @@ class OptimizedPhaseCircuit:
         while True:
             layer_idx = int(self._rng.integers(len(self._cx_block)))
             ctrl, trgt = self._cx_block[layer_idx].random_flip_cx(self._rng)
-            if layer_idx < len(self._cx_block) - 1 and self._cx_block[
-                layer_idx + 1
-            ].has_cx(ctrl, trgt):
+            if layer_idx < len(self._cx_block) - 1 and self._cx_block[layer_idx + 1].has_cx(ctrl, trgt):
                 # Try again if CX gate already present in layer above (to avoid redundancy)
                 continue
             if layer_idx > 0 and self._cx_block[layer_idx - 1].has_cx(ctrl, trgt):
@@ -492,9 +463,7 @@ class OptimizedPhaseCircuit:
           working forwards towards the last layer).
         """
         if not self.is_cx_flippable(layer_idx, ctrl, trgt):
-            raise ValueError(
-                f"Gate {(ctrl, trgt)} cannot be flipped in layer number {layer_idx}."
-            )
+            raise ValueError(f"Gate {(ctrl, trgt)} cannot be flipped in layer number {layer_idx}.")
         self._flip_cx(layer_idx, ctrl, trgt)
 
     def _flip_cx(self, layer_idx: int, ctrl: int, trgt: int) -> None:
@@ -659,12 +628,7 @@ class OptimizedPhaseCircuit:
         pad_x += font_size * (num_digits + 1)
         delta_fst = row_width // 4
         delta_snd = 2 * row_width // 4
-        width = (
-            2 * pad_x
-            + 2 * margin_x
-            + row_width * len(gadgets)
-            + 2 * max_cx_gates_depth * cx_row_width
-        )
+        width = 2 * pad_x + 2 * margin_x + row_width * len(gadgets) + 2 * max_cx_gates_depth * cx_row_width
         height = pad_y + line_height * (num_qubits + 1)
         builder = SVGBuilder(width, height)
         levels: List[int] = [0 for _ in range(num_qubits)]
@@ -708,16 +672,12 @@ class OptimizedPhaseCircuit:
                 builder.line((x + delta_fst, text_y), (x + delta_snd, text_y))
                 builder.circle((x + delta_fst, text_y), r, other_fill)
                 builder.circle((x + delta_snd, text_y), r, fill)
-                builder.text(
-                    (x + delta_snd + 2 * r, text_y), str(angle), font_size=font_size
-                )
+                builder.text((x + delta_snd + 2 * r, text_y), str(angle), font_size=font_size)
             else:
                 for q in gadget.qubits:
                     y = pad_y + (q + 1) * line_height
                     builder.circle((x, y), r, fill)
-                builder.text(
-                    (x + r, y - line_height // 3), str(angle), font_size=font_size
-                )
+                builder.text((x + r, y - line_height // 3), str(angle), font_size=font_size)
         base_x = base_x + (max_lvl + 1) * row_width
         levels = [0 for _ in range(num_qubits)]
         max_lvl = 0
@@ -739,9 +699,7 @@ class OptimizedPhaseCircuit:
             y = pad_y + (q + 1) * line_height
             _builder.line((pad_x, y), (width - pad_x, y))
             _builder.text((0, y), f"{str(q):>{num_digits}}", font_size=font_size)
-            _builder.text(
-                (width - pad_x + r, y), f"{str(q):>{num_digits}}", font_size=font_size
-            )
+            _builder.text((width - pad_x + r, y), f"{str(q):>{num_digits}}", font_size=font_size)
         _builder >>= builder
         svg_code = repr(_builder)
         if svg_code_only:
@@ -810,9 +768,7 @@ def reverse_traversal_anneal(
                 **opt_kwargs,
             )
         else:
-            opt = OptimizedPhaseCircuit(
-                circuit.copy(), topology, cx_blocks, qubit_mapping=mapping, **opt_kwargs
-            )
+            opt = OptimizedPhaseCircuit(circuit.copy(), topology, cx_blocks, qubit_mapping=mapping, **opt_kwargs)
         if cx_blocks and num_anneal_iters:
             opt.anneal(num_anneal_iters, **anneal_kwargs)
 
@@ -824,16 +780,10 @@ def reverse_traversal_anneal(
         mapping = opt._output_mapping
         reversed_circuit = not reversed_circuit
     if best_reversed:
-        reversed_phase = PhaseCircuit(
-            best_circuit.num_qubits, list(reversed(best_circuit._phase_block))
-        )
-        reversed_cx_blocks = CXCircuit(
-            best_circuit.topology, list(reversed(best_circuit._cx_block))
-        )
+        reversed_phase = PhaseCircuit(best_circuit.num_qubits, list(reversed(best_circuit._phase_block)))
+        reversed_cx_blocks = CXCircuit(best_circuit.topology, list(reversed(best_circuit._cx_block)))
         mapping = best_circuit._qubit_mapping
-        best_circuit = OptimizedPhaseCircuit(
-            reversed_phase, best_circuit.topology, reversed_cx_blocks, **opt_kwargs
-        )
+        best_circuit = OptimizedPhaseCircuit(reversed_phase, best_circuit.topology, reversed_cx_blocks, **opt_kwargs)
         best_circuit._qubit_mapping = mapping
     return best_circuit
 
@@ -847,9 +797,7 @@ def reverse_traversal(
     opt_kwargs: Dict = {},
     anneal_kwargs: Dict = {},
 ) -> OptimizedPhaseCircuit:
-    opt = reverse_traversal_anneal(
-        circuit, topology, cx_blocks, num_iters, 0, opt_kwargs, anneal_kwargs
-    )
+    opt = reverse_traversal_anneal(circuit, topology, cx_blocks, num_iters, 0, opt_kwargs, anneal_kwargs)
     if num_anneal_iters > 0:
         opt.anneal(num_anneal_iters, **anneal_kwargs)
     return opt

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from qiskit import QuantumCircuit
-from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
-from qiskit.circuit import Parameter
-from qiskit.synthesis import LieTrotter, SuzukiTrotter
 from functools import partial
+
+from qiskit import QuantumCircuit
+from qiskit.circuit import Parameter
+from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
 
 from .basics import CNOTEquivCliffordGate
 from .hamiltonian import Hamiltonian
@@ -12,10 +12,10 @@ from .primitive.ordering import order_circuits
 from .primitive.simplification import simplify_hamiltonian
 from .primitive.utils import constr_circuit_from_simp_steps
 
-
 _UNROLL_BASIS_GATES = ["cx", "h", "s", "sdg", "rzx", "rxx", "ryy", "rzz"]
 # _SYNTHESIS_BASIS_GATES = ["cx", "rz", "sx", "x"]
 _SYNTHESIS_BASIS_GATES = ["cx", "u"]
+
 
 def _process_same_weight_hamiltonian(ham: Hamiltonian, parallel: bool = False) -> QuantumCircuit:
     """Helper function to process a single Hamiltonian group (used for parallel execution)."""
@@ -58,16 +58,20 @@ def compile_hamiltonian_simulation(
         circuits = [_process_same_weight_hamiltonian(ham, parallel=parallel_search) for ham in hams]
     elif backend == "concurrent.futures":
         from concurrent.futures import ProcessPoolExecutor
+
         with ProcessPoolExecutor() as executor:
             circuits = list(executor.map(partial(_process_same_weight_hamiltonian, parallel=parallel_search), hams))
     elif backend == "joblib":
         from joblib import Parallel, delayed
-        circuits = Parallel(n_jobs=-1)(delayed(_process_same_weight_hamiltonian)(ham, parallel=parallel_search) for ham in hams)
+
+        circuits = Parallel(n_jobs=-1)(
+            delayed(_process_same_weight_hamiltonian)(ham, parallel=parallel_search) for ham in hams
+        )
     elif backend == "sequential":
         circuits = [_process_same_weight_hamiltonian(ham, parallel=parallel_search) for ham in hams]
     else:
         raise ValueError(f"Unknown backend: {backend}. Use 'joblib', 'concurrent.futures', or 'sequential'.")
-    qc = order_circuits(circuits, method=order_method or 'tsp')
+    qc = order_circuits(circuits, method=order_method or "tsp")
 
     if optimize:
         qc = optimize_phoenix_circuit_by_qiskit(qc)
@@ -85,14 +89,12 @@ def optimize_phoenix_circuit_by_qiskit(qc: QuantumCircuit) -> QuantumCircuit:
     2. unroll the remaining custom Clifford gates to their definitions and let Qiskit resynthesize
        consecutive 2-qubit blocks, so patterns such as ``Rzx -> Ryy -> Rzz`` can be compressed.
     """
-    from qiskit.transpiler import passes, PassManager
     from itertools import product
 
-    inverse_list = [
-        CNOTEquivCliffordGate(p0, p1)
-        for p0, p1 in product(["x", "y", "z"], repeat=2)
-    ]
-    
+    from qiskit.transpiler import PassManager, passes
+
+    inverse_list = [CNOTEquivCliffordGate(p0, p1) for p0, p1 in product(["x", "y", "z"], repeat=2)]
+
     pm = PassManager()
     pm.append(passes.InverseCancellation(inverse_list))
     pm.append(passes.CommutativeInverseCancellation(matrix_based=True))
@@ -109,9 +111,7 @@ def optimize_phoenix_circuit_by_qiskit(qc: QuantumCircuit) -> QuantumCircuit:
     pm.append(passes.UnitarySynthesis(basis_gates=_SYNTHESIS_BASIS_GATES))
     pm.append(passes.Optimize1qGatesDecomposition(basis=_SYNTHESIS_BASIS_GATES[1:]))
     pm.append(passes.CommutativeCancellation())
-        
+
     qc = pm.run(qc)
 
     return qc
-
-

@@ -1,9 +1,10 @@
 from dataclasses import dataclass
+
 from qiskit import QuantumCircuit
 from qiskit.circuit.library import PauliEvolutionGate
+
 from ..basics import CNOTEquivCliffordGate, fSwapEquivCliffordGate
 from ..hamiltonian import Hamiltonian
-
 
 # _EACH_GROUP_SYNTHESIS_BASIS_GATES = ["cx", "rz", "sx", "x"]
 _EACH_GROUP_SYNTHESIS_BASIS_GATES = ["cx", "u"]
@@ -26,11 +27,11 @@ def constr_circuit_from_simp_steps(ham: Hamiltonian, steps: list[SimplificationS
         qc_post.append(step.clifford, step.qubits)
 
         qc_pre.append(step.clifford, step.qubits)
-    
+
     qc_post = qc_post.reverse_ops()
     qc_pre.append(PauliEvolutionGate(ham), range(ham.num_qubits))
 
-    qc = qc_pre.compose(qc_post).decompose('PauliEvolution')
+    qc = qc_pre.compose(qc_post).decompose("PauliEvolution")
 
     qc = _optimize_phoenix_circuit_by_qiskit_each_group(qc)
 
@@ -38,17 +39,13 @@ def constr_circuit_from_simp_steps(ham: Hamiltonian, steps: list[SimplificationS
 
 
 def _synthesize_successive_2q_pauli_rotation_block(block: QuantumCircuit) -> QuantumCircuit:
-    from qiskit.transpiler import passes, PassManager
+    from qiskit.transpiler import PassManager, passes
 
     pm = PassManager()
     pm.append(passes.Collect2qBlocks())
     pm.append(passes.ConsolidateBlocks(basis_gates=["cx"]))
     pm.append(passes.UnitarySynthesis(basis_gates=_EACH_GROUP_SYNTHESIS_BASIS_GATES))
-    pm.append(
-        passes.Optimize1qGatesDecomposition(
-            basis=_EACH_GROUP_SYNTHESIS_BASIS_GATES[1:]
-        )
-    )
+    pm.append(passes.Optimize1qGatesDecomposition(basis=_EACH_GROUP_SYNTHESIS_BASIS_GATES[1:]))
     pm.append(passes.CommutativeCancellation())
     return pm.run(block)
 
@@ -75,10 +72,7 @@ def _optimize_phoenix_circuit_by_qiskit_each_group(qc: QuantumCircuit) -> Quantu
         local_block = QuantumCircuit(2)
         local_qubits = tuple(local_block.qubits)
         for instr in run_instrs:
-            mapped_qargs = [
-                local_qubits[run_pair_qubits.index(qubit)]
-                for qubit in instr.qubits
-            ]
+            mapped_qargs = [local_qubits[run_pair_qubits.index(qubit)] for qubit in instr.qubits]
             local_block.append(instr.operation, mapped_qargs, instr.clbits)
 
         synthesized_block = _synthesize_successive_2q_pauli_rotation_block(local_block)
@@ -112,5 +106,3 @@ def _is_successive_2q_pauli_rotation(instr) -> bool:
         and len(instr.qubits) == 2
         and instr.qubits[0] != instr.qubits[1]
     )
-
-

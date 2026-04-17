@@ -146,20 +146,22 @@ exclude = [
 ]
 
 [tool.ruff.lint]
+# Relaxed ruleset: focus on rules that catch real bugs; drop purely cosmetic
+# or style-preference categories that don't fit scientific-code conventions
+# (uppercase math symbols, whitespace noise, subjective simplifications).
 select = [
     "E",      # pycodestyle errors
-    "W",      # pycodestyle warnings
-    "F",      # pyflakes
-    "I",      # isort
-    "N",      # pep8-naming
-    "UP",     # pyupgrade
-    "B",      # flake8-bugbear
-    "C4",     # flake8-comprehensions
-    "SIM",    # flake8-simplify
+    "F",      # pyflakes (undefined names, unused imports, etc.)
+    "I",      # isort (auto-fixable)
+    "UP",     # pyupgrade (modernize syntax)
+    "B",      # flake8-bugbear (real bug patterns)
 ]
 ignore = [
     "E501",   # line too long (handled by formatter)
-    "B008",   # do not perform function calls in argument defaults
+    "E402",   # module-level import not at top (common in notebooks/scripts)
+    "E741",   # ambiguous variable names (l, I, O) — natural in math code
+    "B008",   # function call in default arg (common in Qiskit-style APIs)
+    "B905",   # zip without strict= (py3.9 compat)
     "C901",   # too complex
 ]
 

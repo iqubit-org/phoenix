@@ -35,9 +35,7 @@ def dump_qubit_hamiltonian_json(
     coeffs = []
     for coeff in qubit_hamiltonian.coeffs:
         if abs(coeff.imag) > 1e-10:
-            raise ValueError(
-                f"Expected a real-valued qubit Hamiltonian, got coefficient {coeff!r}."
-            )
+            raise ValueError(f"Expected a real-valued qubit Hamiltonian, got coefficient {coeff!r}.")
         coeffs.append(float(coeff.real))
 
     output_path = Path(output_path)

@@ -1,5 +1,5 @@
 """
-    Utility classes and functions for the `pauliopt` library.
+Utility classes and functions for the `pauliopt` library.
 """
 
 from abc import ABC, abstractmethod
@@ -43,13 +43,9 @@ def calculate_orthogonal_point(a, b, d, left):
     magnitude = np.linalg.norm(direction_vector)
     normalized_direction_vector = direction_vector / magnitude
     if left:
-        orthogonal_vector = np.array(
-            [-normalized_direction_vector[1], normalized_direction_vector[0]]
-        )
+        orthogonal_vector = np.array([-normalized_direction_vector[1], normalized_direction_vector[0]])
     else:
-        orthogonal_vector = np.array(
-            [normalized_direction_vector[1], -normalized_direction_vector[0]]
-        )
+        orthogonal_vector = np.array([normalized_direction_vector[1], -normalized_direction_vector[0]])
     midpoint = (a + b) / 2
     orthogonal_point = midpoint + d * orthogonal_vector
     return int(orthogonal_point[0]), int(orthogonal_point[1])
@@ -377,9 +373,7 @@ class Angle(AngleExpr):
             raise TypeError("RNG seed must be integer or 'None'.")
         rng = np.random.default_rng(seed=rng_seed)
         if nonzero:
-            rs = 1 + rng.integers(
-                2 * subdivision - 1, size=size
-            )  # type: ignore[attr-defined]
+            rs = 1 + rng.integers(2 * subdivision - 1, size=size)  # type: ignore[attr-defined]
         else:
             rs = rng.integers(2 * subdivision, size=size)  # type: ignore[attr-defined]
         if size == 1:
@@ -404,16 +398,11 @@ pi: Final[Angle] = Angle.pi
 """ Constant for `Angle.pi`. """
 
 
-def SumprodAngleExpr(
-    *exprs: AngleExpr, coeffs: Union[int, Fraction, Sequence[Union[int, Fraction]]] = 1
-) -> AngleExpr:
+def SumprodAngleExpr(*exprs: AngleExpr, coeffs: Union[int, Fraction, Sequence[Union[int, Fraction]]] = 1) -> AngleExpr:
     if not isinstance(coeffs, Sequence):
         coeffs = (coeffs,)
     if len(coeffs) != len(exprs):
-        raise ValueError(
-            f"Expected a sequence of {len(exprs)} coefficients, "
-            f"found {len(coeffs)}."
-        )
+        raise ValueError(f"Expected a sequence of {len(exprs)} coefficients, found {len(coeffs)}.")
     _coeffs: Dict[AngleExpr, Fraction] = {}
     _const: Angle = Angle.zero
     for e, c in zip(exprs, coeffs):
@@ -430,11 +419,7 @@ def SumprodAngleExpr(
             if e in _coeffs:
                 c += _coeffs[e]
             _coeffs[e] = c
-    _coeffs = {
-        e: c
-        for e, c in sorted(_coeffs.items(), key=lambda i: -i[1])
-        if c != 0 and not e.is_zero
-    }
+    _coeffs = {e: c for e, c in sorted(_coeffs.items(), key=lambda i: -i[1]) if c != 0 and not e.is_zero}
     if not _coeffs:
         return _const
     return _SumprodAngleExpr(_coeffs, _const)
@@ -444,17 +429,10 @@ class _SumprodAngleExpr(AngleExpr):
     _coeffs: Mapping[AngleExpr, Fraction]
     _const: "Angle"
 
-    def __init__(
-        self, coeffs: Mapping[AngleExpr, Fraction], const: "Angle" = Angle.zero
-    ):
+    def __init__(self, coeffs: Mapping[AngleExpr, Fraction], const: "Angle" = Angle.zero):
         if any(isinstance(e, Angle) for e in coeffs):
-            raise ValueError(
-                "Keys of 'coeff' argument of _SumprodAngleExpr"
-                "constructor cannot be Angle."
-            )
-        self._coeffs = MappingProxyType(
-            {e: c for e, c in coeffs.items() if c != 0 and not e.is_zero}
-        )
+            raise ValueError("Keys of 'coeff' argument of _SumprodAngleExprconstructor cannot be Angle.")
+        self._coeffs = MappingProxyType({e: c for e, c in coeffs.items() if c != 0 and not e.is_zero})
         self._const = const
 
     @property
@@ -475,9 +453,7 @@ class _SumprodAngleExpr(AngleExpr):
 
     @property
     def to_qiskit(self) -> Any:
-        return sum(
-            (c * e.to_qiskit for e, c in self.coeffs.items()), self.const.to_qiskit
-        )
+        return sum((c * e.to_qiskit for e, c in self.coeffs.items()), self.const.to_qiskit)
 
     def __hash__(self) -> int:
         return hash((_SumprodAngleExpr, tuple(self.coeffs.items()), self.const))
@@ -489,9 +465,7 @@ class _SumprodAngleExpr(AngleExpr):
         neg_sub_e = {e: c for e, c in self.coeffs.items() if c < 0}
         s = "+".join(("" if c == 1 else str(c)) + f(e) for e, c in pos_sub_e.items())
         if neg_sub_e:
-            s += "-" + "".join(
-                ("-" if c == -1 else str(c)) + f(e) for e, c in pos_sub_e.items()
-            )
+            s += "-" + "".join(("-" if c == -1 else str(c)) + f(e) for e, c in pos_sub_e.items())
         if self.const != 0:
             s += f(self.const)
         return s
@@ -529,9 +503,7 @@ class _ModAngleExpr(AngleExpr):
 
     def __init__(self, expr: AngleExpr, mod: AngleExpr):
         if isinstance(expr, Angle) and isinstance(mod, Angle):
-            raise ValueError(
-                "Arguments to _ModAngleExpr constructor cannot both be Angle."
-            )
+            raise ValueError("Arguments to _ModAngleExpr constructor cannot both be Angle.")
         self._expr = expr
         self._mod = mod
 
@@ -701,25 +673,19 @@ class SVGBuilder:
         _validate_vec2(to)
         fx, fy = fro
         tx, ty = to
-        tag = f'<path fill="none" stroke="black"' f' d="M {fx}, {fy} L {tx}, {ty}"/>'
+        tag = f'<path fill="none" stroke="black" d="M {fx}, {fy} L {tx}, {ty}"/>'
         self._tags.append(tag)
         return self
 
-    def line_bend(
-        self, fro: Tuple[int, int], to: Tuple[int, int], left=False, degree=5
-    ):
+    def line_bend(self, fro: Tuple[int, int], to: Tuple[int, int], left=False, degree=5):
         _validate_vec2(fro)
         _validate_vec2(to)
 
         fx, fy = fro
         tx, ty = to
-        bx, by = calculate_orthogonal_point(
-            np.asarray(fro), np.asarray(to), d=degree, left=left
-        )
+        bx, by = calculate_orthogonal_point(np.asarray(fro), np.asarray(to), d=degree, left=left)
 
-        tag = (
-            f'<path d="M {fx} {fy} Q {bx} {by} {tx} {ty}" fill="none" stroke="black"/>'
-        )
+        tag = f'<path d="M {fx} {fy} Q {bx} {by} {tx} {ty}" fill="none" stroke="black"/>'
         self._tags.append(tag)
         return self
 
@@ -737,30 +703,20 @@ class SVGBuilder:
         self._tags.append(tag)
         return self
 
-    def square(
-        self, centre: Tuple[int, int], width: int, height: int, fill
-    ) -> "SVGBuilder":
+    def square(self, centre: Tuple[int, int], width: int, height: int, fill) -> "SVGBuilder":
         _validate_vec2(centre)
         x, y = centre
         if fill in self._def_object_ids:
-            tag = (
-                f'<rect fill="url(#{fill})" stroke="black" x="{x}" y="{y}" '
-                f'width="{width}" height="{height}"/>'
-            )
+            tag = f'<rect fill="url(#{fill})" stroke="black" x="{x}" y="{y}" width="{width}" height="{height}"/>'
             self._tags.append(tag)
         elif isinstance(fill, str):
-            tag = (
-                f'<rect fill="{fill}" stroke="black" x="{x}" y="{y}" '
-                f'width="{width}" height="{height}"/>'
-            )
+            tag = f'<rect fill="{fill}" stroke="black" x="{x}" y="{y}" width="{width}" height="{height}"/>'
             self._tags.append(tag)
         else:
             raise TypeError(f"Fill must be string or a defined Tag. Got: {fill} ")
         return self
 
-    def text_with_square(
-        self, centre: Tuple[int, int], width: int, height: int, text: str
-    ) -> "SVGBuilder":
+    def text_with_square(self, centre: Tuple[int, int], width: int, height: int, text: str) -> "SVGBuilder":
         _validate_vec2(centre)
         x, y = centre
         tag = (
@@ -782,13 +738,11 @@ class SVGBuilder:
         if not isinstance(fill, str):
             raise TypeError("Fill must be string.")
         x, y = centre
-        tag = f'<circle fill="{fill}" stroke="black"' f' cx="{x}" cy="{y}" r="{r}"/>'
+        tag = f'<circle fill="{fill}" stroke="black" cx="{x}" cy="{y}" r="{r}"/>'
         self._tags.append(tag)
         return self
 
-    def rect(
-        self, centre: Tuple[int, int], width: int, height: int, fill: str
-    ) -> "SVGBuilder":
+    def rect(self, centre: Tuple[int, int], width: int, height: int, fill: str) -> "SVGBuilder":
         """
         Draws a rectangle with given centre, width and height.
         """
@@ -804,9 +758,7 @@ class SVGBuilder:
         self._tags.append(tag)
         return self
 
-    def text(
-        self, pos: Tuple[int, int], text: str, *, font_size: int = 10, center=False
-    ) -> "SVGBuilder":
+    def text(self, pos: Tuple[int, int], text: str, *, font_size: int = 10, center=False) -> "SVGBuilder":
         """
         Draws text at the given position (stroke/fill not used).
         """
@@ -860,14 +812,10 @@ class TempScheduleProvider(Protocol):
     from an initial and final temperatures.
     """
 
-    def __call__(
-        self, t_init: Union[int, float], t_final: Union[int, float]
-    ) -> TempSchedule: ...
+    def __call__(self, t_init: Union[int, float], t_final: Union[int, float]) -> TempSchedule: ...
 
 
-def linear_temp_schedule(
-    t_init: Union[int, float], t_final: Union[int, float]
-) -> TempSchedule:
+def linear_temp_schedule(t_init: Union[int, float], t_final: Union[int, float]) -> TempSchedule:
     """
     Returns a straight/linear temperature schedule for given initial and final temperatures,
     from https://link.springer.com/article/10.1007/BF00143921
@@ -883,9 +831,7 @@ def linear_temp_schedule(
     return temp_schedule
 
 
-def geometric_temp_schedule(
-    t_init: Union[int, float], t_final: Union[int, float]
-) -> TempSchedule:
+def geometric_temp_schedule(t_init: Union[int, float], t_final: Union[int, float]) -> TempSchedule:
     """
     Returns a geometric temperature schedule for given initial and final temperatures,
     from https://link.springer.com/article/10.1007/BF00143921
@@ -901,9 +847,7 @@ def geometric_temp_schedule(
     return temp_schedule
 
 
-def reciprocal_temp_schedule(
-    t_init: Union[int, float], t_final: Union[int, float]
-) -> TempSchedule:
+def reciprocal_temp_schedule(t_init: Union[int, float], t_final: Union[int, float]) -> TempSchedule:
     """
     Returns a reciprocal temperature schedule for given initial and final temperatures,
     from https://link.springer.com/article/10.1007/BF00143921
@@ -921,9 +865,7 @@ def reciprocal_temp_schedule(
     return temp_schedule
 
 
-def log_temp_schedule(
-    t_init: Union[int, float], t_final: Union[int, float]
-) -> TempSchedule:
+def log_temp_schedule(t_init: Union[int, float], t_final: Union[int, float]) -> TempSchedule:
     """
     Returns a logarithmic temperature schedule for given initial and final temperatures,
     from https://link.springer.com/article/10.1007/BF00143921
@@ -935,9 +877,7 @@ def log_temp_schedule(
 
     def temp_schedule(it: int, num_iters: int) -> float:
         num = t_init * t_final * (math.log(num_iters + 1) - math.log(2))
-        denom = (t_final * math.log(num_iters + 1) - t_init * math.log(2)) + (
-            t_init - t_final
-        ) * math.log(it + 2)
+        denom = (t_final * math.log(num_iters + 1) - t_init * math.log(2)) + (t_init - t_final) * math.log(it + 2)
         return num / denom
 
     return temp_schedule
@@ -948,16 +888,12 @@ StandardTempScheduleName = Literal["linear", "geometric", "reciprocal", "log"]
     Names of the standard temperature schedules.
 """
 
-StandardTempSchedule = Tuple[
-    StandardTempScheduleName, Union[int, float], Union[int, float]
-]
+StandardTempSchedule = Tuple[StandardTempScheduleName, Union[int, float], Union[int, float]]
 """
     Type for standard temperature schedules.
 """
 
-StandardTempSchedules: Final[
-    Mapping[StandardTempScheduleName, TempScheduleProvider]
-] = {
+StandardTempSchedules: Final[Mapping[StandardTempScheduleName, TempScheduleProvider]] = {
     "linear": linear_temp_schedule,
     "geometric": geometric_temp_schedule,
     "reciprocal": reciprocal_temp_schedule,

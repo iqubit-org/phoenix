@@ -52,7 +52,7 @@ gates are:
 
 import sys
 
-sys.path.append('..')
+sys.path.append("..")
 
 import os
 import json
@@ -75,10 +75,10 @@ class PhasePolynomial:
         self.transformations = []
 
     def __repr__(self):
-        paulis = ['I' if i not in self.qubits else 'Z' for i in range(self.num_qubits)]
+        paulis = ["I" if i not in self.qubits else "Z" for i in range(self.num_qubits)]
         for qubit, pauli in self.transformations:
             paulis[qubit] = pauli
-        return ''.join(paulis)
+        return "".join(paulis)
 
     def add_rotation_qubit(self, qubit):
         if qubit not in self.qubits:
@@ -86,28 +86,28 @@ class PhasePolynomial:
             # self.qubits.sort()
 
     def add_transformation(self, qubit, pauli):
-        assert pauli in ['X', 'Y']
+        assert pauli in ["X", "Y"]
         if (qubit, pauli) not in self.transformations:
             self.transformations.append((qubit, pauli))
 
 
-qasm_dir = 'uccsd_qasm/'
-json_dir = 'uccsd_json/'
+qasm_dir = "uccsd_qasm/"
+json_dir = "uccsd_json/"
 
-fnames = natsorted([fname for fname in os.listdir(qasm_dir) if fname.endswith('.qasm')])
+fnames = natsorted([fname for fname in os.listdir(qasm_dir) if fname.endswith(".qasm")])
 
 for fname in fnames:
     qasm_fname = os.path.join(qasm_dir, fname)
-    json_fname = os.path.join(json_dir, fname.replace('.qasm', '.json'))
+    json_fname = os.path.join(json_dir, fname.replace(".qasm", ".json"))
 
     if os.path.exists(json_fname):
         continue
 
     circ = Circuit.from_qasm(fname=qasm_fname)
 
-    print('converting {} to {} ...'.format(qasm_fname, json_fname))
+    print("converting {} to {} ...".format(qasm_fname, json_fname))
 
-    dag = circ.to_dag('networkx')
+    dag = circ.to_dag("networkx")
 
     # pop the first layer of X gates
     x_gates = [g for g in dag if isinstance(g, gates.U3) and np.allclose(g.angles, [pi, 0, pi])]
@@ -123,26 +123,39 @@ for fname in fnames:
 
         # the CNOT to be contracted into phase_poly is the one whose "tq" is in the qubits of phase_poly
         # moreover, herein only consider the simplest structure of CNOT tree (V-shape)
-        while pred_cnots := [g for g in list(dag.predecessors(phase_poly)) if
-                             isinstance(g, gates.XGate) and len(g.qregs) == 2 and
-                             g.tq == phase_poly.qubits[-1] and g.cq not in phase_poly.qubits]:
-            succ_cnots = [g for g in list(dag.successors(phase_poly)) if isinstance(g, gates.XGate) and
-                          len(g.qregs) == 2 and g.tq == phase_poly.qubits[-1] and g.cq not in phase_poly.qubits]
+        while pred_cnots := [
+            g
+            for g in list(dag.predecessors(phase_poly))
+            if isinstance(g, gates.XGate)
+            and len(g.qregs) == 2
+            and g.tq == phase_poly.qubits[-1]
+            and g.cq not in phase_poly.qubits
+        ]:
+            succ_cnots = [
+                g
+                for g in list(dag.successors(phase_poly))
+                if isinstance(g, gates.XGate)
+                and len(g.qregs) == 2
+                and g.tq == phase_poly.qubits[-1]
+                and g.cq not in phase_poly.qubits
+            ]
             pred_cx = pred_cnots[0]
             succ_cx = succ_cnots[0]
             assert pred_cx.qregs == succ_cx.qregs, "phase_poly({}) pred_cx.qregs = {}, succ_cx.qregs = {}".format(
-                phase_poly.qubits, pred_cx.qregs, succ_cx.qregs)
+                phase_poly.qubits, pred_cx.qregs, succ_cx.qregs
+            )
             phase_poly.add_rotation_qubit(pred_cx.tq)
             phase_poly.add_rotation_qubit(pred_cx.cq)
             dag = nx.contracted_nodes(dag, phase_poly, pred_cx, self_loops=False)
             dag = nx.contracted_nodes(dag, phase_poly, succ_cx, self_loops=False)
 
     # identify Pauli transformation (H, S-H-S, ...)
-    nx.set_node_attributes(dag, False, 'resolved')
-    while phase_polies := [node for node in dag if
-                           isinstance(node, PhasePolynomial) and not dag.nodes[node]['resolved']]:
+    nx.set_node_attributes(dag, False, "resolved")
+    while phase_polies := [
+        node for node in dag if isinstance(node, PhasePolynomial) and not dag.nodes[node]["resolved"]
+    ]:
         phase_poly = phase_polies[0]
-        dag.nodes[phase_poly]['resolved'] = True
+        dag.nodes[phase_poly]["resolved"] = True
         # find the neighbors of phase_poly
         while pred_u3s := [g for g in list(dag.predecessors(phase_poly)) if isinstance(g, gates.U3)]:
             pred_u3 = pred_u3s[0]
@@ -150,13 +163,14 @@ for fname in fnames:
             # print(pred_u3, succ_u3)
             if np.allclose(pred_u3.angles, [pi / 2, 0, pi]) and np.allclose(succ_u3.angles, [pi / 2, 0, pi]):
                 # H Z H --> X
-                phase_poly.add_transformation(pred_u3.tq, 'X')
+                phase_poly.add_transformation(pred_u3.tq, "X")
                 dag = nx.contracted_nodes(dag, phase_poly, pred_u3, self_loops=False)
                 dag = nx.contracted_nodes(dag, phase_poly, succ_u3, self_loops=False)
-            elif np.allclose(pred_u3.angles, [pi / 2, -pi / 2, pi / 2]) and np.allclose(succ_u3.angles,
-                                                                                        [-pi / 2, -pi / 2, pi / 2]):
+            elif np.allclose(pred_u3.angles, [pi / 2, -pi / 2, pi / 2]) and np.allclose(
+                succ_u3.angles, [-pi / 2, -pi / 2, pi / 2]
+            ):
                 # S H S Z SDG H SDG --> Y
-                phase_poly.add_transformation(pred_u3.tq, 'Y')
+                phase_poly.add_transformation(pred_u3.tq, "Y")
                 dag = nx.contracted_nodes(dag, phase_poly, pred_u3, self_loops=False)
                 dag = nx.contracted_nodes(dag, phase_poly, succ_u3, self_loops=False)
             else:
@@ -168,12 +182,7 @@ for fname in fnames:
     paulis = [str(node) for node in nodes]
     coeffs = [node.coeff for node in nodes]
 
-    data = {
-        'num_qubits': circ.num_qubits,
-        'front_x_on': front_x_on,
-        'paulis': paulis,
-        'coeffs': coeffs
-    }
+    data = {"num_qubits": circ.num_qubits, "front_x_on": front_x_on, "paulis": paulis, "coeffs": coeffs}
 
-    with open(json_fname, 'w') as f:
+    with open(json_fname, "w") as f:
         json.dump(data, f, indent=4)

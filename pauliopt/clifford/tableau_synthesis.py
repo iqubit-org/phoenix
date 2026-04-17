@@ -12,7 +12,6 @@ from pauliopt.topologies import Topology
 
 
 class CliffordTableauSynthesisException(Exception):
-
     pass
 
 
@@ -24,16 +23,8 @@ def heurisitc_fkt(row, G, remaining: CliffordTableau):
     :param G: The graph of the topology
     :param remaining: The remaining clifford
     """
-    row_x = [
-        nx.shortest_path_length(G, source=row, target=col)
-        for col in G.nodes
-        if remaining._x_out(row, col) != 0
-    ]
-    row_z = [
-        nx.shortest_path_length(G, source=row, target=col)
-        for col in G.nodes
-        if remaining._z_out(row, col) != 0
-    ]
+    row_x = [nx.shortest_path_length(G, source=row, target=col) for col in G.nodes if remaining._x_out(row, col) != 0]
+    row_z = [nx.shortest_path_length(G, source=row, target=col) for col in G.nodes if remaining._z_out(row, col) != 0]
     dist_x = sum(row_x)
     dist_z = sum(row_z)
     return dist_x + dist_z
@@ -77,9 +68,7 @@ def pick_col(
     return choice_fn(scores, key=lambda x: x[1])[0]
 
 
-def pick_pivot_perm_row_col(
-    G, remaining: "CliffordTableau", remaining_rows: List[int], choice_fn=min
-):
+def pick_pivot_perm_row_col(G, remaining: "CliffordTableau", remaining_rows: List[int], choice_fn=min):
     row = pick_row(G, remaining, remaining_rows, choice_fn)
     col = pick_col(G, remaining, row, choice_fn)
     return col, row
@@ -100,9 +89,7 @@ def pick_pivot(G, remaining: "CliffordTableau", possible_swaps, include_swaps):
     scores = []
     has_cutting_swappable = any([not is_cutting(i, G) for i in possible_swaps])
     for col in G.nodes:
-        if not is_cutting(col, G) or (
-            include_swaps and has_cutting_swappable and col in possible_swaps
-        ):
+        if not is_cutting(col, G) or (include_swaps and has_cutting_swappable and col in possible_swaps):
             scores.append((col, col, heurisitc_fkt(col, G, remaining)))
     assert len(scores) > 0
     return min(scores, key=lambda x: x[2])[:2]
@@ -178,21 +165,13 @@ def compute_steiner_tree(
         return []
     if include_swaps:
         if lookup is None:
-            raise CliffordTableauSynthesisException(
-                "Lookup table is required to include swaps"
-            )
+            raise CliffordTableauSynthesisException("Lookup table is required to include swaps")
         if swappable_nodes is None:
-            raise CliffordTableauSynthesisException(
-                "Swappable nodes are required to include swaps"
-            )
+            raise CliffordTableauSynthesisException("Swappable nodes are required to include swaps")
         if permutation is None:
-            raise CliffordTableauSynthesisException(
-                "Permutation is required to include swaps"
-            )
+            raise CliffordTableauSynthesisException("Permutation is required to include swaps")
         if n_qubits is None:
-            raise CliffordTableauSynthesisException(
-                "Number of qubits is required to include swaps"
-            )
+            raise CliffordTableauSynthesisException("Number of qubits is required to include swaps")
 
         for _ in range(n_qubits):
             dfs = list(reversed(list(nx.dfs_edges(steiner_stree, source=root))))
@@ -305,9 +284,7 @@ def remove_interactions(
 
     """
     row = list(set([pivot_col] + row))
-    lookup = {
-        node: int(remaining._x_out(pivot_row, node) != 0) for node in sub_graph.nodes
-    }
+    lookup = {node: int(remaining._x_out(pivot_row, node) != 0) for node in sub_graph.nodes}
     traversal = compute_steiner_tree(
         pivot_col,
         row,
@@ -400,9 +377,7 @@ def get_non_cutting_vertex(G, pivot_col, swappable_nodes):
     non_cutting_vertices = []
     for node in G.nodes:
         if not is_cutting(node, G) and node in swappable_nodes:
-            shortest_path_len = nx.shortest_path_length(
-                G, source=node, target=pivot_col, weight="weight"
-            )
+            shortest_path_len = nx.shortest_path_length(G, source=node, target=pivot_col, weight="weight")
             non_cutting_vertices.append((node, shortest_path_len))
     non_cutting = min(non_cutting_vertices, key=lambda x: x[1])[0]
     return non_cutting
@@ -543,9 +518,7 @@ def synthesize_tableau(
 
     while G.nodes:
         # 1. Pick a pivot
-        pivot_col, pivot_row = pick_pivot_callback(
-            G, remaining, swappable_nodes, include_swaps
-        )
+        pivot_col, pivot_row = pick_pivot_callback(G, remaining, swappable_nodes, include_swaps)
 
         if is_cutting(pivot_col, G) and include_swaps:
             non_cutting = get_non_cutting_vertex(G, pivot_col, swappable_nodes)

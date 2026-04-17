@@ -71,9 +71,7 @@ def optimize_pauli_polynomial(
     for c in range(pp.num_qubits):
         for t in range(pp.num_qubits):
             if c != t:
-                gate, effect = get_best_gate(
-                    pp, c, t, gate_set, topology, leg_cache=leg_cache
-                )
+                gate, effect = get_best_gate(pp, c, t, gate_set, topology, leg_cache=leg_cache)
                 dist = topology.dist(c, t)
                 if effect + 2 * dist <= 0:
                     pp.propagate_inplace(gate)
@@ -83,9 +81,7 @@ def optimize_pauli_polynomial(
     return clifford_left, pp, clifford_right
 
 
-def compare(
-    pp: PauliPolynomial, prev_gadget: int, current_gadget: int, next_gadget: int
-) -> bool:
+def compare(pp: PauliPolynomial, prev_gadget: int, current_gadget: int, next_gadget: int) -> bool:
     """
     Compare the previous and next gadget to the current gadget.
     :param pp:
@@ -95,8 +91,7 @@ def compare(
     :return:
     """
     return pp.commutes(current_gadget, next_gadget) and (
-        pp.mutual_legs(prev_gadget, current_gadget)
-        < pp.mutual_legs(prev_gadget, next_gadget)
+        pp.mutual_legs(prev_gadget, current_gadget) < pp.mutual_legs(prev_gadget, next_gadget)
     )
 
 
@@ -111,9 +106,7 @@ def sort_pauli_polynomial(pp: PauliPolynomial) -> PauliPolynomial:
         prev_col_idx = col_idx - 1
         col_idx_ = col_idx
         new_col_idx = col_idx
-        while new_col_idx < pp.num_gadgets and compare(
-            pp, prev_col_idx, col_idx_, new_col_idx
-        ):
+        while new_col_idx < pp.num_gadgets and compare(pp, prev_col_idx, col_idx_, new_col_idx):
             pp.swap_gadgets(col_idx_, new_col_idx)
             prev_col_idx = col_idx_
             col_idx_ = new_col_idx
@@ -164,28 +157,20 @@ def recursion_synth_divide_and_conquer(
     :param leg_cache:
     :return:
     """
-    c_l, pp, c_r = optimize_pauli_polynomial(
-        c_l, pp, c_r, topology, leg_cache=leg_cache
-    )
+    c_l, pp, c_r = optimize_pauli_polynomial(c_l, pp, c_r, topology, leg_cache=leg_cache)
     if pp.num_gadgets <= 2:
         return [c_l, pp, c_r]
 
     c_center = CliffordTableau(pp.num_qubits)
     pp = sort_pauli_polynomial(pp)
     pp_left, pp_right = split_pauli_polynomial(pp)
-    regions_left = recursion_synth_divide_and_conquer(
-        c_l, pp_left, c_center, topology, leg_cache=leg_cache
-    )
-    regions_right = recursion_synth_divide_and_conquer(
-        c_center, pp_right, c_r, topology, leg_cache=leg_cache
-    )
+    regions_left = recursion_synth_divide_and_conquer(c_l, pp_left, c_center, topology, leg_cache=leg_cache)
+    regions_right = recursion_synth_divide_and_conquer(c_center, pp_right, c_r, topology, leg_cache=leg_cache)
 
     return regions_left[:-1] + [c_center] + regions_right[1:]
 
 
-def synthesis_divide_and_conquer(
-    pp: PauliPolynomial, topology: Topology
-) -> Tuple[Circuit, List]:
+def synthesis_divide_and_conquer(pp: PauliPolynomial, topology: Topology) -> Tuple[Circuit, List]:
     """
     Divide and conquer synthesis.
 
@@ -202,9 +187,7 @@ def synthesis_divide_and_conquer(
     c_l = CliffordTableau(pp.num_qubits)
     c_r = CliffordTableau(pp.num_qubits)
     legs_cache = {}
-    regions = recursion_synth_divide_and_conquer(
-        c_l, pp, c_r, topology, leg_cache=legs_cache
-    )
+    regions = recursion_synth_divide_and_conquer(c_l, pp, c_r, topology, leg_cache=legs_cache)
 
     circ_out = Circuit(pp.num_qubits)
     for region in regions:

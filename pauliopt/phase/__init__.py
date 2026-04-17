@@ -1,6 +1,6 @@
 """
-    This module contains code to create and simplify circuits of mixed ZX phase gadgets,
-    by conjugation with topologically-aware random circuits of CX gates.
+This module contains code to create and simplify circuits of mixed ZX phase gadgets,
+by conjugation with topologically-aware random circuits of CX gates.
 """
 
 from pauliopt.phase.phase_circuits import (

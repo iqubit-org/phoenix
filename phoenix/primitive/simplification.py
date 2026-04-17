@@ -8,17 +8,16 @@ from ..basics import CNOTEquivCliffordGate, fSwapEquivCliffordGate
 from ..hamiltonian import Hamiltonian
 from ..primitive.utils import SimplificationStep
 
-
 CLIFFORD_OPTIONS = [
-    CNOTEquivCliffordGate('X', 'X'),
-    CNOTEquivCliffordGate('Y', 'Y'),
-    CNOTEquivCliffordGate('Z', 'Z'),
-    CNOTEquivCliffordGate('X', 'Y'),
-    CNOTEquivCliffordGate('Y', 'X'),
-    CNOTEquivCliffordGate('X', 'Z'),
-    CNOTEquivCliffordGate('Z', 'X'),
-    CNOTEquivCliffordGate('Y', 'Z'),
-    CNOTEquivCliffordGate('Z', 'Y'),
+    CNOTEquivCliffordGate("X", "X"),
+    CNOTEquivCliffordGate("Y", "Y"),
+    CNOTEquivCliffordGate("Z", "Z"),
+    CNOTEquivCliffordGate("X", "Y"),
+    CNOTEquivCliffordGate("Y", "X"),
+    CNOTEquivCliffordGate("X", "Z"),
+    CNOTEquivCliffordGate("Z", "X"),
+    CNOTEquivCliffordGate("Y", "Z"),
+    CNOTEquivCliffordGate("Z", "Y"),
 ]
 
 # Precompute the 4x4 symplectic block for each Clifford type (computed once at import time).
@@ -55,14 +54,11 @@ def simplify_hamiltonian(ham: Hamiltonian, parallel: bool = False) -> tuple[Hami
         else:
             best_ham, best_cliff, qubits = search_best_clifford(nonlocal_ham, visited)
 
-        simp_steps.append(SimplificationStep(
-            clifford=best_cliff,
-            local_hamiltonian=local_ham,
-            qubits=qubits))
+        simp_steps.append(SimplificationStep(clifford=best_cliff, local_hamiltonian=local_ham, qubits=qubits))
 
         # q0, q1 = qubits
         # new_layer = max(int(last_layer[q0]), int(last_layer[q1])) + 1
-        # last_layer[q0] = new_layer                                                     
+        # last_layer[q0] = new_layer
         # last_layer[q1] = new_layer
 
         current_ham = best_ham
@@ -71,9 +67,9 @@ def simplify_hamiltonian(ham: Hamiltonian, parallel: bool = False) -> tuple[Hami
     return current_ham, simp_steps
 
 
-def _apply_cliff_to_tableau(x: np.ndarray, z: np.ndarray,
-                            block_4x4: np.ndarray, q0: int, q1: int
-                            ) -> tuple[np.ndarray, np.ndarray]:
+def _apply_cliff_to_tableau(
+    x: np.ndarray, z: np.ndarray, block_4x4: np.ndarray, q0: int, q1: int
+) -> tuple[np.ndarray, np.ndarray]:
     """Apply a 2-qubit Clifford (given as its 4x4 symplectic block) to a tableau.
 
     Instead of constructing a full n-qubit Clifford and calling ``PauliList.evolve``,
@@ -93,8 +89,9 @@ def _apply_cliff_to_tableau(x: np.ndarray, z: np.ndarray,
     return new_x, new_z
 
 
-def search_best_clifford(ham: Hamiltonian, visited: set[bytes] = None) -> tuple[
-    Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]]:
+def search_best_clifford(
+    ham: Hamiltonian, visited: set[bytes] = None
+) -> tuple[Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]]:
     """Search for the best Clifford gate to apply."""
     # n = ham.num_qubits
     # if last_layer is None:
@@ -109,23 +106,23 @@ def search_best_clifford(ham: Hamiltonian, visited: set[bytes] = None) -> tuple[
     x = ham.paulis.x.astype(np.int8)
     z = ham.paulis.z.astype(np.int8)
 
-    best_cost = float('inf')
+    best_cost = float("inf")
     best_cliff_idx = 0
     best_pair_idx = 0
     for ci, cliff in enumerate(CLIFFORD_OPTIONS):
         block = _CLIFFORD_BLOCKS[id(cliff)]
         for pi, (q0, q1) in enumerate(qubit_pairs):
             new_x, new_z = _apply_cliff_to_tableau(x, z, block, q0, q1)
-            
+
             if visited is not None and _tableau_key(new_x, new_z) in visited:
                 continue
             if np.array_equal(new_x, x) and np.array_equal(new_z, z):
                 continue
 
             cost = heuristic_bsf_cost(new_x, new_z)
-            # new_layer   = max(last_layer[q0], last_layer[q1]) + 1            
+            # new_layer   = max(last_layer[q0], last_layer[q1]) + 1
             # delta_depth = max(0, new_layer - current_depth)
-            # cost += delta_depth * depth_weight  
+            # cost += delta_depth * depth_weight
 
             if cost < best_cost:
                 best_cost = cost
@@ -171,7 +168,7 @@ def _heuristic_bsf_cost(x: np.ndarray, z: np.ndarray) -> float:
         cost += np.bitwise_or(x[row_combs[0]], x[row_combs[1]]).sum() * 0.5
         cost += np.bitwise_or(z[row_combs[0]], z[row_combs[1]]).sum() * 0.5
 
-    cost += total_weight * num_nonlocal_paulis ** 2
+    cost += total_weight * num_nonlocal_paulis**2
     return cost
 
 
@@ -213,7 +210,7 @@ def heuristic_bsf_cost(x: np.ndarray, z: np.ndarray) -> float:
         cost += _pairwise_or_sum(nl_x) * 0.5
         cost += _pairwise_or_sum(nl_z) * 0.5
 
-    cost += total_weight * num_nl ** 2
+    cost += total_weight * num_nl**2
     return cost
 
 
@@ -222,9 +219,7 @@ def search_best_clifford_par(
     visited: set[bytes] | None = None,
     col_chunk: int = 64,
     visited_chunk: int = 256,
-) -> tuple[Hamiltonian,
-           CNOTEquivCliffordGate | fSwapEquivCliffordGate,
-           tuple[int, int]]:
+) -> tuple[Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]]:
     """Compressed-representation vectorized search.
 
     Never materializes the full (C, m, n) tableau tensor (which blows up to
@@ -258,7 +253,7 @@ def search_best_clifford_par(
     z = ham.paulis.z.astype(np.int8)
     m, n = x.shape
 
-    pairs_arr = np.asarray(qubit_pairs, dtype=np.int64)           # (P, 2)
+    pairs_arr = np.asarray(qubit_pairs, dtype=np.int64)  # (P, 2)
     q0p = pairs_arr[:, 0]
     q1p = pairs_arr[:, 1]
 
@@ -268,26 +263,24 @@ def search_best_clifford_par(
     # So cost collapses to `total_weight · num_nl² = rw_new · 1[rw_new > 1]`.
     # Skips the entire column-streaming loop; per-Clifford O(P), not O(P·n).
     if m == 1:
-        return _search_best_clifford_par_m1(
-            ham, qubit_pairs, q0p, q1p, x, z, n, visited, visited_chunk
-        )
+        return _search_best_clifford_par_m1(ham, qubit_pairs, q0p, q1p, x, z, n, visited, visited_chunk)
 
     # ---- Precomputed originals ----
-    wo = (x | z).astype(np.int32)                                 # (m, n)
+    wo = (x | z).astype(np.int32)  # (m, n)
     x_i32 = x.astype(np.int32, copy=False)
     z_i32 = z.astype(np.int32, copy=False)
-    rw_orig = wo.sum(axis=1)                                      # (m,)
+    rw_orig = wo.sum(axis=1)  # (m,)
 
     # Original values at affected columns, shape (P, m)
     wo_at_q0 = wo[:, q0p].T
     wo_at_q1 = wo[:, q1p].T
-    x_at_q0  = x_i32[:, q0p].T
-    x_at_q1  = x_i32[:, q1p].T
-    z_at_q0  = z_i32[:, q0p].T
-    z_at_q1  = z_i32[:, q1p].T
+    x_at_q0 = x_i32[:, q0p].T
+    x_at_q1 = x_i32[:, q1p].T
+    z_at_q0 = z_i32[:, q0p].T
+    z_at_q1 = z_i32[:, q1p].T
 
     # (P, m, 4) slab used as matmul input against each Clifford block
-    sub_base = np.stack([x_at_q0, x_at_q1, z_at_q0, z_at_q1], axis=-1)    # (P, m, 4) int32
+    sub_base = np.stack([x_at_q0, x_at_q1, z_at_q0, z_at_q1], axis=-1)  # (P, m, 4) int32
 
     # Running global-best across 9 Cliffords
     best_cost = np.inf
@@ -304,23 +297,23 @@ def search_best_clifford_par(
 
     for ci, cliff in enumerate(CLIFFORD_OPTIONS):
         block = _CLIFFORD_BLOCKS[id(cliff)].astype(np.int32, copy=False)  # (4, 4)
-        new_sub = (sub_base @ block) & 1                                  # (P, m, 4) int32
+        new_sub = (sub_base @ block) & 1  # (P, m, 4) int32
 
-        new_x_q0 = new_sub[:, :, 0]         # (P, m)
+        new_x_q0 = new_sub[:, :, 0]  # (P, m)
         new_x_q1 = new_sub[:, :, 1]
         new_z_q0 = new_sub[:, :, 2]
         new_z_q1 = new_sub[:, :, 3]
-        new_wo_q0 = new_x_q0 | new_z_q0     # (P, m)
+        new_wo_q0 = new_x_q0 | new_z_q0  # (P, m)
         new_wo_q1 = new_x_q1 | new_z_q1
 
         # Same-as-input mask (skip no-op Cliffords)
-        same_mask = np.all(new_sub == sub_base, axis=(1, 2))              # (P,)
+        same_mask = np.all(new_sub == sub_base, axis=(1, 2))  # (P,)
 
         # Candidate row weights and nonlocal mask
-        d_rw = (new_wo_q0 - wo_at_q0) + (new_wo_q1 - wo_at_q1)            # (P, m) signed
-        rw_new = rw_orig[None, :] + d_rw                                  # (P, m)
-        nl_mask = (rw_new > 1).astype(np.int32)                           # (P, m)
-        num_nl = nl_mask.sum(axis=1).astype(np.int64)                     # (P,)
+        d_rw = (new_wo_q0 - wo_at_q0) + (new_wo_q1 - wo_at_q1)  # (P, m) signed
+        rw_new = rw_orig[None, :] + d_rw  # (P, m)
+        nl_mask = (rw_new > 1).astype(np.int32)  # (P, m)
+        num_nl = nl_mask.sum(axis=1).astype(np.int64)  # (P,)
 
         # Streaming pass over all n columns of original (wo, x, z) in chunks.
         # Produces:
@@ -328,74 +321,90 @@ def search_best_clifford_par(
         #   sum_f_x_orig[p], sum_f_z_orig[p]                   (same for x, z)
         #   sum_nz_wo_orig[p] = # cols k with s_wo_orig[p, k] > 0  (for total_weight)
         sum_f_wo_orig = np.zeros(P, dtype=np.int64)
-        sum_f_x_orig  = np.zeros(P, dtype=np.int64)
-        sum_f_z_orig  = np.zeros(P, dtype=np.int64)
+        sum_f_x_orig = np.zeros(P, dtype=np.int64)
+        sum_f_z_orig = np.zeros(P, dtype=np.int64)
         sum_nz_wo_orig = np.zeros(P, dtype=np.int64)
 
-        nnl_col = num_nl[:, None]                                         # (P, 1) int64
+        nnl_col = num_nl[:, None]  # (P, 1) int64
         for k_start in range(0, n, col_chunk):
             k_end = min(k_start + col_chunk, n)
-            wo_chunk = wo[:, k_start:k_end]                               # (m, K) int32
-            x_chunk  = x_i32[:, k_start:k_end]
-            z_chunk  = z_i32[:, k_start:k_end]
+            wo_chunk = wo[:, k_start:k_end]  # (m, K) int32
+            x_chunk = x_i32[:, k_start:k_end]
+            z_chunk = z_i32[:, k_start:k_end]
 
-            s_wo = (nl_mask @ wo_chunk).astype(np.int64, copy=False)      # (P, K)
-            s_x  = (nl_mask @ x_chunk).astype(np.int64, copy=False)
-            s_z  = (nl_mask @ z_chunk).astype(np.int64, copy=False)
+            s_wo = (nl_mask @ wo_chunk).astype(np.int64, copy=False)  # (P, K)
+            s_x = (nl_mask @ x_chunk).astype(np.int64, copy=False)
+            s_z = (nl_mask @ z_chunk).astype(np.int64, copy=False)
 
             d_wo = nnl_col - s_wo
-            d_x  = nnl_col - s_x
-            d_z  = nnl_col - s_z
+            d_x = nnl_col - s_x
+            d_z = nnl_col - s_z
             sum_f_wo_orig += (d_wo * (d_wo - 1) // 2).sum(axis=1)
-            sum_f_x_orig  += (d_x  * (d_x  - 1) // 2).sum(axis=1)
-            sum_f_z_orig  += (d_z  * (d_z  - 1) // 2).sum(axis=1)
+            sum_f_x_orig += (d_x * (d_x - 1) // 2).sum(axis=1)
+            sum_f_z_orig += (d_z * (d_z - 1) // 2).sum(axis=1)
             sum_nz_wo_orig += (s_wo > 0).sum(axis=1)
 
         # ORIGINAL s values at the affected columns — per candidate.
-        s_o_wo_q0 = (nl_mask * wo_at_q0).sum(axis=1).astype(np.int64)     # (P,)
+        s_o_wo_q0 = (nl_mask * wo_at_q0).sum(axis=1).astype(np.int64)  # (P,)
         s_o_wo_q1 = (nl_mask * wo_at_q1).sum(axis=1).astype(np.int64)
-        s_o_x_q0  = (nl_mask * x_at_q0 ).sum(axis=1).astype(np.int64)
-        s_o_x_q1  = (nl_mask * x_at_q1 ).sum(axis=1).astype(np.int64)
-        s_o_z_q0  = (nl_mask * z_at_q0 ).sum(axis=1).astype(np.int64)
-        s_o_z_q1  = (nl_mask * z_at_q1 ).sum(axis=1).astype(np.int64)
+        s_o_x_q0 = (nl_mask * x_at_q0).sum(axis=1).astype(np.int64)
+        s_o_x_q1 = (nl_mask * x_at_q1).sum(axis=1).astype(np.int64)
+        s_o_z_q0 = (nl_mask * z_at_q0).sum(axis=1).astype(np.int64)
+        s_o_z_q1 = (nl_mask * z_at_q1).sum(axis=1).astype(np.int64)
 
         # NEW s values at the affected columns — per candidate.
         s_n_wo_q0 = (nl_mask * new_wo_q0).sum(axis=1).astype(np.int64)
         s_n_wo_q1 = (nl_mask * new_wo_q1).sum(axis=1).astype(np.int64)
-        s_n_x_q0  = (nl_mask * new_x_q0 ).sum(axis=1).astype(np.int64)
-        s_n_x_q1  = (nl_mask * new_x_q1 ).sum(axis=1).astype(np.int64)
-        s_n_z_q0  = (nl_mask * new_z_q0 ).sum(axis=1).astype(np.int64)
-        s_n_z_q1  = (nl_mask * new_z_q1 ).sum(axis=1).astype(np.int64)
+        s_n_x_q0 = (nl_mask * new_x_q0).sum(axis=1).astype(np.int64)
+        s_n_x_q1 = (nl_mask * new_x_q1).sum(axis=1).astype(np.int64)
+        s_n_z_q0 = (nl_mask * new_z_q0).sum(axis=1).astype(np.int64)
+        s_n_z_q1 = (nl_mask * new_z_q1).sum(axis=1).astype(np.int64)
 
         # Corrections: replace orig-column contributions with new-column ones.
-        corr_wo = (_f_diff(num_nl, s_n_wo_q0) + _f_diff(num_nl, s_n_wo_q1)
-                   - _f_diff(num_nl, s_o_wo_q0) - _f_diff(num_nl, s_o_wo_q1))
-        corr_x  = (_f_diff(num_nl, s_n_x_q0 ) + _f_diff(num_nl, s_n_x_q1 )
-                   - _f_diff(num_nl, s_o_x_q0 ) - _f_diff(num_nl, s_o_x_q1 ))
-        corr_z  = (_f_diff(num_nl, s_n_z_q0 ) + _f_diff(num_nl, s_n_z_q1 )
-                   - _f_diff(num_nl, s_o_z_q0 ) - _f_diff(num_nl, s_o_z_q1 ))
+        corr_wo = (
+            _f_diff(num_nl, s_n_wo_q0)
+            + _f_diff(num_nl, s_n_wo_q1)
+            - _f_diff(num_nl, s_o_wo_q0)
+            - _f_diff(num_nl, s_o_wo_q1)
+        )
+        corr_x = (
+            _f_diff(num_nl, s_n_x_q0)
+            + _f_diff(num_nl, s_n_x_q1)
+            - _f_diff(num_nl, s_o_x_q0)
+            - _f_diff(num_nl, s_o_x_q1)
+        )
+        corr_z = (
+            _f_diff(num_nl, s_n_z_q0)
+            + _f_diff(num_nl, s_n_z_q1)
+            - _f_diff(num_nl, s_o_z_q0)
+            - _f_diff(num_nl, s_o_z_q1)
+        )
 
         sum_f_wo = sum_f_wo_orig + corr_wo
-        sum_f_x  = sum_f_x_orig  + corr_x
-        sum_f_z  = sum_f_z_orig  + corr_z
+        sum_f_x = sum_f_x_orig + corr_x
+        sum_f_z = sum_f_z_orig + corr_z
 
         # pair_or_X[p] = n · C(num_nl, 2) − sum_f_X[p]
-        n_C2 = n * num_nl * (num_nl - 1) // 2                             # (P,)
+        n_C2 = n * num_nl * (num_nl - 1) // 2  # (P,)
         pair_or_wo = n_C2 - sum_f_wo
-        pair_or_x  = n_C2 - sum_f_x
-        pair_or_z  = n_C2 - sum_f_z
+        pair_or_x = n_C2 - sum_f_x
+        pair_or_z = n_C2 - sum_f_z
 
         # total_weight[p] = sum_nz_wo_orig - orig_nz_at_affected + new_nz_at_affected
-        total_weight = (sum_nz_wo_orig
-                        - (s_o_wo_q0 > 0).astype(np.int64)
-                        - (s_o_wo_q1 > 0).astype(np.int64)
-                        + (s_n_wo_q0 > 0).astype(np.int64)
-                        + (s_n_wo_q1 > 0).astype(np.int64))
+        total_weight = (
+            sum_nz_wo_orig
+            - (s_o_wo_q0 > 0).astype(np.int64)
+            - (s_o_wo_q1 > 0).astype(np.int64)
+            + (s_n_wo_q0 > 0).astype(np.int64)
+            + (s_n_wo_q1 > 0).astype(np.int64)
+        )
 
-        costs = (pair_or_wo.astype(np.float64)
-                 + 0.5 * pair_or_x.astype(np.float64)
-                 + 0.5 * pair_or_z.astype(np.float64)
-                 + total_weight.astype(np.float64) * num_nl.astype(np.float64) ** 2)
+        costs = (
+            pair_or_wo.astype(np.float64)
+            + 0.5 * pair_or_x.astype(np.float64)
+            + 0.5 * pair_or_z.astype(np.float64)
+            + total_weight.astype(np.float64) * num_nl.astype(np.float64) ** 2
+        )
 
         # Mark same-as-input candidates as invalid.
         costs = np.where(same_mask, np.inf, costs)
@@ -421,12 +430,12 @@ def search_best_clifford_par(
                 chunk_z[idx, :, q0p[p_start:p_end]] = new_z_q0_i8[p_start:p_end]
                 chunk_z[idx, :, q1p[p_start:p_end]] = new_z_q1_i8[p_start:p_end]
 
-                xz = np.concatenate([chunk_x, chunk_z], axis=-1)          # (k, m, 2n)
+                xz = np.concatenate([chunk_x, chunk_z], axis=-1)  # (k, m, 2n)
                 packed = np.packbits(xz.reshape(k, -1).astype(np.uint8, copy=False), axis=-1)
                 row_nb = packed.shape[1]
                 pb = packed.tobytes()
                 for j in range(k):
-                    if pb[j * row_nb:(j + 1) * row_nb] in visited:
+                    if pb[j * row_nb : (j + 1) * row_nb] in visited:
                         costs[p_start + j] = np.inf
 
         # --- Reduce within this Clifford, then fold into global best ------
@@ -454,9 +463,7 @@ def _search_best_clifford_par_m1(
     n: int,
     visited: set[bytes] | None,
     visited_chunk: int,
-) -> tuple[Hamiltonian,
-           CNOTEquivCliffordGate | fSwapEquivCliffordGate,
-           tuple[int, int]]:
+) -> tuple[Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]]:
     """Specialized par search for m == 1.
 
     For a single-Pauli tableau, pairwise-OR sums are trivially 0, and
@@ -465,23 +472,23 @@ def _search_best_clifford_par_m1(
     """
     P = len(qubit_pairs)
     # Original scalar values at the affected qubits (single row).
-    x_row = x[0]                                                    # (n,) int8
-    z_row = z[0]                                                    # (n,)
-    wo_row = (x_row | z_row).astype(np.int32)                       # (n,) int32
-    rw_orig = int(wo_row.sum())                                     # scalar
+    x_row = x[0]  # (n,) int8
+    z_row = z[0]  # (n,)
+    wo_row = (x_row | z_row).astype(np.int32)  # (n,) int32
+    rw_orig = int(wo_row.sum())  # scalar
 
     # Vector form at affected columns for each pair
-    x_at_q0 = x_row[q0p].astype(np.int32)                           # (P,)
+    x_at_q0 = x_row[q0p].astype(np.int32)  # (P,)
     x_at_q1 = x_row[q1p].astype(np.int32)
     z_at_q0 = z_row[q0p].astype(np.int32)
     z_at_q1 = z_row[q1p].astype(np.int32)
-    wo_at_q0 = wo_row[q0p]                                          # (P,)
+    wo_at_q0 = wo_row[q0p]  # (P,)
     wo_at_q1 = wo_row[q1p]
 
     # (P, 1, 4) sub_base — keep 3D for consistency with block matmul.
     # Shape chosen so (sub_base @ block) is (P, 1, 4).
     sub_base = np.stack([x_at_q0, x_at_q1, z_at_q0, z_at_q1], axis=-1)  # (P, 4)
-    sub_base_3d = sub_base[:, None, :].astype(np.int32, copy=False)      # (P, 1, 4)
+    sub_base_3d = sub_base[:, None, :].astype(np.int32, copy=False)  # (P, 1, 4)
 
     best_cost = np.inf
     best_cliff_idx = 0
@@ -489,19 +496,19 @@ def _search_best_clifford_par_m1(
 
     for ci, cliff in enumerate(CLIFFORD_OPTIONS):
         block = _CLIFFORD_BLOCKS[id(cliff)].astype(np.int32, copy=False)
-        new_sub = ((sub_base_3d @ block) & 1)[:, 0, :]              # (P, 4)
+        new_sub = ((sub_base_3d @ block) & 1)[:, 0, :]  # (P, 4)
 
-        new_x_q0 = new_sub[:, 0]                                    # (P,)
+        new_x_q0 = new_sub[:, 0]  # (P,)
         new_x_q1 = new_sub[:, 1]
         new_z_q0 = new_sub[:, 2]
         new_z_q1 = new_sub[:, 3]
-        new_wo_q0 = new_x_q0 | new_z_q0                             # (P,)
+        new_wo_q0 = new_x_q0 | new_z_q0  # (P,)
         new_wo_q1 = new_x_q1 | new_z_q1
 
         # Row-weight change for the single row
-        d_rw = (new_wo_q0 - wo_at_q0) + (new_wo_q1 - wo_at_q1)      # (P,)
-        rw_new = rw_orig + d_rw                                     # (P,)
-        nl_mask = rw_new > 1                                        # (P,)
+        d_rw = (new_wo_q0 - wo_at_q0) + (new_wo_q1 - wo_at_q1)  # (P,)
+        rw_new = rw_orig + d_rw  # (P,)
+        nl_mask = rw_new > 1  # (P,)
 
         # Cost collapses to rw_new where nl_mask, else 0
         costs = np.where(nl_mask, rw_new.astype(np.float64), 0.0)
@@ -515,19 +522,19 @@ def _search_best_clifford_par_m1(
             for p_start in range(0, P, visited_chunk):
                 p_end = min(p_start + visited_chunk, P)
                 k = p_end - p_start
-                chunk_x = np.broadcast_to(x_row, (k, n)).copy()     # (k, n)
+                chunk_x = np.broadcast_to(x_row, (k, n)).copy()  # (k, n)
                 chunk_z = np.broadcast_to(z_row, (k, n)).copy()
                 idx = np.arange(k)
                 chunk_x[idx, q0p[p_start:p_end]] = new_x_q0[p_start:p_end].astype(np.int8)
                 chunk_x[idx, q1p[p_start:p_end]] = new_x_q1[p_start:p_end].astype(np.int8)
                 chunk_z[idx, q0p[p_start:p_end]] = new_z_q0[p_start:p_end].astype(np.int8)
                 chunk_z[idx, q1p[p_start:p_end]] = new_z_q1[p_start:p_end].astype(np.int8)
-                xz = np.concatenate([chunk_x, chunk_z], axis=-1)    # (k, 2n)
+                xz = np.concatenate([chunk_x, chunk_z], axis=-1)  # (k, 2n)
                 packed = np.packbits(xz.astype(np.uint8, copy=False), axis=-1)
                 row_nb = packed.shape[1]
                 pb = packed.tobytes()
                 for j in range(k):
-                    if pb[j * row_nb:(j + 1) * row_nb] in visited:
+                    if pb[j * row_nb : (j + 1) * row_nb] in visited:
                         costs[p_start + j] = np.inf
 
         pi_best = int(np.argmin(costs))

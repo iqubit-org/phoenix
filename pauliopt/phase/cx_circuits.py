@@ -1,6 +1,6 @@
 """
-    This module contains code to create CX circuits for the optimization
-    of circuits of mixed phase gadgets.
+This module contains code to create CX circuits for the optimization
+of circuits of mixed phase gadgets.
 """
 
 from typing import (
@@ -61,9 +61,7 @@ def permrowcol(
         raise ModuleNotFoundError("You must install the 'galois' library.")
     cnots = []
     m = np.asarray(matrix, dtype=np.int32)
-    if (
-        not parities_as_columns
-    ):  # This synthesis technique only works when parities are columns.
+    if not parities_as_columns:  # This synthesis technique only works when parities are columns.
         m = m.T
 
     def add_cnot(ctrl, trgt, m, cnots):
@@ -75,14 +73,7 @@ def permrowcol(
 
     def choose_column(options, row, m):
         if reallocate:
-            return options[
-                np.argmin(
-                    [
-                        sum(m[:, o]) if m[row, o] == 1 else topology.num_qubits
-                        for o in options
-                    ]
-                )
-            ]
+            return options[np.argmin([sum(m[:, o]) if m[row, o] == 1 else topology.num_qubits for o in options])]
         return row
 
     qubits_to_process = list(range(topology.num_qubits))
@@ -114,22 +105,14 @@ def permrowcol(
         # Reduce the row
         ones_in_the_row = [i for i in columns_to_eliminate if m[row, i] == 1]
         if len(ones_in_the_row) > 1:
-            submatrix = [
-                [m[i, j] for i in qubits_to_process if i != row]
-                for j in columns_to_eliminate
-                if j != col
-            ]
+            submatrix = [[m[i, j] for i in qubits_to_process if i != row] for j in columns_to_eliminate if j != col]
             A = galois.GF(2)(submatrix)
             A_inv = np.linalg.inv(A)
-            b = galois.GF(2)(
-                [m[row, i] for i in columns_to_eliminate if i != col], dtype=np.int32
-            )
+            b = galois.GF(2)([m[row, i] for i in columns_to_eliminate if i != col], dtype=np.int32)
             X1 = np.matmul(A_inv, b)
             # Add the row that we removed back in for easier indexing.
             X = np.insert(X1, qubits_to_process.index(row), 1)
-            row_nodes = [
-                qubits_to_process[i] for i in range(len(qubits_to_process)) if X[i] == 1
-            ]
+            row_nodes = [qubits_to_process[i] for i in range(len(qubits_to_process)) if X[i] == 1]
             steiner_tree = topology.steiner_tree(row_nodes, qubits_to_process)
             traversal = list(nx.bfs_edges(steiner_tree, source=row))
             for parent, child in traversal:
@@ -175,14 +158,8 @@ class CXCircuitLayer:
         self._matching = Matching(topology)
         self._num_flippable_cxs = 2 * len(self.topology.couplings)
         for gate in gates:
-            if (
-                not isinstance(gate, (list, tuple))
-                or len(gate) != 2
-                or len(set(gate)) != 2
-            ):
-                raise TypeError(
-                    f"Expected gates to be pairs of distinct integers, found {gate}."
-                )
+            if not isinstance(gate, (list, tuple)) or len(gate) != 2 or len(set(gate)) != 2:
+                raise TypeError(f"Expected gates to be pairs of distinct integers, found {gate}.")
             ctrl, trgt = gate
             self.flip_cx(ctrl, trgt)
 
@@ -265,10 +242,7 @@ class CXCircuitLayer:
         coupling = Coupling(ctrl, trgt)
         if coupling in self._gates:
             return self._gates[coupling] == gate
-        if (
-            self._matching.incident(ctrl) is None
-            and self._matching.incident(trgt) is None
-        ):
+        if self._matching.incident(ctrl) is None and self._matching.incident(trgt) is None:
             return True
         return False
 
@@ -390,8 +364,7 @@ class CXCircuitLayer:
         if "pos" not in kwargs:
             if layout not in layouts:
                 raise ValueError(
-                    f"Invalid layout found: {layout}. "
-                    f"Valid layouts: {', '.join(repr(l) for l in layouts)}"
+                    f"Invalid layout found: {layout}. Valid layouts: {', '.join(repr(l) for l in layouts)}"
                 )
             kwargs["pos"] = getattr(nx, layout + "_layout")(G)
         if "node_color" not in kwargs:
@@ -415,14 +388,8 @@ class CXCircuitLayer:
         if not noshow:
             plt.show()
 
-    def __irshift__(
-        self, gates: Union[GateLike, Sequence[GateLike]]
-    ) -> "CXCircuitLayer":
-        if (
-            isinstance(gates, (list, tuple))
-            and all(isinstance(x, int) for x in gates)
-            and len(gates) == 2
-        ):
+    def __irshift__(self, gates: Union[GateLike, Sequence[GateLike]]) -> "CXCircuitLayer":
+        if isinstance(gates, (list, tuple)) and all(isinstance(x, int) for x in gates) and len(gates) == 2:
             gates = [cast(Union[List[int], Tuple[int, int]], gates)]
         if not isinstance(gates, Sequence):
             raise TypeError(f"Expected sequence of gates, found {gates}")
@@ -648,9 +615,7 @@ class CXCircuit(Sequence[CXCircuitLayer]):
         layers = []
         current_layer = []
         for cnot in cnots:
-            assert cnot[0] in topology.adjacent(
-                cnot[1]
-            )  # Double check that the cnot is allowed
+            assert cnot[0] in topology.adjacent(cnot[1])  # Double check that the cnot is allowed
             if any([c in cnot or t in cnot for c, t in current_layer]):
                 layer = CXCircuitLayer(topology, current_layer)
                 layers.append(layer)
@@ -675,9 +640,7 @@ class CXCircuit(Sequence[CXCircuitLayer]):
     def __iter__(self) -> Iterator[CXCircuitLayer]:
         return iter(self._layers)
 
-    def __irshift__(
-        self, layers: Union[CXCircuitLayerLike, CXCircuitLike]
-    ) -> "CXCircuit":
+    def __irshift__(self, layers: Union[CXCircuitLayerLike, CXCircuitLike]) -> "CXCircuit":
         if isinstance(layers, (CXCircuitLayer, CXCircuitLayerView)):
             layers = [layers]
         if isinstance(layers, (CXCircuit, CXCircuitView)):
@@ -696,16 +659,12 @@ class CXCircuit(Sequence[CXCircuitLayer]):
                 layer = layer.clone()
             elif not isinstance(layer, CXCircuitLayer):
                 if not isinstance(layer, Sequence):
-                    raise TypeError(
-                        f"Expected a sequence of pairs of ints, found {layer}"
-                    )
+                    raise TypeError(f"Expected a sequence of pairs of ints, found {layer}")
                 layer = CXCircuitLayer(self.topology, cast(Sequence[GateLike], layer))
             self._layers.append(layer)
         return self
 
-    def __rshift__(
-        self, layers: Union[CXCircuitLayerLike, CXCircuitLike]
-    ) -> "CXCircuit":
+    def __rshift__(self, layers: Union[CXCircuitLayerLike, CXCircuitLike]) -> "CXCircuit":
         circ = CXCircuit(self.topology, [])
         circ >>= layers
         return circ
@@ -817,9 +776,7 @@ class CXCircuitLayerView:
         Draws this CX circuit layer using NetworkX and Matplotlib.
         Keyword arguments `kwargs` are those of `networkx.draw_networkx`.
         """
-        return self._layer.draw(
-            layout=layout, figsize=figsize, zcolor=zcolor, xcolor=xcolor, **kwargs
-        )
+        return self._layer.draw(layout=layout, figsize=figsize, zcolor=zcolor, xcolor=xcolor, **kwargs)
 
     def __eq__(self, other) -> bool:
         if self is other:
@@ -885,9 +842,7 @@ class CXCircuitView(Sequence[CXCircuitLayerView]):
         Draws this CX circuit using NetworkX and Matplotlib.
         Keyword arguments `kwargs` are those of `networkx.draw_networkx`.
         """
-        return self._circuit.draw(
-            layout=layout, figsize=figsize, zcolor=zcolor, xcolor=xcolor, **kwargs
-        )
+        return self._circuit.draw(layout=layout, figsize=figsize, zcolor=zcolor, xcolor=xcolor, **kwargs)
 
     @overload
     def __getitem__(self, layer_idx: int) -> CXCircuitLayerView: ...
