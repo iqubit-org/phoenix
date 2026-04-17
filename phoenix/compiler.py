@@ -33,7 +33,8 @@ def compile_hamiltonian_simulation(
     grouping: bool = True,
     optimize: bool = True,
     order_method: str | None = None,
-    backend: str = "sequential",
+    # backend: str = "sequential",
+    backend: str = "joblib",
 ) -> QuantumCircuit:
     """Compile a Hamiltonian simulation circuit using the Phoenix framework.
 
