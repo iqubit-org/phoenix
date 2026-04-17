@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import qiskit.quantum_info as qi
 from qiskit.circuit import Gate, QuantumCircuit, QuantumRegister
 from qiskit.circuit._utils import with_gate_array

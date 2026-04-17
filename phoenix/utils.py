@@ -1,4 +1,5 @@
-import matplotlib.pyplot as plt
+from __future__ import annotations
+
 import numpy as np
 import qiskit
 import rustworkx as rx
@@ -267,6 +268,8 @@ def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), title="P
     Y-axis: Pauli string index
     R/G/B/Gray color: X/Y/Z/I
     """
+    import matplotlib.pyplot as plt
+
     if not paulis:
         raise ValueError("paulis list cannot be empty")
 
