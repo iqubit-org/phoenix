@@ -42,20 +42,28 @@ def simplify_hamiltonian(ham: Hamiltonian) -> tuple[Hamiltonian, list[Simplifica
     """
     current_ham = ham
     simp_steps: list[SimplificationStep] = []
-    avoid: tuple[int, int] = (-1, -1)
+    visited = set()
+
+    # last_layer = np.zeros(current_ham.num_qubits, dtype=np.int64)
 
     while current_ham.total_weight > 2:
         local_ham, nonlocal_ham = current_ham.separate_local_nonlocal()
+        visited.add(_tableau_key(nonlocal_ham.paulis.x, nonlocal_ham.paulis.z))
 
-        best_ham, best_cliff, qubits = search_best_clifford(nonlocal_ham, avoid)
+        best_ham, best_cliff, qubits, cost = search_best_clifford(nonlocal_ham, visited)
 
         simp_steps.append(SimplificationStep(
             clifford=best_cliff,
             local_hamiltonian=local_ham,
             qubits=qubits))
 
+        # q0, q1 = qubits
+        # new_layer = max(int(last_layer[q0]), int(last_layer[q1])) + 1
+        # last_layer[q0] = new_layer                                                     
+        # last_layer[q1] = new_layer
+
         current_ham = best_ham
-        avoid = qubits
+        visited.add(_tableau_key(current_ham.paulis.x, current_ham.paulis.z))
 
     return current_ham, simp_steps
 
@@ -82,12 +90,19 @@ def _apply_cliff_to_tableau(x: np.ndarray, z: np.ndarray,
     return new_x, new_z
 
 
-def search_best_clifford(ham: Hamiltonian, avoid: tuple[int, int]) -> tuple[
-    Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]]:
+def search_best_clifford(ham: Hamiltonian, visited: set[bytes] = None, 
+                         last_layer: np.ndarray = None, depth_weight: float = None) -> tuple[
+    Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int], float]:
     """Search for the best Clifford gate to apply."""
+    # n = ham.num_qubits
+    # if last_layer is None:
+    #     last_layer = np.zeros(n, dtype=np.int64)
+    # if depth_weight is None:
+    #     depth_weight = np.sqrt(n)
+    # current_depth = last_layer.max() if n > 0 else 0
 
     qubit_pairs = sorted(combinations(ham.active_qubits, 2), key=lambda idx: (idx[0] % 2))
-    qubit_pairs = [pair for pair in qubit_pairs if pair != avoid]
+    qubit_pairs = [pair for pair in qubit_pairs]
 
     x = ham.paulis.x.astype(np.int8)
     z = ham.paulis.z.astype(np.int8)
@@ -95,21 +110,37 @@ def search_best_clifford(ham: Hamiltonian, avoid: tuple[int, int]) -> tuple[
     best_cost = float('inf')
     best_cliff_idx = 0
     best_pair_idx = 0
-
+    from tqdm import tqdm
     for ci, cliff in enumerate(CLIFFORD_OPTIONS):
         block = _CLIFFORD_BLOCKS[id(cliff)]
-        for pi, (q0, q1) in enumerate(qubit_pairs):
+        for pi, (q0, q1) in tqdm(enumerate(qubit_pairs), total=len(qubit_pairs), desc=f"Searching Cliff {ci+1}/{len(CLIFFORD_OPTIONS)}"):
             new_x, new_z = _apply_cliff_to_tableau(x, z, block, q0, q1)
+            
+            if visited is not None and _tableau_key(new_x, new_z) in visited:
+                continue
+            if np.array_equal(new_x, x) and np.array_equal(new_z, z):
+                continue
+
             cost = heuristic_bsf_cost(new_x, new_z)
+            # new_layer   = max(last_layer[q0], last_layer[q1]) + 1            
+            # delta_depth = max(0, new_layer - current_depth)   # 恒为 0 或 1
+            # cost += delta_depth * depth_weight  
+
             if cost < best_cost:
                 best_cost = cost
                 best_cliff_idx = ci
                 best_pair_idx = pi
+    
+    print(f"Best Clifford: {CLIFFORD_OPTIONS[best_cliff_idx]}, qubits: {qubit_pairs[best_pair_idx]}, cost: {best_cost:.2f}")
 
     best_cliff = CLIFFORD_OPTIONS[best_cliff_idx]
     best_qubit_pair = qubit_pairs[best_pair_idx]
     best_ham = ham.apply_clifford(best_cliff, *best_qubit_pair)
-    return best_ham, best_cliff, best_qubit_pair
+    return best_ham, best_cliff, best_qubit_pair, best_cost
+
+
+def _tableau_key(x: np.ndarray, z: np.ndarray) -> bytes:
+    return np.packbits(np.hstack([x, z]).astype(np.uint8), axis=None).tobytes()
 
 
 def _heuristic_bsf_cost(x: np.ndarray, z: np.ndarray) -> float:

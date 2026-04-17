@@ -17,7 +17,6 @@ _UNROLL_BASIS_GATES = ["cx", "h", "s", "sdg", "rzx", "rxx", "ryy", "rzz"]
 # _SYNTHESIS_BASIS_GATES = ["cx", "rz", "sx", "x"]
 _SYNTHESIS_BASIS_GATES = ["cx", "u"]
 
-
 def _process_same_weight_hamiltonian(ham: Hamiltonian) -> QuantumCircuit:
     """Helper function to process a single Hamiltonian group (used for parallel execution)."""
     ham_, simp_steps = simplify_hamiltonian(ham)
@@ -33,8 +32,8 @@ def compile_hamiltonian_simulation(
     grouping: bool = True,
     optimize: bool = True,
     order_method: str | None = None,
-    # backend: str = "sequential",
-    backend: str = "joblib",
+    backend: str = "sequential",
+    # backend: str = "concurrent.futures",
 ) -> QuantumCircuit:
     """Compile a Hamiltonian simulation circuit using the Phoenix framework.
 
@@ -69,6 +68,7 @@ def compile_hamiltonian_simulation(
     else:
         raise ValueError(f"Unknown backend: {backend}. Use 'joblib', 'concurrent.futures', or 'sequential'.")
 
+    print(f"Generated {len(circuits)} subcircuits for Hamiltonian simulation")
     qc = order_circuits(circuits, method=order_method or 'tsp')
 
     if optimize:

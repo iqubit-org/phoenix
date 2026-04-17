@@ -1,4 +1,6 @@
 from __future__ import annotations
+import time
+from functools import lru_cache
 
 import numpy as np
 from qiskit import QuantumCircuit
@@ -26,6 +28,8 @@ class CircuitTetris:
         self.tail_cliffs = tail_cliffs
         self.head_depth2q = _compute_cliff_depth2q(head_cliffs)
         self.tail_depth2q = _compute_cliff_depth2q(tail_cliffs)
+        self.head_signature = _encode_cliffs(head_cliffs)
+        self.tail_signature = _encode_cliffs(tail_cliffs)
 
     @classmethod
     def from_circuit(cls, qc: QuantumCircuit) -> CircuitTetris:
@@ -169,13 +173,91 @@ def _compute_cliff_depth2q(cliffs: list[CircuitInstruction]) -> int:
     return max(qubit_depth.values())
 
 
+def _encode_cliffs(cliffs: list[CircuitInstruction]) -> tuple[tuple[str, int, int], ...]:
+    """Encode Clifford instructions into a compact, hashable representation."""
+    return tuple(
+        (
+            instr.operation.name,
+            instr.qubits[0]._index,
+            instr.qubits[1]._index,
+        )
+        for instr in cliffs
+    )
+
+
+@lru_cache(maxsize=65536)
+def _compute_cliff_depth2q_signature(
+    cliffs_sig: tuple[tuple[str, int, int], ...]
+) -> int:
+    """Compute 2Q depth from encoded Clifford instructions."""
+    if not cliffs_sig:
+        return 0
+    qubit_depth: dict[int, int] = {}
+    for _, q0, q1 in cliffs_sig:
+        d = max(qubit_depth.get(q0, 0), qubit_depth.get(q1, 0)) + 1
+        qubit_depth[q0] = d
+        qubit_depth[q1] = d
+    return max(qubit_depth.values())
+
+
+@lru_cache(maxsize=65536)
+def _cancellation_bonus_signature(
+    lhs_tail_sig: tuple[tuple[str, int, int], ...],
+    rhs_head_sig: tuple[tuple[str, int, int], ...],
+) -> tuple[
+    float,
+    tuple[tuple[str, int, int], ...],
+    tuple[tuple[str, int, int], ...],
+]:
+    """
+    Cached cancellation-bonus computation on compact clifford signatures.
+
+    Returns:
+        bonus,
+        lhs signature with cancelled gates removed,
+        rhs signature with cancelled gates removed
+    """
+    if not lhs_tail_sig or not rhs_head_sig:
+        return 0.0, lhs_tail_sig, rhs_head_sig
+
+    lhs_masks = tuple((1 << q0) | (1 << q1) for _, q0, q1 in lhs_tail_sig)
+    rhs_masks = tuple((1 << q0) | (1 << q1) for _, q0, q1 in rhs_head_sig)
+
+    bonus = 0.0
+    used_tail: set[int] = set()
+    used_head: set[int] = set()
+
+    def _is_reachable(masks: tuple[int, ...], idx: int, used: set[int]) -> bool:
+        target_mask = masks[idx]
+        for k in range(idx):
+            if k not in used and (target_mask & masks[k]):
+                return False
+        return True
+
+    for i, t in enumerate(lhs_tail_sig):
+        for j, h in enumerate(rhs_head_sig):
+            if j in used_head:
+                continue
+            if t == h and _is_reachable(lhs_masks, i, used_tail) and _is_reachable(rhs_masks, j, used_head):
+                bonus += 2.0
+                used_tail.add(i)
+                used_head.add(j)
+                break
+
+    lhs_remaining = tuple(t for i, t in enumerate(lhs_tail_sig) if i not in used_tail)
+    rhs_remaining = tuple(h for j, h in enumerate(rhs_head_sig) if j not in used_head)
+    return bonus, lhs_remaining, rhs_remaining
+
+
 def assembling_cost(lhs: CircuitTetris, rhs: CircuitTetris) -> float:
     cost = depth_cost(lhs.right_end, rhs.left_end)
-    bonus, lhs_tail_simplified, rhs_head_simplified = cancellation_bonus(lhs.tail_cliffs, rhs.head_cliffs, return_simplified_blocks=True)
+    bonus, lhs_tail_simplified, rhs_head_simplified = _cancellation_bonus_signature(
+        lhs.tail_signature, rhs.head_signature
+    )
 
     if bonus > 0:
-        lhs_depth_reduced = lhs.tail_depth2q - _compute_cliff_depth2q(lhs_tail_simplified)
-        rhs_depth_reduced = rhs.head_depth2q - _compute_cliff_depth2q(rhs_head_simplified)
+        lhs_depth_reduced = lhs.tail_depth2q - _compute_cliff_depth2q_signature(lhs_tail_simplified)
+        rhs_depth_reduced = rhs.head_depth2q - _compute_cliff_depth2q_signature(rhs_head_simplified)
         bonus += lhs_depth_reduced * lhs.circuit.num_qubits + rhs_depth_reduced * rhs.circuit.num_qubits
 
     cost -= bonus
@@ -352,13 +434,57 @@ def _compute_cost_matrix(tetris_list: list[CircuitTetris]) -> np.ndarray:
     This represents the cost of placing block j immediately after block i.
     """
     n = len(tetris_list)
-    cost_matrix = np.zeros((n, n))
-    for i in range(n):
+    if n == 0:
+        return np.zeros((0, 0), dtype=float)
+
+    left_ends = np.stack([t.left_end for t in tetris_list]).astype(np.int32, copy=False)
+    right_ends = np.stack([t.right_end for t in tetris_list]).astype(np.int32, copy=False)
+    num_qubits = left_ends.shape[1]
+
+    # Vectorized depth-cost matrix.
+    row_sum_right = right_ends.sum(axis=1, dtype=np.int64)
+    row_sum_left = left_ends.sum(axis=1, dtype=np.int64)
+    cost_matrix = row_sum_right[:, None] + row_sum_left[None, :]
+
+    right_zero = (right_ends == 0).astype(np.uint8, copy=False)
+    left_zero = (left_ends == 0).astype(np.uint8, copy=False)
+    zero_overlap = right_zero @ left_zero.T
+    cost_matrix = cost_matrix - (zero_overlap == 0) * num_qubits
+    cost_matrix = cost_matrix.astype(np.float64, copy=False)
+
+    # Precompute signature sets so most (i, j) pairs can be skipped by an O(1)
+    # intersection test: if lhs.tail and rhs.head share no (gate_name, q0, q1)
+    # triple, bonus is necessarily 0 and we avoid both the LRU-cache lookup
+    # and the O(T·H·(T+H)) inner loop of `_cancellation_bonus_signature`.
+    tail_sig_sets: list[frozenset] = [frozenset(t.tail_signature) for t in tetris_list]
+    head_sig_sets: list[frozenset] = [frozenset(t.head_signature) for t in tetris_list]
+
+    for i, lhs in enumerate(tetris_list):
+        ts = tail_sig_sets[i]
+        if not ts:
+            continue
+        lhs_sig = lhs.tail_signature
+        lhs_td = lhs.tail_depth2q
+        lhs_nq = lhs.circuit.num_qubits
+
         for j in range(n):
-            if i != j:
-                cost_matrix[i, j] = assembling_cost(tetris_list[i], tetris_list[j])
-            else:
-                cost_matrix[i, j] = float('inf')  # Can't go from a node to itself
+            if i == j:
+                continue
+            hs = head_sig_sets[j]
+            if not hs or ts.isdisjoint(hs):
+                continue
+
+            rhs = tetris_list[j]
+            bonus, lhs_tail_simplified, rhs_head_simplified = _cancellation_bonus_signature(
+                lhs_sig, rhs.head_signature
+            )
+            if bonus > 0:
+                lhs_depth_reduced = lhs_td - _compute_cliff_depth2q_signature(lhs_tail_simplified)
+                rhs_depth_reduced = rhs.head_depth2q - _compute_cliff_depth2q_signature(rhs_head_simplified)
+                bonus += lhs_depth_reduced * lhs_nq + rhs_depth_reduced * rhs.circuit.num_qubits
+                cost_matrix[i, j] -= bonus
+
+    np.fill_diagonal(cost_matrix, float('inf'))
     return cost_matrix
 
 
@@ -443,96 +569,109 @@ def _tsp_dp_solve(cost_matrix: np.ndarray, start_idx: int = 0) -> tuple[list[int
     return path, best_cost
 
 
-def _tsp_2opt_improve(ordering: list[int], cost_matrix: np.ndarray, 
-                       max_iterations: int = 1000) -> tuple[list[int], float]:
+def _tsp_2opt_improve(ordering: list[int], cost_matrix: np.ndarray,
+                      max_iterations: int = 1000) -> tuple[list[int], float]:
     """
-    Improve an ordering using 2-opt local search.
-    
-    2-opt repeatedly reverses segments of the path to reduce total cost.
-    This is the classic TSP local search that works well in practice.
-    
-    Time complexity per iteration: O(n²)
-    
+    Improve an ordering using vectorized 2-opt local search (best-improvement).
+
+    The cost matrix is asymmetric (ATSP), so reversing a segment [i, j] flips
+    every internal edge. Per-iteration work is O(n²) numpy via prefix sums:
+
+        diff[k]   = C[o[k+1], o[k]] - C[o[k], o[k+1]]
+        prefix[k] = sum(diff[:k])
+        Δ_internal(i, j) = prefix[j] - prefix[i]
+
+    combined with O(1) boundary-edge deltas for each (i, j).
+
     Args:
         ordering: Initial ordering (list of node indices)
-        cost_matrix: n×n cost matrix
+        cost_matrix: n×n cost matrix (asymmetric)
         max_iterations: Maximum number of improvement iterations
-    
+
     Returns:
         Tuple of (improved ordering, total cost)
     """
     n = len(ordering)
     if n <= 2:
-        cost = sum(cost_matrix[ordering[i]][ordering[i+1]] for i in range(n-1)) if n > 1 else 0
-        return ordering, cost
-    
-    ordering = list(ordering)  # Make a copy
+        cost = float(cost_matrix[ordering[0], ordering[1]]) if n == 2 else 0.0
+        return list(ordering), cost
 
-    current_cost = sum(cost_matrix[ordering[k]][ordering[k+1]] for k in range(n - 1))
+    o = np.asarray(ordering, dtype=np.int64).copy()
+    C = np.asarray(cost_matrix, dtype=np.float64)
+
+    current_cost = float(C[o[:-1], o[1:]].sum())
 
     for _ in range(max_iterations):
-        improved = False
+        # Cost submatrix under current ordering: M[a, b] = C[o[a], o[b]]
+        M = C[o[:, None], o[None, :]]
 
-        for i in range(1, n - 1):
-            for j in range(i + 1, n):
-                # Compute cost delta for reversing segment [i, j]: O(j-i) instead of O(n)
-                delta = (cost_matrix[ordering[i-1]][ordering[j]]
-                         - cost_matrix[ordering[i-1]][ordering[i]])
-                if j < n - 1:
-                    delta += (cost_matrix[ordering[i]][ordering[j+1]]
-                              - cost_matrix[ordering[j]][ordering[j+1]])
-                for k in range(i, j):
-                    delta += (cost_matrix[ordering[k+1]][ordering[k]]
-                              - cost_matrix[ordering[k]][ordering[k+1]])
+        # Prefix-sum for internal-edge reversal delta
+        diag_up = np.diagonal(M, offset=1)        # M[k, k+1], len n-1
+        diag_down = np.diagonal(M, offset=-1)     # M[k+1, k], len n-1
+        diff = diag_down - diag_up                # diff[k]
+        prefix = np.concatenate(([0.0], np.cumsum(diff)))  # shape (n,)
+        internal = prefix[None, :] - prefix[:, None]       # (n, n)
 
-                if delta < -1e-10:
-                    ordering[i:j+1] = ordering[i:j+1][::-1]
-                    current_cost += delta
-                    improved = True
-                    break
+        # Boundary deltas
+        bound_left = np.zeros((n, n))
+        bound_left[1:, :] = M[:-1, :] - diag_up[:, None]   # M[i-1, j] - M[i-1, i]
+        bound_right = np.zeros((n, n))
+        bound_right[:, :-1] = M[:, 1:] - diag_up[None, :]  # M[i, j+1] - M[j, j+1]
 
-            if improved:
-                break
+        delta = internal + bound_left + bound_right
 
-        if not improved:
-            break
+        # Valid (i, j): 1 <= i < j <= n-1
+        rows = np.arange(n)[:, None]
+        cols = np.arange(n)[None, :]
+        valid = (rows >= 1) & (cols > rows)
+        delta_masked = np.where(valid, delta, np.inf)
 
-    return ordering, current_cost
+        flat = int(np.argmin(delta_masked))
+        i_best, j_best = divmod(flat, n)
+        best_delta = float(delta_masked[i_best, j_best])
+
+        if best_delta >= -1e-10:
+            break  # converged
+
+        o[i_best:j_best + 1] = o[i_best:j_best + 1][::-1]
+        current_cost += best_delta
+
+    return o.tolist(), current_cost
 
 
 def _tsp_greedy_initial(cost_matrix: np.ndarray, start_idx: int = 0) -> list[int]:
     """
-    Generate an initial ordering using greedy nearest neighbor heuristic.
-    
+    Generate an initial ordering using greedy nearest-neighbor heuristic.
+
+    Vectorized: each step finds the nearest unvisited node via a single
+    np.argmin over a masked row.
+
     Args:
         cost_matrix: n×n cost matrix
         start_idx: Starting node
-    
+
     Returns:
         Greedy ordering starting from start_idx
     """
     n = cost_matrix.shape[0]
-    visited = {start_idx}
+    if n == 0:
+        return []
+
+    C = np.asarray(cost_matrix, dtype=np.float64)
     ordering = [start_idx]
+    unvisited = np.ones(n, dtype=bool)
+    unvisited[start_idx] = False
     current = start_idx
-    
-    while len(ordering) < n:
-        # Find the nearest unvisited node
-        best_next = -1
-        best_cost = float('inf')
-        
-        for j in range(n):
-            if j not in visited and cost_matrix[current][j] < best_cost:
-                best_cost = cost_matrix[current][j]
-                best_next = j
-        
-        if best_next == -1:
+
+    for _ in range(n - 1):
+        row = np.where(unvisited, C[current], np.inf)
+        nxt = int(np.argmin(row))
+        if not np.isfinite(row[nxt]):
             break
-            
-        ordering.append(best_next)
-        visited.add(best_next)
-        current = best_next
-    
+        ordering.append(nxt)
+        unvisited[nxt] = False
+        current = nxt
+
     return ordering
 
 
