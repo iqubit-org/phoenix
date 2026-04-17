@@ -32,7 +32,7 @@ class Hamiltonian(SparsePauliOp):
         """Generate the corresponding unitary evolution operator."""
         return linalg.expm(-1j * self.to_matrix() * t)
 
-    def normalize(self) -> "Hamiltonian":
+    def normalize(self) -> Hamiltonian:
         """Return a normalized version of the Hamiltonian."""
         norm = self.norm()
         if norm == 0:
@@ -45,7 +45,7 @@ class Hamiltonian(SparsePauliOp):
         # Since Pauli matrices have spectral norm 1, this simplifies to sum(|coeff|).
         return np.sum(np.abs(self.coeffs))
 
-    def group_same_weights(self) -> list["Hamiltonian"]:
+    def group_same_weights(self) -> list[Hamiltonian]:
         """Group Pauli strings by their nontrivial parts."""
         from .primitive.grouping import group_paulis_and_coeffs
 
@@ -124,7 +124,7 @@ class Hamiltonian(SparsePauliOp):
         return np.sum(self.with_ops.sum(axis=1) <= 1)
 
     @property
-    def reverse(self) -> "Hamiltonian":
+    def reverse(self) -> Hamiltonian:
         """Reverse the order of Pauli exponentiations"""
         return Hamiltonian(self.paulis[::-1], self.coeffs[::-1])
 
@@ -136,7 +136,7 @@ class Hamiltonian(SparsePauliOp):
     def which_local_paulis(self) -> np.ndarray:
         return np.where(self.with_ops.sum(axis=1) <= 1)[0]
 
-    def apply_clifford(self, cliff, *qubits, inplace=False, frame="s") -> "Hamiltonian":
+    def apply_clifford(self, cliff, *qubits, inplace=False, frame="s") -> Hamiltonian:
         qc = QuantumCircuit(self.num_qubits)
         qc.append(cliff, qubits)
 
@@ -147,7 +147,7 @@ class Hamiltonian(SparsePauliOp):
         else:
             return Hamiltonian(self.paulis.evolve(qc, frame=frame), self.coeffs)
 
-    def separate_local_nonlocal(self) -> tuple["Hamiltonian", "Hamiltonian"]:
+    def separate_local_nonlocal(self) -> tuple[Hamiltonian, Hamiltonian]:
         """
         Separate Hamiltonian into local (weight <= 1) and non-local parts.
         Returns (local_ham, nonlocal_ham).

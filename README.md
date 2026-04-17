@@ -1,7 +1,7 @@
 # 🐦‍🔥 PHOENIX: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices
 
 [![PyPI](https://img.shields.io/pypi/v/phoenix-quantum?color=blue)](https://pypi.org/project/phoenix-quantum/)
-[![Python](https://img.shields.io/badge/python-3.8--3.12-blue)](https://pypi.org/project/phoenix-quantum/)
+[![Python](https://img.shields.io/badge/python-3.9--3.12-blue)](https://pypi.org/project/phoenix-quantum/)
 [![License](https://img.shields.io/pypi/l/phoenix-quantum)](./LICENSE)
 [![CI](https://github.com/iqubit-org/phoenix/actions/workflows/ci.yml/badge.svg)](https://github.com/iqubit-org/phoenix/actions/workflows/ci.yml)
 [![Slides](https://img.shields.io/badge/Slides-PPTX-orange)](https://fact-lab.hkust.edu.hk/publications/conference-paper/2025/yang-2025-phoenix/Phoenix-ZY%20%2862DAC_Presentation%29.pdf)
