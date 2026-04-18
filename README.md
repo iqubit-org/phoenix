@@ -10,11 +10,12 @@
 
 ## Overview
 
-Phoenix is a high-level VQA (variational quantum algorithm) compiler built on top of [Qiskit](https://github.com/Qiskit/qiskit). It compiles Hamiltonian simulation circuits by exploiting global optimization opportunities through the BSF (binary symplectic form) representation of Pauli exponentiations and Clifford formalism.
+Phoenix is a high-level application-specific for generic Hamiltonian simulation programs (e.g., VQA, QAOA) built on top of Qiskit framework. It compiles Hamiltonian simulation circuits by exploiting global optimization opportunities through the BSF (binary symplectic form) representation of Pauli exponentiations and Clifford transformation.
 
-Different from ZX-calculus-like approaches (e.g., [TKet](https://github.com/CQCL/pytket-docs), [PauliOpt](https://github.com/hashberg-io/pauliopt)) and local peephole optimization approaches (e.g., [Paulihedral](https://arxiv.org/abs/2109.03371), [Tetris](https://arxiv.org/abs/2309.01905v2)), Phoenix performs global optimization on the Pauli-string IR level before lowering to gate-level circuits.
+Different from ZX calculus or Phase polynomial like approaches (e.g., [TKet](https://github.com/CQCL/pytket-docs), [PauliOpt](https://github.com/hashberg-io/pauliopt)) and local peephole optimization approaches (e.g., [Paulihedral](https://arxiv.org/abs/2109.03371), [Tetris](https://arxiv.org/abs/2309.01905)), Phoenix performs global optimization on the Pauli-string IR level before lowering to gate-level circuits.
 
-This repo includes benchmarking scripts and results with other SOTA baselines -- TKet, Paulihedral, Tetris, PauliOpt, and QuCLEAR. Code of Paulihedral and Tetris are refactored and integrated in this repo.
+
+This repo also includes benchmarking scripts and results with other SOTA baselines -- [Qiskit-Rustiq (Goubault de Brugière et al. 2024)](https://arxiv.org/abs/2404.03280), [TKet (Schmitz et al. 2021, Paykin et al. 2023)](https://arxiv.org/abs/2103.08602), [Paulihedral (Li et al. 2022)](https://arxiv.org/abs/2109.03371), [Tetris (Jin et al. 2024)](https://arxiv.org/abs/2309.01905), [PauliOpt (Winderl et al. 2023)](https://github.com/hashberg-io/pauliopt), and [QuCLEAR (Liu et al. 2025)](https://arxiv.org/abs/2408.13316).
 
 
 ## Usage
@@ -83,7 +84,7 @@ Core optimization strategy (BSF simplification via Clifford conjugation):
 
 Lower is better. Opt Rate = geometric mean of (optimized / original) across all benchmarks.
 
-### HamLib Benchmarks (100 programs across 4 categories)
+### [HamLib Benchmarks](https://arxiv.org/abs/2306.13126) (100 programs across 4 categories)
 
 ```
 >>> Num2Q Opt Rate
