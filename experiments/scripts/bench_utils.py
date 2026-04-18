@@ -7,14 +7,10 @@ import sys
 sys.path.append("../..")
 
 import qiskit
-import pytket
-import pytket.qasm
-import pytket.passes
 import numpy as np
 import rustworkx as rx
 from typing import Tuple, List
-from qiskit.transpiler import CouplingMap, PassManager
-
+from qiskit.transpiler import CouplingMap
 
 import phoenix
 
@@ -168,11 +164,35 @@ def quclear_pass(
 def pauliopt_pass(
     paulis: List[str],
     coeffs: List[float],
-    method="steiner_gray",
+    method: str = "steiner_gray",
     coupling_map: CouplingMap = None,
     with_O3: bool = False,
 ) -> qiskit.QuantumCircuit:
-    """Optional method: annealing, steiner_gray, divide_and_conquer (The default steiner_gray which performs the best in fidel tests)"""
+    """PauliOpt synthesis, architecture-aware when ``coupling_map`` is limited.
+
+    Methods (all three take a ``Topology`` natively):
+      - ``steiner_gray``       — Steiner-tree based greedy synthesis.
+                                 Default; best on limited topologies.
+                                 See Goubault de Brugière et al. 2024
+                                 (arXiv:2404.03280) and the pauliopt
+                                 comparison paper (arXiv:2306.15601).
+      - ``annealing``          — Simulated-annealing refinement.
+                                 Longer runtime; sensitive to schedule
+                                 / nr_iterations (pauliopt default is
+                                 only 100 iters — often not enough).
+                                 See arXiv:2206.11839.
+      - ``divide_and_conquer`` — Recursive block split synthesis.
+                                 Newer, experimental.
+
+    Topology handling:
+      When ``coupling_map`` encodes a **limited** connectivity, we build
+      the pauliopt ``Topology`` directly from it and pass it into the
+      synthesizer, so pauliopt does its own architecture-aware routing.
+      Only post-optimisation (gate cancellation / 2q resynthesis) is
+      then delegated to Qiskit. Previously we forced all-to-all inside
+      pauliopt and routed later with Qiskit SABRE, which negated the
+      whole point of pauliopt's Steiner-tree machinery.
+    """
     from pauliopt.pauli.pauli_polynomial import PauliPolynomial
     from pauliopt.pauli.pauli_gadget import PPhase
     from pauliopt.pauli_strings import I, X, Y, Z
@@ -190,17 +210,36 @@ def pauliopt_pass(
             qc_out.append(instruction.operation, op_qubits)
         return qc_out
 
-    pauli_str_map = {"I": I, "X": X, "Y": Y, "Z": Z}
-    topology = Topology.complete(len(paulis[0]))
-    pp = PauliPolynomial(num_qubits=len(paulis[0]))
-    for pauli_str, coeff in zip(paulis, coeffs):
-        pp >>= PPhase(coeff * 2) @ [pauli_str_map[p] for p in pauli_str]
+    n = len(paulis[0])
+    all2all = coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)
 
-    # TODO: check the correctness of the generated circuit
+    # Build a pauliopt Topology matching the target connectivity.
+    if all2all:
+        topology = Topology.complete(n)
+    else:
+        # qiskit CouplingMap is directed; Topology treats couplings as
+        # undirected (stored as a frozenset of Coupling), so duplicates OK.
+        topology = Topology(coupling_map.size(), list(coupling_map.get_edges()))
+
+    # Coerce coeffs to real floats: Qiskit's SparsePauliOp exposes complex128
+    # coeffs even when imag is 0, but pauliopt -> qiskit's `rz(angle)` rejects
+    # complex params.
+    coeffs_real = np.asarray(coeffs)
+    if np.iscomplexobj(coeffs_real):
+        coeffs_real = np.real_if_close(coeffs_real, tol=1e8)
+        if np.iscomplexobj(coeffs_real):
+            raise ValueError("pauliopt requires real coefficients; got non-trivial complex")
+    coeffs_real = coeffs_real.astype(float, copy=False)
+
+    pauli_str_map = {"I": I, "X": X, "Y": Y, "Z": Z}
+    pp = PauliPolynomial(num_qubits=n)
+    for pauli_str, coeff in zip(paulis, coeffs_real):
+        pp >>= PPhase(float(coeff) * 2) @ [pauli_str_map[p] for p in pauli_str]
+
     if method == "annealing":
         qc = annealing_synthesis(pp.copy(), topology).to_qiskit()
     elif method == "steiner_gray":
-        qc, gadget_perm, perm = pauli_polynomial_steiner_gray_clifford(pp.copy(), topology)
+        qc, _gadget_perm, perm = pauli_polynomial_steiner_gray_clifford(pp.copy(), topology)
         qc = apply_permutation(qc.to_qiskit(), perm)
     elif method == "divide_and_conquer":
         qc, perm = synthesis_divide_and_conquer(pp.copy(), topology)
@@ -208,7 +247,11 @@ def pauliopt_pass(
     else:
         raise ValueError(f"Unknown method: {method}")
 
-    if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
+    # Post-optimisation. For limited topology the circuit is already
+    # architecture-aware (all 2q gates live on coupling-map edges); Qiskit
+    # SABRE inside `optimize_with_mapping` should find zero additional
+    # SWAPs and only run the cancellation / resynthesis passes.
+    if all2all:
         if with_O3:
             qc = phoenix.utils.qiskit_O3_all2all(qc)
     else:
