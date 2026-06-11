@@ -62,6 +62,59 @@ def _hamming(p: str, q: str) -> int:
     return sum(1 for a, b in zip(p, q) if a != b)
 
 
+def _encode_paulis(
+    paulis: list[str],
+) -> tuple[list[int], list[int], list[int], list[tuple[int, ...]]]:
+    """Encode Pauli strings as X/Z bitsets plus non-identity support keys."""
+    x_bits: list[int] = []
+    z_bits: list[int] = []
+    support_bits: list[int] = []
+    support_keys: list[tuple[int, ...]] = []
+
+    for pauli in paulis:
+        x = 0
+        z = 0
+        support = 0
+        key: list[int] = []
+        for i, op in enumerate(pauli):
+            if op == "I":
+                continue
+
+            bit = 1 << i
+            if op == "X":
+                x |= bit
+            elif op == "Y":
+                x |= bit
+                z |= bit
+            elif op == "Z":
+                z |= bit
+            else:
+                raise ValueError(f"Invalid Pauli character {op!r} in {pauli!r}")
+
+            support |= bit
+            key.append(i)
+
+        x_bits.append(x)
+        z_bits.append(z)
+        support_bits.append(support)
+        support_keys.append(tuple(key))
+
+    return x_bits, z_bits, support_bits, support_keys
+
+
+def _hamming_bits(x_bits: list[int], z_bits: list[int], p: int, q: int) -> int:
+    return ((x_bits[p] ^ x_bits[q]) | (z_bits[p] ^ z_bits[q])).bit_count()
+
+
+def _support_key_from_bits(bits: int) -> tuple[int, ...]:
+    indices = []
+    while bits:
+        low_bit = bits & -bits
+        indices.append(low_bit.bit_length() - 1)
+        bits ^= low_bit
+    return tuple(indices)
+
+
 def group_paulis(
     paulis: list[str],
     subset: bool = False,
@@ -119,21 +172,18 @@ def group_paulis(
         group_paulis(['XXXIII', 'XXIXII'], subset=True)
         # -> {(0, 1, 2, 3): ['XXXIII', 'XXIXII']}  # Hamming 2, len(union)=4 -> absorb
     """
-    nontrivial = []
-    for pauli in paulis:
-        # Find indices where pauli is not 'I'
-        # Note: qiskit Pauli strings are little-endian (qubit 0 is rightmost),
-        indices = tuple(np.where(np.array(list(pauli)) != "I")[0])
-        nontrivial.append(indices)
+    x_bits, z_bits, support_bits, support_keys = _encode_paulis(paulis)
 
-    groups: dict[tuple[int, ...], list[str]] = {}
-    for idx, pauli in zip(nontrivial, paulis):
-        if idx not in groups:
-            groups[idx] = [pauli]
+    group_rows: dict[tuple[int, ...], list[int]] = {}
+    key_to_bits: dict[tuple[int, ...], int] = {}
+    for row, (bits, key) in enumerate(zip(support_bits, support_keys)):
+        if key not in group_rows:
+            group_rows[key] = [row]
+            key_to_bits[key] = bits
         else:
-            groups[idx].append(pauli)
+            group_rows[key].append(row)
 
-    sorted_keys = sorted(groups.keys(), key=lambda k: (-len(k), k))
+    sorted_keys = sorted(group_rows.keys(), key=lambda k: (-len(k), k))
 
     if subset:
         # Greedy soft-subset clustering using min-mean Hamming: for each
@@ -141,42 +191,44 @@ def group_paulis(
         # then take the best (smallest) across candidate Paulis. Larger
         # groups seed clusters first so smaller sibling groups get absorbed
         # rather than starting redundant clusters.
-        cluster_supports: list[set[int]] = []
-        cluster_paulis: list[list[str]] = []
+        cluster_supports: list[int] = []
+        cluster_rows: list[list[int]] = []
         for key in sorted_keys:
-            key_paulis = groups[key]
-            key_set = set(key)
+            key_rows = group_rows[key]
+            key_bits = key_to_bits[key]
 
             best_idx = -1
             best_h: float | None = None
-            for i, (supp, g_paulis) in enumerate(zip(cluster_supports, cluster_paulis)):
-                union_size = len(key_set | supp)
+            for i, (supp, g_rows) in enumerate(zip(cluster_supports, cluster_rows)):
+                union_size = (key_bits | supp).bit_count()
                 threshold = max(2, union_size // 4)
-                n_g = len(g_paulis)
+                n_g = len(g_rows)
                 score = min(
-                    sum(_hamming(p, q) for q in g_paulis) / n_g for p in key_paulis
+                    sum(_hamming_bits(x_bits, z_bits, p, q) for q in g_rows) / n_g
+                    for p in key_rows
                 )
                 if score <= threshold and (best_h is None or score < best_h):
                     best_h = score
                     best_idx = i
 
             if best_idx >= 0:
-                cluster_supports[best_idx] |= key_set
-                cluster_paulis[best_idx].extend(key_paulis)
+                cluster_supports[best_idx] |= key_bits
+                cluster_rows[best_idx].extend(key_rows)
             else:
-                cluster_supports.append(set(key_set))
-                cluster_paulis.append(list(key_paulis))
+                cluster_supports.append(key_bits)
+                cluster_rows.append(list(key_rows))
 
         merged: dict[tuple[int, ...], list[str]] = {}
-        for supp, pls in zip(cluster_supports, cluster_paulis):
-            ukey = tuple(sorted(supp))
+        for supp, rows in zip(cluster_supports, cluster_rows):
+            ukey = _support_key_from_bits(supp)
+            pls = [paulis[row] for row in rows]
             if ukey in merged:
                 merged[ukey].extend(pls)
             else:
                 merged[ukey] = pls
         groups = dict(sorted(merged.items(), key=lambda x: (-len(x[0]), x[0])))
     else:
-        groups = {k: groups[k] for k in sorted_keys}
+        groups = {k: [paulis[row] for row in group_rows[k]] for k in sorted_keys}
 
     return _reorder_by_least_overlap(groups)
 
