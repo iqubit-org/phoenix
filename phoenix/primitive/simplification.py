@@ -134,12 +134,30 @@ def search_best_clifford(
     best_cliff = CLIFFORD_OPTIONS[best_cliff_idx]
     best_qubit_pair = qubit_pairs[best_pair_idx]
     best_ham = ham.apply_clifford(best_cliff, *best_qubit_pair)
-    print(f"Applied Clifford: {best_cliff.name}(size: {ham.paulis.x.shape}) on qubits {best_qubit_pair}, total_weight: {ham.total_weight} → {best_ham.total_weight}, cost: {best_cost:.2f}")
     return best_ham, best_cliff, best_qubit_pair
 
 
 def _tableau_key(x: np.ndarray, z: np.ndarray) -> bytes:
     return np.packbits(np.hstack([x, z]).astype(np.uint8), axis=None).tobytes()
+
+
+def _candidate_tableau_key(
+    x: np.ndarray,
+    z: np.ndarray,
+    q0: int,
+    q1: int,
+    new_x_q0: np.ndarray,
+    new_x_q1: np.ndarray,
+    new_z_q0: np.ndarray,
+    new_z_q1: np.ndarray,
+) -> bytes:
+    candidate_x = x.copy()
+    candidate_z = z.copy()
+    candidate_x[:, q0] = new_x_q0.astype(np.int8, copy=False)
+    candidate_x[:, q1] = new_x_q1.astype(np.int8, copy=False)
+    candidate_z[:, q0] = new_z_q0.astype(np.int8, copy=False)
+    candidate_z[:, q1] = new_z_q1.astype(np.int8, copy=False)
+    return _tableau_key(candidate_x, candidate_z)
 
 
 def _heuristic_bsf_cost(x: np.ndarray, z: np.ndarray) -> float:
@@ -259,13 +277,11 @@ def search_best_clifford_par(
     q0p = pairs_arr[:, 0]
     q1p = pairs_arr[:, 1]
 
-    # ---- Fast path for m=1 --------------------------------------------------
-    # With a single Pauli row (num_nl ∈ {0, 1}), the pairwise-OR sums vanish:
-    #     f(s) = C(num_nl − s, 2) is 0 for num_nl ∈ {0, 1}, any s.
-    # So cost collapses to `total_weight · num_nl² = rw_new · 1[rw_new > 1]`.
-    # Skips the entire column-streaming loop; per-Clifford O(P), not O(P·n).
-    if m == 1:
-        return _search_best_clifford_par_m1(ham, qubit_pairs, q0p, q1p, x, z, n, visited, visited_chunk)
+    row_weights = (x | z).sum(axis=1)
+    if int(row_weights.min()) > 3:
+        return _search_best_clifford_par_nonlocal_stable(
+            ham, qubit_pairs, q0p, q1p, x, z, n, visited, visited_chunk
+        )
 
     # ---- Precomputed originals ----
     wo = (x | z).astype(np.int32)  # (m, n)
@@ -451,11 +467,10 @@ def search_best_clifford_par(
     best_cliff = CLIFFORD_OPTIONS[best_cliff_idx]
     best_qubit_pair = qubit_pairs[best_pair_idx]
     best_ham = ham.apply_clifford(best_cliff, *best_qubit_pair)
-    print(f"Applied Clifford: {best_cliff.name}(size: {ham.paulis.x.shape}) on qubits {best_qubit_pair}, total_weight: {ham.total_weight} → {best_ham.total_weight}, cost: {best_cost:.2f}")
     return best_ham, best_cliff, best_qubit_pair
 
 
-def _search_best_clifford_par_m1(
+def _search_best_clifford_par_nonlocal_stable(
     ham: Hamiltonian,
     qubit_pairs: list,
     q0p: np.ndarray,
@@ -466,32 +481,39 @@ def _search_best_clifford_par_m1(
     visited: set[bytes] | None,
     visited_chunk: int,
 ) -> tuple[Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]]:
-    """Specialized par search for m == 1.
+    """Specialized search when all rows are guaranteed to stay nonlocal.
 
-    For a single-Pauli tableau, pairwise-OR sums are trivially 0, and
-        cost[p] = rw_new[p] if rw_new[p] > 1 else 0.
-    Reduces each Clifford's work from O(P·n) column streaming to O(P).
+    A 2-qubit Clifford can remove support from at most two columns in any row.
+    If every row starts with weight > 3, every candidate keeps every row
+    nonlocal.  The heuristic's nonlocal row set is then fixed, so only the two
+    touched columns can change the pairwise-OR and total-weight terms.
     """
-    print("Utilize _search_best_clifford_par_m1")
-    P = len(qubit_pairs)
-    # Original scalar values at the affected qubits (single row).
-    x_row = x[0]  # (n,) int8
-    z_row = z[0]  # (n,)
-    wo_row = (x_row | z_row).astype(np.int32)  # (n,) int32
-    rw_orig = int(wo_row.sum())  # scalar
+    m = x.shape[0]
 
-    # Vector form at affected columns for each pair
-    x_at_q0 = x_row[q0p].astype(np.int32)  # (P,)
-    x_at_q1 = x_row[q1p].astype(np.int32)
-    z_at_q0 = z_row[q0p].astype(np.int32)
-    z_at_q1 = z_row[q1p].astype(np.int32)
-    wo_at_q0 = wo_row[q0p]  # (P,)
-    wo_at_q1 = wo_row[q1p]
+    wo = (x | z).astype(np.int32)
+    x_i32 = x.astype(np.int32, copy=False)
+    z_i32 = z.astype(np.int32, copy=False)
 
-    # (P, 1, 4) sub_base — keep 3D for consistency with block matmul.
-    # Shape chosen so (sub_base @ block) is (P, 1, 4).
-    sub_base = np.stack([x_at_q0, x_at_q1, z_at_q0, z_at_q1], axis=-1)  # (P, 4)
-    sub_base_3d = sub_base[:, None, :].astype(np.int32, copy=False)  # (P, 1, 4)
+    x_at_q0 = x_i32[:, q0p].T
+    x_at_q1 = x_i32[:, q1p].T
+    z_at_q0 = z_i32[:, q0p].T
+    z_at_q1 = z_i32[:, q1p].T
+    sub_base = np.stack([x_at_q0, x_at_q1, z_at_q0, z_at_q1], axis=-1)
+
+    def _pair_or_col_contrib(cols: np.ndarray) -> np.ndarray:
+        zeros = m - cols.sum(axis=-1)
+        return m * (m - 1) // 2 - zeros * (zeros - 1) // 2
+
+    wo_col_contrib = _pair_or_col_contrib(wo.T)
+    x_col_contrib = _pair_or_col_contrib(x_i32.T)
+    z_col_contrib = _pair_or_col_contrib(z_i32.T)
+    wo_col_nonzero = wo.sum(axis=0) > 0
+
+    base_pair_wo = int(wo_col_contrib.sum())
+    base_pair_x = int(x_col_contrib.sum())
+    base_pair_z = int(z_col_contrib.sum())
+    base_total_weight = int(wo_col_nonzero.sum())
+    num_nl_sq = float(m * m)
 
     best_cost = np.inf
     best_cliff_idx = 0
@@ -499,49 +521,76 @@ def _search_best_clifford_par_m1(
 
     for ci, cliff in enumerate(CLIFFORD_OPTIONS):
         block = _CLIFFORD_BLOCKS[id(cliff)].astype(np.int32, copy=False)
-        new_sub = ((sub_base_3d @ block) & 1)[:, 0, :]  # (P, 4)
+        new_sub = (sub_base @ block) & 1
 
-        new_x_q0 = new_sub[:, 0]  # (P,)
-        new_x_q1 = new_sub[:, 1]
-        new_z_q0 = new_sub[:, 2]
-        new_z_q1 = new_sub[:, 3]
-        new_wo_q0 = new_x_q0 | new_z_q0  # (P,)
+        new_x_q0 = new_sub[:, :, 0]
+        new_x_q1 = new_sub[:, :, 1]
+        new_z_q0 = new_sub[:, :, 2]
+        new_z_q1 = new_sub[:, :, 3]
+        new_wo_q0 = new_x_q0 | new_z_q0
         new_wo_q1 = new_x_q1 | new_z_q1
 
-        # Row-weight change for the single row
-        d_rw = (new_wo_q0 - wo_at_q0) + (new_wo_q1 - wo_at_q1)  # (P,)
-        rw_new = rw_orig + d_rw  # (P,)
-        nl_mask = rw_new > 1  # (P,)
+        pair_or_wo = (
+            base_pair_wo
+            - wo_col_contrib[q0p]
+            - wo_col_contrib[q1p]
+            + _pair_or_col_contrib(new_wo_q0)
+            + _pair_or_col_contrib(new_wo_q1)
+        )
+        pair_or_x = (
+            base_pair_x
+            - x_col_contrib[q0p]
+            - x_col_contrib[q1p]
+            + _pair_or_col_contrib(new_x_q0)
+            + _pair_or_col_contrib(new_x_q1)
+        )
+        pair_or_z = (
+            base_pair_z
+            - z_col_contrib[q0p]
+            - z_col_contrib[q1p]
+            + _pair_or_col_contrib(new_z_q0)
+            + _pair_or_col_contrib(new_z_q1)
+        )
+        total_weight = (
+            base_total_weight
+            - wo_col_nonzero[q0p].astype(np.int64)
+            - wo_col_nonzero[q1p].astype(np.int64)
+            + (new_wo_q0.sum(axis=1) > 0).astype(np.int64)
+            + (new_wo_q1.sum(axis=1) > 0).astype(np.int64)
+        )
 
-        # Cost collapses to rw_new where nl_mask, else 0
-        costs = np.where(nl_mask, rw_new.astype(np.float64), 0.0)
+        costs = (
+            pair_or_wo.astype(np.float64)
+            + 0.5 * pair_or_x.astype(np.float64)
+            + 0.5 * pair_or_z.astype(np.float64)
+            + total_weight.astype(np.float64) * num_nl_sq
+        )
 
-        # Invalidate same-as-input (no-op Clifford).
-        same_mask = np.all(new_sub == sub_base, axis=1)
+        same_mask = np.all(new_sub == sub_base, axis=(1, 2))
         costs = np.where(same_mask, np.inf, costs)
 
-        # Visited: reconstruct (chunk, 1, n) tableaux; matches _tableau_key.
-        if visited:
-            for p_start in range(0, P, visited_chunk):
-                p_end = min(p_start + visited_chunk, P)
-                k = p_end - p_start
-                chunk_x = np.broadcast_to(x_row, (k, n)).copy()  # (k, n)
-                chunk_z = np.broadcast_to(z_row, (k, n)).copy()
-                idx = np.arange(k)
-                chunk_x[idx, q0p[p_start:p_end]] = new_x_q0[p_start:p_end].astype(np.int8)
-                chunk_x[idx, q1p[p_start:p_end]] = new_x_q1[p_start:p_end].astype(np.int8)
-                chunk_z[idx, q0p[p_start:p_end]] = new_z_q0[p_start:p_end].astype(np.int8)
-                chunk_z[idx, q1p[p_start:p_end]] = new_z_q1[p_start:p_end].astype(np.int8)
-                xz = np.concatenate([chunk_x, chunk_z], axis=-1)  # (k, 2n)
-                packed = np.packbits(xz.astype(np.uint8, copy=False), axis=-1)
-                row_nb = packed.shape[1]
-                pb = packed.tobytes()
-                for j in range(k):
-                    if pb[j * row_nb : (j + 1) * row_nb] in visited:
-                        costs[p_start + j] = np.inf
+        while True:
+            pi_best = int(np.argmin(costs))
+            c_best = float(costs[pi_best])
+            if not visited or not np.isfinite(c_best):
+                break
 
-        pi_best = int(np.argmin(costs))
-        c_best = float(costs[pi_best])
+            q0 = int(q0p[pi_best])
+            q1 = int(q1p[pi_best])
+            key = _candidate_tableau_key(
+                x,
+                z,
+                q0,
+                q1,
+                new_x_q0[pi_best],
+                new_x_q1[pi_best],
+                new_z_q0[pi_best],
+                new_z_q1[pi_best],
+            )
+            if key not in visited:
+                break
+            costs[pi_best] = np.inf
+
         if c_best < best_cost:
             best_cost = c_best
             best_cliff_idx = ci
