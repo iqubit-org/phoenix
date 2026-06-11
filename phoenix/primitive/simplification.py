@@ -134,7 +134,7 @@ def search_best_clifford(
     best_cliff = CLIFFORD_OPTIONS[best_cliff_idx]
     best_qubit_pair = qubit_pairs[best_pair_idx]
     best_ham = ham.apply_clifford(best_cliff, *best_qubit_pair)
-    # print(f"Applied Clifford: {best_cliff.name} on qubits {best_qubit_pair}, total_weight: {ham.total_weight} → {best_ham.total_weight}, cost: {best_cost:.2f}")
+    print(f"Applied Clifford: {best_cliff.name}(size: {ham.paulis.x.shape}) on qubits {best_qubit_pair}, total_weight: {ham.total_weight} → {best_ham.total_weight}, cost: {best_cost:.2f}")
     return best_ham, best_cliff, best_qubit_pair
 
 
@@ -451,7 +451,7 @@ def search_best_clifford_par(
     best_cliff = CLIFFORD_OPTIONS[best_cliff_idx]
     best_qubit_pair = qubit_pairs[best_pair_idx]
     best_ham = ham.apply_clifford(best_cliff, *best_qubit_pair)
-    # print(f"Applied Clifford: {best_cliff.name} on qubits {best_qubit_pair}, total_weight: {ham.total_weight} → {best_ham.total_weight}, cost: {best_cost:.2f}")
+    print(f"Applied Clifford: {best_cliff.name}(size: {ham.paulis.x.shape}) on qubits {best_qubit_pair}, total_weight: {ham.total_weight} → {best_ham.total_weight}, cost: {best_cost:.2f}")
     return best_ham, best_cliff, best_qubit_pair
 
 
@@ -472,6 +472,7 @@ def _search_best_clifford_par_m1(
         cost[p] = rw_new[p] if rw_new[p] > 1 else 0.
     Reduces each Clifford's work from O(P·n) column streaming to O(P).
     """
+    print("Utilize _search_best_clifford_par_m1")
     P = len(qubit_pairs)
     # Original scalar values at the affected qubits (single row).
     x_row = x[0]  # (n,) int8
