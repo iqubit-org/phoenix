@@ -11,6 +11,7 @@ Usage:
                                              [--backend BACKEND]
                                              [-o OUTPUT]
                                              [--no-grouping]
+                                             [--subset]
                                              [--O3]
 """
 
@@ -57,6 +58,9 @@ def main():
     parser.add_argument("--O3", action="store_true", help="Apply Qiskit O3 post-optimization (default: False)")
     parser.add_argument(
         "--no-optimize", action="store_true", help="Disable the internal optimize pass inside Phoenix (default: False)"
+    )
+    parser.add_argument(
+        "--subset", action="store_true", help="Use subset-based grouping (default: False)"
     )
     parser.add_argument(
         "--no-grouping", action="store_true", help="Disable the grouping of Pauli strings (default: False)"

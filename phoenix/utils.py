@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 import numpy as np
 import qiskit
 import rustworkx as rx
@@ -7,6 +8,8 @@ from prettytable import PrettyTable
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Operator
 from qiskit.transpiler import CouplingMap
+
+warnings.filterwarnings("ignore")
 
 
 def remove_1q_gates(qc: QuantumCircuit) -> QuantumCircuit:
@@ -260,7 +263,8 @@ def gene_hhex_coupling_map(size) -> CouplingMap:
     return coupling_map
 
 
-def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), title="Pauli Strings", output_filename=None):
+def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), hide_axis=False,
+                       title="Pauli Strings", output_filename=None):
     """
     Visualize a set of equal-length Pauli strings.
 
@@ -300,12 +304,17 @@ def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), title="P
     fig, ax = plt.subplots(figsize=figsize)
     ax.imshow(img, aspect="auto", interpolation="nearest", origin="upper")
 
-    ax.set_xlabel("Qubit index")
-    ax.set_ylabel("Pauli string index")
+    if not hide_axis:
+        ax.set_xlabel("Qubit index")
+        ax.set_ylabel("Pauli string index")
     ax.set_title(title)
 
     ax.set_xticks(np.arange(n_cols))
     ax.set_xticklabels([f"q{i}" for i in range(n_cols)])
+
+    if hide_axis:
+        ax.set_xticks([])
+        ax.set_yticks([])
 
     step = max(1, n_rows // 12)
     ax.set_yticks(np.arange(0, n_rows, step))

@@ -57,25 +57,67 @@ def _reorder_by_least_overlap(groups: dict[tuple[int, ...], list[str]]) -> dict[
     return final
 
 
-def group_paulis(paulis: list[str]) -> dict[tuple[int, ...], list[str]]:
+def _hamming(p: str, q: str) -> int:
+    """Number of qubit positions where Pauli strings ``p`` and ``q`` differ."""
+    return sum(1 for a, b in zip(p, q) if a != b)
+
+
+def group_paulis(
+    paulis: list[str],
+    subset: bool = False,
+) -> dict[tuple[int, ...], list[str]]:
     """
     Group Pauli strings by their nontrivial parts.
 
-    E.g.,
+    When ``subset=False`` (default), Pauli strings are grouped by exact match
+    of their nontrivial qubit indices.
 
-        ['XXIII', 'YYIII', 'ZZIII', 'IXXII', 'IYYII', 'IZZII', 'IIXXI', 'IIYYI', 'IIZZI', 'IIIXX', 'IIIYY', 'IIIZZ', 'ZIIII', 'IZIII', 'IIZII', 'IIIZI', 'IIIIZ']
+    When ``subset=True``, a coarser "soft subset" grouping is used based on
+    Hamming distance between the actual Pauli strings (not just their qubit
+    supports). Exact-match groups are built first and processed in order of
+    decreasing weight. A candidate key is absorbed into an existing cluster
+    iff some Pauli in the candidate is, on average, Hamming-close to the
+    cluster's members. Concretely (**min-mean** aggregation):
 
-    will be grouped as
+    * For each (candidate, cluster) pair, compute
+      ``union = set(candidate_key) | cluster.support`` and
+      ``score = min_{p in candidate} mean_{q in cluster} Hamming(p, q)`` --
+      i.e. pick, among the candidate's Paulis, the one whose *average*
+      distance to the whole cluster is smallest.
+    * The candidate is eligible for the cluster iff
+      ``score <= max(2, len(union) // 4)``.
+    * Among eligible clusters, pick the one with the smallest ``score``
+      (ties: earliest-inserted).
+    * If no cluster is eligible, the candidate seeds a new cluster.
 
-         {(0, 1): ['XXIII', 'YYIII', 'ZZIII'],
-          (2, 3): ['IIXXI', 'IIYYI', 'IIZZI'],
-          (3, 4): ['IIIXX', 'IIIYY', 'IIIZZ'],
-          (1, 2): ['IXXII', 'IYYII', 'IZZII'],
-          (0,): ['ZIIII'],
-          (1,): ['IZIII'],
-          (2,): ['IIZII'],
-          (3,): ['IIIZI'],
-          (4,): ['IIIIZ']}
+    The *mean* on the cluster side prevents a runaway cascade: a single
+    close member of a diverse cluster is no longer enough to pull unrelated
+    candidates in. The *min* on the candidate side gives the candidate a
+    fair chance by letting its best-aligned representative speak for the
+    whole exact-match group (e.g. ``{XXIII, YYIII, ZZIII}`` can join a
+    cluster as long as any one of these aligns with the cluster's pattern).
+
+    The merged cluster's key becomes the sorted union of absorbed supports,
+    so a cluster's support can grow when it absorbs a "sibling" group whose
+    qubit set is not strictly contained.
+
+    Rationale: this rule only merges Pauli strings that *actually look alike*
+    on their active qubits, so downstream BSF simplification can share
+    Clifford scaffolding. Purely index-based subset grouping would happily
+    merge ``IYZIII`` into the ``XXXIII`` group (same support {1, 2}) even
+    though the two strings have no common Pauli letters, which pollutes BSF
+    and hurts compilation.
+
+    Examples (with the Hamming rule above)::
+
+        group_paulis(['XXXIII', 'IXXIII'], subset=True)
+        # -> {(0, 1, 2): ['XXXIII', 'IXXIII']}     # Hamming 1, len(union)=3 -> absorb
+
+        group_paulis(['XXXIII', 'IYZIII'], subset=True)
+        # -> {(0, 1, 2): ['XXXIII'], (1, 2): ['IYZIII']}  # Hamming 3 > 1 -> separate
+
+        group_paulis(['XXXIII', 'XXIXII'], subset=True)
+        # -> {(0, 1, 2, 3): ['XXXIII', 'XXIXII']}  # Hamming 2, len(union)=4 -> absorb
     """
     nontrivial = []
     for pauli in paulis:
@@ -91,7 +133,51 @@ def group_paulis(paulis: list[str]) -> dict[tuple[int, ...], list[str]]:
         else:
             groups[idx].append(pauli)
 
-    groups = dict(sorted(groups.items(), key=lambda x: (-len(x[0]), x[0])))
+    sorted_keys = sorted(groups.keys(), key=lambda k: (-len(k), k))
+
+    if subset:
+        # Greedy soft-subset clustering using min-mean Hamming: for each
+        # candidate Pauli, measure its mean distance to all cluster members,
+        # then take the best (smallest) across candidate Paulis. Larger
+        # groups seed clusters first so smaller sibling groups get absorbed
+        # rather than starting redundant clusters.
+        cluster_supports: list[set[int]] = []
+        cluster_paulis: list[list[str]] = []
+        for key in sorted_keys:
+            key_paulis = groups[key]
+            key_set = set(key)
+
+            best_idx = -1
+            best_h: float | None = None
+            for i, (supp, g_paulis) in enumerate(zip(cluster_supports, cluster_paulis)):
+                union_size = len(key_set | supp)
+                threshold = max(2, union_size // 4)
+                n_g = len(g_paulis)
+                score = min(
+                    sum(_hamming(p, q) for q in g_paulis) / n_g for p in key_paulis
+                )
+                if score <= threshold and (best_h is None or score < best_h):
+                    best_h = score
+                    best_idx = i
+
+            if best_idx >= 0:
+                cluster_supports[best_idx] |= key_set
+                cluster_paulis[best_idx].extend(key_paulis)
+            else:
+                cluster_supports.append(set(key_set))
+                cluster_paulis.append(list(key_paulis))
+
+        merged: dict[tuple[int, ...], list[str]] = {}
+        for supp, pls in zip(cluster_supports, cluster_paulis):
+            ukey = tuple(sorted(supp))
+            if ukey in merged:
+                merged[ukey].extend(pls)
+            else:
+                merged[ukey] = pls
+        groups = dict(sorted(merged.items(), key=lambda x: (-len(x[0]), x[0])))
+    else:
+        groups = {k: groups[k] for k in sorted_keys}
+
     return _reorder_by_least_overlap(groups)
 
 
@@ -142,11 +228,12 @@ def group_paulis(paulis: list[str]) -> dict[tuple[int, ...], list[str]]:
 
 
 def group_paulis_and_coeffs(
-    paulis: list[str], coeffs: np.ndarray
+    paulis: list[str], coeffs: np.ndarray,
+    subset: bool = False,
 ) -> dict[tuple[int, ...], tuple[list[str], np.ndarray]]:
     """Group Pauli strings (with coefficients) by their nontrivial parts."""
     groups = {}
-    grouped_paulis = group_paulis(paulis)
+    grouped_paulis = group_paulis(paulis, subset=subset)
 
     # We need to map back to coefficients.
     # Since paulis might contain duplicates in general, we should be careful.

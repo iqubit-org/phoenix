@@ -341,7 +341,7 @@ def cancellation_bonus(
     return bonus
 
 
-def order_circuits(circuits: list[QuantumCircuit], method: str = "trivial", **kwargs) -> QuantumCircuit:
+def order_circuits(circuits: list[QuantumCircuit], method: str = "tsp", **kwargs) -> QuantumCircuit:
     """
     Order and assemble a list of circuits to minimize total cost.
 

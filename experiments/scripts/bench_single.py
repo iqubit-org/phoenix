@@ -1,14 +1,16 @@
 #!/usr/bin/env python
+import argparse
+import json
 import sys
+import time
+import warnings
 
 sys.path.append("../..")
 
-import json
-import argparse
-import warnings
+import bench_utils
+
 import phoenix
 import phoenix.utils
-import bench_utils
 
 warnings.filterwarnings("ignore")
 
@@ -38,10 +40,10 @@ def main():
     parser.add_argument("-c", "--compiler", default="phoenix", type=str, help="Compiler (default: phoenix)")
     args = parser.parse_args()
 
-    console.rule("Benchmarking on {}".format(args.filename))
+    console.rule(f"Benchmarking on {args.filename}")
     console.print(args)
 
-    with open(args.filename, "r") as f:
+    with open(args.filename) as f:
         data = json.load(f)
 
     if args.device == "all2all":
@@ -59,6 +61,7 @@ def main():
     circ = ham.generate_circuit()
     phoenix.utils.print_circ_info(circ, title="Original circuit")
 
+    t0 = time.perf_counter()
     if args.compiler == "tket":
         circ_opt = bench_utils.tket_pass(
             data["paulis"], data["coeffs"], greedy=args.tket_greedy, coupling_map=coupling_map, with_O3=args.O3
@@ -83,8 +86,12 @@ def main():
         )
     else:
         raise ValueError("Unsupported compiler")
+    elapsed = time.perf_counter() - t0
 
-    phoenix.utils.print_circ_info(circ_opt, title="Optimized circuit")
+    phoenix.utils.print_circ_info(
+        circ_opt,
+        title=f"Optimized circuit (compiler={args.compiler}, O3={args.O3}, {elapsed:.2f}s)",
+    )
 
 
 if __name__ == "__main__":

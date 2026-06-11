@@ -45,13 +45,15 @@ class Hamiltonian(SparsePauliOp):
         # Since Pauli matrices have spectral norm 1, this simplifies to sum(|coeff|).
         return np.sum(np.abs(self.coeffs))
 
-    def group_same_weights(self) -> list[Hamiltonian]:
+    def group_same_weights(self, subset: bool = True) -> list[Hamiltonian]:
         """Group Pauli strings by their nontrivial parts."""
         from .primitive.grouping import group_paulis_and_coeffs
 
         return [
             Hamiltonian(pls, coes)
-            for pls, coes in group_paulis_and_coeffs(self.paulis.to_labels(), self.coeffs).values()
+            for pls, coes in group_paulis_and_coeffs(
+                self.paulis.to_labels(), self.coeffs, subset=subset
+            ).values()
         ]
 
     def tableau(self, arrange="xz", with_phase=False) -> np.ndarray:
