@@ -1,0 +1,317 @@
+[
+ {
+  "name": "oscillating-152",
+  "paulis": 144,
+  "qubits": 10,
+  "off": {
+   "num_2q": 305,
+   "depth_2q": 213,
+   "time": 0.18
+  },
+  "on": {
+   "num_2q": 316,
+   "depth_2q": 235,
+   "time": 0.14
+  }
+ },
+ {
+  "name": "CH2_cmplt_BK_sto3g",
+  "paulis": 1488,
+  "qubits": 14,
+  "off": {
+   "num_2q": 3029,
+   "depth_2q": 1690,
+   "time": 1.25
+  },
+  "on": {
+   "num_2q": 3054,
+   "depth_2q": 1728,
+   "time": 1.22
+  }
+ },
+ {
+  "name": "CH2_cmplt_JW_sto3g",
+  "paulis": 1488,
+  "qubits": 14,
+  "off": {
+   "num_2q": 3220,
+   "depth_2q": 1731,
+   "time": 1.24
+  },
+  "on": {
+   "num_2q": 3215,
+   "depth_2q": 1731,
+   "time": 1.26
+  }
+ },
+ {
+  "name": "CH2_cmplt_P_sto3g",
+  "paulis": 1488,
+  "qubits": 14,
+  "off": {
+   "num_2q": 3568,
+   "depth_2q": 2091,
+   "time": 1.65
+  },
+  "on": {
+   "num_2q": 3584,
+   "depth_2q": 2066,
+   "time": 1.65
+  }
+ },
+ {
+  "name": "CH2_frz_BK_sto3g",
+  "paulis": 828,
+  "qubits": 12,
+  "off": {
+   "num_2q": 1857,
+   "depth_2q": 1101,
+   "time": 0.7
+  },
+  "on": {
+   "num_2q": 1829,
+   "depth_2q": 1077,
+   "time": 0.71
+  }
+ },
+ {
+  "name": "CH2_frz_JW_sto3g",
+  "paulis": 828,
+  "qubits": 12,
+  "off": {
+   "num_2q": 1838,
+   "depth_2q": 964,
+   "time": 0.66
+  },
+  "on": {
+   "num_2q": 1836,
+   "depth_2q": 968,
+   "time": 0.68
+  }
+ },
+ {
+  "name": "CH2_frz_P_sto3g",
+  "paulis": 828,
+  "qubits": 12,
+  "off": {
+   "num_2q": 1803,
+   "depth_2q": 1049,
+   "time": 0.86
+  },
+  "on": {
+   "num_2q": 1888,
+   "depth_2q": 1082,
+   "time": 0.85
+  }
+ },
+ {
+  "name": "LiH_cmplt_BK_sto3g",
+  "paulis": 640,
+  "qubits": 12,
+  "off": {
+   "num_2q": 1203,
+   "depth_2q": 702,
+   "time": 0.48
+  },
+  "on": {
+   "num_2q": 1199,
+   "depth_2q": 695,
+   "time": 0.49
+  }
+ },
+ {
+  "name": "LiH_cmplt_JW_sto3g",
+  "paulis": 640,
+  "qubits": 12,
+  "off": {
+   "num_2q": 1475,
+   "depth_2q": 821,
+   "time": 0.54
+  },
+  "on": {
+   "num_2q": 1475,
+   "depth_2q": 821,
+   "time": 0.55
+  }
+ },
+ {
+  "name": "LiH_cmplt_P_sto3g",
+  "paulis": 640,
+  "qubits": 12,
+  "off": {
+   "num_2q": 1494,
+   "depth_2q": 879,
+   "time": 0.63
+  },
+  "on": {
+   "num_2q": 1490,
+   "depth_2q": 880,
+   "time": 0.67
+  }
+ },
+ {
+  "name": "LiH_frz_BK_sto3g",
+  "paulis": 144,
+  "qubits": 10,
+  "off": {
+   "num_2q": 305,
+   "depth_2q": 213,
+   "time": 0.12
+  },
+  "on": {
+   "num_2q": 316,
+   "depth_2q": 235,
+   "time": 0.14
+  }
+ },
+ {
+  "name": "LiH_frz_JW_sto3g",
+  "paulis": 144,
+  "qubits": 10,
+  "off": {
+   "num_2q": 370,
+   "depth_2q": 222,
+   "time": 0.15
+  },
+  "on": {
+   "num_2q": 333,
+   "depth_2q": 220,
+   "time": 0.14
+  }
+ },
+ {
+  "name": "LiH_frz_P_sto3g",
+  "paulis": 144,
+  "qubits": 10,
+  "off": {
+   "num_2q": 359,
+   "depth_2q": 242,
+   "time": 0.14
+  },
+  "on": {
+   "num_2q": 362,
+   "depth_2q": 238,
+   "time": 0.15
+  }
+ },
+ {
+  "name": "NH_cmplt_BK_sto3g",
+  "paulis": 640,
+  "qubits": 12,
+  "off": {
+   "num_2q": 1332,
+   "depth_2q": 756,
+   "time": 0.54
+  },
+  "on": {
+   "num_2q": 1337,
+   "depth_2q": 747,
+   "time": 0.55
+  }
+ },
+ {
+  "name": "NH_cmplt_JW_sto3g",
+  "paulis": 640,
+  "qubits": 12,
+  "off": {
+   "num_2q": 1469,
+   "depth_2q": 863,
+   "time": 0.55
+  },
+  "on": {
+   "num_2q": 1471,
+   "depth_2q": 863,
+   "time": 0.53
+  }
+ },
+ {
+  "name": "NH_cmplt_P_sto3g",
+  "paulis": 640,
+  "qubits": 12,
+  "off": {
+   "num_2q": 1691,
+   "depth_2q": 1007,
+   "time": 0.72
+  },
+  "on": {
+   "num_2q": 1692,
+   "depth_2q": 1011,
+   "time": 0.73
+  }
+ },
+ {
+  "name": "NH_frz_BK_sto3g",
+  "paulis": 360,
+  "qubits": 10,
+  "off": {
+   "num_2q": 852,
+   "depth_2q": 526,
+   "time": 0.33
+  },
+  "on": {
+   "num_2q": 849,
+   "depth_2q": 523,
+   "time": 0.37
+  }
+ },
+ {
+  "name": "NH_frz_JW_sto3g",
+  "paulis": 360,
+  "qubits": 10,
+  "off": {
+   "num_2q": 905,
+   "depth_2q": 520,
+   "time": 0.32
+  },
+  "on": {
+   "num_2q": 896,
+   "depth_2q": 505,
+   "time": 0.32
+  }
+ },
+ {
+  "name": "NH_frz_P_sto3g",
+  "paulis": 360,
+  "qubits": 10,
+  "off": {
+   "num_2q": 791,
+   "depth_2q": 478,
+   "time": 0.33
+  },
+  "on": {
+   "num_2q": 800,
+   "depth_2q": 482,
+   "time": 0.34
+  }
+ },
+ {
+  "name": "N2-JW-22",
+  "paulis": 4577,
+  "qubits": 22,
+  "off": {
+   "num_2q": 11690,
+   "depth_2q": 5314,
+   "time": 5.48
+  },
+  "on": {
+   "num_2q": 11180,
+   "depth_2q": 5087,
+   "time": 5.27
+  }
+ },
+ {
+  "name": "Na2-JW24",
+  "paulis": 6508,
+  "qubits": 24,
+  "off": {
+   "num_2q": 12460,
+   "depth_2q": 5421,
+   "time": 12.93
+  },
+  "on": {
+   "num_2q": 12401,
+   "depth_2q": 5362,
+   "time": 12.91
+  }
+ }
+]

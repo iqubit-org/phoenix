@@ -16,8 +16,8 @@ from natsort import natsorted
 
 # input_qasm_dpath = './output_uccsd/phoenix/all2all'
 
-input_json_dpath = "../benchmarks/uccsd_json"
-output_dpath = sys.argv[1] if len(sys.argv) > 1 else "../benchmarks/uccsd_qasm"
+input_json_dpath = "../benchmarks/uccsd"
+output_dpath = sys.argv[1] if len(sys.argv) > 1 else "./output_uccsd/naive/all2all"
 
 
 def ideal_evolution(json_fname):

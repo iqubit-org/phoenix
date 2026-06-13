@@ -1,0 +1,27 @@
+[
+ {
+  "name": "N2-JW-22",
+  "paulis": 4577,
+  "qubits": 22,
+  "support": {
+   "num_2q": 15359,
+   "depth_2q": 11735,
+   "time": 183.81
+  },
+  "adaptive": {
+   "num_2q": 15535,
+   "depth_2q": 11511,
+   "time": 1804.34
+  },
+  "peel": {
+   "num_2q": 11690,
+   "depth_2q": 5314,
+   "time": 15.71
+  },
+  "peel-absorb": {
+   "num_2q": 11466,
+   "depth_2q": 5192,
+   "time": 5.76
+  }
+ }
+]

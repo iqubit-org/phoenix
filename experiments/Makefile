@@ -1,16 +1,19 @@
 OUTPUT_QASM_PATH = output_uccsd
 BENCH_SCRIPT = bench_uccsd.py
-ALL_COMPILERS := qiskit tket paulihedral tetris pauliopt quclear phoenix
-HIGH_LEVEL_COMPILERS := tket paulihedral tetris pauliopt quclear phoenix
-NON_TOPO_AWARE_COMPILERS := tket pauliopt quclear phoenix
+ALL_COMPILERS := qiskit tket paulihedral tetris quclear phoenix
+HIGH_LEVEL_COMPILERS := tket paulihedral tetris quclear phoenix
+NON_TOPO_AWARE_COMPILERS := tket quclear phoenix
 TOPOLOGY_TYPES := hhex square
 
 
 .PHONY: all clean
 
-all:
+all: naive
 	@echo "This is the comprehensive Makefile for benchmarking Phoenix and baselines on UCCSD benchmarks."
 
+naive:
+	@echo "Testing naive compilation on UCCSD benchmarks (all2all topology)..."
+	@cd scripts && ./$(BENCH_SCRIPT) -c naive
 
 # Phoenix compiler
 phoenix:
@@ -124,16 +127,16 @@ paulirl_square:
 	@echo "Testing PauliRL on UCCSD benchmarks (square topology)..."
 	@cd scripts && ./uccsd_all2all_to_limited.py -c paulirl -d square
 
-# Perform local optimization by Qiskit O3 after high-level compilation
+# Perform local optimization by Qiskit O3 after high-level compilation.
 O3:
 	@echo "Performing local optimization by Qiskit O3 on all compiled circuits..."
-	@parallel --bar --group 'cd scripts && ./uccsd_all2all_qiskit_opt.py -c {}' ::: $(HIGH_LEVEL_COMPILERS)
+	@parallel -j 2 --bar --group 'cd scripts && ./uccsd_all2all_qiskit_opt.py -c {} -j '$$(( $$(sysctl -n hw.ncpu) / 2 )) ::: $(HIGH_LEVEL_COMPILERS)
 	@echo "\n✅ All local optimizations are complete."
 
 # Perform hardware-aware benchmarking since some VQA compilers are not topology-aware
 topology:
 	@echo "Performing hardware-aware compilation for some non-topology-aware VQA compilers..."
-	@parallel --bar --group 'cd scripts && ./uccsd_all2all_to_limited.py -c {1} -d {2}' ::: $(NON_TOPO_AWARE_COMPILERS) ::: $(TOPOLOGY_TYPES)
+	@parallel -j 2 --bar --group 'cd scripts && ./uccsd_all2all_to_limited.py -c {1} -d {2} -j '$$(( $$(sysctl -n hw.ncpu) / 2 )) ::: $(NON_TOPO_AWARE_COMPILERS) ::: $(TOPOLOGY_TYPES)
 	@echo "\n✅ All hardware-aware compilations are complete."
 
 sum_result:
@@ -146,9 +149,13 @@ disp_result:
 
 clean:
 	@echo "Cleaning up .QASM files..."
-	@find ./$(OUTPUT_QASM_PATH)/ -type f -name "*.qasm" -exec rm -f {} +
+	@find ./$(OUTPUT_QASM_PATH)/ -type f -name "*.qasm" -not -path "*/naive/*" -exec rm -f {} +
+	@echo "(kept the naive/ original-circuit reference; use make clean_naive to remove it)"
+
+clean_naive:
+	@find ./$(OUTPUT_QASM_PATH)/naive -type f -name "*.qasm" -exec rm -f {} +
 
 
 demo:
 	@echo "Demo test on LiH_frz_BK_sto3g..."
-	@cd scripts && ./bench_single.py ../../benchmarks/uccsd_json/LiH_frz_BK_sto3g.json --O3
+	@cd scripts && ./bench_single.py ../../benchmarks/uccsd/LiH_frz_BK_sto3g.json --O3

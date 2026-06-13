@@ -59,7 +59,7 @@ def compile_one(json_path: Path, input_root: Path, output_root: Path) -> tuple[P
 def main() -> None:
     warnings.filterwarnings("ignore")
 
-    input_root = (REPO_ROOT / "benchmarks" / "hamlib_json").resolve()
+    input_root = (REPO_ROOT / "benchmarks" / "hamlib").resolve()
     output_root = (REPO_ROOT / "experiments" / "output_hamlib" / "quclear").resolve()
 
     missing_jsons = find_missing_jsons(input_root, output_root)

@@ -61,8 +61,7 @@ def main():
 
     all2all_dpath = "../output_uccsd/{}/all2all".format(args.compiler)
     limited_dpath = "../output_uccsd/{}/{}".format(args.compiler, args.device)
-    if not os.path.exists(limited_dpath):
-        os.makedirs(limited_dpath)
+    os.makedirs(limited_dpath, exist_ok=True)  # parallel-safe
 
     fnames = natsorted(os.listdir(all2all_dpath))
     tasks = [(os.path.join(all2all_dpath, fname), os.path.join(limited_dpath, fname)) for fname in fnames]

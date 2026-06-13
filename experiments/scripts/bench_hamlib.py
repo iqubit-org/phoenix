@@ -17,21 +17,19 @@ import qiskit.qasm2
 from natsort import natsorted
 import phoenix
 import bench_utils
-from functools import partial
 
 from rich.console import Console
 
 console = Console()
 
-INPUT_QASM_DPATH = "../../benchmarks/hamlib_qasm"
-INPUT_JSON_DPATH = "../../benchmarks/hamlib_json"
+INPUT_JSON_DPATH = "../../benchmarks/hamlib"
 OUTPUT_DPATH = "../output_hamlib"
 
 CATEGORIES = ["binaryoptimization", "chemistry", "condensedmatter", "discreteoptimization"]
 
 COMPILER_PASSES = {
+    "naive": bench_utils.naive_pass,
     "phoenix": bench_utils.phoenix_pass,
-    "phoenix+": partial(bench_utils.phoenix_pass, grouping=False),
     "paulihedral": bench_utils.paulihedral_pass,
     "tetris": bench_utils.tetris_pass,
     "pauliopt": bench_utils.pauliopt_pass,
@@ -92,8 +90,7 @@ def main():
 
     output_dpath = os.path.join(OUTPUT_DPATH, args.compiler, args.type)
 
-    if not os.path.exists(output_dpath):
-        os.makedirs(output_dpath)
+    os.makedirs(output_dpath, exist_ok=True)  # parallel-safe (categories run via GNU parallel)
 
     console.print("program type: {}".format(args.type))
     console.print("compiler: {}".format(args.compiler))

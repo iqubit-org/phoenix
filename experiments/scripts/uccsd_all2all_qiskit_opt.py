@@ -52,8 +52,7 @@ def main():
 
     if not os.path.exists(all2all_dpath):
         raise FileNotFoundError("Directory not found: {}".format(all2all_dpath))
-    if not os.path.exists(all2all_opt_dpath):
-        os.makedirs(all2all_opt_dpath)
+    os.makedirs(all2all_opt_dpath, exist_ok=True)  # parallel-safe
 
     console.rule("Applying Qiskit O3 for {}".format(args.compiler))
     console.print("parallel jobs: {}".format(args.jobs))

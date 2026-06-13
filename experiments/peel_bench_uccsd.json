@@ -1,0 +1,477 @@
+[
+ {
+  "name": "oscillating-152",
+  "paulis": 144,
+  "qubits": 10,
+  "support": {
+   "num_2q": 368,
+   "depth_2q": 312,
+   "time": 0.75
+  },
+  "adaptive": {
+   "num_2q": 316,
+   "depth_2q": 262,
+   "time": 0.67
+  },
+  "peel": {
+   "num_2q": 305,
+   "depth_2q": 213,
+   "time": 2.88
+  },
+  "peel-absorb": {
+   "num_2q": 269,
+   "depth_2q": 189,
+   "time": 0.13
+  }
+ },
+ {
+  "name": "CH2_cmplt_BK_sto3g",
+  "paulis": 1488,
+  "qubits": 14,
+  "support": {
+   "num_2q": 3205,
+   "depth_2q": 2578,
+   "time": 11.91
+  },
+  "adaptive": {
+   "num_2q": 3005,
+   "depth_2q": 2433,
+   "time": 11.32
+  },
+  "peel": {
+   "num_2q": 3029,
+   "depth_2q": 1690,
+   "time": 1.34
+  },
+  "peel-absorb": {
+   "num_2q": 2933,
+   "depth_2q": 1633,
+   "time": 1.34
+  }
+ },
+ {
+  "name": "CH2_cmplt_JW_sto3g",
+  "paulis": 1488,
+  "qubits": 14,
+  "support": {
+   "num_2q": 3065,
+   "depth_2q": 2552,
+   "time": 13.01
+  },
+  "adaptive": {
+   "num_2q": 3065,
+   "depth_2q": 2552,
+   "time": 13.32
+  },
+  "peel": {
+   "num_2q": 3220,
+   "depth_2q": 1731,
+   "time": 1.32
+  },
+  "peel-absorb": {
+   "num_2q": 3123,
+   "depth_2q": 1673,
+   "time": 1.38
+  }
+ },
+ {
+  "name": "CH2_cmplt_P_sto3g",
+  "paulis": 1488,
+  "qubits": 14,
+  "support": {
+   "num_2q": 3432,
+   "depth_2q": 2756,
+   "time": 18.74
+  },
+  "adaptive": {
+   "num_2q": 3235,
+   "depth_2q": 2637,
+   "time": 16.36
+  },
+  "peel": {
+   "num_2q": 3568,
+   "depth_2q": 2091,
+   "time": 1.87
+  },
+  "peel-absorb": {
+   "num_2q": 3479,
+   "depth_2q": 2036,
+   "time": 1.6
+  }
+ },
+ {
+  "name": "CH2_frz_BK_sto3g",
+  "paulis": 828,
+  "qubits": 12,
+  "support": {
+   "num_2q": 1760,
+   "depth_2q": 1425,
+   "time": 5.52
+  },
+  "adaptive": {
+   "num_2q": 1684,
+   "depth_2q": 1368,
+   "time": 5.21
+  },
+  "peel": {
+   "num_2q": 1857,
+   "depth_2q": 1101,
+   "time": 0.76
+  },
+  "peel-absorb": {
+   "num_2q": 1792,
+   "depth_2q": 1053,
+   "time": 0.69
+  }
+ },
+ {
+  "name": "CH2_frz_JW_sto3g",
+  "paulis": 828,
+  "qubits": 12,
+  "support": {
+   "num_2q": 1697,
+   "depth_2q": 1404,
+   "time": 5.74
+  },
+  "adaptive": {
+   "num_2q": 1697,
+   "depth_2q": 1404,
+   "time": 5.78
+  },
+  "peel": {
+   "num_2q": 1838,
+   "depth_2q": 964,
+   "time": 0.72
+  },
+  "peel-absorb": {
+   "num_2q": 1768,
+   "depth_2q": 919,
+   "time": 0.67
+  }
+ },
+ {
+  "name": "CH2_frz_P_sto3g",
+  "paulis": 828,
+  "qubits": 12,
+  "support": {
+   "num_2q": 1928,
+   "depth_2q": 1515,
+   "time": 7.39
+  },
+  "adaptive": {
+   "num_2q": 1779,
+   "depth_2q": 1446,
+   "time": 6.58
+  },
+  "peel": {
+   "num_2q": 1803,
+   "depth_2q": 1049,
+   "time": 0.87
+  },
+  "peel-absorb": {
+   "num_2q": 1736,
+   "depth_2q": 1004,
+   "time": 0.8
+  }
+ },
+ {
+  "name": "LiH_cmplt_BK_sto3g",
+  "paulis": 640,
+  "qubits": 12,
+  "support": {
+   "num_2q": 1215,
+   "depth_2q": 979,
+   "time": 3.84
+  },
+  "adaptive": {
+   "num_2q": 1205,
+   "depth_2q": 998,
+   "time": 3.59
+  },
+  "peel": {
+   "num_2q": 1203,
+   "depth_2q": 702,
+   "time": 0.52
+  },
+  "peel-absorb": {
+   "num_2q": 1141,
+   "depth_2q": 661,
+   "time": 0.48
+  }
+ },
+ {
+  "name": "LiH_cmplt_JW_sto3g",
+  "paulis": 640,
+  "qubits": 12,
+  "support": {
+   "num_2q": 1332,
+   "depth_2q": 1132,
+   "time": 4.47
+  },
+  "adaptive": {
+   "num_2q": 1332,
+   "depth_2q": 1132,
+   "time": 4.45
+  },
+  "peel": {
+   "num_2q": 1475,
+   "depth_2q": 821,
+   "time": 0.57
+  },
+  "peel-absorb": {
+   "num_2q": 1403,
+   "depth_2q": 780,
+   "time": 0.52
+  }
+ },
+ {
+  "name": "LiH_cmplt_P_sto3g",
+  "paulis": 640,
+  "qubits": 12,
+  "support": {
+   "num_2q": 1446,
+   "depth_2q": 1142,
+   "time": 5.4
+  },
+  "adaptive": {
+   "num_2q": 1365,
+   "depth_2q": 1097,
+   "time": 4.77
+  },
+  "peel": {
+   "num_2q": 1494,
+   "depth_2q": 879,
+   "time": 0.72
+  },
+  "peel-absorb": {
+   "num_2q": 1432,
+   "depth_2q": 840,
+   "time": 0.65
+  }
+ },
+ {
+  "name": "LiH_frz_BK_sto3g",
+  "paulis": 144,
+  "qubits": 10,
+  "support": {
+   "num_2q": 368,
+   "depth_2q": 312,
+   "time": 0.73
+  },
+  "adaptive": {
+   "num_2q": 316,
+   "depth_2q": 263,
+   "time": 0.67
+  },
+  "peel": {
+   "num_2q": 305,
+   "depth_2q": 213,
+   "time": 0.14
+  },
+  "peel-absorb": {
+   "num_2q": 269,
+   "depth_2q": 189,
+   "time": 0.13
+  }
+ },
+ {
+  "name": "LiH_frz_JW_sto3g",
+  "paulis": 144,
+  "qubits": 10,
+  "support": {
+   "num_2q": 316,
+   "depth_2q": 286,
+   "time": 0.78
+  },
+  "adaptive": {
+   "num_2q": 316,
+   "depth_2q": 286,
+   "time": 0.82
+  },
+  "peel": {
+   "num_2q": 370,
+   "depth_2q": 222,
+   "time": 0.2
+  },
+  "peel-absorb": {
+   "num_2q": 331,
+   "depth_2q": 195,
+   "time": 0.17
+  }
+ },
+ {
+  "name": "LiH_frz_P_sto3g",
+  "paulis": 144,
+  "qubits": 10,
+  "support": {
+   "num_2q": 387,
+   "depth_2q": 324,
+   "time": 1.08
+  },
+  "adaptive": {
+   "num_2q": 346,
+   "depth_2q": 297,
+   "time": 1.21
+  },
+  "peel": {
+   "num_2q": 359,
+   "depth_2q": 242,
+   "time": 0.18
+  },
+  "peel-absorb": {
+   "num_2q": 318,
+   "depth_2q": 217,
+   "time": 0.16
+  }
+ },
+ {
+  "name": "NH_cmplt_BK_sto3g",
+  "paulis": 640,
+  "qubits": 12,
+  "support": {
+   "num_2q": 1169,
+   "depth_2q": 945,
+   "time": 3.72
+  },
+  "adaptive": {
+   "num_2q": 1147,
+   "depth_2q": 945,
+   "time": 3.99
+  },
+  "peel": {
+   "num_2q": 1332,
+   "depth_2q": 756,
+   "time": 0.66
+  },
+  "peel-absorb": {
+   "num_2q": 1271,
+   "depth_2q": 705,
+   "time": 0.52
+  }
+ },
+ {
+  "name": "NH_cmplt_JW_sto3g",
+  "paulis": 640,
+  "qubits": 12,
+  "support": {
+   "num_2q": 1294,
+   "depth_2q": 1065,
+   "time": 4.39
+  },
+  "adaptive": {
+   "num_2q": 1294,
+   "depth_2q": 1065,
+   "time": 4.2
+  },
+  "peel": {
+   "num_2q": 1469,
+   "depth_2q": 863,
+   "time": 0.79
+  },
+  "peel-absorb": {
+   "num_2q": 1401,
+   "depth_2q": 811,
+   "time": 0.53
+  }
+ },
+ {
+  "name": "NH_cmplt_P_sto3g",
+  "paulis": 640,
+  "qubits": 12,
+  "support": {
+   "num_2q": 1585,
+   "depth_2q": 1304,
+   "time": 6.02
+  },
+  "adaptive": {
+   "num_2q": 1491,
+   "depth_2q": 1178,
+   "time": 5.53
+  },
+  "peel": {
+   "num_2q": 1691,
+   "depth_2q": 1007,
+   "time": 1.02
+  },
+  "peel-absorb": {
+   "num_2q": 1629,
+   "depth_2q": 967,
+   "time": 0.74
+  }
+ },
+ {
+  "name": "NH_frz_BK_sto3g",
+  "paulis": 360,
+  "qubits": 10,
+  "support": {
+   "num_2q": 845,
+   "depth_2q": 708,
+   "time": 2.03
+  },
+  "adaptive": {
+   "num_2q": 765,
+   "depth_2q": 642,
+   "time": 1.9
+  },
+  "peel": {
+   "num_2q": 852,
+   "depth_2q": 526,
+   "time": 0.38
+  },
+  "peel-absorb": {
+   "num_2q": 802,
+   "depth_2q": 496,
+   "time": 0.54
+  }
+ },
+ {
+  "name": "NH_frz_JW_sto3g",
+  "paulis": 360,
+  "qubits": 10,
+  "support": {
+   "num_2q": 721,
+   "depth_2q": 604,
+   "time": 1.86
+  },
+  "adaptive": {
+   "num_2q": 721,
+   "depth_2q": 604,
+   "time": 1.9
+  },
+  "peel": {
+   "num_2q": 905,
+   "depth_2q": 520,
+   "time": 0.36
+  },
+  "peel-absorb": {
+   "num_2q": 859,
+   "depth_2q": 488,
+   "time": 0.34
+  }
+ },
+ {
+  "name": "NH_frz_P_sto3g",
+  "paulis": 360,
+  "qubits": 10,
+  "support": {
+   "num_2q": 867,
+   "depth_2q": 701,
+   "time": 2.57
+  },
+  "adaptive": {
+   "num_2q": 763,
+   "depth_2q": 638,
+   "time": 2.1
+  },
+  "peel": {
+   "num_2q": 791,
+   "depth_2q": 478,
+   "time": 0.36
+  },
+  "peel-absorb": {
+   "num_2q": 750,
+   "depth_2q": 448,
+   "time": 0.32
+  }
+ }
+]

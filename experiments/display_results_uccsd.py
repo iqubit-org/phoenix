@@ -7,7 +7,6 @@ result_qiskit = pd.read_csv("./results/result_uccsd_qiskit.csv")
 result_tket = pd.read_csv("./results/result_uccsd_tket.csv")
 result_paulihedral = pd.read_csv("./results/result_uccsd_paulihedral.csv")
 result_tetris = pd.read_csv("./results/result_uccsd_tetris.csv")
-result_pauliopt = pd.read_csv("./results/result_uccsd_pauliopt.csv")
 result_quclear = pd.read_csv("./results/result_uccsd_quclear.csv")
 result_phoenix = pd.read_csv("./results/result_uccsd_phoenix.csv")
 
@@ -16,7 +15,6 @@ compilers = {
     "TKet": result_tket,
     "Paulihedral": result_paulihedral,
     "Tetris": result_tetris,
-    "PauliOpt": result_pauliopt,
     "QuCLEAR": result_quclear,
     "Phoenix": result_phoenix,
 }
@@ -30,8 +28,8 @@ topologies = [
 
 
 def opt_rate(df, col_opt, col_orig):
-    if len(df) == 0:
-        return float("nan")
+    if len(df) == 0 or col_opt not in df.columns:
+        return "-"  # this compiler has not been run for this topology yet
     return gmean(df[col_opt] / df[col_orig]).round(3)
 
 

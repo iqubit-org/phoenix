@@ -1,0 +1,710 @@
+{
+  "binaryoptimization": [
+    {
+      "name": "flat100-4-flat100-7.cnf-90-cc",
+      "n_qubit": 90,
+      "n_pauli": 223,
+      "status": "ok",
+      "compile_time": 4.9395
+    },
+    {
+      "name": "graph-complete_bipart-complbipart-n-10_a-5_b-5",
+      "n_qubit": 10,
+      "n_pauli": 75,
+      "status": "ok",
+      "compile_time": 2.8506
+    },
+    {
+      "name": "graph-gnp_k-2-gnp-k_2_n-4_rinst-05",
+      "n_qubit": 4,
+      "n_pauli": 12,
+      "status": "ok",
+      "compile_time": 2.7959
+    },
+    {
+      "name": "graph-gnp_k-4-gnp-k_4_n-40_rinst-07",
+      "n_qubit": 40,
+      "n_pauli": 804,
+      "status": "ok",
+      "compile_time": 3.3034
+    },
+    {
+      "name": "graph-gnp_k-4-gnp-k_4_n-6_rinst-15",
+      "n_qubit": 6,
+      "n_pauli": 45,
+      "status": "ok",
+      "compile_time": 3.1673
+    },
+    {
+      "name": "graph-gnp_k-5-gnp-k_5_n-24_rinst-04",
+      "n_qubit": 24,
+      "n_pauli": 188,
+      "status": "ok",
+      "compile_time": 3.0919
+    },
+    {
+      "name": "graph-gnp_k-5-gnp-k_5_n-60_rinst-19",
+      "n_qubit": 60,
+      "n_pauli": 1971,
+      "status": "ok",
+      "compile_time": 4.1209
+    },
+    {
+      "name": "graph-gnp_k-5-gnp-k_5_n-90_rinst-02",
+      "n_qubit": 90,
+      "n_pauli": 2958,
+      "status": "ok",
+      "compile_time": 5.181
+    },
+    {
+      "name": "graph-regular_reg-4-reg-4_n-90_rinst-07",
+      "n_qubit": 90,
+      "n_pauli": 540,
+      "status": "ok",
+      "compile_time": 3.3722
+    },
+    {
+      "name": "uf100-2-uf100-0396.cnf-46-res",
+      "n_qubit": 46,
+      "n_pauli": 271,
+      "status": "ok",
+      "compile_time": 4.976
+    },
+    {
+      "name": "uf100-2-uf100-0601.cnf-46-res",
+      "n_qubit": 46,
+      "n_pauli": 284,
+      "status": "ok",
+      "compile_time": 5.3389
+    },
+    {
+      "name": "uf100-4-uf100-0246.cnf-70-res",
+      "n_qubit": 70,
+      "n_pauli": 688,
+      "status": "ok",
+      "compile_time": 26.7313
+    },
+    {
+      "name": "uf20-7-uf20-0384.cnf-8-res",
+      "n_qubit": 8,
+      "n_pauli": 29,
+      "status": "ok",
+      "compile_time": 2.821
+    },
+    {
+      "name": "uuf100-0-uuf100-0810.cnf-40-res",
+      "n_qubit": 40,
+      "n_pauli": 187,
+      "status": "ok",
+      "compile_time": 3.8829
+    },
+    {
+      "name": "uuf100-8-uuf100-0509.cnf-40-cc",
+      "n_qubit": 40,
+      "n_pauli": 206,
+      "status": "ok",
+      "compile_time": 3.9829
+    }
+  ],
+  "chemistry": [
+    {
+      "name": "BH-JW-10",
+      "n_qubit": 10,
+      "n_pauli": 275,
+      "status": "ok",
+      "compile_time": 3.6797
+    },
+    {
+      "name": "Be2-JW-6",
+      "n_qubit": 6,
+      "n_pauli": 61,
+      "status": "ok",
+      "compile_time": 2.9135
+    },
+    {
+      "name": "C2-JW-18",
+      "n_qubit": 18,
+      "n_pauli": 1883,
+      "status": "ok",
+      "compile_time": 21.5198
+    },
+    {
+      "name": "H2-JW-8",
+      "n_qubit": 8,
+      "n_pauli": 184,
+      "status": "ok",
+      "compile_time": 3.1533
+    },
+    {
+      "name": "HF-BK12",
+      "n_qubit": 12,
+      "n_pauli": 630,
+      "status": "ok",
+      "compile_time": 5.0162
+    },
+    {
+      "name": "HF-parity10",
+      "n_qubit": 10,
+      "n_pauli": 275,
+      "status": "ok",
+      "compile_time": 4.0864
+    },
+    {
+      "name": "Li2-JW14",
+      "n_qubit": 14,
+      "n_pauli": 669,
+      "status": "ok",
+      "compile_time": 6.7517
+    },
+    {
+      "name": "LiH-parity-4",
+      "n_qubit": 4,
+      "n_pauli": 26,
+      "status": "ok",
+      "compile_time": 2.7462
+    },
+    {
+      "name": "N2-JW-22",
+      "n_qubit": 22,
+      "n_pauli": 4577,
+      "status": "ok",
+      "compile_time": 101.3198
+    },
+    {
+      "name": "N2-parity-14",
+      "n_qubit": 14,
+      "n_pauli": 669,
+      "status": "ok",
+      "compile_time": 8.3542
+    },
+    {
+      "name": "NH-BK-14",
+      "n_qubit": 14,
+      "n_pauli": 1085,
+      "status": "ok",
+      "compile_time": 7.6732
+    },
+    {
+      "name": "NH-JW-14",
+      "n_qubit": 14,
+      "n_pauli": 1085,
+      "status": "ok",
+      "compile_time": 8.5653
+    },
+    {
+      "name": "Na2-JW24",
+      "n_qubit": 24,
+      "n_pauli": 6508,
+      "status": "timeout",
+      "compile_time": null
+    },
+    {
+      "name": "O3-BK22",
+      "n_qubit": 22,
+      "n_pauli": 5465,
+      "status": "ok",
+      "compile_time": 145.8142
+    },
+    {
+      "name": "OH-JW10",
+      "n_qubit": 10,
+      "n_pauli": 275,
+      "status": "ok",
+      "compile_time": 3.8747
+    },
+    {
+      "name": "OH-JW12",
+      "n_qubit": 12,
+      "n_pauli": 630,
+      "status": "ok",
+      "compile_time": 5.4019
+    },
+    {
+      "name": "OH-parity12",
+      "n_qubit": 12,
+      "n_pauli": 630,
+      "status": "ok",
+      "compile_time": 5.2631
+    },
+    {
+      "name": "all-vib-bh-enc_stdbinary_dvalues_d-level-4",
+      "n_qubit": 2,
+      "n_pauli": 9,
+      "status": "ok",
+      "compile_time": 31.1762
+    },
+    {
+      "name": "all-vib-bhf2-mu_y_prime_enc_stdbinary_dvalues_8-8-8-8-8-8",
+      "n_qubit": 6,
+      "n_pauli": 24,
+      "status": "ok",
+      "compile_time": 2.8769
+    },
+    {
+      "name": "all-vib-c2h-mu_y_prime_enc_stdbinary_dvalues_8-8-4-4",
+      "n_qubit": 3,
+      "n_pauli": 12,
+      "status": "ok",
+      "compile_time": 2.6288
+    },
+    {
+      "name": "all-vib-c2h-mu_z_prime_enc_gray_dvalues_4-4-4-4",
+      "n_qubit": 4,
+      "n_pauli": 8,
+      "status": "ok",
+      "compile_time": 2.6657
+    },
+    {
+      "name": "all-vib-ch2-mu_y_prime_enc_gray_dvalues_16-16-16",
+      "n_qubit": 4,
+      "n_pauli": 32,
+      "status": "ok",
+      "compile_time": 2.674
+    },
+    {
+      "name": "all-vib-cyclo_propene-mu_x_prime_enc_stdbinary_dvalues_8-8-8-8-8-8-8-8-8-4-4-4-4-4-4",
+      "n_qubit": 11,
+      "n_pauli": 40,
+      "status": "ok",
+      "compile_time": 4.3114
+    },
+    {
+      "name": "all-vib-cyclo_propene-mu_x_prime_enc_unary_dvalues_16-16-16-16-16-16-16-16-16-16-16-16-16-16-16",
+      "n_qubit": 64,
+      "n_pauli": 120,
+      "status": "ok",
+      "compile_time": 2.7566
+    },
+    {
+      "name": "all-vib-f2-enc_gray_dvalues_d-level-16",
+      "n_qubit": 4,
+      "n_pauli": 98,
+      "status": "ok",
+      "compile_time": 2.6669
+    },
+    {
+      "name": "all-vib-fccf-enc_gray_dvalues_4-4-4-4-4-4-4",
+      "n_qubit": 14,
+      "n_pauli": 1035,
+      "status": "ok",
+      "compile_time": 7.4552
+    },
+    {
+      "name": "all-vib-fccf-mu_y_prime_enc_stdbinary_dvalues_16-16-16-16-8-8-8",
+      "n_qubit": 4,
+      "n_pauli": 32,
+      "status": "ok",
+      "compile_time": 3.2148
+    },
+    {
+      "name": "all-vib-fccf-mu_y_prime_enc_unary_dvalues_8-8-8-8-8-8-8",
+      "n_qubit": 8,
+      "n_pauli": 14,
+      "status": "ok",
+      "compile_time": 2.5757
+    },
+    {
+      "name": "all-vib-fccf-mu_z_prime_enc_unary_dvalues_16-16-16-16-16-16-16",
+      "n_qubit": 16,
+      "n_pauli": 30,
+      "status": "ok",
+      "compile_time": 6.2888
+    },
+    {
+      "name": "all-vib-h2co-mu_y_prime_enc_unary_dvalues_16-16-16-16-16-16",
+      "n_qubit": 32,
+      "n_pauli": 60,
+      "status": "ok",
+      "compile_time": 2.8707
+    },
+    {
+      "name": "all-vib-hc3h2cn-mu_y_prime_enc_stdbinary_dvalues_4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4",
+      "n_qubit": 24,
+      "n_pauli": 48,
+      "status": "ok",
+      "compile_time": 2.6283
+    },
+    {
+      "name": "all-vib-hco-enc_unary_dvalues_4-4-4",
+      "n_qubit": 12,
+      "n_pauli": 1788,
+      "status": "ok",
+      "compile_time": 15.067
+    },
+    {
+      "name": "all-vib-hno-mu_x_prime_enc_unary_dvalues_4-4-4",
+      "n_qubit": 12,
+      "n_pauli": 18,
+      "status": "ok",
+      "compile_time": 2.5788
+    },
+    {
+      "name": "all-vib-o3-enc_gray_dvalues_8-8-8",
+      "n_qubit": 9,
+      "n_pauli": 2801,
+      "status": "ok",
+      "compile_time": 21.046
+    },
+    {
+      "name": "all-vib-o3-mu_y_prime_enc_unary_dvalues_4-4-4",
+      "n_qubit": 4,
+      "n_pauli": 6,
+      "status": "ok",
+      "compile_time": 2.5972
+    }
+  ],
+  "condensedmatter": [
+    {
+      "name": "BH_D-1_d-4-bh_graph-1D-grid-nonpbc-qubitnodes_Lx-12_U-40_enc-unary_d-4",
+      "n_qubit": 48,
+      "n_pauli": 816,
+      "status": "ok",
+      "compile_time": 26.982
+    },
+    {
+      "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-14_U-10_enc-stdbinary_d-4",
+      "n_qubit": 28,
+      "n_pauli": 490,
+      "status": "ok",
+      "compile_time": 4.8397
+    },
+    {
+      "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-24_U-20_enc-stdbinary_d-4",
+      "n_qubit": 48,
+      "n_pauli": 840,
+      "status": "ok",
+      "compile_time": 11.9097
+    },
+    {
+      "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-46_U-2_enc-gray_d-4",
+      "n_qubit": 92,
+      "n_pauli": 1610,
+      "status": "ok",
+      "compile_time": 107.971
+    },
+    {
+      "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-60_U-10_enc-stdbinary_d-4",
+      "n_qubit": 120,
+      "n_pauli": 2100,
+      "status": "timeout",
+      "compile_time": null
+    },
+    {
+      "name": "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-10_U-30_enc-unary_d-8",
+      "n_qubit": 80,
+      "n_pauli": 3980,
+      "status": "ok",
+      "compile_time": 22.0467
+    },
+    {
+      "name": "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-4_U-40_enc-gray_d-8",
+      "n_qubit": 12,
+      "n_pauli": 1176,
+      "status": "ok",
+      "compile_time": 6.1368
+    },
+    {
+      "name": "BH_D-2_d-4-bh_graph-2D-grid-nonpbc-qubitnodes_Lx-7_Ly-7_U-70_enc-gray_d-4",
+      "n_qubit": 98,
+      "n_pauli": 2835,
+      "status": "ok",
+      "compile_time": 15.3625
+    },
+    {
+      "name": "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-11_Ly-11_U-100_enc-gray_d-4",
+      "n_qubit": 156,
+      "n_pauli": 6570,
+      "status": "ok",
+      "compile_time": 65.8442
+    },
+    {
+      "name": "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-5_U-30_enc-gray_d-4",
+      "n_qubit": 28,
+      "n_pauli": 938,
+      "status": "ok",
+      "compile_time": 5.6117
+    },
+    {
+      "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-10_Ly-10_U-30_enc-stdbinary_d-4",
+      "n_qubit": 100,
+      "n_pauli": 4950,
+      "status": "ok",
+      "compile_time": 18.7735
+    },
+    {
+      "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-3_Ly-22_U-70_enc-unary_d-4",
+      "n_qubit": 132,
+      "n_pauli": 7194,
+      "status": "ok",
+      "compile_time": 50.5628
+    },
+    {
+      "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-5_Ly-5_U-30_enc-unary_d-4",
+      "n_qubit": 60,
+      "n_pauli": 3270,
+      "status": "ok",
+      "compile_time": 16.0306
+    },
+    {
+      "name": "BH_D-3_d-4-bh_graph-3D-grid-nonpbc-qubitnodes_Lx-2_Ly-2_Lz-2_U-20_enc-unary_d-4",
+      "n_qubit": 32,
+      "n_pauli": 880,
+      "status": "ok",
+      "compile_time": 5.4084
+    },
+    {
+      "name": "FH_D-1-fh-graph-1D-grid-nonpbc-qubitnodes_Lx-90_U-2_enc-jw",
+      "n_qubit": 180,
+      "n_pauli": 626,
+      "status": "ok",
+      "compile_time": 3.7963
+    },
+    {
+      "name": "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-160_U-12_enc-parity",
+      "n_qubit": 320,
+      "n_pauli": 1120,
+      "status": "ok",
+      "compile_time": 14.8926
+    },
+    {
+      "name": "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-50_U-2_enc-jw",
+      "n_qubit": 100,
+      "n_pauli": 350,
+      "status": "ok",
+      "compile_time": 3.9776
+    },
+    {
+      "name": "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-105_U-8_enc-bk",
+      "n_qubit": 420,
+      "n_pauli": 1890,
+      "status": "ok",
+      "compile_time": 20.096
+    },
+    {
+      "name": "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-72_U-0_enc-parity",
+      "n_qubit": 720,
+      "n_pauli": 2880,
+      "status": "ok",
+      "compile_time": 133.9072
+    },
+    {
+      "name": "FH_D-2-fh-graph-2D-triag-nonpbc-qubitnodes_Lx-16_Ly-16_U-4_enc-bk",
+      "n_qubit": 306,
+      "n_pauli": 2091,
+      "status": "ok",
+      "compile_time": 27.948
+    },
+    {
+      "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-4_Ly-133_h-0.1",
+      "n_qubit": 532,
+      "n_pauli": 3313,
+      "status": "ok",
+      "compile_time": 13.9325
+    },
+    {
+      "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-186_h-0.5",
+      "n_qubit": 930,
+      "n_pauli": 5937,
+      "status": "ok",
+      "compile_time": 36.2535
+    },
+    {
+      "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-58_h-2",
+      "n_qubit": 290,
+      "n_pauli": 1841,
+      "status": "ok",
+      "compile_time": 6.0897
+    },
+    {
+      "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-185_h-0.5",
+      "n_qubit": 370,
+      "n_pauli": 2035,
+      "status": "ok",
+      "compile_time": 7.2177
+    },
+    {
+      "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-190_h-0",
+      "n_qubit": 760,
+      "n_pauli": 4560,
+      "status": "ok",
+      "compile_time": 21.3658
+    },
+    {
+      "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-186_h-3",
+      "n_qubit": 930,
+      "n_pauli": 6510,
+      "status": "ok",
+      "compile_time": 37.8818
+    },
+    {
+      "name": "heis-graph-2D-triag-nonpbc-qubitnodes_Lx-40_Ly-40_h-0.1",
+      "n_qubit": 861,
+      "n_pauli": 8241,
+      "status": "ok",
+      "compile_time": 42.7245
+    },
+    {
+      "name": "tfim-graph-1D-grid-pbc-qubitnodes_Lx-16_h-2",
+      "n_qubit": 16,
+      "n_pauli": 32,
+      "status": "ok",
+      "compile_time": 2.6728
+    },
+    {
+      "name": "tfim-graph-1D-grid-pbc-qubitnodes_Lx-26_h-6",
+      "n_qubit": 26,
+      "n_pauli": 52,
+      "status": "ok",
+      "compile_time": 2.6604
+    },
+    {
+      "name": "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-19_Ly-19_h-5",
+      "n_qubit": 361,
+      "n_pauli": 1045,
+      "status": "ok",
+      "compile_time": 7.0279
+    },
+    {
+      "name": "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-15_h-3",
+      "n_qubit": 75,
+      "n_pauli": 205,
+      "status": "ok",
+      "compile_time": 3.0058
+    },
+    {
+      "name": "tfim-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-148_h-6",
+      "n_qubit": 592,
+      "n_pauli": 1776,
+      "status": "ok",
+      "compile_time": 14.3172
+    },
+    {
+      "name": "tfim-graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-160_h-0.1",
+      "n_qubit": 324,
+      "n_pauli": 1127,
+      "status": "ok",
+      "compile_time": 6.8683
+    },
+    {
+      "name": "tfim-graph-2D-triag-pbc-qubitnodes_Lx-13_Ly-13_h-0.1",
+      "n_qubit": 91,
+      "n_pauli": 364,
+      "status": "ok",
+      "compile_time": 3.3366
+    },
+    {
+      "name": "tfim-graph-2D-triag-pbc-qubitnodes_Lx-19_Ly-19_h-0.5",
+      "n_qubit": 190,
+      "n_pauli": 760,
+      "status": "ok",
+      "compile_time": 4.7409
+    }
+  ],
+  "discreteoptimization": [
+    {
+      "name": "TSP_Ncity-10-tsp_prob-pr76_Ncity-10_enc-unary",
+      "n_qubit": 100,
+      "n_pauli": 1000,
+      "status": "ok",
+      "compile_time": 4.9244
+    },
+    {
+      "name": "TSP_Ncity-10-tsp_prob-st70_Ncity-10_enc-unary",
+      "n_qubit": 100,
+      "n_pauli": 1000,
+      "status": "ok",
+      "compile_time": 5.0312
+    },
+    {
+      "name": "TSP_Ncity-16-tsp_prob-fl417_Ncity-16_enc-stdbinary",
+      "n_qubit": 64,
+      "n_pauli": 3840,
+      "status": "ok",
+      "compile_time": 30.4691
+    },
+    {
+      "name": "TSP_Ncity-16-tsp_prob-kroD100_Ncity-16_enc-stdbinary",
+      "n_qubit": 64,
+      "n_pauli": 3840,
+      "status": "ok",
+      "compile_time": 40.1239
+    },
+    {
+      "name": "TSP_Ncity-4-tsp_rand-002_Ncity-4_enc-stdbinary",
+      "n_qubit": 8,
+      "n_pauli": 48,
+      "status": "ok",
+      "compile_time": 3.0403
+    },
+    {
+      "name": "TSP_Ncity-5-tsp_prob-ts225_Ncity-5_enc-unary",
+      "n_qubit": 25,
+      "n_pauli": 125,
+      "status": "ok",
+      "compile_time": 2.9011
+    },
+    {
+      "name": "TSP_Ncity-7-tsp_prob-lin105_Ncity-7_enc-unary",
+      "n_qubit": 49,
+      "n_pauli": 343,
+      "status": "ok",
+      "compile_time": 3.9043
+    },
+    {
+      "name": "TSP_Ncity-8-tsp_prob-d198_Ncity-8_enc-unary",
+      "n_qubit": 64,
+      "n_pauli": 512,
+      "status": "ok",
+      "compile_time": 3.7984
+    },
+    {
+      "name": "TSP_Ncity-8-tsp_prob-ulysses22_Ncity-8_enc-stdbinary",
+      "n_qubit": 24,
+      "n_pauli": 448,
+      "status": "ok",
+      "compile_time": 4.2464
+    },
+    {
+      "name": "binary-color02-dsjc1000.1_k-3-dsjc1000.1",
+      "n_qubit": 72,
+      "n_pauli": 675,
+      "status": "ok",
+      "compile_time": 4.7486
+    },
+    {
+      "name": "binary-graph-regular_k-5-reg-5_n-10_rinst-07",
+      "n_qubit": 30,
+      "n_pauli": 1295,
+      "status": "ok",
+      "compile_time": 9.2429
+    },
+    {
+      "name": "gray-color02-1-fullins_5_k-5-1-fullins_5",
+      "n_qubit": 144,
+      "n_pauli": 5334,
+      "status": "timeout",
+      "compile_time": null
+    },
+    {
+      "name": "gray-color02-will199gpia_k-3-will199gpia",
+      "n_qubit": 120,
+      "n_pauli": 1512,
+      "status": "ok",
+      "compile_time": 10.6044
+    },
+    {
+      "name": "unary-color02-ash608gpia_k-3-ash608gpia",
+      "n_qubit": 480,
+      "n_pauli": 1614,
+      "status": "ok",
+      "compile_time": 12.4924
+    },
+    {
+      "name": "unary-color02-queen13_13_k-4-queen13_13",
+      "n_qubit": 112,
+      "n_pauli": 412,
+      "status": "ok",
+      "compile_time": 3.7497
+    }
+  ]
+}

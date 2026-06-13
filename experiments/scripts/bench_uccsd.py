@@ -14,7 +14,6 @@ import warnings
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import qiskit.qasm2
 from natsort import natsorted
-from functools import partial
 import bench_utils
 import phoenix
 
@@ -24,10 +23,11 @@ from rich.console import Console
 
 console = Console()
 
-INPUT_JSON_DPATH = "../../benchmarks/uccsd_json"
+INPUT_JSON_DPATH = "../../benchmarks/uccsd"
 OUTPUT_DPATH = "../output_uccsd"
 
 COMPILER_PASSES = {
+    "naive": bench_utils.naive_pass,
     "tket": bench_utils.tket_pass,
     "qiskit": bench_utils.qiskit_pass,
     "paulihedral": bench_utils.paulihedral_pass,
@@ -35,7 +35,6 @@ COMPILER_PASSES = {
     "pauliopt": bench_utils.pauliopt_pass,
     "quclear": bench_utils.quclear_pass,
     "phoenix": bench_utils.phoenix_pass,
-    "phoenix+": partial(bench_utils.phoenix_pass, grouping=False),
 }
 
 COUPLING_MAP_GENS = {
@@ -102,8 +101,7 @@ def main():
     else:
         output_dpath = os.path.join(OUTPUT_DPATH, args.compiler, args.device)
 
-    if not os.path.exists(output_dpath):
-        os.makedirs(output_dpath)
+    os.makedirs(output_dpath, exist_ok=True)  # parallel-safe (GNU parallel runs)
 
     console.print("topology: {}".format(args.device))
     console.print("compiler: {}".format(args.compiler))

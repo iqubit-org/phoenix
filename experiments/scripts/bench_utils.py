@@ -36,19 +36,44 @@ def qiskit_O3_all2all(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
     circ = qiskit.transpile(circ, optimization_level=3, basis_gates=["u1", "u2", "u3", "cx"])
     return circ
 
+def naive_pass(
+    paulis: List[str],
+    coeffs: List[float],
+    coupling_map: CouplingMap = None,
+    with_O3: bool = False,
+) -> qiskit.QuantumCircuit:
+    """Naive compilation: the raw Trotter circuit of the input program.
+
+    This pass produces the ORIGINAL-circuit reference that opt rates are
+    computed against (replacing the pre-generated benchmarks/*_qasm dirs), so
+    ``with_O3`` is deliberately ignored — the baseline must stay unoptimized
+    no matter how the bench driver invokes it (bench_hamlib hardcodes
+    with_O3=True for every compiler).
+    """
+    paulis = [p[::-1] for p in paulis]
+    qc = phoenix.Hamiltonian(paulis, coeffs).generate_circuit()
+    if not (coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)):
+        qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
+    # Pure basis translation (NO optimization): every compiled output is
+    # counted in the cx/1q basis, so the reference must be too — counting raw
+    # rzz/rxx gates as single 2q gates would skew every opt rate by ~2x.
+    qc = qiskit.transpile(qc, basis_gates=["u", "cx"], optimization_level=0)
+    return qc
 
 def phoenix_pass(
     paulis: List[str],
     coeffs: List[float],
-    grouping: bool = True,
+    grouping: str | None = None,
     coupling_map: CouplingMap = None,
     with_O3: bool = False,
 ) -> qiskit.QuantumCircuit:
-    """Phoenix's high-level optimization"""
+    """Phoenix's high-level optimization.
+
+    ``grouping`` accepts the public modes (None/'peel'/'support').
+    """
     paulis = [
         p[::-1] for p in paulis
     ]  # ! PHOENIX uses little-endian convention for Pauli strings, reverse the input strings here
-
     ham = phoenix.Hamiltonian(paulis, coeffs)
     qc = phoenix.compile_hamiltonian_simulation(ham, grouping=grouping)
     # circ = ham.phoenix_circuit(order_blocks=order_blocks, efficient=efficient)
