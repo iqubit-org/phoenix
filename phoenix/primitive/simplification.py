@@ -32,9 +32,94 @@ for _cliff in CLIFFORD_OPTIONS:
     _CLIFFORD_BLOCKS[id(_cliff)] = Clifford(_qc2).symplectic_matrix.astype(np.int8)
 
 
-def simplify_hamiltonian(ham: Hamiltonian, parallel: bool = False) -> tuple[Hamiltonian, list[SimplificationStep]]:
+def _phi_record(ham: Hamiltonian) -> tuple[int, int, float]:
+    """Lexicographic potential Φ = (N_nl, W, cost_bsf) of a tableau.
+
+    ``N_nl`` (number of nonlocal rows) is non-increasing under the simplify
+    loop (locals get extracted, Clifford conjugation never maps a non-identity
+    row to identity), and ``W`` (total Pauli weight over nonlocal rows) is a
+    bounded non-negative integer, so "strictly improve the best-ever record
+    within a bounded patience" is a terminating discipline. ``cost_bsf`` only
+    breaks ties.
+    """
+    x = ham.paulis.x
+    z = ham.paulis.z
+    wo = x | z
+    rw = wo.sum(axis=1)
+    nl = rw > 1
+    return int(nl.sum()), int(rw[nl].sum()), heuristic_bsf_cost(x, z)
+
+
+def _force_reduce_min_row(
+    ham: Hamiltonian,
+) -> tuple[Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]]:
+    """Forced row elimination move (Phase D safety valve).
+
+    Picks the minimum-weight nonlocal row ``r`` and applies the Clifford that
+    strictly reduces ``w_r``, tie-breaking by the total-weight side effect ΔW
+    on all rows. Always succeeds: for any two active qubits of ``r`` its
+    2-qubit sub-pattern σ⊗τ is reducible to weight 1 by one of the 9 options
+    (verified exhaustively). Consecutive forced moves strictly decrease the
+    minimum nonlocal row weight, so a row is extracted after ≤ w_r − 1 moves.
+    """
+    x = ham.paulis.x.astype(np.int8)
+    z = ham.paulis.z.astype(np.int8)
+    wo = x | z
+    rw = wo.sum(axis=1)
+    nl = np.where(rw > 1)[0]
+    r = int(nl[np.argmin(rw[nl])])
+    support = np.where(wo[r])[0]
+
+    pairs = list(combinations(support.tolist(), 2))
+    pairs_arr = np.asarray(pairs, dtype=np.int64)
+    q0p, q1p = pairs_arr[:, 0], pairs_arr[:, 1]
+
+    # (P, m, 4) tableau bits at the affected columns
+    x_i32 = x.astype(np.int32)
+    z_i32 = z.astype(np.int32)
+    sub_base = np.stack([x_i32[:, q0p].T, x_i32[:, q1p].T, z_i32[:, q0p].T, z_i32[:, q1p].T], axis=-1)
+    wo_at = (sub_base[:, :, 0] | sub_base[:, :, 2]) + (sub_base[:, :, 1] | sub_base[:, :, 3])  # (P, m)
+
+    best_key = None
+    best_move = None
+    for cliff in CLIFFORD_OPTIONS:
+        block = _CLIFFORD_BLOCKS[id(cliff)].astype(np.int32, copy=False)
+        new_sub = (sub_base @ block) & 1  # (P, m, 4)
+        new_wo_at = (new_sub[:, :, 0] | new_sub[:, :, 2]) + (new_sub[:, :, 1] | new_sub[:, :, 3])
+        d_rw = new_wo_at - wo_at  # (P, m)
+        w_r_new = rw[r] + d_rw[:, r]  # (P,)
+        d_W = d_rw.sum(axis=1)  # (P,) total-weight side effect
+
+        valid = w_r_new < rw[r]
+        if not np.any(valid):
+            continue
+        idx = np.where(valid)[0]
+        order = np.lexsort((d_W[idx], w_r_new[idx]))
+        pi = int(idx[order[0]])
+        key = (int(w_r_new[pi]), int(d_W[pi]))
+        if best_key is None or key < best_key:
+            best_key = key
+            best_move = (cliff, pairs[pi])
+
+    assert best_move is not None, "forced row reduction must always find a move"
+    cliff, (q0, q1) = best_move
+    return ham.apply_clifford(cliff, q0, q1), cliff, (int(q0), int(q1))
+
+
+def simplify_hamiltonian(
+    ham: Hamiltonian,
+    parallel: bool = False,
+    patience: int | None = None,
+) -> tuple[Hamiltonian, list[SimplificationStep]]:
     """
     Simplify a Hamiltonian (Pauli Tableau) using Clifford gates until weights are <= 2.
+
+    The greedy BSF-cost search is guarded by a stall safety net: a best-ever
+    record of Φ = (N_nl, W, cost) is kept, and ``patience`` applied moves
+    without improving it — or a search that finds no unvisited candidate at
+    all — triggers a forced row-elimination episode
+    (:func:`_force_reduce_min_row`) until a row is extracted, after which the
+    normal search resumes. This makes the loop terminate unconditionally.
 
     Returns:
         The simplified Hamiltonian (remaining terms).
@@ -45,23 +130,45 @@ def simplify_hamiltonian(ham: Hamiltonian, parallel: bool = False) -> tuple[Hami
     simp_steps: list[SimplificationStep] = []
     visited = set()
 
-    # last_layer = np.zeros(current_ham.num_qubits, dtype=np.int64)
+    if patience is None:
+        patience = max(16, 2 * len(ham.active_qubits))
+
+    best_record: tuple[int, int, float] | None = None
+    stall_count = 0
+    forced_mode = False
 
     while current_ham.total_weight > 2:
         local_ham, nonlocal_ham = current_ham.separate_local_nonlocal()
         visited.add(_tableau_key(nonlocal_ham.paulis.x, nonlocal_ham.paulis.z))
 
-        if parallel:
-            best_ham, best_cliff, qubits = search_best_clifford_par(nonlocal_ham, visited)
+        if forced_mode and np.any(local_ham.with_ops):
+            forced_mode = False  # a row was extracted; episode over
+
+        if forced_mode:
+            best_ham, best_cliff, qubits = _force_reduce_min_row(nonlocal_ham)
         else:
-            best_ham, best_cliff, qubits = search_best_clifford(nonlocal_ham, visited)
+            if parallel:
+                result = search_best_clifford_par(nonlocal_ham, visited)
+            else:
+                result = search_best_clifford(nonlocal_ham, visited)
+
+            stalled = result is None
+            if not stalled:
+                best_ham, best_cliff, qubits = result
+                record = _phi_record(best_ham)
+                if best_record is None or record < best_record:
+                    best_record = record
+                    stall_count = 0
+                else:
+                    stall_count += 1
+                    stalled = stall_count > patience
+
+            if stalled:
+                best_ham, best_cliff, qubits = _force_reduce_min_row(nonlocal_ham)
+                forced_mode = True
+                stall_count = 0
 
         simp_steps.append(SimplificationStep(clifford=best_cliff, local_hamiltonian=local_ham, qubits=qubits))
-
-        # q0, q1 = qubits
-        # new_layer = max(int(last_layer[q0]), int(last_layer[q1])) + 1
-        # last_layer[q0] = new_layer
-        # last_layer[q1] = new_layer
 
         current_ham = best_ham
         visited.add(_tableau_key(current_ham.paulis.x, current_ham.paulis.z))
@@ -92,18 +199,13 @@ def _apply_cliff_to_tableau(
 
 
 def search_best_clifford(
-    ham: Hamiltonian, visited: set[bytes] = None
-) -> tuple[Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]]:
-    """Search for the best Clifford gate to apply."""
-    # n = ham.num_qubits
-    # if last_layer is None:
-    #     last_layer = np.zeros(n, dtype=np.int64)
-    # if depth_weight is None:
-    #     depth_weight = np.sqrt(n)
-    # current_depth = last_layer.max() if n > 0 else 0
+    ham: Hamiltonian, visited: set[bytes] | None = None
+) -> tuple[Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]] | None:
+    """Search for the best Clifford gate to apply.
 
+    Returns ``None`` when every candidate is visited or a no-op (stall signal).
+    """
     qubit_pairs = sorted(combinations(ham.active_qubits, 2), key=lambda idx: (idx[0] % 2))
-    qubit_pairs = [pair for pair in qubit_pairs]
 
     x = ham.paulis.x.astype(np.int8)
     z = ham.paulis.z.astype(np.int8)
@@ -122,14 +224,16 @@ def search_best_clifford(
                 continue
 
             cost = heuristic_bsf_cost(new_x, new_z)
-            # new_layer   = max(last_layer[q0], last_layer[q1]) + 1
-            # delta_depth = max(0, new_layer - current_depth)
-            # cost += delta_depth * depth_weight
-
             if cost < best_cost:
                 best_cost = cost
                 best_cliff_idx = ci
                 best_pair_idx = pi
+
+    if not np.isfinite(best_cost):
+        # Every candidate is visited or a no-op: blindly applying
+        # (cliff[0], pair[0]) here would re-enter a visited state and hard-cycle
+        # the caller. Signal the stall instead.
+        return None
 
     best_cliff = CLIFFORD_OPTIONS[best_cliff_idx]
     best_qubit_pair = qubit_pairs[best_pair_idx]
@@ -160,38 +264,6 @@ def _candidate_tableau_key(
     return _tableau_key(candidate_x, candidate_z)
 
 
-def _heuristic_bsf_cost(x: np.ndarray, z: np.ndarray) -> float:
-    r"""
-    Original heuristic cost for a Pauli Tableau, the smaller the simpler.
-
-    .. math::
-        \mathrm{cost}_{\mathrm{bsf}} := \mathrm{total\_weight} * n_{\mathrm{nonlocal}}^2
-        + \sum_{\langle i,j \rangle} \lVert r_x^{(i)} \lor r_z^{(i)} \lor r_x^{(j)} \lor r_z^{(j)} \rVert
-        + \frac{1}{2} \sum_{\langle i,j \rangle} (\lVert r_x^{(i)} \lor r_x^{(j)} \rVert + \lVert r_z^{(i)} \lor r_z^{(j)} \rVert)
-    """
-    with_ops = np.logical_or(x, z)
-    row_weights = with_ops.sum(axis=1)
-    which_nonlocal_paulis = np.where(row_weights > 1)[0]
-    num_nonlocal_paulis = which_nonlocal_paulis.size
-
-    if not np.any(with_ops):
-        total_weight = 0
-    elif not num_nonlocal_paulis:
-        total_weight = 1
-    else:
-        total_weight = np.bitwise_or.reduce(with_ops[which_nonlocal_paulis], axis=0).sum()
-
-    cost = 0.0
-    if num_nonlocal_paulis > 1:
-        row_combs = np.array(list(combinations(which_nonlocal_paulis, 2))).T
-        cost += np.bitwise_or(with_ops[row_combs[0]], with_ops[row_combs[1]]).sum()
-        cost += np.bitwise_or(x[row_combs[0]], x[row_combs[1]]).sum() * 0.5
-        cost += np.bitwise_or(z[row_combs[0]], z[row_combs[1]]).sum() * 0.5
-
-    cost += total_weight * num_nonlocal_paulis**2
-    return cost
-
-
 def heuristic_bsf_cost(x: np.ndarray, z: np.ndarray) -> float:
     r"""
     Optimized heuristic cost for a Pauli Tableau.
@@ -204,10 +276,7 @@ def heuristic_bsf_cost(x: np.ndarray, z: np.ndarray) -> float:
     row_weights = with_ops.sum(axis=1)
     which_nl = np.where(row_weights > 1)[0]
     num_nl = which_nl.size
-
-    if not np.any(with_ops):
-        return 0.0
-    elif not num_nl:
+    if num_nl == 0:
         return 0.0
 
     total_weight = np.bitwise_or.reduce(with_ops[which_nl], axis=0).sum()
@@ -218,7 +287,6 @@ def heuristic_bsf_cost(x: np.ndarray, z: np.ndarray) -> float:
         nl_x = x[which_nl].astype(np.int32)
         nl_z = z[which_nl].astype(np.int32)
 
-        # sum_{i<j} |a_i OR a_j| = (m-1)*sum(|a_i|) - sum-upper-tri(A @ A.T)
         def _pairwise_or_sum(a: np.ndarray) -> float:
             m = a.shape[0]
             row_sums = a.sum(axis=1)
@@ -237,18 +305,19 @@ def heuristic_bsf_cost(x: np.ndarray, z: np.ndarray) -> float:
 def search_best_clifford_par(
     ham: Hamiltonian,
     visited: set[bytes] | None = None,
-    col_chunk: int = 64,
-    visited_chunk: int = 256,
-) -> tuple[Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]]:
+) -> tuple[Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]] | None:
     """Compressed-representation vectorized search.
+
+    Returns ``None`` when every candidate is visited or a no-op (stall signal).
 
     Never materializes the full (C, m, n) tableau tensor (which blows up to
     GB-scale for wide groups like condensed-matter parity encoding). Instead,
     exploits the fact that a 2-qubit Clifford only modifies 2 columns of x
     and 2 columns of z per candidate, decomposes the cost per column, and
-    streams the unchanged-column contributions in small K-wide chunks.
+    reduces all per-row work to lookups over an 80-state joint code
+    (16 local tableau codes x 5 row-weight classes) histogrammed per pair.
 
-    Memory: O(P·m + P·K + chunk·m·n) rather than O(9·P·m·n).
+    Memory: O(P·m + P·n) rather than O(9·P·m·n).
 
     Cost-formula decomposition (per candidate p, with modified cols q0, q1):
         For a 0/1 matrix M of shape (m, n),
@@ -261,10 +330,16 @@ def search_best_clifford_par(
             − f(s_nl at col q0, ORIG) − f(s_nl at col q1, ORIG)
             + f(s_nl at col q0, NEW)  + f(s_nl at col q1, NEW).
 
-    Tie-break matches the sequential / prior par implementation.
+    The per-candidate nonlocal-restricted column sums collapse to fixed
+    (n,) lookups: at any column outside {q0, q1} the sum provably equals the
+    original nonlocal column sum S_k for every candidate (rows can only
+    enter/leave the nonlocal set when their support lies inside the pair),
+    so Σ_k f(·) is evaluated from a per-ν table over the few distinct
+    num_nl values.
+
+    Tie-break matches the sequential implementation.
     """
     qubit_pairs = sorted(combinations(ham.active_qubits, 2), key=lambda idx: (idx[0] % 2))
-    qubit_pairs = list(qubit_pairs)
     P = len(qubit_pairs)
     if P == 0:
         raise ValueError("search_best_clifford_par: no valid qubit pairs")
@@ -279,128 +354,136 @@ def search_best_clifford_par(
 
     row_weights = (x | z).sum(axis=1)
     if int(row_weights.min()) > 3:
-        return _search_best_clifford_par_nonlocal_stable(
-            ham, qubit_pairs, q0p, q1p, x, z, n, visited, visited_chunk
-        )
+        return _search_best_clifford_par_nonlocal_stable(ham, qubit_pairs, q0p, q1p, x, z, visited)
 
     # ---- Precomputed originals ----
     wo = (x | z).astype(np.int32)  # (m, n)
-    x_i32 = x.astype(np.int32, copy=False)
-    z_i32 = z.astype(np.int32, copy=False)
     rw_orig = wo.sum(axis=1)  # (m,)
 
-    # Original values at affected columns, shape (P, m)
-    wo_at_q0 = wo[:, q0p].T
-    wo_at_q1 = wo[:, q1p].T
-    x_at_q0 = x_i32[:, q0p].T
-    x_at_q1 = x_i32[:, q1p].T
-    z_at_q0 = z_i32[:, q0p].T
-    z_at_q1 = z_i32[:, q1p].T
+    # Column sums over the *originally nonlocal* rows. Key invariant: for any
+    # candidate (clifford, pair), the nl-restricted column sum at any column
+    # k ∉ {q0, q1} equals S_k exactly — a row can enter/leave the nonlocal set
+    # only if its support lies inside the pair (the symplectic block is
+    # invertible and outside columns are untouched), and such rows contribute
+    # 0 to every outside column. Hence the per-candidate (P, n) column-sum
+    # recomputation collapses to lookups into these fixed (n,) arrays.
+    nl_rows0 = rw_orig >= 2  # (m,)
+    S_wo = wo[nl_rows0].sum(axis=0).astype(np.int64)  # (n,)
+    S_x = x[nl_rows0].astype(np.int64).sum(axis=0)
+    S_z = z[nl_rows0].astype(np.int64).sum(axis=0)
+    NZ_wo_total = int((S_wo > 0).sum())
 
-    # (P, m, 4) slab used as matmul input against each Clifford block
-    sub_base = np.stack([x_at_q0, x_at_q1, z_at_q0, z_at_q1], axis=-1)  # (P, m, 4) int32
+    # ---- Compact per-(pair, row) encoding --------------------------------
+    # A 2q Clifford on (q0, q1) touches a row only through its 4 tableau bits
+    # (x_q0, x_q1, z_q0, z_q1) =: code in [0, 16). Every per-row quantity the
+    # cost needs (new bits, weight delta, nonlocal status) is a pure function
+    # of (code, row weight), and the weight only matters through
+    # wclass = min(rw, 4) since a 2q Clifford changes a row weight by at most
+    # ±2. Joint code jc = code + 16*wclass in [0, 80). A per-pair histogram
+    # over the 80 joint codes therefore replaces all O(P·m) per-Clifford
+    # reductions with (P, 80) @ (80,) lookups.
+    cq = x.astype(np.uint8) | (z.astype(np.uint8) << 1)  # (m, n) per-qubit 2-bit nibble
+    code = cq[:, q0p].T | (cq[:, q1p].T << 2)  # (P, m) uint8
+    wclass = np.minimum(rw_orig, 4).astype(np.uint8)  # (m,)
+    jc = code + (wclass << 4)[None, :]  # (P, m) uint8, in [0, 80)
+
+    offs = (np.arange(P, dtype=np.int64) * 80)[:, None]
+    hist = np.bincount((jc.astype(np.int64) + offs).ravel(), minlength=80 * P).reshape(P, 80)
+
+    # Bit decomposition of the 16 codes (original values at q0, q1):
+    # bit0 = x_q0, bit1 = z_q0, bit2 = x_q1, bit3 = z_q1
+    codes16 = np.arange(16, dtype=np.int64)
+    bit_x0 = codes16 & 1
+    bit_z0 = (codes16 >> 1) & 1
+    bit_x1 = (codes16 >> 2) & 1
+    bit_z1 = (codes16 >> 3) & 1
+    wo_q0_16 = bit_x0 | bit_z0
+    wo_q1_16 = bit_x1 | bit_z1
+    w_rep = np.arange(5)[:, None]  # representative row weight per class; 4 = ">=4"
+
+    def _tile80(v16: np.ndarray) -> np.ndarray:
+        """Replicate a (16,) per-code table across the 5 weight classes."""
+        return np.tile(v16, 5)
+
+    # Per-pair gathers of the fixed nonlocal column sums (Clifford-independent)
+    S_wo_q0 = S_wo[q0p]  # (P,)
+    S_wo_q1 = S_wo[q1p]
+    S_x_q0 = S_x[q0p]
+    S_x_q1 = S_x[q1p]
+    S_z_q0 = S_z[q0p]
+    S_z_q1 = S_z[q1p]
+    NZ_wo_outside = (
+        NZ_wo_total - (S_wo_q0 > 0).astype(np.int64) - (S_wo_q1 > 0).astype(np.int64)
+    )  # (P,)
 
     # Running global-best across 9 Cliffords
     best_cost = np.inf
     best_cliff_idx = 0
     best_pair_idx = 0
 
-    # Preallocate small (P,) scratchpads reused per Clifford
-    # (allocated in loop for clarity)
-
     def _f_diff(nnl: np.ndarray, s: np.ndarray) -> np.ndarray:
         """f(s) = C(num_nl - s, 2) = (num_nl - s)(num_nl - s - 1) / 2, integer."""
         d = nnl - s
         return d * (d - 1) // 2
 
+    def _g_table(num_nl: np.ndarray, S: np.ndarray) -> np.ndarray:
+        """g(ν)[p] = Σ_k f(ν_p − S_k), evaluated via the few distinct ν values."""
+        uniq, inv = np.unique(num_nl, return_inverse=True)
+        d = uniq[:, None] - S[None, :]  # (u, n)
+        return (d * (d - 1) // 2).sum(axis=1)[inv]  # (P,)
+
     for ci, cliff in enumerate(CLIFFORD_OPTIONS):
-        block = _CLIFFORD_BLOCKS[id(cliff)].astype(np.int32, copy=False)  # (4, 4)
-        new_sub = (sub_base @ block) & 1  # (P, m, 4) int32
+        block = _CLIFFORD_BLOCKS[id(cliff)].astype(np.int64, copy=False)  # (4, 4)
 
-        new_x_q0 = new_sub[:, :, 0]  # (P, m)
-        new_x_q1 = new_sub[:, :, 1]
-        new_z_q0 = new_sub[:, :, 2]
-        new_z_q1 = new_sub[:, :, 3]
-        new_wo_q0 = new_x_q0 | new_z_q0  # (P, m)
-        new_wo_q1 = new_x_q1 | new_z_q1
+        # Apply the symplectic block to each of the 16 codes (16x4 @ 4x4)
+        vecs16 = np.stack([bit_x0, bit_x1, bit_z0, bit_z1], axis=1)  # (16, 4)
+        new16 = (vecs16 @ block) & 1  # (16, 4)
+        n_x0_16, n_x1_16, n_z0_16, n_z1_16 = new16.T  # each (16,)
+        n_wo0_16 = n_x0_16 | n_z0_16
+        n_wo1_16 = n_x1_16 | n_z1_16
+        d_rw_16 = (n_wo0_16 + n_wo1_16) - (wo_q0_16 + wo_q1_16)  # (16,)
+        changed_16 = (n_x0_16 != bit_x0) | (n_x1_16 != bit_x1) | (n_z0_16 != bit_z0) | (n_z1_16 != bit_z1)
 
-        # Same-as-input mask (skip no-op Cliffords)
-        same_mask = np.all(new_sub == sub_base, axis=(1, 2))  # (P,)
+        # (80,) lookup tables over the joint code (weight class major, code minor)
+        nl80 = ((w_rep + d_rw_16[None, :]) > 1).astype(np.int64).ravel()  # row nonlocal after
+        same_count = hist @ _tile80(changed_16.astype(np.int64))  # (P,)
+        same_mask = same_count == 0
 
-        # Candidate row weights and nonlocal mask
-        d_rw = (new_wo_q0 - wo_at_q0) + (new_wo_q1 - wo_at_q1)  # (P, m) signed
-        rw_new = rw_orig[None, :] + d_rw  # (P, m)
-        nl_mask = (rw_new > 1).astype(np.int32)  # (P, m)
-        num_nl = nl_mask.sum(axis=1).astype(np.int64)  # (P,)
-
-        # Streaming pass over all n columns of original (wo, x, z) in chunks.
-        # Produces:
-        #   sum_f_wo_orig[p] = Σ_k f(s_wo_nl_orig[p, k])      (for pairwise_or on wo)
-        #   sum_f_x_orig[p], sum_f_z_orig[p]                   (same for x, z)
-        #   sum_nz_wo_orig[p] = # cols k with s_wo_orig[p, k] > 0  (for total_weight)
-        sum_f_wo_orig = np.zeros(P, dtype=np.int64)
-        sum_f_x_orig = np.zeros(P, dtype=np.int64)
-        sum_f_z_orig = np.zeros(P, dtype=np.int64)
-        sum_nz_wo_orig = np.zeros(P, dtype=np.int64)
-
-        nnl_col = num_nl[:, None]  # (P, 1) int64
-        for k_start in range(0, n, col_chunk):
-            k_end = min(k_start + col_chunk, n)
-            wo_chunk = wo[:, k_start:k_end]  # (m, K) int32
-            x_chunk = x_i32[:, k_start:k_end]
-            z_chunk = z_i32[:, k_start:k_end]
-
-            s_wo = (nl_mask @ wo_chunk).astype(np.int64, copy=False)  # (P, K)
-            s_x = (nl_mask @ x_chunk).astype(np.int64, copy=False)
-            s_z = (nl_mask @ z_chunk).astype(np.int64, copy=False)
-
-            d_wo = nnl_col - s_wo
-            d_x = nnl_col - s_x
-            d_z = nnl_col - s_z
-            sum_f_wo_orig += (d_wo * (d_wo - 1) // 2).sum(axis=1)
-            sum_f_x_orig += (d_x * (d_x - 1) // 2).sum(axis=1)
-            sum_f_z_orig += (d_z * (d_z - 1) // 2).sum(axis=1)
-            sum_nz_wo_orig += (s_wo > 0).sum(axis=1)
-
-        # ORIGINAL s values at the affected columns — per candidate.
-        s_o_wo_q0 = (nl_mask * wo_at_q0).sum(axis=1).astype(np.int64)  # (P,)
-        s_o_wo_q1 = (nl_mask * wo_at_q1).sum(axis=1).astype(np.int64)
-        s_o_x_q0 = (nl_mask * x_at_q0).sum(axis=1).astype(np.int64)
-        s_o_x_q1 = (nl_mask * x_at_q1).sum(axis=1).astype(np.int64)
-        s_o_z_q0 = (nl_mask * z_at_q0).sum(axis=1).astype(np.int64)
-        s_o_z_q1 = (nl_mask * z_at_q1).sum(axis=1).astype(np.int64)
+        num_nl = hist @ nl80  # (P,)
 
         # NEW s values at the affected columns — per candidate.
-        s_n_wo_q0 = (nl_mask * new_wo_q0).sum(axis=1).astype(np.int64)
-        s_n_wo_q1 = (nl_mask * new_wo_q1).sum(axis=1).astype(np.int64)
-        s_n_x_q0 = (nl_mask * new_x_q0).sum(axis=1).astype(np.int64)
-        s_n_x_q1 = (nl_mask * new_x_q1).sum(axis=1).astype(np.int64)
-        s_n_z_q0 = (nl_mask * new_z_q0).sum(axis=1).astype(np.int64)
-        s_n_z_q1 = (nl_mask * new_z_q1).sum(axis=1).astype(np.int64)
+        s_n_wo_q0 = hist @ (nl80 * _tile80(n_wo0_16))
+        s_n_wo_q1 = hist @ (nl80 * _tile80(n_wo1_16))
+        s_n_x_q0 = hist @ (nl80 * _tile80(n_x0_16))
+        s_n_x_q1 = hist @ (nl80 * _tile80(n_x1_16))
+        s_n_z_q0 = hist @ (nl80 * _tile80(n_z0_16))
+        s_n_z_q1 = hist @ (nl80 * _tile80(n_z1_16))
 
-        # Corrections: replace orig-column contributions with new-column ones.
-        corr_wo = (
-            _f_diff(num_nl, s_n_wo_q0)
+        # Σ_k f(ν − s_k) over all columns: outside columns contribute exactly
+        # f(ν − S_k) (see the S_* invariant above); the two pair columns are
+        # swapped from their (algebraic) f(ν − S_q) share to the candidate's
+        # actual nl-restricted NEW values f(ν − s_n_q).
+        sum_f_wo = (
+            _g_table(num_nl, S_wo)
+            - _f_diff(num_nl, S_wo_q0)
+            - _f_diff(num_nl, S_wo_q1)
+            + _f_diff(num_nl, s_n_wo_q0)
             + _f_diff(num_nl, s_n_wo_q1)
-            - _f_diff(num_nl, s_o_wo_q0)
-            - _f_diff(num_nl, s_o_wo_q1)
         )
-        corr_x = (
-            _f_diff(num_nl, s_n_x_q0)
+        sum_f_x = (
+            _g_table(num_nl, S_x)
+            - _f_diff(num_nl, S_x_q0)
+            - _f_diff(num_nl, S_x_q1)
+            + _f_diff(num_nl, s_n_x_q0)
             + _f_diff(num_nl, s_n_x_q1)
-            - _f_diff(num_nl, s_o_x_q0)
-            - _f_diff(num_nl, s_o_x_q1)
         )
-        corr_z = (
-            _f_diff(num_nl, s_n_z_q0)
+        sum_f_z = (
+            _g_table(num_nl, S_z)
+            - _f_diff(num_nl, S_z_q0)
+            - _f_diff(num_nl, S_z_q1)
+            + _f_diff(num_nl, s_n_z_q0)
             + _f_diff(num_nl, s_n_z_q1)
-            - _f_diff(num_nl, s_o_z_q0)
-            - _f_diff(num_nl, s_o_z_q1)
         )
-
-        sum_f_wo = sum_f_wo_orig + corr_wo
-        sum_f_x = sum_f_x_orig + corr_x
-        sum_f_z = sum_f_z_orig + corr_z
 
         # pair_or_X[p] = n · C(num_nl, 2) − sum_f_X[p]
         n_C2 = n * num_nl * (num_nl - 1) // 2  # (P,)
@@ -408,11 +491,10 @@ def search_best_clifford_par(
         pair_or_x = n_C2 - sum_f_x
         pair_or_z = n_C2 - sum_f_z
 
-        # total_weight[p] = sum_nz_wo_orig - orig_nz_at_affected + new_nz_at_affected
+        # total_weight[p]: outside columns keep their S_k > 0 status; the two
+        # pair columns use the candidate's nl-restricted NEW values.
         total_weight = (
-            sum_nz_wo_orig
-            - (s_o_wo_q0 > 0).astype(np.int64)
-            - (s_o_wo_q1 > 0).astype(np.int64)
+            NZ_wo_outside
             + (s_n_wo_q0 > 0).astype(np.int64)
             + (s_n_wo_q1 > 0).astype(np.int64)
         )
@@ -427,42 +509,37 @@ def search_best_clifford_par(
         # Mark same-as-input candidates as invalid.
         costs = np.where(same_mask, np.inf, costs)
 
-        # --- Visited check via chunked tableau reconstruction ---------------
-        if visited:
-            # Convert the (P, m) new-column arrays to int8 once.
-            new_x_q0_i8 = new_x_q0.astype(np.int8, copy=False)
-            new_x_q1_i8 = new_x_q1.astype(np.int8, copy=False)
-            new_z_q0_i8 = new_z_q0.astype(np.int8, copy=False)
-            new_z_q1_i8 = new_z_q1.astype(np.int8, copy=False)
-
-            for p_start in range(0, P, visited_chunk):
-                p_end = min(p_start + visited_chunk, P)
-                k = p_end - p_start
-
-                # Broadcast-build full (k, m, n) for this chunk; keeps mem bounded.
-                chunk_x = np.broadcast_to(x, (k, m, n)).copy()
-                chunk_z = np.broadcast_to(z, (k, m, n)).copy()
-                idx = np.arange(k)
-                chunk_x[idx, :, q0p[p_start:p_end]] = new_x_q0_i8[p_start:p_end]
-                chunk_x[idx, :, q1p[p_start:p_end]] = new_x_q1_i8[p_start:p_end]
-                chunk_z[idx, :, q0p[p_start:p_end]] = new_z_q0_i8[p_start:p_end]
-                chunk_z[idx, :, q1p[p_start:p_end]] = new_z_q1_i8[p_start:p_end]
-
-                xz = np.concatenate([chunk_x, chunk_z], axis=-1)  # (k, m, 2n)
-                packed = np.packbits(xz.reshape(k, -1).astype(np.uint8, copy=False), axis=-1)
-                row_nb = packed.shape[1]
-                pb = packed.tobytes()
-                for j in range(k):
-                    if pb[j * row_nb : (j + 1) * row_nb] in visited:
-                        costs[p_start + j] = np.inf
-
         # --- Reduce within this Clifford, then fold into global best ------
-        pi_best = int(np.argmin(costs))
-        c_best = float(costs[pi_best])
+        # Visited check is done lazily: only the running argmin candidate is
+        # materialized and tested, instead of reconstructing all P candidate
+        # tableaus (O(P·m·n) memory traffic per Clifford).
+        while True:
+            pi_best = int(np.argmin(costs))
+            c_best = float(costs[pi_best])
+            if not visited or not np.isfinite(c_best):
+                break
+            crow = code[pi_best]  # (m,) uint8 — winner's per-row codes
+            key = _candidate_tableau_key(
+                x,
+                z,
+                int(q0p[pi_best]),
+                int(q1p[pi_best]),
+                n_x0_16[crow],
+                n_x1_16[crow],
+                n_z0_16[crow],
+                n_z1_16[crow],
+            )
+            if key not in visited:
+                break
+            costs[pi_best] = np.inf
+
         if c_best < best_cost:
             best_cost = c_best
             best_cliff_idx = ci
             best_pair_idx = pi_best
+
+    if not np.isfinite(best_cost):
+        return None  # all candidates visited or no-op — signal stall (see search_best_clifford)
 
     best_cliff = CLIFFORD_OPTIONS[best_cliff_idx]
     best_qubit_pair = qubit_pairs[best_pair_idx]
@@ -477,10 +554,8 @@ def _search_best_clifford_par_nonlocal_stable(
     q1p: np.ndarray,
     x: np.ndarray,
     z: np.ndarray,
-    n: int,
     visited: set[bytes] | None,
-    visited_chunk: int,
-) -> tuple[Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]]:
+) -> tuple[Hamiltonian, CNOTEquivCliffordGate | fSwapEquivCliffordGate, tuple[int, int]] | None:
     """Specialized search when all rows are guaranteed to stay nonlocal.
 
     A 2-qubit Clifford can remove support from at most two columns in any row.
@@ -595,6 +670,9 @@ def _search_best_clifford_par_nonlocal_stable(
             best_cost = c_best
             best_cliff_idx = ci
             best_pair_idx = pi_best
+
+    if not np.isfinite(best_cost):
+        return None  # all candidates visited or no-op — signal stall (see search_best_clifford)
 
     best_cliff = CLIFFORD_OPTIONS[best_cliff_idx]
     best_qubit_pair = qubit_pairs[best_pair_idx]

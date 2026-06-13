@@ -9,6 +9,7 @@ from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
 from .basics import CNOTEquivCliffordGate
 from .hamiltonian import Hamiltonian
 from .primitive.ordering import order_circuits
+from .primitive.peel import peel_compile
 from .primitive.simplification import simplify_hamiltonian
 from .primitive.utils import constr_circuit_from_simp_steps
 
@@ -20,11 +21,33 @@ _SYNTHESIS_BASIS_GATES = ["cx", "u"]
 _OPTIMAL_CLIFFORD_MAX_BLOCK_WIDTH = 3
 
 
-def _process_same_weight_hamiltonian(ham: Hamiltonian, parallel: bool = False) -> QuantumCircuit:
+def _process_same_weight_hamiltonian(
+    ham: Hamiltonian, parallel: bool = False, patience: int | None = None
+) -> QuantumCircuit:
     """Helper function to process a single Hamiltonian group (used for parallel execution)."""
-    ham_, simp_steps = simplify_hamiltonian(ham, parallel=parallel)
+    ham_, simp_steps = simplify_hamiltonian(ham, parallel=parallel, patience=patience)
     qc = constr_circuit_from_simp_steps(ham_, simp_steps)
     return qc
+
+
+def _simplify_groups(
+    hams: list[Hamiltonian], backend: str, parallel: bool, patience: int | None
+) -> list[QuantumCircuit]:
+    """Simplify each Hamiltonian group into a subcircuit, parallelizing across
+    groups via the chosen backend (a single group always runs in-process)."""
+    simp = partial(_process_same_weight_hamiltonian, parallel=parallel, patience=patience)
+    if len(hams) <= 1 or backend == "sequential":
+        return [simp(ham) for ham in hams]
+    if backend == "concurrent.futures":
+        from concurrent.futures import ProcessPoolExecutor
+
+        with ProcessPoolExecutor() as executor:
+            return list(executor.map(simp, hams))
+    if backend == "joblib":
+        from joblib import Parallel, delayed
+
+        return Parallel(n_jobs=-1)(delayed(simp)(ham) for ham in hams)
+    raise ValueError(f"Unknown backend: {backend}. Use 'joblib', 'concurrent.futures', or 'sequential'.")
 
 
 def compile_hamiltonian_simulation(
@@ -32,11 +55,13 @@ def compile_hamiltonian_simulation(
     time: float | Parameter = 1.0,
     order: int = 1,
     trotter_steps: int = 1,
-    grouping: bool = True,
+    grouping: str | None = None,
     parallel_search: bool = True,
     optimize: bool = True,
+    terminal='auto',
     order_method: str | None = None,
     backend: str = "sequential",
+    search_patience: int | None = None,
 ) -> QuantumCircuit:
     """Compile a Hamiltonian simulation circuit using the Phoenix framework.
 
@@ -45,36 +70,35 @@ def compile_hamiltonian_simulation(
         time: Evolution time.
         order: Trotter-Suzuki order (1 or 2).
         trotter_steps: Number of Trotter steps.
+        grouping: Compilation strategy for Pauli terms:
+            - ``None`` (default) or ``"peel"``: the peel-forward engine —
+              sequential extraction in a forward-only Clifford frame, grouping
+              fully emergent, guaranteed termination, zero numeric
+              hyperparameters (see ``primitive.peel`` /
+              docs/peel_forward_design.md);
+            - ``"support"``: exact same-support grouping + legacy BSF greedy
+              search (DAC'25 behavior, kept as the ablation baseline).
         optimize: Whether to apply Qiskit post-optimization.
-        order_method: Ordering method for subcircuits (None defaults to 'tsp').
-        backend: Parallelization backend ("joblib", "concurrent.futures", or "sequential").
+        order_method: Ordering method for subcircuits in support mode
+            (None defaults to 'tsp'). Ignored by peel.
+        backend: Parallelization backend for support mode ("joblib",
+            "concurrent.futures", or "sequential"). Ignored by peel.
+        search_patience: Stall patience of the legacy BSF search safety net
+            (support mode only). Default: max(16, 2·#active qubits).
 
     Returns:
         The compiled quantum circuit.
     """
-    if grouping or hamiltonian.max_weight <= 2:
-        hams = hamiltonian.group_same_weights()
+    if grouping is None or grouping == "peel":
+        qc = peel_compile(hamiltonian, terminal=terminal)
+    elif grouping == "support":
+        hams = hamiltonian.group_same_weights()[::-1]
+        circuits = _simplify_groups(hams, backend, parallel=parallel_search, patience=search_patience)
+        qc = order_circuits(circuits, method=order_method or "tsp")
     else:
-        hams = [hamiltonian]
-
-    if len(hams) <= 1:
-        circuits = [_process_same_weight_hamiltonian(ham, parallel=parallel_search) for ham in hams]
-    elif backend == "concurrent.futures":
-        from concurrent.futures import ProcessPoolExecutor
-
-        with ProcessPoolExecutor() as executor:
-            circuits = list(executor.map(partial(_process_same_weight_hamiltonian, parallel=parallel_search), hams))
-    elif backend == "joblib":
-        from joblib import Parallel, delayed
-
-        circuits = Parallel(n_jobs=-1)(
-            delayed(_process_same_weight_hamiltonian)(ham, parallel=parallel_search) for ham in hams
+        raise ValueError(
+            f"Unknown grouping mode: {grouping!r}; options: 'peel' (default), 'support'"
         )
-    elif backend == "sequential":
-        circuits = [_process_same_weight_hamiltonian(ham, parallel=parallel_search) for ham in hams]
-    else:
-        raise ValueError(f"Unknown backend: {backend}. Use 'joblib', 'concurrent.futures', or 'sequential'.")
-    qc = order_circuits(circuits, method=order_method or "tsp")
 
     if optimize:
         qc = optimize_phoenix_circuit_by_qiskit(qc)

@@ -12,7 +12,6 @@ from ..hamiltonian import Hamiltonian
 _EACH_GROUP_SYNTHESIS_BASIS_GATES = ["cx", "u"]
 _SUCCESSIVE_2Q_PAULI_ROTATION_GATES = {"rxx", "rxy", "rxz", "ryx", "ryy", "ryz", "rzx", "rzy", "rzz"}
 
-
 @dataclass
 class SimplificationStep:
     clifford: CNOTEquivCliffordGate | fSwapEquivCliffordGate

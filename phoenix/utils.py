@@ -329,3 +329,6 @@ def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), hide_axi
     if output_filename:
         plt.savefig(output_filename, dpi=350)
     plt.show()
+
+
+# def gene_uccsd_hamiltonian()

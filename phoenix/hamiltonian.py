@@ -45,14 +45,14 @@ class Hamiltonian(SparsePauliOp):
         # Since Pauli matrices have spectral norm 1, this simplifies to sum(|coeff|).
         return np.sum(np.abs(self.coeffs))
 
-    def group_same_weights(self, subset: bool = True) -> list[Hamiltonian]:
-        """Group Pauli strings by their nontrivial parts."""
+    def group_same_weights(self) -> list[Hamiltonian]:
+        """Group Pauli strings by their nontrivial parts (exact same support)."""
         from .primitive.grouping import group_paulis_and_coeffs
 
         return [
             Hamiltonian(pls, coes)
             for pls, coes in group_paulis_and_coeffs(
-                self.paulis.to_labels(), self.coeffs, subset=subset
+                self.paulis.to_labels(), self.coeffs
             ).values()
         ]
 
@@ -88,7 +88,7 @@ class Hamiltonian(SparsePauliOp):
                 table.add_row([pauli[::-1], " ".join(x_part), " ".join(z_part), sign])
             else:
                 table.add_row([pauli[::-1], " ".join(z_part), " ".join(x_part), sign])
-        table.title = f"Display index: q0...q{self.num_qubits - 1}"
+        table.title = f"Qubit index: q0...q{self.num_qubits - 1}"
         print(table)
 
     @property
