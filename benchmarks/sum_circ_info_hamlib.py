@@ -4,8 +4,9 @@ Summarize circuit information (e.g., # qubits, # gates, depth, etc.) of all benc
 
 import os
 import json
+import qiskit
 import pandas as pd
-from qiskit import QuantumCircuit
+from phoenix import Hamiltonian
 from natsort import natsorted
 from rich.console import Console
 import warnings
@@ -14,11 +15,7 @@ warnings.filterwarnings("ignore")
 
 console = Console()
 
-benchmark_dpath = "./hamlib_qasm/"
-
-fnames = natsorted(
-    [os.path.join(benchmark_dpath, fname) for fname in os.listdir(benchmark_dpath) if fname.endswith(".qasm")]
-)
+benchmark_dir = "./hamlib"
 
 description = pd.DataFrame(
     columns=[
@@ -34,35 +31,35 @@ description = pd.DataFrame(
     ]
 )
 
-all_gate_names = []
+for category in natsorted(os.listdir(benchmark_dir)):
+    category_dir = os.path.join(benchmark_dir, category)
+    if not os.path.isdir(category_dir):
+        continue
 
-for dir in os.listdir(benchmark_dpath):
-    qasm_fnames = natsorted(
-        [
-            os.path.join(benchmark_dpath, dir, fname)
-            for fname in os.listdir(os.path.join(benchmark_dpath, dir))
-            if fname.endswith(".qasm")
-        ]
+    fnames = natsorted(
+        [os.path.join(category_dir, fname) for fname in os.listdir(category_dir) if fname.endswith(".json")]
     )
-    for qasm_fname in qasm_fnames:
-        json_fname = qasm_fname.replace("qasm", "json")
-        program_name = qasm_fname.split("/")[-1].replace(".qasm", "")
-        qc = QuantumCircuit.from_qasm_file(qasm_fname)
-        with open(json_fname, "r") as f:
+
+    for fname in fnames:
+        program_name = os.path.basename(fname).replace(".json", "")
+        with open(fname, "r") as f:
             data = json.load(f)
 
-        pauli_weights = [len(pauli) - pauli.count("I") for pauli in data["paulis"]]
+        data["paulis"] = [p[::-1] for p in data["paulis"]]  # reverse the order of qubits to be consistent with qiskit
+        ham = Hamiltonian(data["paulis"], data["coeffs"])
+        qc = ham.generate_circuit()
+        qc = qiskit.transpile(qc, basis_gates=["u", "cx"], optimization_level=0)
 
         description = pd.concat(
             [
                 description,
                 pd.DataFrame(
                     {
-                        "category": dir,
+                        "category": category,
                         "program": program_name,
                         "num_qubits": qc.num_qubits,
                         "num_paulis": len(data["paulis"]),
-                        "max_pauli_weight": max(pauli_weights),
+                        "max_pauli_weight": ham.max_weight,
                         "num_gates": qc.size(),
                         "num_2q_gates": qc.num_nonlocal_gates(),
                         "depth": qc.depth(),
