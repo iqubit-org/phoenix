@@ -39,13 +39,12 @@ result_fname = "./results/result_uccsd_{}.csv".format(args.compiler)
 
 results = {
     "all2all": pd.DataFrame(columns=["program", "num_gates", "num_2q_gates", "depth", "depth_2q"]),
-    "all2all_opt": pd.DataFrame(columns=["program", "num_gates", "num_2q_gates", "depth", "depth_2q"]),
     "hhex": pd.DataFrame(columns=["program", "num_gates", "num_2q_gates", "depth", "depth_2q"]),
     "square": pd.DataFrame(columns=["program", "num_gates", "num_2q_gates", "depth", "depth_2q"]),
 }
 
 
-for dir in ["all2all", "all2all_opt", "hhex", "square"]:
+for dir in ["all2all", "hhex", "square"]:
     output_dpath = os.path.join(OUTPUT_DPATH, dir)
     if not os.path.isdir(output_dpath):
         print("Skipping", output_dpath, "(not generated for this compiler)")
@@ -106,7 +105,7 @@ for fname in natsorted(os.listdir(BENCHMARK_DPATH)):
 
 
 # merge only the topologies actually generated for this compiler
-for dir in ["all2all", "all2all_opt", "hhex", "square"]:
+for dir in ["all2all", "hhex", "square"]:
     if results[dir].empty:
         continue
     result = pd.merge(result, results[dir], on="program", suffixes=("", "({})".format(dir)))

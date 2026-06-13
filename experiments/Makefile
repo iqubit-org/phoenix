@@ -2,7 +2,7 @@ OUTPUT_QASM_PATH = output_uccsd
 BENCH_SCRIPT = bench_uccsd.py
 ALL_COMPILERS := qiskit tket paulihedral tetris quclear phoenix
 HIGH_LEVEL_COMPILERS := tket paulihedral tetris quclear phoenix
-NON_TOPO_AWARE_COMPILERS := tket quclear phoenix
+NON_TOPO_AWARE_COMPILERS := tket quclear phoenix qiskit
 TOPOLOGY_TYPES := hhex square
 
 
@@ -19,9 +19,6 @@ naive:
 phoenix:
 	@echo "Testing Phoenix on UCCSD benchmarks (all2all topology)..."
 	@cd scripts && ./$(BENCH_SCRIPT) -c phoenix
-phoenix_o3:
-	@echo "Testing Phoenix with O3 optimization on UCCSD benchmarks (all2all topology)..."
-	@cd scripts && ./$(BENCH_SCRIPT) -c phoenix --O3
 phoenix_hhex:
 	@echo "Testing Phoenix on UCCSD benchmarks (heavy-hexagonal topology)..."
 	@cd scripts && ./uccsd_all2all_to_limited.py -c phoenix -d hhex
@@ -33,9 +30,6 @@ phoenix_square:
 paulihedral:
 	@echo "Testing Paulihedral on UCCSD benchmarks (all2all topology)..."
 	@cd scripts && ./$(BENCH_SCRIPT) -c paulihedral
-paulihedral_o3:
-	@echo "Testing Paulihedral with O3 optimization on UCCSD benchmarks (all2all topology)..."
-	@cd scripts && ./$(BENCH_SCRIPT) -c paulihedral --O3
 paulihedral_hhex:
 	@echo "Testing Paulihedral on UCCSD benchmarks (heavy-hexagonal topology)..."
 	@cd scripts && ./$(BENCH_SCRIPT) -c paulihedral -d hhex
@@ -47,9 +41,6 @@ paulihedral_square:
 tetris:
 	@echo "Testing Tetris on UCCSD benchmarks (all2all topology)..."
 	@cd scripts && ./$(BENCH_SCRIPT) -c tetris
-tetris_o3:
-	@echo "Testing Tetris with O3 optimization on UCCSD benchmarks (all2all topology)..."
-	@cd scripts && ./$(BENCH_SCRIPT) -c tetris --O3
 tetris_hhex:
 	@echo "Testing Tetris on UCCSD benchmarks (heavy-hexagonal topology)..."
 	@cd scripts && ./$(BENCH_SCRIPT) -c tetris -d hhex
@@ -61,9 +52,6 @@ tetris_square:
 qiskit:
 	@echo "Testing Qiskit on UCCSD benchmarks (all2all topology)..."
 	@cd scripts && ./$(BENCH_SCRIPT) -c qiskit
-qiskit_o3:
-	@echo "Testing Qiskit with O3 optimization on UCCSD benchmarks (all2all topology)..."
-	@cd scripts && ./$(BENCH_SCRIPT) -c qiskit --O3
 qiskit_hhex:
 	@echo "Testing Qiskit on UCCSD benchmarks (heavy-hexagonal topology)..."
 	@cd scripts && ./$(BENCH_SCRIPT) -c qiskit -d hhex
@@ -75,9 +63,6 @@ qiskit_square:
 tket:
 	@echo "Testing TKet on UCCSD benchmarks (all2all topology)..."
 	@cd scripts && ./$(BENCH_SCRIPT) -c tket
-tket_o3:
-	@echo "Testing TKet with O3 optimization on UCCSD benchmarks (all2all topology)..."
-	@cd scripts && ./$(BENCH_SCRIPT) -c tket --O3
 tket_hhex:
 	@echo "Testing TKet on UCCSD benchmarks (heavy-hexagonal topology)..."
 	@cd scripts && ./uccsd_all2all_to_limited.py -c tket -d hhex
@@ -89,9 +74,6 @@ tket_square:
 pauliopt:
 	@echo "Testing PauliOpt on UCCSD benchmarks (all2all topology)..."
 	@cd scripts && ./$(BENCH_SCRIPT) -c pauliopt
-pauliopt_o3:
-	@echo "Testing PauliOpt with O3 optimization on UCCSD benchmarks (all2all topology)..."
-	@cd scripts && ./$(BENCH_SCRIPT) -c pauliopt --O3
 pauliopt_hhex:
 	@echo "Testing PauliOpt on UCCSD benchmarks (heavy-hexagonal topology)..."
 	@cd scripts && ./uccsd_all2all_to_limited.py -c pauliopt -d hhex
@@ -103,9 +85,6 @@ pauliopt_square:
 quclear:
 	@echo "Testing QuCLEAR on UCCSD benchmarks (all2all topology)..."
 	@cd scripts && ./$(BENCH_SCRIPT) -c quclear
-quclear_o3:
-	@echo "Testing QuCLEAR with O3 optimization on UCCSD benchmarks (all2all topology)..."
-	@cd scripts && ./$(BENCH_SCRIPT) -c quclear --O3
 quclear_hhex:
 	@echo "Testing QuCLEAR on UCCSD benchmarks (heavy-hexagonal topology)..."
 	@cd scripts && ./uccsd_all2all_to_limited.py -c quclear -d hhex
@@ -117,9 +96,6 @@ quclear_square:
 paulirl:
 	@echo "Testing PauliRL on UCCSD benchmarks (all2all topology)..."
 	@cd scripts && ./$(BENCH_SCRIPT) -c paulirl
-paulirl_o3:
-	@echo "Testing PauliRL with O3 optimization on UCCSD benchmarks (all2all topology)..."
-	@cd scripts && ./$(BENCH_SCRIPT) -c paulirl --O3
 paulirl_hhex:
 	@echo "Testing PauliRL on UCCSD benchmarks (heavy-hexagonal topology)..."
 	@cd scripts && ./uccsd_all2all_to_limited.py -c paulirl -d hhex

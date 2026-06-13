@@ -60,7 +60,7 @@ class fSwapGate(SingletonGate):
             qc._append(instr, qargs, cargs)
         self.definition = qc
 
-    def inverse(self, annotated=False):
+    def inverse(self, annotated: bool = False):
         return fSwapGate()  # self-inverse
 
     def reverse_ops(self):
@@ -229,8 +229,6 @@ class fSwapEquivCliffordGate(Gate):
 
     def inverse(self, annotated: bool = False):
         """Return the inverse gate."""
-        # iSWAP† ≠ iSWAP, so the inverse requires conjugating with the inverse
-        # For simplicity, return a gate that when decomposed gives the inverse circuit
         inv_gate = fSwapEquivCliffordGate(self.pauli_0, self.pauli_1)
         # Override the definition to be the inverse
         inv_gate._inverse = True

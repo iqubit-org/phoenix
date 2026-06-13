@@ -54,7 +54,7 @@ def process_one(fname, compiler, output_dpath):
         data = json.load(f)
 
     compiler_pass = COMPILER_PASSES[compiler]
-    circ = compiler_pass(data["paulis"], data["coeffs"], with_O3=True)
+    circ = compiler_pass(data["paulis"], data["coeffs"])
 
     qiskit.qasm2.dump(circ, output_fname)
     return fname, "ok", circ

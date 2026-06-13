@@ -54,7 +54,7 @@ def _synthesize_successive_2q_pauli_rotation_block(block: QuantumCircuit) -> Qua
 def _optimize_phoenix_circuit_by_qiskit_each_group(qc: QuantumCircuit) -> QuantumCircuit:
     """Resynthesize only successive 2Q Pauli-rotation runs.
 
-    This is a narrow version of :func:`optimize_phoenix_circuit_by_qiskit`:
+    This is a narrow version of :func:`~phoenix.utils.post_transpile`:
     it scans the circuit, finds maximal consecutive runs of 2-qubit Pauli
     rotations acting on the same qubit pair, and applies 2-qubit unitary
     synthesis to each run independently.  Other instructions are preserved

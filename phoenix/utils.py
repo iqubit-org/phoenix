@@ -8,6 +8,7 @@ from prettytable import PrettyTable
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Operator
 from qiskit.transpiler import CouplingMap
+from qiskit.transpiler.passes.synthesis import HLSConfig
 
 warnings.filterwarnings("ignore")
 
@@ -80,22 +81,79 @@ def is_all2all_coupling_map(coupling_map: CouplingMap) -> bool:
     return False
 
 
-def qiskit_O3_all2all(circ: QuantumCircuit) -> QuantumCircuit:
-    from itertools import combinations
-
-    for q0, q1 in combinations(range(circ.num_qubits), 2):
-        circ.cx(q0, q1)
-        circ.cx(q0, q1)
-    circ = qiskit.transpile(circ, optimization_level=3, basis_gates=["u1", "u2", "u3", "cx"])
-    return circ
+# Basis used to unroll custom Clifford gate definitions before 2q-block resynthesis.
+_UNROLL_BASIS_GATES = ["cx", "h", "s", "sdg", "rzx", "rxx", "ryy", "rzz"]
+# Final synthesis basis (cx + universal 1q) so every compiled circuit is counted alike.
+_SYNTHESIS_BASIS_GATES = ["cx", "u"]
+# Max width of a Clifford sub-block handed to Qiskit's optimal (Bravyi-Maslov) synthesis.
+_OPTIMAL_CLIFFORD_MAX_BLOCK_WIDTH = 3
 
 
-def qiskit_pass(
-    paulis: list[str], coeffs: list[float], coupling_map: CouplingMap = None, with_O3: bool = False
+def post_transpile(qc: QuantumCircuit, all2all: bool = True) -> QuantumCircuit:
+    """Common circuit-level post-optimization.
+
+    Applied uniformly to every compiler's output in the benchmark harness so
+    comparisons are apples-to-apples. The pipeline has three goals:
+
+    1. cancel Phoenix-native Clifford scaffolding as much as possible while the
+       custom gate structure is still visible (no-op on non-Phoenix circuits);
+    2. collect short runs of Clifford gates and resynthesize each block with
+       Qiskit's optimal (Bravyi-Maslov) Clifford synthesis;
+    3. unroll the remaining custom gates and let Qiskit resynthesize consecutive
+       2-qubit blocks (KAK), so patterns such as ``Rzx -> Ryy -> Rzz`` compress.
+
+    On baseline circuits (no Phoenix custom gates) the Phoenix-specific steps
+    are inert; the generic steps (2q-block KAK resynthesis, commutative and
+    optimal-Clifford resynthesis) still apply, giving every compiler the same
+    O3-grade circuit-level optimization.
+    """
+    from itertools import product
+
+    from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
+    from qiskit.transpiler import PassManager, passes
+
+    from .basics import CNOTEquivCliffordGate
+
+    inverse_list = [CNOTEquivCliffordGate(p0, p1) for p0, p1 in product(["x", "y", "z"], repeat=2)]
+
+    pm = PassManager()
+    pm.append(passes.InverseCancellation(inverse_list))
+    pm.append(passes.CommutativeInverseCancellation(matrix_based=True))
+    pm.append(passes.Optimize1qGatesDecomposition())
+    pm.append(passes.CommutativeCancellation())
+    
+    # Collect Clifford blocks up to width 3 and resynthesize them optimally with Bravyi-Maslov synthesis.
+    if all2all:
+        pm.append(passes.CollectCliffords(matrix_based=True, min_block_size=2, max_block_width=_OPTIMAL_CLIFFORD_MAX_BLOCK_WIDTH))
+        pm.append(passes.HighLevelSynthesis(hls_config=HLSConfig(use_default_on_unspecified=False, clifford=["bm"])))
+
+    # unroll CNOTEquivCliffordGate if existing
+    pm.append(
+        passes.UnrollCustomDefinitions(
+            SessionEquivalenceLibrary,
+            basis_gates=_UNROLL_BASIS_GATES,
+        )
+    )
+    pm.append(passes.Collect2qBlocks())
+    pm.append(passes.ConsolidateBlocks(basis_gates=["cx"]))
+    pm.append(passes.UnitarySynthesis(basis_gates=_SYNTHESIS_BASIS_GATES))
+    pm.append(passes.Optimize1qGatesDecomposition(basis=_SYNTHESIS_BASIS_GATES[1:]))
+    pm.append(passes.CommutativeCancellation())
+
+    return pm.run(qc)
+
+
+def compile_by_qiskit(
+    paulis: list[str], coeffs: list[float], coupling_map: CouplingMap = None,
+    little_endian: bool = True
 ) -> QuantumCircuit:
     from qiskit.circuit.library import PauliEvolutionGate
     from qiskit.quantum_info import SparsePauliOp
     from qiskit.transpiler.passes import HighLevelSynthesis, HLSConfig
+
+    if not little_endian:
+        # ! Qiskit uses little-endian convention for Pauli strings by default
+        paulis = [p[::-1] for p in paulis]
 
     n = len(paulis[0])  # number of qubits
     op = SparsePauliOp(paulis, coeffs)
@@ -118,58 +176,45 @@ def qiskit_pass(
     )
     hls_pass = HighLevelSynthesis(hls_config=hls_config)
     qc = hls_pass(qc)
+    qc = post_transpile(qc)
 
-    if coupling_map is None or is_all2all_coupling_map(coupling_map):
-        if with_O3:
-            qc = qiskit_O3_all2all(qc)
-    else:
+    if not(coupling_map is None or is_all2all_coupling_map(coupling_map)):
         qc = optimize_with_mapping(qc, coupling_map)
 
     return qc
 
 
-def optimize_with_mapping(circ: QuantumCircuit, coupling_map: CouplingMap, tket_opt: bool = False) -> QuantumCircuit:
+def optimize_with_mapping(circ: QuantumCircuit, coupling_map: CouplingMap) -> QuantumCircuit:
     """By default, we use Qiskit's O3 compiler to performa hardware-aware tranpilation and optimization"""
     circ = qiskit.transpile(
         circ,
         optimization_level=3,
-        basis_gates=["u1", "u2", "u3", "cx"],
+        basis_gates=["u", "cx"],
         coupling_map=coupling_map,
-        layout_method="sabre",
     )
-
-    # whether to further perform a TKet's topology-preserved optimization pass
-    if tket_opt:
-        import pytket.passes
-
-        circ = qiskit_to_tket(circ)
-        pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
-        circ = tket_to_qiskit(circ)
 
     return circ
 
 
-def tket_pass(
-    paulis: list[str], coeffs: list[float], greedy: bool = True, little_endian: bool = False
+def compile_by_tket(
+    paulis: list[str], coeffs: list[float], greedy: bool = True, little_endian: bool = True
 ) -> QuantumCircuit:
     import pytket.passes
 
     if little_endian:
+        # ! TKet uses large-endian convention for Pauli strings by default
         paulis = [p[::-1] for p in paulis]
+
     circ = constr_tket_circuit(paulis, coeffs)
     if greedy:
         pytket.passes.GreedyPauliSimp().apply(circ)
     else:
         pytket.passes.PauliSimp().apply(circ)
-    # GreedyPauliSimp introduces implicit qubit permutations (no explicit SWAP gates).
-    # These are lost when converting to QASM/Qiskit, causing incorrect unitaries.
-    # Materialize the permutation as explicit SWAP gates before further optimization.
     if circ.has_implicit_wireswaps:
         circ.replace_implicit_wire_swaps()
 
-    # pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
-
     qc = tket_to_qiskit(circ)
+    qc = post_transpile(qc)
     return qc
 
 

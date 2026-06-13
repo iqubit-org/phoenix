@@ -21,35 +21,13 @@ from rich.console import Console
 
 console = Console()
 
-# Chain = CouplingMap(rx.generators.path_graph(35).to_directed().edge_list())
-# Manhattan = CouplingMap(arch.read_device_topology('../manhattan.graphml').to_directed().edge_list())
-# Sycamore = CouplingMap(arch.read_device_topology('../sycamore.graphml').to_directed().edge_list())
-# All2all = CouplingMap(rx.generators.complete_graph(35).to_directed().edge_list())
-
-
-def qiskit_O3_all2all(circ: qiskit.QuantumCircuit) -> qiskit.QuantumCircuit:
-    from itertools import combinations
-
-    for q0, q1 in combinations(range(circ.num_qubits), 2):
-        circ.cx(q0, q1)
-        circ.cx(q0, q1)
-    circ = qiskit.transpile(circ, optimization_level=3, basis_gates=["u1", "u2", "u3", "cx"])
-    return circ
 
 def naive_pass(
     paulis: List[str],
     coeffs: List[float],
     coupling_map: CouplingMap = None,
-    with_O3: bool = False,
 ) -> qiskit.QuantumCircuit:
-    """Naive compilation: the raw Trotter circuit of the input program.
-
-    This pass produces the ORIGINAL-circuit reference that opt rates are
-    computed against (replacing the pre-generated benchmarks/*_qasm dirs), so
-    ``with_O3`` is deliberately ignored — the baseline must stay unoptimized
-    no matter how the bench driver invokes it (bench_hamlib hardcodes
-    with_O3=True for every compiler).
-    """
+    """Naive compilation: the raw Trotter circuit of the input program."""
     paulis = [p[::-1] for p in paulis]
     qc = phoenix.Hamiltonian(paulis, coeffs).generate_circuit()
     if not (coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)):
@@ -65,7 +43,6 @@ def phoenix_pass(
     coeffs: List[float],
     grouping: str | None = None,
     coupling_map: CouplingMap = None,
-    with_O3: bool = False,
 ) -> qiskit.QuantumCircuit:
     """Phoenix's high-level optimization.
 
@@ -76,19 +53,15 @@ def phoenix_pass(
     ]  # ! PHOENIX uses little-endian convention for Pauli strings, reverse the input strings here
     ham = phoenix.Hamiltonian(paulis, coeffs)
     qc = phoenix.compile_hamiltonian_simulation(ham, grouping=grouping)
-    # circ = ham.phoenix_circuit(order_blocks=order_blocks, efficient=efficient)
 
-    if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
-        if with_O3:
-            qc = phoenix.utils.qiskit_O3_all2all(qc)
-    else:
+    if not (coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)):
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
 
     return qc
 
 
 def paulihedral_pass(
-    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, with_O3: bool = False
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None
 ) -> qiskit.QuantumCircuit:
     from tetris.utils.parallel_bl import gate_count_oriented_scheduling
     from tetris.synthesis_SC import block_opt_SC
@@ -99,21 +72,13 @@ def paulihedral_pass(
     a2 = gate_count_oriented_scheduling(constr_mypauli_blocks(paulis, coeffs))
 
     qc, total_swaps, total_cx = block_opt_SC(a2, graph=coupling_map_to_pGraph(coupling_map))
-
-    qc = qiskit.transpile(qc, optimization_level=2, basis_gates=["u1", "u2", "u3", "cx"])
+    # qc = qiskit.transpile(qc, optimization_level=2, basis_gates=["u1", "u2", "u3", "cx"])
 
     if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
-        if with_O3:
-            qc = qiskit_O3_all2all(qc)
+        qc = phoenix.utils.post_transpile(qc, all2all=True)
     else:
-        qc = qiskit.transpile(
-            qc,
-            basis_gates=["u1", "u2", "u3", "cx"],
-            coupling_map=coupling_map,
-            initial_layout=list(range(qc.num_qubits)),
-            layout_method="sabre",
-            optimization_level=3,
-        )
+        qc = phoenix.utils.post_transpile(qc, all2all=False)
+        qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
 
     # console.print({
     #     'PH_swap_count': total_swaps,
@@ -127,7 +92,7 @@ def paulihedral_pass(
 
 
 def tetris_pass(
-    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, with_O3: bool = False
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None
 ) -> qiskit.QuantumCircuit:
     from tetris.utils.synthesis_lookahead import synthesis_lookahead
 
@@ -143,17 +108,10 @@ def tetris_pass(
     )
 
     if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
-        if with_O3:
-            qc = qiskit_O3_all2all(qc)
+        qc = phoenix.utils.post_transpile(qc, all2all=True)
     else:
-        qc = qiskit.transpile(
-            qc,
-            basis_gates=["u1", "u2", "u3", "cx"],
-            coupling_map=coupling_map,
-            initial_layout=list(range(qc.num_qubits)),
-            layout_method="sabre",
-            optimization_level=3,
-        )
+        qc = phoenix.utils.post_transpile(qc, all2all=False)
+        qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
 
     metrics.update(
         {
@@ -169,18 +127,16 @@ def tetris_pass(
 
 
 def quclear_pass(
-    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, with_O3: bool = False
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None
 ) -> qiskit.QuantumCircuit:
     from quclear.CE_module import construct_qcc_circuit, CE_recur_tree
 
     qc, append_clifford, sorted_entanglers = CE_recur_tree(entanglers=paulis, params=coeffs, barrier=False)
     append_clifford = append_clifford.decompose("swap")
     qc.compose(append_clifford, inplace=True)
+    qc = phoenix.utils.post_transpile(qc)
 
-    if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
-        if with_O3:
-            qc = phoenix.utils.qiskit_O3_all2all(qc)
-    else:
+    if not (coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)):
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
 
     return qc
@@ -191,7 +147,6 @@ def pauliopt_pass(
     coeffs: List[float],
     method: str = "steiner_gray",
     coupling_map: CouplingMap = None,
-    with_O3: bool = False,
 ) -> qiskit.QuantumCircuit:
     """PauliOpt synthesis, architecture-aware when ``coupling_map`` is limited.
 
@@ -277,123 +232,38 @@ def pauliopt_pass(
     # SABRE inside `optimize_with_mapping` should find zero additional
     # SWAPs and only run the cancellation / resynthesis passes.
     if all2all:
-        if with_O3:
-            qc = phoenix.utils.qiskit_O3_all2all(qc)
+        qc = phoenix.utils.post_transpile(qc, all2all=True)
     else:
+        qc = phoenix.utils.post_transpile(qc, all2all=False)
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
 
     return qc
 
 
 def tket_pass(
-    paulis: List[str], coeffs: List[float], greedy: bool = True, coupling_map: CouplingMap = None, with_O3: bool = False
+    paulis: List[str], coeffs: List[float], greedy: bool = True, coupling_map: CouplingMap = None
 ) -> qiskit.QuantumCircuit:
-    qc = phoenix.utils.tket_pass(paulis, coeffs, greedy=greedy)
-
-    if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
-        if with_O3:
-            qc = phoenix.utils.qiskit_O3_all2all(qc)
-    else:
+    qc = phoenix.utils.compile_by_tket(paulis, coeffs, greedy=greedy, little_endian=False)
+    if not (coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)):
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
-
     return qc
 
 
 def qiskit_pass(
-    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, with_O3: bool = False
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None
 ) -> qiskit.QuantumCircuit:
-    from qiskit import QuantumCircuit
-    from qiskit.circuit.library import PauliEvolutionGate
-    from qiskit.quantum_info import SparsePauliOp
-    from qiskit.transpiler.passes import HighLevelSynthesis, HLSConfig
-
-    paulis = [
-        p[::-1] for p in paulis
-    ]  # ! Qiskit uses little-endian convention for Pauli strings, reverse the input strings here
-
-    n = len(paulis[0])  # number of qubits
-    op = SparsePauliOp(paulis, coeffs)
-    qc = QuantumCircuit(n)
-    qc.append(PauliEvolutionGate(op), reversed(range(n)))
-
-    hls_config = HLSConfig(
-        PauliEvolution=[
-            (
-                "rustiq",
-                {
-                    "optimize_count": True,  # 优化双量子比特门数量
-                    "preserve_order": False,  # 不保持 Pauli 项顺序
-                    "upto_phase": True,  # 允许全局相位差异
-                    "upto_clifford": False,  # 合成最终 Clifford 算子 (If True, 类似把尾端Clifford吸收进最终measurement)
-                    "resynth_clifford_method": 1,  # 使用 Qiskit 贪心合成 （If 2，类似把尾端Clifford吸收进最终measurement）
-                },
-            )
-        ]
-    )
-    hls_pass = HighLevelSynthesis(hls_config=hls_config)
-    qc = hls_pass(qc)
-
-    if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
-        if with_O3:
-            qc = phoenix.utils.qiskit_O3_all2all(qc)
-    else:
+    qc = phoenix.utils.compile_by_qiskit(paulis, coeffs, little_endian=False)
+    if not (coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)):
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
-
     return qc
 
 
 def paulirl_pass(
-    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, with_O3: bool = False
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None
 ) -> qiskit.QuantumCircuit:
     """https://quantum.cloud.ibm.com/docs/en/guides/ai-transpiler-passes"""
     # TODO: perform PauliRL synthesis
-
-    if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
-        if with_O3:
-            qc = phoenix.utils.qiskit_O3_all2all(qc)
-    else:
-        qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
-
-    return qc
-
-
-# def sabre_map(circ: qiskit.QuantumCircuit, coupling_map: CouplingMap) -> Tuple[
-#     qiskit.QuantumCircuit, List[int], List[int]]:
-#     """
-#     Mapping logical circuits on physical qubits by means of SabreLayout pass in Qiskit.
-
-#     Args:
-#         circ: Input logical quantum circuit
-#         coupling_map: Physical qubit connectivity graph
-
-#     Returns:
-#         Mapped circuit, initial mapping (physical qubit indices), final mapping (physical qubit indices)
-#     """
-#     from qiskit.transpiler import passes
-
-#     pm = PassManager([passes.SabreLayout(coupling_map)])
-#     circ = pm.run(circ)
-#     # init_mapping_inv = {i: j for i, j in zip(circ.layout.initial_index_layout(), range(circ.num_qubits))}
-#     # final_mapping_inv = {i: j for i, j in zip(circ.layout.final_index_layout(), range(circ.num_qubits))}
-#     # init_mapping = {j: i for i, j in init_mapping_inv.items()}
-#     # final_mapping = {j: i for i, j in final_mapping_inv.items()}
-#     # circ = Circuit.from_qiskit(circ).rewire(init_mapping_inv)
-#     # return circ, init_mapping, final_mapping
-#     return circ, circ.layout.initial_index_layout(), circ.layout.final_index_layout()
-
-
-# def pre_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
-#     """Pre-mapping optimization on logical circuits by means of TKet's pass"""
-#     circ = circ.copy()
-#     pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
-#     return circ
-#
-#
-# def post_mapping_optimize(circ: pytket.Circuit) -> pytket.Circuit:
-#     """Post-mapping optimization on physical circuits by means of TKet's pass"""
-#     circ = circ.copy()
-#     pytket.passes.FullPeepholeOptimise(allow_swaps=False).apply(circ)
-#     return circ
+    raise NotImplementedError("PauliRL pass not implemented yet")
 
 
 def coupling_map_to_pGraph(coupling_map: CouplingMap) -> pGraph:

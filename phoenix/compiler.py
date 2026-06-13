@@ -4,21 +4,13 @@ from functools import partial
 
 from qiskit import QuantumCircuit
 from qiskit.circuit import Parameter
-from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
 
-from .basics import CNOTEquivCliffordGate
 from .hamiltonian import Hamiltonian
 from .primitive.ordering import order_circuits
 from .primitive.peel import peel_compile
 from .primitive.simplification import simplify_hamiltonian
 from .primitive.utils import constr_circuit_from_simp_steps
-
-_UNROLL_BASIS_GATES = ["cx", "h", "s", "sdg", "rzx", "rxx", "ryy", "rzz"]
-# _SYNTHESIS_BASIS_GATES = ["cx", "rz", "sx", "x"]
-_SYNTHESIS_BASIS_GATES = ["cx", "u"]
-
-# Max width of a Clifford sub-block we hand to Qiskit's optimal (Bravyi-Maslov)
-_OPTIMAL_CLIFFORD_MAX_BLOCK_WIDTH = 3
+from .utils import post_transpile
 
 
 def _process_same_weight_hamiltonian(
@@ -57,7 +49,6 @@ def compile_hamiltonian_simulation(
     trotter_steps: int = 1,
     grouping: str | None = None,
     parallel_search: bool = True,
-    optimize: bool = True,
     terminal='auto',
     order_method: str | None = None,
     backend: str = "sequential",
@@ -99,84 +90,7 @@ def compile_hamiltonian_simulation(
         raise ValueError(
             f"Unknown grouping mode: {grouping!r}; options: 'peel' (default), 'support'"
         )
-
-    if optimize:
-        qc = optimize_phoenix_circuit_by_qiskit(qc)
-
-    return qc
-
-
-def optimize_phoenix_circuit_by_qiskit(qc: QuantumCircuit) -> QuantumCircuit:
-    """Topology-preserved post-optimization for phoenix-compiled circuits.
-
-    This pass pipeline has three goals:
-
-    1. cancel Phoenix-native Clifford scaffolding as much as possible while the custom gate
-       structure is still visible;
-    2. collect short runs of Clifford gates and resynthesize each block with Qiskit's
-       optimal (Bravyi-Maslov) Clifford synthesis while the custom gate structure
-       is still visible;
-    3. unroll the remaining custom Clifford gates to their definitions and let Qiskit resynthesize
-       consecutive 2-qubit blocks, so patterns such as ``Rzx -> Ryy -> Rzz`` can be compressed.
-    """
-    from itertools import product
-
-    from qiskit.transpiler import PassManager, passes
-
-    inverse_list = [CNOTEquivCliffordGate(p0, p1) for p0, p1 in product(["x", "y", "z"], repeat=2)]
-
-    pm = PassManager()
-    pm.append(passes.InverseCancellation(inverse_list))
-    pm.append(passes.CommutativeInverseCancellation(matrix_based=True))
-    pm.append(passes.Optimize1qGatesDecomposition())
-    pm.append(passes.CommutativeCancellation())
-    _append_optimal_clifford_resynthesis_passes(pm, passes)
-    pm.append(
-        passes.UnrollCustomDefinitions(
-            SessionEquivalenceLibrary,
-            basis_gates=_UNROLL_BASIS_GATES,
-        )
-    )
-    pm.append(passes.Collect2qBlocks())
-    pm.append(passes.ConsolidateBlocks(basis_gates=["cx"]))
-    pm.append(passes.UnitarySynthesis(basis_gates=_SYNTHESIS_BASIS_GATES))
-    pm.append(passes.Optimize1qGatesDecomposition(basis=_SYNTHESIS_BASIS_GATES[1:]))
-    pm.append(passes.CommutativeCancellation())
-
-    qc = pm.run(qc)
+    
+    qc = post_transpile(qc)
 
     return qc
-
-
-def _append_optimal_clifford_resynthesis_passes(pm, passes_module) -> None:
-    """Collect <=3-qubit Clifford runs and resynthesize them optimally.
-
-    Uses ``CollectCliffords(matrix_based=True)`` so Phoenix's custom Clifford
-    gates (``CNOTEquivCliffordGate`` and friends) are matched by their unitary
-    directly, without needing to unroll first. Each collected block is then
-    lowered via :func:`qiskit.synthesis.synth_clifford_bm` (the Bravyi-Maslov
-    method), which produces a CX-count-optimal circuit for 1-, 2-, and 3-qubit
-    Cliffords. The width cap keeps every block in BM's optimal regime, so this
-    pass cannot regress CX count.
-    """
-    required = ("CollectCliffords", "HighLevelSynthesis")
-    if not all(hasattr(passes_module, name) for name in required):
-        return
-
-    try:
-        from qiskit.transpiler.passes.synthesis import HLSConfig
-    except ImportError:
-        return
-
-    pm.append(
-        passes_module.CollectCliffords(
-            matrix_based=True,
-            min_block_size=2,
-            max_block_width=_OPTIMAL_CLIFFORD_MAX_BLOCK_WIDTH,
-        )
-    )
-    pm.append(
-        passes_module.HighLevelSynthesis(
-            hls_config=HLSConfig(use_default_on_unspecified=False, clifford=["bm"])
-        )
-    )

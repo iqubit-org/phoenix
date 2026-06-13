@@ -1,7 +1,11 @@
 from . import primitive, utils
 from .basics import CNOTEquivCliffordGate, fSwapEquivCliffordGate
-from .compiler import compile_hamiltonian_simulation, optimize_phoenix_circuit_by_qiskit
+from .compiler import compile_hamiltonian_simulation
 from .hamiltonian import Hamiltonian
+from .utils import post_transpile
+
+# Backwards-compatible alias for the former name (now in ``phoenix.utils``).
+optimize_phoenix_circuit_by_qiskit = post_transpile
 
 # Resolved by setuptools-scm at build time (see `pyproject.toml`).
 # The generated `_version.py` is installed with the package; in a source
@@ -20,6 +24,7 @@ __all__ = [
     "__version__",
     "Hamiltonian",
     "compile_hamiltonian_simulation",
+    "post_transpile",
     "optimize_phoenix_circuit_by_qiskit",
     "CNOTEquivCliffordGate",
     "fSwapEquivCliffordGate",

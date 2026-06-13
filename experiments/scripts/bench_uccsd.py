@@ -45,7 +45,7 @@ COUPLING_MAP_GENS = {
 }
 
 
-def process_one(fname, compiler, device, with_O3, output_dpath):
+def process_one(fname, compiler, device, output_dpath):
     """Compile a single UCCSD benchmark and dump the result."""
     import warnings as _warnings
 
@@ -59,7 +59,7 @@ def process_one(fname, compiler, device, with_O3, output_dpath):
     coupling_map = gene_coupling_map(data["num_qubits"])
 
     compiler_pass = COMPILER_PASSES[compiler]
-    circ = compiler_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, with_O3=with_O3)
+    circ = compiler_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map)
 
     qiskit.qasm2.dump(circ, output_fname)
     return fname, circ
@@ -75,11 +75,11 @@ def main():
         help="Device topology (default: all2all) (options: all2all, hhex, square)",
     )
     parser.add_argument("-c", "--compiler", default="phoenix", type=str, help="Compiler (default: phoenix)")
-    parser.add_argument(
-        "--O3",
-        action="store_true",
-        help="With Qisit O3 for further local optimization in Phoenix compiler (default: False)",
-    )
+    # parser.add_argument(
+    #     "--O3",
+    #     action="store_true",
+    #     help="With Qisit O3 for further local optimization in Phoenix compiler (default: False)",
+    # )
     parser.add_argument(
         "-j",
         "--jobs",
@@ -95,11 +95,7 @@ def main():
         raise ValueError("Unsupported device: {}".format(args.device))
 
     json_fnames = [os.path.join(INPUT_JSON_DPATH, fname) for fname in natsorted(os.listdir(INPUT_JSON_DPATH))]
-
-    if args.device == "all2all" and args.O3:
-        output_dpath = os.path.join(OUTPUT_DPATH, args.compiler, "all2all_opt")
-    else:
-        output_dpath = os.path.join(OUTPUT_DPATH, args.compiler, args.device)
+    output_dpath = os.path.join(OUTPUT_DPATH, args.compiler, args.device)
 
     os.makedirs(output_dpath, exist_ok=True)  # parallel-safe (GNU parallel runs)
 
@@ -110,7 +106,7 @@ def main():
 
     with ProcessPoolExecutor(max_workers=args.jobs) as executor:
         futures = {
-            executor.submit(process_one, fname, args.compiler, args.device, args.O3, output_dpath): fname
+            executor.submit(process_one, fname, args.compiler, args.device, output_dpath): fname
             for fname in json_fnames
         }
         for future in as_completed(futures):

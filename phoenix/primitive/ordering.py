@@ -347,7 +347,7 @@ def order_circuits(circuits: list[QuantumCircuit], method: str = "tsp", **kwargs
 
     The assembling cost is a heuristic that estimates depth overhead and gate cancellation
     potential between adjacent circuit blocks. The actual gate cancellation is realized
-    by optimize_phoenix_circuit_by_qiskit() in the compiler.
+    by post_transpile() in the compiler.
 
     Args:
         circuits: List of QuantumCircuits to order and assemble

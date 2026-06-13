@@ -21,7 +21,6 @@ compilers = {
 
 topologies = [
     ("All2all", "all2all"),
-    ("All2all O3", "all2all_opt"),
     ("Square", "square"),
     ("HHex", "hhex"),
 ]
