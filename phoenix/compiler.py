@@ -53,6 +53,7 @@ def compile_hamiltonian_simulation(
     order_method: str | None = None,
     backend: str = "sequential",
     search_patience: int | None = None,
+    optimize: bool = True,
 ) -> QuantumCircuit:
     """Compile a Hamiltonian simulation circuit using the Phoenix framework.
 
@@ -90,7 +91,7 @@ def compile_hamiltonian_simulation(
         raise ValueError(
             f"Unknown grouping mode: {grouping!r}; options: 'peel' (default), 'support'"
         )
-    
-    qc = post_transpile(qc)
+    if optimize:
+        qc = post_transpile(qc)
 
     return qc

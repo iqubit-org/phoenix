@@ -4,11 +4,11 @@ import warnings
 import numpy as np
 import qiskit
 import rustworkx as rx
+import matplotlib.pyplot as plt
 from prettytable import PrettyTable
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Operator
-from qiskit.transpiler import CouplingMap
-from qiskit.transpiler.passes.synthesis import HLSConfig
+from qiskit.transpiler import CouplingMap, PassManager, passes
 
 warnings.filterwarnings("ignore")
 
@@ -89,7 +89,7 @@ _SYNTHESIS_BASIS_GATES = ["cx", "u"]
 _OPTIMAL_CLIFFORD_MAX_BLOCK_WIDTH = 3
 
 
-def post_transpile(qc: QuantumCircuit, all2all: bool = True) -> QuantumCircuit:
+def post_transpile(qc: QuantumCircuit) -> QuantumCircuit:
     """Common circuit-level post-optimization.
 
     Applied uniformly to every compiler's output in the benchmark harness so
@@ -108,9 +108,7 @@ def post_transpile(qc: QuantumCircuit, all2all: bool = True) -> QuantumCircuit:
     O3-grade circuit-level optimization.
     """
     from itertools import product
-
     from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
-    from qiskit.transpiler import PassManager, passes
 
     from .basics import CNOTEquivCliffordGate
 
@@ -123,9 +121,8 @@ def post_transpile(qc: QuantumCircuit, all2all: bool = True) -> QuantumCircuit:
     pm.append(passes.CommutativeCancellation())
     
     # Collect Clifford blocks up to width 3 and resynthesize them optimally with Bravyi-Maslov synthesis.
-    if all2all:
-        pm.append(passes.CollectCliffords(matrix_based=True, min_block_size=2, max_block_width=_OPTIMAL_CLIFFORD_MAX_BLOCK_WIDTH))
-        pm.append(passes.HighLevelSynthesis(hls_config=HLSConfig(use_default_on_unspecified=False, clifford=["bm"])))
+    pm.append(passes.CollectCliffords(matrix_based=True, min_block_size=2, max_block_width=_OPTIMAL_CLIFFORD_MAX_BLOCK_WIDTH))
+    pm.append(passes.HighLevelSynthesis(hls_config=passes.HLSConfig(use_default_on_unspecified=False, clifford=["bm"])))
 
     # unroll CNOTEquivCliffordGate if existing
     pm.append(
@@ -149,7 +146,6 @@ def compile_by_qiskit(
 ) -> QuantumCircuit:
     from qiskit.circuit.library import PauliEvolutionGate
     from qiskit.quantum_info import SparsePauliOp
-    from qiskit.transpiler.passes import HighLevelSynthesis, HLSConfig
 
     if not little_endian:
         # ! Qiskit uses little-endian convention for Pauli strings by default
@@ -160,7 +156,7 @@ def compile_by_qiskit(
     qc = QuantumCircuit(n)
     qc.append(PauliEvolutionGate(op), range(n))
 
-    hls_config = HLSConfig(
+    hls_config = passes.HLSConfig(
         PauliEvolution=[
             (
                 "rustiq",
@@ -174,7 +170,7 @@ def compile_by_qiskit(
             )
         ]
     )
-    hls_pass = HighLevelSynthesis(hls_config=hls_config)
+    hls_pass = passes.HighLevelSynthesis(hls_config=hls_config)
     qc = hls_pass(qc)
     qc = post_transpile(qc)
 
@@ -191,6 +187,7 @@ def optimize_with_mapping(circ: QuantumCircuit, coupling_map: CouplingMap) -> Qu
         optimization_level=3,
         basis_gates=["u", "cx"],
         coupling_map=coupling_map,
+        seed_transpiler=1997
     )
 
     return circ
@@ -317,8 +314,6 @@ def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), hide_axi
     Y-axis: Pauli string index
     R/G/B/Gray color: X/Y/Z/I
     """
-    import matplotlib.pyplot as plt
-
     if not paulis:
         raise ValueError("paulis list cannot be empty")
 
