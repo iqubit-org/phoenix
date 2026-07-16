@@ -75,9 +75,8 @@ def paulihedral_pass(
     # qc = qiskit.transpile(qc, optimization_level=2, basis_gates=["u1", "u2", "u3", "cx"])
 
     if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
-        qc = phoenix.utils.post_transpile(qc, all2all=True)
+        qc = phoenix.utils.post_transpile(qc)
     else:
-        qc = phoenix.utils.post_transpile(qc, all2all=False)
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
 
     # console.print({
@@ -108,9 +107,8 @@ def tetris_pass(
     )
 
     if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
-        qc = phoenix.utils.post_transpile(qc, all2all=True)
+        qc = phoenix.utils.post_transpile(qc)
     else:
-        qc = phoenix.utils.post_transpile(qc, all2all=False)
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
 
     metrics.update(
@@ -130,9 +128,12 @@ def quclear_pass(
     paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None
 ) -> qiskit.QuantumCircuit:
     from quclear.CE_module import construct_qcc_circuit, CE_recur_tree
+    from qiskit.synthesis import synth_clifford_greedy
+    from qiskit.quantum_info import Clifford
 
     qc, append_clifford, sorted_entanglers = CE_recur_tree(entanglers=paulis, params=coeffs, barrier=False)
-    append_clifford = append_clifford.decompose("swap")
+    # append_clifford = append_clifford.decompose("swap")
+    append_clifford = synth_clifford_greedy(Clifford(append_clifford))
     qc.compose(append_clifford, inplace=True)
     qc = phoenix.utils.post_transpile(qc)
 
@@ -197,8 +198,7 @@ def pauliopt_pass(
     if all2all:
         topology = Topology.complete(n)
     else:
-        # qiskit CouplingMap is directed; Topology treats couplings as
-        # undirected (stored as a frozenset of Coupling), so duplicates OK.
+        # qiskit CouplingMap is directed; Topology treats couplings as undirected
         topology = Topology(coupling_map.size(), list(coupling_map.get_edges()))
 
     # Coerce coeffs to real floats: Qiskit's SparsePauliOp exposes complex128
@@ -232,9 +232,8 @@ def pauliopt_pass(
     # SABRE inside `optimize_with_mapping` should find zero additional
     # SWAPs and only run the cancellation / resynthesis passes.
     if all2all:
-        qc = phoenix.utils.post_transpile(qc, all2all=True)
+        qc = phoenix.utils.post_transpile(qc)
     else:
-        qc = phoenix.utils.post_transpile(qc, all2all=False)
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
 
     return qc
@@ -263,7 +262,7 @@ def paulirl_pass(
 ) -> qiskit.QuantumCircuit:
     """https://quantum.cloud.ibm.com/docs/en/guides/ai-transpiler-passes"""
     # TODO: perform PauliRL synthesis
-    raise NotImplementedError("PauliRL pass not implemented yet")
+    raise NotImplementedError("PauliRL pass not implemented yet cause it is not scalable")
 
 
 def coupling_map_to_pGraph(coupling_map: CouplingMap) -> pGraph:

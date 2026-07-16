@@ -1,0 +1,10 @@
+{
+  "note": "Topology-aware peel (peel_topo_aware.py MVP) vs route-after-SABRE. Correct + fully topology-valid (0 illegal edges, no SABRE) but NOT competitive on 2q count. Routing (naive per-row SWAP) is the loss; reductions-only is comparable to route-after.",
+  "setting": "square topology, perfect Hamiltonian path, post_transpile(all2all=False) cleanup",
+  "results": [
+    {"prog": "uccsd_10", "topo": "square", "topo_peel_absorb_2q": 6044, "topo_peel_replay_2q": 10197, "route_after_2q": 3337, "delta_pct": 81, "engine_reductions": 1012, "engine_swaps": 1287},
+    {"prog": "uccsd_20", "topo": "square", "topo_peel_absorb_2q": 70825, "topo_peel_replay_2q": 134282, "route_after_2q": 25253, "delta_pct": 180, "engine_reductions": 18306, "engine_swaps": 15615}
+  ],
+  "diagnosis": "UCCSD doubles have disconnected 2-block support; 51-76% rows connected even with perfect layout; no static layout connects all doubles. Naive per-row SWAP routing >> SABRE. reductions-only ~18k comparable to route-after 25k.",
+  "verdict": "naive co-design verified working but not impressive; beating route-after needs Steiner CNOT fan-in + fSWAP fusion + cross-row-sharing preservation (multi-week, MPLS/2QAN-level)."
+}
