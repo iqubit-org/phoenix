@@ -1,126 +1,83 @@
-"""Generate several 6/8-qubit UCCSD Hamiltonian examples and store them as JSON.
+"""Generate a clean ladder of UCCSD cluster operators (14-20 qubits) as JSON benchmarks.
 
-This script mirrors ``qiskit_nature_uccsd_hamiltonian.py`` but uses active-space reductions to
-keep the qubit count small. For standard second-quantized electronic-structure problems, the
-Jordan-Wigner qubit count is twice the number of spatial orbitals, so practical UCCSD examples in
-the 5-8 qubit window land on 6 or 8 qubits.
+At a uniform cluster amplitude the UCCSD operator t·(T - T†)/i depends ONLY on
+(num_spatial_orbitals, num_particles, mapper) — the molecule, geometry and basis set never
+enter (they would only matter through the variational amplitudes, which we fix). So these
+benchmarks are built driver-free, straight from (electrons, orbitals) tuples: no PySCF, no
+molecule, no basis. Two physically different molecules with the same (e, o) signature produce
+byte-identical operators, which is why the files are named by their true determinants.
+
+The dumped operator is a VQE-ansatz compilation benchmark (singles -> 2 strings at ±t/2,
+doubles -> same-support families of 8 strings at ±t/8, every string odd-Y), NOT a molecular
+electronic Hamiltonian. JW and BK give very different Pauli patterns at the same (e, o): JW
+carries contiguous Z-chains (max weight = #qubits, full 8-string same-support families), BK
+trades them for O(log n)-weight parity sets (lower weight, more fragmented supports).
+
+Ladder (fixed 10 closed-shell electrons, virtual orbitals increasing; string counts identical
+for JW/BK):
+
+    ucc_10e_7o   14q / 1000     ucc_10e_8o   16q / 2340
+    ucc_10e_9o   18q / 4240     ucc_10e_10o  20q / 6700
 """
 
 from __future__ import annotations
 
+import numpy as np
+
 from dataclasses import dataclass
 from pathlib import Path
 
-from qiskit import QuantumCircuit
-from qiskit.circuit.library import PauliEvolutionGate
-from qiskit_nature.second_q.circuit.library import HartreeFock, UCCSD
-from qiskit_nature.second_q.drivers import PySCFDriver
-from qiskit_nature.second_q.mappers import JordanWignerMapper
-from qiskit_nature.second_q.transformers import ActiveSpaceTransformer
-from qiskit_nature.units import DistanceUnit
+from qiskit_nature.second_q.circuit.library import UCCSD
+from qiskit_nature.second_q.mappers import BravyiKitaevMapper, JordanWignerMapper
 
-from qiskit_nature_uccsd_hamiltonian import dump_qubit_hamiltonian_json
+from qiskit_nature_uccsd import dump_qubit_operator_json, uccsd_pauli_operator
 
 
 @dataclass(frozen=True)
-class ActiveSpaceExample:
-    name: str
-    atom: str
-    active_electrons: int | tuple[int, int]
-    active_spatial_orbitals: int
-    output_json: str
+class UCCCase:
+    num_electrons: int  # total electrons, closed-shell -> (n/2 alpha, n/2 beta)
+    num_spatial_orbitals: int  # qubit count = 2 * num_spatial_orbitals
+
+    @property
+    def num_particles(self) -> tuple[int, int]:
+        half = self.num_electrons // 2
+        return (half, half)
 
 
-EXAMPLES: tuple[ActiveSpaceExample, ...] = (
-    ActiveSpaceExample(
-        name="LiH active space (2e, 3o)",
-        atom="Li 0.0 0.0 0.0; H 0.0 0.0 1.6",
-        active_electrons=2,
-        active_spatial_orbitals=3,
-        output_json="LiH_as_2e_3o_JW_sto3g.json",
-    ),
-    ActiveSpaceExample(
-        name="LiH active space (2e, 4o)",
-        atom="Li 0.0 0.0 0.0; H 0.0 0.0 1.6",
-        active_electrons=2,
-        active_spatial_orbitals=4,
-        output_json="LiH_as_2e_4o_JW_sto3g.json",
-    ),
-    ActiveSpaceExample(
-        name="BeH2 active space (2e, 3o)",
-        atom="Be 0.0 0.0 0.0; H 0.0 0.0 -1.3; H 0.0 0.0 1.3",
-        active_electrons=2,
-        active_spatial_orbitals=3,
-        output_json="BeH2_as_2e_3o_JW_sto3g.json",
-    ),
-    ActiveSpaceExample(
-        name="BeH2 active space (4e, 4o)",
-        atom="Be 0.0 0.0 0.0; H 0.0 0.0 -1.3; H 0.0 0.0 1.3",
-        active_electrons=4,
-        active_spatial_orbitals=4,
-        output_json="BeH2_as_4e_4o_JW_sto3g.json",
-    ),
+# Fixed 10 electrons, virtual orbitals 7->10. Each (e, o) class is realizable by real
+# closed-shell molecules at STO-3G, e.g. H2O/NH3/CH4 (complete) and C2H2 (frozen-core),
+# but the operator does not depend on which.
+CASES: tuple[UCCCase, ...] = (
+    UCCCase(num_electrons=10, num_spatial_orbitals=7),
+    UCCCase(num_electrons=10, num_spatial_orbitals=8),
+    UCCCase(num_electrons=10, num_spatial_orbitals=9),
+    UCCCase(num_electrons=10, num_spatial_orbitals=10),
 )
 
+MAPPERS = {"JW": JordanWignerMapper(), "BK": BravyiKitaevMapper()}
 
-def build_example(example: ActiveSpaceExample) -> None:
-    driver = PySCFDriver(
-        atom=example.atom,
-        basis="sto3g",
-        charge=0,
-        spin=0,
-        unit=DistanceUnit.ANGSTROM,
-    )
-    problem = driver.run()
 
-    transformer = ActiveSpaceTransformer(
-        num_electrons=example.active_electrons,
-        num_spatial_orbitals=example.active_spatial_orbitals,
-    )
-    active_problem = transformer.transform(problem)
+def build_case(case: UCCCase) -> None:
+    for encoding, mapper in MAPPERS.items():
+        ansatz = UCCSD(case.num_spatial_orbitals, case.num_particles, mapper)
+        cluster_op = uccsd_pauli_operator(ansatz)
+        assert cluster_op.num_qubits == 2 * case.num_spatial_orbitals
 
-    mapper = JordanWignerMapper()
-    qubit_hamiltonian = mapper.map(active_problem.hamiltonian.second_q_op())
-    evolution_time = 0.25
-    evolution_gate = PauliEvolutionGate(qubit_hamiltonian, time=evolution_time)
+        name = f"ucc_{case.num_electrons}e_{case.num_spatial_orbitals}o_{encoding}"
+        output_path = Path(__file__).resolve().parent / "uccsd" / f"{name}.json"
+        dump_qubit_operator_json(cluster_op, output_path)
 
-    evolution_circuit = QuantumCircuit(qubit_hamiltonian.num_qubits, name=example.name)
-    evolution_circuit.append(evolution_gate, range(qubit_hamiltonian.num_qubits))
-
-    hartree_fock = HartreeFock(
-        active_problem.num_spatial_orbitals,
-        active_problem.num_particles,
-        mapper,
-    )
-    uccsd = UCCSD(
-        active_problem.num_spatial_orbitals,
-        active_problem.num_particles,
-        mapper,
-        initial_state=hartree_fock,
-    )
-
-    assert evolution_gate.num_qubits == qubit_hamiltonian.num_qubits
-    assert uccsd.num_qubits == qubit_hamiltonian.num_qubits
-    assert 5 <= qubit_hamiltonian.num_qubits <= 8
-
-    output_path = Path(__file__).resolve().parent / "hams" / example.output_json
-    dump_qubit_hamiltonian_json(qubit_hamiltonian, output_path)
-
-    print(f"Example: {example.name}")
-    print(f"  Active electrons: {active_problem.num_particles}")
-    print(f"  Active spatial orbitals: {active_problem.num_spatial_orbitals}")
-    print(f"  Qubits: {qubit_hamiltonian.num_qubits}")
-    print(f"  Hamiltonian terms: {len(qubit_hamiltonian.paulis)}")
-    print(f"  UCCSD parameter count: {uccsd.num_parameters}")
-    print(f"  Evolution time: {evolution_time}")
-    print(f"  JSON: {output_path}")
-    print(f"  Circuit depth (undecomposed): {evolution_circuit.depth()}")
-    print()
+        labels = cluster_op.paulis.to_labels()
+        max_weight = max(sum(c != "I" for c in lbl) for lbl in labels)
+        print(
+            f"{name}: {cluster_op.num_qubits}q, {ansatz.num_parameters} excitations, "
+            f"{len(labels)} strings, max_weight {max_weight} -> {output_path.name}"
+        )
 
 
 def main() -> None:
-    for example in EXAMPLES:
-        build_example(example)
+    for case in CASES:
+        build_case(case)
 
 
 if __name__ == "__main__":

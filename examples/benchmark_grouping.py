@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Benchmark comparing grouping=True vs grouping=False for compile_hamiltonian_simulation.
+Benchmark comparing grouping='holistic' vs grouping='support' for compile_hamiltonian_simulation.
 """
 
 import json
@@ -16,7 +16,7 @@ def load_hamiltonian(path):
 
 
 def benchmark():
-    ham = load_hamiltonian("../benchmarks/uccsd_json/LiH_frz_BK_sto3g.json")
+    ham = load_hamiltonian("../benchmarks/uccsd/ucc_10e_7o_BK.json")
     # ham = load_hamiltonian('benchmarks/qaoa_json/qaoa_rand_16.json')
     print(f"Hamiltonian: {len(ham.paulis)} Pauli terms, {ham.paulis.num_qubits} qubits")
     print(f"Groups (same-weight): {len(ham.group_same_weights())}")
@@ -25,32 +25,21 @@ def benchmark():
     print("\n1. Original circuit")
     print_circ_info(ham.generate_circuit(), title="Original circuit")
 
-    # grouping=True
-    print("\n1. grouping=True")
-    start = time.perf_counter()
-    qc_grouped = compile_hamiltonian_simulation(ham, grouping=True)
-    t_grouped = time.perf_counter() - start
-    print_circ_info(qc_grouped, title="grouping=True")
-    print(f"   Compilation time: {t_grouped:.4f}s")
+    results = {}
+    for i, mode in enumerate(["holistic", "support"], start=2):
+        print(f"\n{i}. grouping='{mode}'")
+        start = time.perf_counter()
+        qc = compile_hamiltonian_simulation(ham, grouping=mode)
+        elapsed = time.perf_counter() - start
+        print_circ_info(qc, title=f"grouping='{mode}'")
+        print(f"   Compilation time: {elapsed:.4f}s")
+        results[mode] = (elapsed, qc)
 
-    # grouping=False
-    print("\n2. grouping=False")
-    start = time.perf_counter()
-    qc_ungrouped = compile_hamiltonian_simulation(ham, grouping=False)
-    t_ungrouped = time.perf_counter() - start
-    print_circ_info(qc_ungrouped, title="grouping=False")
-    print(f"   Compilation time: {t_ungrouped:.4f}s")
-
-    # Summary
     print("\n" + "=" * 60)
     print("Summary:")
-    print(
-        f"  grouping=True  : {t_grouped:.4f}s, {qc_grouped.num_nonlocal_gates()} CX gates, depth {qc_grouped.depth()}"
-    )
-    print(
-        f"  grouping=False : {t_ungrouped:.4f}s, {qc_ungrouped.num_nonlocal_gates()} CX gates, depth {qc_ungrouped.depth()}"
-    )
-    print(f"  Speedup (time) : {t_ungrouped / t_grouped:.2f}x")
+    for mode, (elapsed, qc) in results.items():
+        print(f"  grouping='{mode}'{' ' * (8 - len(mode))}: {elapsed:.4f}s, {qc.num_nonlocal_gates()} CX gates, depth {qc.depth()}")
+    print(f"  Speedup (time) : {results['support'][0] / results['holistic'][0]:.2f}x")
 
 
 if __name__ == "__main__":

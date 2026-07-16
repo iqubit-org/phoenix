@@ -1,0 +1,54 @@
+{
+  "settings": {
+    "input": "/Users/anan/git-projects/quantum/phoenix/benchmarks/uccsd",
+    "optimize": true,
+    "order_method": "tsp",
+    "backend": "sequential",
+    "parallel_search": true,
+    "search_patience": null
+  },
+  "summary": {
+    "num_cases": 1,
+    "geomean_reversed_over_original": {
+      "num_2q": 1.0033852403520649,
+      "depth_2q": 1.010016694490818,
+      "time": 0.9610754414125201
+    },
+    "wins_reversed": {
+      "num_2q": 0,
+      "depth_2q": 0
+    },
+    "losses_reversed": {
+      "num_2q": 1,
+      "depth_2q": 1
+    }
+  },
+  "results": [
+    {
+      "name": "uccsd_10",
+      "num_qubits": 10,
+      "num_paulis": 800,
+      "original": {
+        "num_2q": 1477,
+        "depth_2q": 1198,
+        "num_gates": 4440,
+        "depth": 2397,
+        "time": 2.492,
+        "num_groups": 67
+      },
+      "reversed": {
+        "num_2q": 1482,
+        "depth_2q": 1210,
+        "num_gates": 4456,
+        "depth": 2421,
+        "time": 2.395,
+        "num_groups": 67
+      },
+      "ratio_reversed_over_original": {
+        "num_2q": 1.0033852403520649,
+        "depth_2q": 1.010016694490818,
+        "time": 0.9610754414125201
+      }
+    }
+  ]
+}

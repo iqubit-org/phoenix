@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""V2-A ablation: SCHEDULE_ASAP on/off (peel terminal='auto' + standard
+"""V2-A ablation: SCHEDULE_ASAP on/off (holistic terminal='auto' + standard
 optimizer). Samples Hamlib categories across the size range + UCCSD + osc.
 """
 
@@ -19,10 +19,10 @@ warnings.filterwarnings("ignore")
 
 import numpy as np
 
-import phoenix.primitive.peel as peel_mod
+import phoenix.primitive.holistic as peel_mod
 from phoenix.compiler import optimize_phoenix_circuit_by_qiskit
 from phoenix.hamiltonian import Hamiltonian
-from phoenix.primitive.peel import peel_compile
+from phoenix.primitive.holistic import holistic_compile
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 HAMLIB = os.path.join(REPO, "benchmarks", "hamlib")
@@ -36,7 +36,7 @@ def run_one(name, ham):
         peel_mod.SCHEDULE_ASAP = flag
         t0 = time.perf_counter()
         with contextlib.redirect_stdout(io.StringIO()):
-            qc = optimize_phoenix_circuit_by_qiskit(peel_compile(ham))
+            qc = optimize_phoenix_circuit_by_qiskit(holistic_compile(ham))
         dt = time.perf_counter() - t0
         n2 = sum(1 for inst in qc.data if inst.operation.num_qubits == 2)
         d2 = qc.depth(lambda inst: inst.operation.num_qubits == 2)
@@ -74,7 +74,7 @@ def main():
         with open(os.path.join(UCCSD, f)) as fh:
             groups["chemistry-uccsd"].append((f, json.load(fh)))
 
-    from test_peel import OSCILLATING_GROUP
+    from test_holistic import OSCILLATING_GROUP
 
     results = {}
     rows = [run_one("oscillating-152", Hamiltonian(OSCILLATING_GROUP, np.ones(len(OSCILLATING_GROUP))))]

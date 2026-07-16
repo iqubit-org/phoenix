@@ -18,7 +18,7 @@ console = Console()
 
 
 def main():
-    # with open('../benchmarks/uccsd_json/NH_frz_JW_sto3g.json', 'r') as f:
+    # with open('../benchmarks/uccsd/NH_frz_JW_sto3g.json', 'r') as f:
     with open(_DIR / "hams/BeH2_as_4e_4o_JW_sto3g.json", "r") as f:
         data = json.load(f)
 
@@ -43,12 +43,12 @@ def main():
     print("Infidelity", phoenix.utils.infidelity(u, Operator(qc_phoenix).to_matrix()))
 
     console.rule("Qiskit synthesis")
-    qc_qiskit = phoenix.utils.qiskit_pass(ham.paulis.to_labels(), ham.coeffs)
+    qc_qiskit = phoenix.utils.compile_by_qiskit(ham.paulis.to_labels(), ham.coeffs)
     phoenix.utils.print_circ_info(qc_qiskit, title="Qiskit synthesized circuit")
     print("Infidelity", phoenix.utils.infidelity(u, Operator(qc_qiskit).to_matrix()))
 
     console.rule("TKet synthesis")
-    qc_tket = phoenix.utils.tket_pass(ham.paulis.to_labels(), ham.coeffs, little_endian=True)
+    qc_tket = phoenix.utils.compile_by_tket(ham.paulis.to_labels(), ham.coeffs, little_endian=True)
     phoenix.utils.print_circ_info(qc_tket, title="TKet synthesized circuit")
     print("Infidelity", phoenix.utils.infidelity(u, Operator(qc_tket).to_matrix()))
 

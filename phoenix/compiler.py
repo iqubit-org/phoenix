@@ -7,7 +7,7 @@ from qiskit.circuit import Parameter
 
 from .hamiltonian import Hamiltonian
 from .primitive.ordering import order_circuits
-from .primitive.peel import peel_compile
+from .primitive.holistic import holistic_compile
 from .primitive.simplification import simplify_hamiltonian
 from .primitive.utils import constr_circuit_from_simp_steps
 from .utils import post_transpile
@@ -44,9 +44,6 @@ def _simplify_groups(
 
 def compile_hamiltonian_simulation(
     hamiltonian: Hamiltonian,
-    time: float | Parameter = 1.0,
-    order: int = 1,
-    trotter_steps: int = 1,
     grouping: str | None = None,
     parallel_search: bool = True,
     terminal='auto',
@@ -59,37 +56,34 @@ def compile_hamiltonian_simulation(
 
     Args:
         hamiltonian: The Hamiltonian to simulate.
-        time: Evolution time.
-        order: Trotter-Suzuki order (1 or 2).
-        trotter_steps: Number of Trotter steps.
         grouping: Compilation strategy for Pauli terms:
-            - ``None`` (default) or ``"peel"``: the peel-forward engine —
-              sequential extraction in a forward-only Clifford frame, grouping
+            - ``None`` (default) or ``"holistic"``: the holistic engine —
+              forward-frame two-qubit peeling over the whole table, grouping
               fully emergent, guaranteed termination, zero numeric
-              hyperparameters (see ``primitive.peel`` /
+              hyperparameters (see ``primitive.holistic`` /
               docs/peel_forward_design.md);
             - ``"support"``: exact same-support grouping + legacy BSF greedy
               search (DAC'25 behavior, kept as the ablation baseline).
         optimize: Whether to apply Qiskit post-optimization.
         order_method: Ordering method for subcircuits in support mode
-            (None defaults to 'tsp'). Ignored by peel.
+            (None defaults to 'tsp'). Ignored by the holistic engine.
         backend: Parallelization backend for support mode ("joblib",
-            "concurrent.futures", or "sequential"). Ignored by peel.
+            "concurrent.futures", or "sequential"). Ignored by the holistic engine.
         search_patience: Stall patience of the legacy BSF search safety net
             (support mode only). Default: max(16, 2·#active qubits).
 
     Returns:
         The compiled quantum circuit.
     """
-    if grouping is None or grouping == "peel":
-        qc = peel_compile(hamiltonian, terminal=terminal)
+    if grouping is None or grouping == "holistic":
+        qc = holistic_compile(hamiltonian, terminal=terminal)
     elif grouping == "support":
-        hams = hamiltonian.group_same_weights()[::-1]
+        hams = hamiltonian.group_same_weights()
         circuits = _simplify_groups(hams, backend, parallel=parallel_search, patience=search_patience)
         qc = order_circuits(circuits, method=order_method or "tsp")
     else:
         raise ValueError(
-            f"Unknown grouping mode: {grouping!r}; options: 'peel' (default), 'support'"
+            f"Unknown grouping mode: {grouping!r}; options: None/'holistic' (default), 'support'"
         )
     if optimize:
         qc = post_transpile(qc)

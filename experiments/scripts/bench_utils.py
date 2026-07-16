@@ -46,7 +46,7 @@ def phoenix_pass(
 ) -> qiskit.QuantumCircuit:
     """Phoenix's high-level optimization.
 
-    ``grouping`` accepts the public modes (None/'peel'/'support').
+    ``grouping`` accepts the public modes (None/'holistic'/'support').
     """
     paulis = [
         p[::-1] for p in paulis

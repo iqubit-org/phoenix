@@ -60,10 +60,11 @@ def main():
         "--no-optimize", action="store_true", help="Disable the internal optimize pass inside Phoenix (default: False)"
     )
     parser.add_argument(
-        "--subset", action="store_true", help="Use subset-based grouping (default: False)"
-    )
-    parser.add_argument(
-        "--no-grouping", action="store_true", help="Disable the grouping of Pauli strings (default: False)"
+        "--grouping",
+        default="holistic",
+        type=str,
+        choices=["holistic", "support"],
+        help="Grouping strategy for Pauli strings (default: holistic)",
     )
     parser.add_argument(
         "--parallel-search",
@@ -94,7 +95,7 @@ def main():
     circ_opt = phoenix.compile_hamiltonian_simulation(
         ham,
         backend=args.backend,
-        grouping=not args.no_grouping,
+        grouping=args.grouping,
         parallel_search=args.parallel_search,
     )
     if args.O3:

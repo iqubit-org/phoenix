@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-"""Benchmark peel-forward vs support on UCCSD + stress programs.
+"""Benchmark holistic vs support on UCCSD + stress programs.
 
-Usage: python bench_peel.py [--uccsd] [--osc] [--big PROGRAM.json ...]
+Usage: python bench_holistic.py [--uccsd] [--osc] [--big PROGRAM.json ...]
 Default: --uccsd --osc
 """
 
@@ -26,7 +26,7 @@ import phoenix
 from phoenix.hamiltonian import Hamiltonian
 
 UCCSD_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "benchmarks", "uccsd")
-MODES = ["support", "peel", "peel-absorb"]
+MODES = ["support", "holistic", "holistic-absorb"]
 
 
 def metrics(qc):
@@ -41,11 +41,11 @@ def run_one(name, ham):
     for mode in MODES:
         t0 = time.perf_counter()
         with contextlib.redirect_stdout(io.StringIO()):
-            if mode == "peel-absorb":
-                from phoenix.compiler import optimize_phoenix_circuit_by_qiskit
-                from phoenix.primitive.peel import peel_compile
+            if mode == "holistic-absorb":
+                from phoenix import optimize_phoenix_circuit_by_qiskit
+                from phoenix.primitive.holistic import holistic_compile
 
-                qc = optimize_phoenix_circuit_by_qiskit(peel_compile(ham, terminal="absorb"))
+                qc = optimize_phoenix_circuit_by_qiskit(holistic_compile(ham, terminal="absorb"))
             else:
                 qc = phoenix.compile_hamiltonian_simulation(ham, grouping=mode, parallel_search=False)
         dt = time.perf_counter() - t0
@@ -67,7 +67,7 @@ def main():
 
     results = []
     if args.osc:
-        from test_peel import OSCILLATING_GROUP
+        from test_holistic import OSCILLATING_GROUP
 
         results.append(run_one(
             "oscillating-152", Hamiltonian(OSCILLATING_GROUP, np.ones(len(OSCILLATING_GROUP)))
@@ -90,7 +90,7 @@ def main():
         return float(np.exp(np.mean(np.log(xs)))) if xs else float("nan")
 
     print("\n=== geomean ratios vs support ===")
-    for mode in ["peel", "peel-absorb"]:
+    for mode in ["holistic", "holistic-absorb"]:
         g2 = geomean([r[mode]["num_2q"] / r["support"]["num_2q"] for r in results if r["support"]["num_2q"]])
         gd = geomean([r[mode]["depth_2q"] / r["support"]["depth_2q"] for r in results if r["support"]["depth_2q"]])
         gt = geomean([r[mode]["time"] / r["support"]["time"] for r in results if r["support"]["time"]])

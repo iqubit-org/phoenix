@@ -186,3 +186,5 @@ debug/
 
 # setuptools-scm generated
 phoenix/_version.py
+
+examples/qiskit_nature*

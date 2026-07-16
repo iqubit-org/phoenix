@@ -1,7 +1,8 @@
-"""Peel-forward compilation: sequential extraction in a forward-only Clifford frame.
+"""Holistic compilation: forward-frame two-qubit peeling (no a-priori grouping).
 
-Design: ``docs/peel_forward_design.md``. The engine replaces the global-descent
-BSF search (greedy + tabu + stall machinery) with a guaranteed-descent loop:
+Design: ``docs/peel_forward_design.md``. The holistic engine replaces the
+support-grouped BSF search (greedy + tabu + stall machinery) with a single
+guaranteed-descent loop over the whole table — grouping is fully emergent:
 
 - every active row with weight <= 2 is *emitted* (frozen) immediately;
 - a *target* row (min weight; ties by pattern popularity) is locked and
@@ -85,7 +86,7 @@ for _ci, _cliff in enumerate(CLIFFORD_OPTIONS):
 
 @dataclass
 class PeelResult:
-    """Output of the peel-forward engine.
+    """Output of the holistic peeling engine.
 
     moves: applied Cliffords in order, ``(cliff, (q0, q1))``.
     emissions: ``(t, labels, coeffs)`` — rows frozen after ``t`` moves, with
@@ -98,135 +99,20 @@ class PeelResult:
     num_qubits: int
 
 
-# v3 certified holistic search (design doc §12) — RESEARCH VARIANT, default
-# OFF after full-matrix ablation (experiments/ablate_v3.json, 2026-06-13):
-# UCCSD geomean Num2Q x1.039 / Depth2Q x1.174 vs v2, N2 +13.7% & 19x slower —
-# the inter-episode global harvest of strong simultaneous moves (dW_eff <= -2)
-# disrupts the family-sequential structure that target-descent episodes
-# exploit, the third independent measurement of the same coherence/locality
-# dichotomy (cluster-first-vs-search-first, P0-1, P1-4). Large wins exist on a
-# program subset (CH2_cmplt_JW -13.7%, LiH_frz_P -20%, osc-152 -9%), kept
-# reachable via these switches for paper experiments. Tier-1 admits moves
-# under strict lexicographic descent of Φ_int = (N_active, S_union, W), ranks
-# progress-first (dW_eff, benefit, -harm) with the Phoenix BSF cost as final
-# tie-break; V3_RELAXED additionally admits plateau moves (Φ_int non-increasing
-# AND strictly cost-decreasing).
-V3_HOLISTIC = False
-V3_RELAXED = False
-
-
-def _holistic_scan(x, z, w, act_idx, relaxed: bool = False):
-    """Tier-1: Phoenix-style scan over ALL active-support pairs × 9 options.
-
-    Because every active row has weight >= 3 and one move changes a row weight
-    by at most 1, all rows stay legacy-nonlocal (w' >= 2) under every
-    candidate — so the cheap stable-set column decomposition applies: pairwise
-    OR terms swap only the two touched columns' contributions
-    g(s) = C(ma,2) − C(ma−s,2). Returns (ci, a, b) of the admitted candidate
-    with the lowest BSF cost, or None if no candidate is certified.
-    """
-    ma = int(act_idx.size)
-    if ma == 0:
-        return None
-    xa = x[act_idx].astype(np.int64)
-    za = z[act_idx].astype(np.int64)
-    wo = xa | za
-    support = np.where(wo.any(axis=0))[0]
-    if support.size < 2:
-        return None
-    pairs = np.asarray(list(combinations(support.tolist(), 2)), dtype=np.int64)
-    q0p, q1p = pairs[:, 0], pairs[:, 1]
-
-    col_w = wo.sum(axis=0)
-    col_x = xa.sum(axis=0)
-    col_z = za.sum(axis=0)
-    C2 = ma * (ma - 1) // 2
-
-    def colc(s):
-        return C2 - (ma - s) * (ma - s - 1) // 2
-
-    base_pair_wo = int(colc(col_w).sum())
-    base_pair_x = int(colc(col_x).sum())
-    base_pair_z = int(colc(col_z).sum())
-    base_nz = int((col_w > 0).sum())  # S_union
-    cost_base = base_pair_wo + 0.5 * (base_pair_x + base_pair_z) + base_nz * ma * ma
-
-    cq = (x[act_idx] | (z[act_idx] << 1)).astype(np.int64)  # (ma, n)
-    code = cq[:, q0p].T | (cq[:, q1p].T << 2)  # (P, ma)
-    rw3 = (w[act_idx] == 3)[None, :]  # (1, ma)
-
-    # Ranking is progress-first: maximize the *effective* weight removed
-    # (ΔW plus the 2 units each emitted row carries off the table), then
-    # benefit/harm counts; the Phoenix BSF cost breaks remaining ties — its
-    # alignment/union wisdom decides among equal-progress moves, but can no
-    # longer trade real progress for cosmetic landscape gains (the T-explosion
-    # failure mode of pure cost-ranking on a global table).
-    K = np.int64(ma + 1)
-    best = None  # (-key, cost, ci, pi) minimized
-    for ci in range(9):
-        d = _DELTA16[ci][code]  # (P, ma)
-        dW = d.sum(axis=1)
-        demit = ((d == -1) & rw3).sum(axis=1)  # rows reaching w' = 2 (emitted)
-        nc = _NEWCODE16[ci].astype(np.int64)[code]
-        nx0, nz0 = nc & 1, (nc >> 1) & 1
-        nx1, nz1 = (nc >> 2) & 1, (nc >> 3) & 1
-        nw0, nw1 = nx0 | nz0, nx1 | nz1
-        s_w0, s_w1 = nw0.sum(axis=1), nw1.sum(axis=1)
-        dS = ((s_w0 > 0).astype(np.int64) + (s_w1 > 0).astype(np.int64)
-              - (col_w[q0p] > 0).astype(np.int64) - (col_w[q1p] > 0).astype(np.int64))
-
-        dW_eff = dW - 2 * demit
-        # Strong simultaneous progress only: dW_eff <= -2 certifies a net
-        # multi-row benefit (one move helps a single row by at most 1, and an
-        # emitted row carries 2 more units off the table) — the same structural
-        # constant as the historical MONOTONE_MIN_GAIN derivation. Weak (-1)
-        # progress is left to the Tier-2 episode, whose target-locked locality
-        # preserves family coherence.
-        admitted = dW_eff <= -2
-
-        pair_wo = (base_pair_wo - colc(col_w[q0p]) - colc(col_w[q1p])
-                   + colc(s_w0) + colc(s_w1))
-        pair_x = (base_pair_x - colc(col_x[q0p]) - colc(col_x[q1p])
-                  + colc(nx0.sum(axis=1)) + colc(nx1.sum(axis=1)))
-        pair_z = (base_pair_z - colc(col_z[q0p]) - colc(col_z[q1p])
-                  + colc(nz0.sum(axis=1)) + colc(nz1.sum(axis=1)))
-        costs = pair_wo + 0.5 * (pair_x + pair_z) + (base_nz + dS) * ma * ma
-
-        if relaxed:
-            admitted |= (demit == 0) & (dS == 0) & (dW == 0) & (costs < cost_base)
-        if not admitted.any():
-            continue
-
-        nben = (d < 0).sum(axis=1)
-        nharm = (d > 0).sum(axis=1)
-        key = ((3 * ma - dW_eff) * K + nben) * K + (ma - nharm)
-        key = np.where(admitted, key, np.int64(-1))
-        kmax = int(key.max())
-        if kmax < 0:
-            continue
-        tied = np.where(key == kmax)[0]
-        ct = costs[tied]
-        pi = int(tied[int(np.argmin(ct))])
-        cand = (-kmax, float(costs[pi]), ci, pi)
-        if best is None or cand < best:
-            best = cand
-
-    if best is None:
-        return None
-    _, _, ci, pi = best
-    return ci, int(pairs[pi, 0]), int(pairs[pi, 1])
-
-
 def peel_forward(ham: Hamiltonian, verbose: bool = False) -> PeelResult:
-    """Run the peel-forward engine. Deterministic; zero numeric hyperparameters.
+    """Run the holistic peeling engine. Deterministic; zero numeric hyperparameters.
 
-    v3 two-tier loop: Tier-1 (certified holistic search, Phoenix-style) as the
-    main channel; when it certifies no move, one Tier-2 target-descent episode
-    runs to completion (existence by the verified lemma), then Tier-1 resumes.
-    Termination: Tier-2 episodes each emit a row (≤ m(n−2) moves total);
-    Tier-1 strictly decreases Φ_int = (N_active, S_union, W) whose first two
-    components are non-increasing under ALL moves, so Tier-1 moves number at
-    most W₀ + m²(n−2). Zero numeric hyperparameters.
+    Target-descent loop: emit every active row of weight <= 2, then lock the
+    cheapest active row as the target and reduce it with guaranteed-descent
+    2-qubit Clifford conjugations (verified lemma) until it emits; repeat until
+    the table is empty. The potential (#active rows, target weight) strictly
+    decreases lexicographically at every move — at most m(n-2) moves. Zero
+    numeric hyperparameters.
+
+    (The retired v3 certified-holistic-search Tier-1 that used to gate this
+    loop is archived in ``backup/peel_v3.py``; its full-matrix ablation,
+    ``experiments/attic/ablate_v3.json``, showed it net-worse on UCCSD, so it
+    was removed.)
     """
     x = np.asarray(ham.paulis.x, dtype=np.uint8).copy()
     z = np.asarray(ham.paulis.z, dtype=np.uint8).copy()
@@ -272,14 +158,8 @@ def peel_forward(ham: Hamiltonian, verbose: bool = False) -> PeelResult:
 
     _emit()
     while active.any():
-        # ---- Tier-1: certified holistic search --------------------------------
-        if V3_HOLISTIC and target < 0:
-            mv = _holistic_scan(x, z, w, np.where(active)[0], relaxed=V3_RELAXED)
-            if mv is not None:
-                _apply(mv[0], mv[1], mv[2], "T1")
-                continue
-
-        # ---- Tier-2: target-descent episode (runs to completion) --------------
+        # target-descent episode: lock the cheapest active row and reduce it to
+        # emission by guaranteed-descent 2q Cliffords, then repeat.
         if target < 0:
             # cheapest active row; ties by 1-local pattern popularity
             wa = np.where(active, w, np.iinfo(np.int64).max)
@@ -615,7 +495,7 @@ def _zero_amplitude(circ: QuantumCircuit) -> complex | None:
         return None
 
 
-def peel_compile(
+def holistic_compile(
     ham: Hamiltonian, terminal: str = "auto", phase_exact: bool = False, verbose: bool = False
 ) -> QuantumCircuit:
     """Engine + circuit construction (pre-optimizer).
