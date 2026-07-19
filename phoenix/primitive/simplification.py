@@ -3,33 +3,11 @@ from __future__ import annotations
 from itertools import combinations
 
 import numpy as np
-from qiskit.circuit import QuantumCircuit
-from qiskit.quantum_info import Clifford
 
+from ..basics import CLIFFORD_OPTIONS, _CLIFFORD_BLOCKS
 from ..basics import CNOTEquivCliffordGate, fSwapEquivCliffordGate
 from ..hamiltonian import Hamiltonian
 from ..primitive.utils import SimplificationStep
-
-CLIFFORD_OPTIONS = [
-    CNOTEquivCliffordGate("X", "X"),
-    CNOTEquivCliffordGate("Y", "Y"),
-    CNOTEquivCliffordGate("Z", "Z"),
-    CNOTEquivCliffordGate("X", "Y"),
-    CNOTEquivCliffordGate("Y", "X"),
-    CNOTEquivCliffordGate("X", "Z"),
-    CNOTEquivCliffordGate("Z", "X"),
-    CNOTEquivCliffordGate("Y", "Z"),
-    CNOTEquivCliffordGate("Z", "Y"),
-]
-
-# Precompute the 4x4 symplectic block for each Clifford type (computed once at import time).
-# Each CNOT-equiv Clifford on qubits (q0, q1) only affects the 4x4 sub-block
-# at indices {q0, q1, q0+n, q1+n} of the full 2n×2n symplectic matrix.
-_CLIFFORD_BLOCKS: dict[int, np.ndarray] = {}
-for _cliff in CLIFFORD_OPTIONS:
-    _qc2 = QuantumCircuit(2)
-    _qc2.append(_cliff, [0, 1])
-    _CLIFFORD_BLOCKS[id(_cliff)] = Clifford(_qc2).symplectic_matrix.astype(np.int8)
 
 
 def _phi_record(ham: Hamiltonian) -> tuple[int, int, float]:

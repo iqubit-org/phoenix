@@ -37,7 +37,8 @@ from qiskit.circuit.library import PauliEvolutionGate
 from qiskit.quantum_info import Clifford, Pauli
 
 from ..hamiltonian import Hamiltonian
-from .simplification import CLIFFORD_OPTIONS, _CLIFFORD_BLOCKS
+from ..basics import CLIFFORD_OPTIONS, _CLIFFORD_BLOCKS
+
 
 # ---------------------------------------------------------------------------
 # Precomputed per-(clifford, 2q-code) tables.
@@ -133,7 +134,7 @@ def peel_forward(ham: Hamiltonian, verbose: bool = False) -> PeelResult:
         # NOTE: ``str(Pauli)`` truncates labels beyond 50 qubits ("II...");
         # ``to_label()`` is the untruncated form (wide Hamlib programs).
         labels = [Pauli((z[r].astype(bool), x[r].astype(bool))).to_label() for r in rows]
-        emissions.append((len(moves), labels, [float(coeffs[r]) for r in rows]))
+        emissions.append((len(moves), labels, coeffs[rows].tolist()))
         active[rows] = False
         if target in rows:
             target = -1
@@ -222,16 +223,63 @@ def peel_forward(ham: Hamiltonian, verbose: bool = False) -> PeelResult:
 # Circuit construction
 # ---------------------------------------------------------------------------
 
-# V2-A commutation-aware ASAP scheduling (ablation switch; the mechanism has
-# no parameters). When True, moves and emission buckets are laid out by greedy
-# ASAP list scheduling over their EXACT commutation partial order instead of
-# the engine's sequential timeline: moves order among themselves only where
-# their pairs share a qubit; an emission bucket is constrained only to the
-# window between the last move touching its support and the move that seals
-# it; blocks have no mutual order (Trotter freedom). This recovers brickwork
-# layer parallelism on local/diagonal programs (the depth regression root
-# cause, cf. design doc §11).
+# V2-A commutation-aware ASAP scheduling
 SCHEDULE_ASAP = True
+
+# Exact-commutation-aware scheduling
+SCHEDULE_EXACT_COMMUTE = True
+
+
+def _move_axis_on(move_item: dict, q: int) -> str:
+    """Pauli axis a CNOT-equivalent move imprints on qubit ``q``: ``P0`` on its
+    control leg (local qubit 0), ``P1`` on its target leg (local qubit 1)."""
+    a, b = move_item["qubits"]
+    c = move_item["cliff"]
+    return c.pauli_0 if q == a else c.pauli_1
+
+
+def _moves_commute(mi: dict, mj: dict) -> bool:
+    return all(_move_axis_on(mi, q) == _move_axis_on(mj, q)
+               for q in set(mi["qubits"]) & set(mj["qubits"]))
+
+
+def _move_fixes_block(move_item: dict, block_item: dict, n: int) -> bool:
+    """Does the move's Clifford fix EVERY rotation in the block bucket (so the
+    block commutes with the move)? Block factor on the control leg must be in
+    {I,P0}, on the target leg in {I,P1}. Label chars are big-endian: qubit q is
+    ``label[n-1-q]``."""
+    a, b = move_item["qubits"]
+    p0, p1 = move_item["cliff"].pauli_0, move_item["cliff"].pauli_1
+    for lbl in block_item["labels"]:
+        if lbl[n - 1 - a] not in ("I", p0) or lbl[n - 1 - b] not in ("I", p1):
+            return False
+    return True
+
+
+def _items_commute(x: dict, y: dict, n: int) -> bool:
+    kx, ky = x["kind"], y["kind"]
+    if kx == "block" and ky == "block":
+        return True  # Trotter freedom
+    if kx == "move" and ky == "move":
+        return _moves_commute(x, y)
+    move, block = (x, y) if kx == "move" else (y, x)
+    return _move_fixes_block(move, block, n)
+
+
+def _exact_commute_deps(items: list[dict], n: int) -> list[set]:
+    """Dependency partial order keeping only genuine non-commutation edges: per
+    qubit, an item links to EVERY earlier item on that qubit it does not commute
+    with. Non-transitivity of commutation forbids any early stop."""
+    on_q: list[list[int]] = [[] for _ in range(n)]
+    deps: list[set] = [set() for _ in items]
+    for i, it in enumerate(items):
+        for q in it["qubits"]:
+            col = on_q[q]
+            for j in reversed(col):
+                if not _items_commute(items[j], it, n):
+                    deps[i].add(j)
+            col.append(i)
+    return deps
 
 
 def peel_circuit(result: PeelResult, terminal: str = "auto", phase_exact: bool = False) -> QuantumCircuit:
@@ -316,6 +364,9 @@ def peel_circuit(result: PeelResult, terminal: str = "auto", phase_exact: bool =
             items.append({"kind": "move", "qubits": (a, b), "deps": deps, "cliff": cliff})
             last_move[a] = last_move[b] = mid
 
+    if SCHEDULE_EXACT_COMMUTE:
+        for it, d in zip(items, _exact_commute_deps(items, n)):
+            it["deps"] = d
     order = _asap_order(items, n) if SCHEDULE_ASAP else _sequential_order(items)
     qc = QuantumCircuit(n)
     for i in order:

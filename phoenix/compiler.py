@@ -3,8 +3,6 @@ from __future__ import annotations
 from functools import partial
 
 from qiskit import QuantumCircuit
-from qiskit.circuit import Parameter
-
 from .hamiltonian import Hamiltonian
 from .primitive.ordering import order_circuits
 from .primitive.holistic import holistic_compile

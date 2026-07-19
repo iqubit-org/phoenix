@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import numpy as np
 import qiskit.quantum_info as qi
 from qiskit.circuit import Gate, QuantumCircuit, QuantumRegister
 from qiskit.circuit._utils import with_gate_array
@@ -243,3 +244,21 @@ class fSwapEquivCliffordGate(Gate):
             and self.pauli_0 == other.pauli_0
             and self.pauli_1 == other.pauli_1
         )
+
+# Pre-defined two-qubit Clifford options
+CLIFFORD_OPTIONS = [
+    CNOTEquivCliffordGate("X", "X"),
+    CNOTEquivCliffordGate("Y", "Y"),
+    CNOTEquivCliffordGate("Z", "Z"),
+    CNOTEquivCliffordGate("X", "Y"),
+    CNOTEquivCliffordGate("Y", "X"),
+    CNOTEquivCliffordGate("X", "Z"),
+    CNOTEquivCliffordGate("Z", "X"),
+    CNOTEquivCliffordGate("Y", "Z"),
+    CNOTEquivCliffordGate("Z", "Y"),
+]
+
+# Each CNOT-equiv Clifford on qubits (q0, q1) only affects the 4x4 sub-block at indices {q0, q1, q0+n, q1+n} of the full 2n×2n symplectic matrix.
+_CLIFFORD_BLOCKS: dict[int, np.ndarray] = {}
+for _cliff in CLIFFORD_OPTIONS:
+    _CLIFFORD_BLOCKS[id(_cliff)] = qi.Clifford(_cliff).symplectic_matrix.astype(np.int8)
