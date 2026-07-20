@@ -203,7 +203,6 @@ def main() -> int:
         try:
             paulis, coeffs = read_instance(path)
             nreps = repetitions_for(len(paulis))
-            print('nreps', nreps)
             samples: list[float] = []
             for _ in range(nreps):
                 start = time.perf_counter()
