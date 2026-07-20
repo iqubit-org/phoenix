@@ -1,7 +1,7 @@
 import phoenix
 import json
 
-with open('./benchmarks/uccsd_json/LiH_frz_BK_sto3g.json', 'r') as f:
+with open('./benchmarks/uccsd/ucc_10e_7o_BK.json', 'r') as f:
     data = json.load(f)
 ham = phoenix.Hamiltonian(data['paulis'], data['coeffs'])
 
