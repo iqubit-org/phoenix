@@ -1,6 +1,6 @@
 OUTPUT_QASM_PATH = output_hamlib
 BENCH_SCRIPT = bench_hamlib.py
-ALL_COMPILERS := qiskit tket paulihedral tetris quclear phoenix
+ALL_COMPILERS := qiskit tket paulihedral tetris quclear phoenix phoenixpp
 HAMLIB_TYPES := binaryoptimization chemistry condensedmatter discreteoptimization
 
 
@@ -13,9 +13,13 @@ naive:
 	@cd scripts && parallel --bar --group './$(BENCH_SCRIPT) -c naive -t {}' ::: $(HAMLIB_TYPES)
 
 phoenix:
-	@echo "Phoenix benchmarking on Hamlib..."
+	@echo "Phoenix (old/support) benchmarking on Hamlib..."
 	@cd scripts && parallel --bar --group './$(BENCH_SCRIPT) -c phoenix -t {}' ::: $(HAMLIB_TYPES)
-	@echo "✅ Phoenix benchmarking completed."
+	@echo "✅ Phoenix (old/support) benchmarking completed."
+phoenixpp:
+	@echo "Phoenix++ (holistic) benchmarking on Hamlib..."
+	@cd scripts && parallel --bar --group './$(BENCH_SCRIPT) -c phoenixpp -t {}' ::: $(HAMLIB_TYPES)
+	@echo "✅ Phoenix++ (holistic) benchmarking completed."
 tket:
 	@echo "TKet benchmarking Hamlib..."
 	@cd scripts && parallel --bar --group './$(BENCH_SCRIPT) -c tket -t {}' ::: $(HAMLIB_TYPES)

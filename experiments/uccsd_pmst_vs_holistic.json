@@ -1,0 +1,68 @@
+[
+ {
+  "name": "uccsd_10",
+  "q": 10,
+  "terms": 800,
+  "pmst_2q": 3521,
+  "pmst_d2q": 2257,
+  "phoenixpp_2q": 1540,
+  "phoenixpp_d2q": 832,
+  "ratio_2q": 0.43737574552683894,
+  "ratio_d2q": 0.3686309260079752
+ },
+ {
+  "name": "uccsd_15",
+  "q": 15,
+  "terms": 1800,
+  "pmst_2q": 15709,
+  "pmst_d2q": 8330,
+  "phoenixpp_2q": 4444,
+  "phoenixpp_d2q": 2125,
+  "ratio_2q": 0.28289515564326184,
+  "ratio_d2q": 0.25510204081632654
+ },
+ {
+  "name": "uccsd_20",
+  "q": 20,
+  "terms": 3200,
+  "pmst_2q": 43248,
+  "pmst_d2q": 20158,
+  "phoenixpp_2q": 9013,
+  "phoenixpp_d2q": 3595,
+  "ratio_2q": 0.2084027007029227,
+  "ratio_d2q": 0.1783411052683798
+ },
+ {
+  "name": "uccsd_25",
+  "q": 25,
+  "terms": 5000,
+  "pmst_2q": 92143,
+  "pmst_d2q": 39101,
+  "phoenixpp_2q": 15197,
+  "phoenixpp_d2q": 5456,
+  "ratio_2q": 0.16492842646755587,
+  "ratio_d2q": 0.13953607324620854
+ },
+ {
+  "name": "uccsd_30",
+  "q": 30,
+  "terms": 7200,
+  "pmst_2q": 174000,
+  "pmst_d2q": 66591,
+  "phoenixpp_2q": 22360,
+  "phoenixpp_d2q": 6966,
+  "ratio_2q": 0.12850574712643678,
+  "ratio_d2q": 0.10460873090958238
+ },
+ {
+  "name": "uccsd_35",
+  "q": 35,
+  "terms": 9800,
+  "pmst_2q": 292586,
+  "pmst_d2q": 102655,
+  "phoenixpp_2q": 32215,
+  "phoenixpp_d2q": 9506,
+  "ratio_2q": 0.11010437956703328,
+  "ratio_d2q": 0.09260143198090692
+ }
+]

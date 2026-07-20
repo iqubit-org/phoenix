@@ -11,6 +11,7 @@ import os
 import json
 import argparse
 import warnings
+from functools import partial
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import qiskit
 import qiskit.qasm2
@@ -29,7 +30,8 @@ CATEGORIES = ["binaryoptimization", "chemistry", "condensedmatter", "discreteopt
 
 COMPILER_PASSES = {
     "naive": bench_utils.naive_pass,
-    "phoenix": bench_utils.phoenix_pass,
+    "phoenix": partial(bench_utils.phoenix_pass, grouping="support"),
+    "phoenixpp": partial(bench_utils.phoenix_pass, grouping="holistic"),
     "paulihedral": bench_utils.paulihedral_pass,
     "tetris": bench_utils.tetris_pass,
     "pauliopt": bench_utils.pauliopt_pass,
@@ -47,8 +49,8 @@ def process_one(fname, compiler, output_dpath):
 
     output_fname = os.path.join(output_dpath, os.path.basename(fname).replace(".json", ".qasm"))
 
-    # if os.path.exists(output_fname):
-    #     return fname, 'cached', output_fname
+    if os.path.exists(output_fname):
+        return fname, 'cached', output_fname
 
     with open(fname, "r") as f:
         data = json.load(f)

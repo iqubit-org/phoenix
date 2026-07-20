@@ -1,42 +1,53 @@
 # summarize Hamlib results in text output
+import os
+
 import pandas as pd
 from scipy.stats import gmean
 from prettytable import PrettyTable
 
-result_qiskit = pd.read_csv("./results/result_hamlib_qiskit.csv")
-result_tket = pd.read_csv("./results/result_hamlib_tket.csv")
-result_paulihedral = pd.read_csv("./results/result_hamlib_paulihedral.csv")
-result_tetris = pd.read_csv("./results/result_hamlib_tetris.csv")
-result_quclear = pd.read_csv("./results/result_hamlib_quclear.csv")
-result_phoenix = pd.read_csv("./results/result_hamlib_phoenix.csv")
+# display label -> results CSV key
+COMPILERS = [
+    ("Qiskit", "qiskit"),
+    ("TKet", "tket"),
+    ("Paulihedral", "paulihedral"),
+    ("Tetris", "tetris"),
+    ("QuCLEAR", "quclear"),
+    ("Phoenix", "phoenix"),
+    ("Phoenix++", "phoenixpp"),
+]
 
-compilers = {
-    "Qiskit": result_qiskit,
-    "TKet": result_tket,
-    "Paulihedral": result_paulihedral,
-    "Tetris": result_tetris,
-    "QuCLEAR": result_quclear,
-    "Phoenix": result_phoenix,
-}
+
+def _load(key):
+    """Load a compiler's results CSV, or an empty frame if it hasn't been run yet
+    (so the table still renders — that column shows '-')."""
+    path = "./results/result_hamlib_{}.csv".format(key)
+    return pd.read_csv(path) if os.path.exists(path) else pd.DataFrame()
+
+
+compilers = {label: _load(key) for label, key in COMPILERS}
 
 categories = ["binaryoptimization", "discreteoptimization", "chemistry", "condensedmatter"]
 
 
 def opt_rate(df, col_opt, col_orig, category=None):
+    if len(df) == 0 or col_opt not in df.columns or col_orig not in df.columns:
+        return "-"  # this compiler has not been run yet
     if category is not None:
         df = df[df["category"] == category]
     if len(df) == 0:
-        return float("nan")
+        return "-"
     return gmean(df[col_opt] / df[col_orig]).round(3)
 
 
 def category_label(cat):
-    n = max((df["category"] == cat).sum() for df in compilers.values())
+    counts = [(df["category"] == cat).sum() for df in compilers.values() if "category" in df.columns]
+    n = max(counts) if counts else 0
     return "{} ({})".format(cat, n)
 
 
 def all_label():
-    n = max(len(df) for df in compilers.values())
+    lens = [len(df) for df in compilers.values() if len(df)]
+    n = max(lens) if lens else 0
     return "All ({})".format(n)
 
 

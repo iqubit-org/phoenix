@@ -11,6 +11,7 @@ import os
 import json
 import argparse
 import warnings
+from functools import partial
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import qiskit.qasm2
 from natsort import natsorted
@@ -34,7 +35,8 @@ COMPILER_PASSES = {
     "tetris": bench_utils.tetris_pass,
     "pauliopt": bench_utils.pauliopt_pass,
     "quclear": bench_utils.quclear_pass,
-    "phoenix": bench_utils.phoenix_pass,
+    "phoenix": partial(bench_utils.phoenix_pass, grouping="support"),
+    "phoenixpp": partial(bench_utils.phoenix_pass, grouping="holistic"),
 }
 
 COUPLING_MAP_GENS = {

@@ -37,7 +37,7 @@ def main():
         help="With Qiskit O3 for further local optimization in Phoenix compiler (default: False)",
     )
     parser.add_argument("--tket-greedy", action="store_true", help="Use tket GreedyPauliSimp pass (default: False)")
-    parser.add_argument("-c", "--compiler", default="phoenix", type=str, help="Compiler (default: phoenix)")
+    parser.add_argument("-c", "--compiler", default="phoenixpp", type=str, help="Compiler (default: phoenixpp)")
     args = parser.parse_args()
 
     console.rule(f"Benchmarking on {args.filename}")
@@ -79,7 +79,13 @@ def main():
     elif args.compiler == "quclear":
         circ_opt = bench_utils.quclear_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, with_O3=args.O3)
     elif args.compiler == "phoenix":
-        circ_opt = bench_utils.phoenix_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, with_O3=args.O3)
+        circ_opt = bench_utils.phoenix_pass(
+            data["paulis"], data["coeffs"], grouping="support", coupling_map=coupling_map
+        )
+    elif args.compiler == "phoenixpp":
+        circ_opt = bench_utils.phoenix_pass(
+            data["paulis"], data["coeffs"], grouping="holistic", coupling_map=coupling_map
+        )
     else:
         raise ValueError("Unsupported compiler")
     elapsed = time.perf_counter() - t0
