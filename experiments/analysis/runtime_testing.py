@@ -180,7 +180,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    output = ANALYSIS_DIR / f"runtime_{args.benchmark_suite}_{args.compiler}.csv"
+    output = ANALYSIS_DIR / f"runtime_{args.benchmark_suite}_{args.compiler}(MacOS).csv"
     if args.overwrite and output.exists():
         output.unlink()
 
