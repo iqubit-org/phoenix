@@ -19,7 +19,7 @@ class SimplificationStep:
     qubits: tuple[int, int]
 
 
-def constr_circuit_from_simp_steps(ham: Hamiltonian, steps: list[SimplificationStep]) -> QuantumCircuit:
+def constr_circuit_from_simp_steps(ham: Hamiltonian, steps: list[SimplificationStep], optimize : bool = True) -> QuantumCircuit:
     qc_pre = QuantumCircuit(ham.num_qubits)
     qc_post = QuantumCircuit(ham.num_qubits)
 
@@ -34,7 +34,8 @@ def constr_circuit_from_simp_steps(ham: Hamiltonian, steps: list[SimplificationS
 
     qc = qc_pre.compose(qc_post).decompose("PauliEvolution")
 
-    qc = _optimize_phoenix_circuit_by_qiskit_each_group(qc)
+    if optimize:
+        qc = _optimize_phoenix_circuit_by_qiskit_each_group(qc)
 
     return qc
 

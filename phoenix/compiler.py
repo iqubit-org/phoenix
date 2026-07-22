@@ -12,20 +12,20 @@ from .utils import post_transpile
 
 
 def _process_same_weight_hamiltonian(
-    ham: Hamiltonian, parallel: bool = False, patience: int | None = None
+    ham: Hamiltonian, parallel: bool = False, patience: int | None = None, optimize : bool = True
 ) -> QuantumCircuit:
     """Helper function to process a single Hamiltonian group (used for parallel execution)."""
     ham_, simp_steps = simplify_hamiltonian(ham, parallel=parallel, patience=patience)
-    qc = constr_circuit_from_simp_steps(ham_, simp_steps)
+    qc = constr_circuit_from_simp_steps(ham_, simp_steps, optimize=optimize)
     return qc
 
 
 def _simplify_groups(
-    hams: list[Hamiltonian], backend: str, parallel: bool, patience: int | None
+    hams: list[Hamiltonian], backend: str, parallel: bool, patience: int | None, optimize : bool = True
 ) -> list[QuantumCircuit]:
     """Simplify each Hamiltonian group into a subcircuit, parallelizing across
     groups via the chosen backend (a single group always runs in-process)."""
-    simp = partial(_process_same_weight_hamiltonian, parallel=parallel, patience=patience)
+    simp = partial(_process_same_weight_hamiltonian, parallel=parallel, patience=patience, optimize=optimize)
     if len(hams) <= 1 or backend == "sequential":
         return [simp(ham) for ham in hams]
     if backend == "concurrent.futures":
@@ -77,7 +77,7 @@ def compile_hamiltonian_simulation(
         qc = holistic_compile(hamiltonian, terminal=terminal)
     elif grouping == "support":
         hams = hamiltonian.group_same_weights()
-        circuits = _simplify_groups(hams, backend, parallel=parallel_search, patience=search_patience)
+        circuits = _simplify_groups(hams, backend, parallel=parallel_search, patience=search_patience, optimize=optimize)
         qc = order_circuits(circuits, method=order_method or "tsp")
     else:
         raise ValueError(

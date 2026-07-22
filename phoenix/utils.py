@@ -142,7 +142,7 @@ def post_transpile(qc: QuantumCircuit) -> QuantumCircuit:
 
 def compile_by_qiskit(
     paulis: list[str], coeffs: list[float], coupling_map: CouplingMap = None,
-    little_endian: bool = True
+    little_endian: bool = True, optimize: bool = True
 ) -> QuantumCircuit:
     from qiskit.circuit.library import PauliEvolutionGate
     from qiskit.quantum_info import SparsePauliOp
@@ -172,7 +172,8 @@ def compile_by_qiskit(
     )
     hls_pass = passes.HighLevelSynthesis(hls_config=hls_config)
     qc = hls_pass(qc)
-    qc = post_transpile(qc)
+    if optimize:
+        qc = post_transpile(qc)
 
     if not(coupling_map is None or is_all2all_coupling_map(coupling_map)):
         qc = optimize_with_mapping(qc, coupling_map)
@@ -194,7 +195,7 @@ def optimize_with_mapping(circ: QuantumCircuit, coupling_map: CouplingMap) -> Qu
 
 
 def compile_by_tket(
-    paulis: list[str], coeffs: list[float], greedy: bool = True, little_endian: bool = True
+    paulis: list[str], coeffs: list[float], greedy: bool = True, little_endian: bool = True, optimize: bool = True
 ) -> QuantumCircuit:
     import pytket.passes
 
@@ -211,7 +212,8 @@ def compile_by_tket(
         circ.replace_implicit_wire_swaps()
 
     qc = tket_to_qiskit(circ)
-    qc = post_transpile(qc)
+    if optimize:
+        qc = post_transpile(qc)
     return qc
 
 
@@ -371,4 +373,28 @@ def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), hide_axi
     plt.show()
 
 
-# def gene_uccsd_hamiltonian()
+def synth_to_clifford_t(qc: QuantumCircuit, epsilon=1e-10) -> QuantumCircuit:
+    """Clifford+T synthesis with a controllable approximation error ``epsilon``."""
+    from qiskit.synthesis import gridsynth_rz, gridsynth_unitary
+    # base = qiskit.transpile(qc, basis_gates=["u", "cx"], optimization_level=1)
+    base = qiskit.transpile(qc, basis_gates=["rz", "sx", "x", "cx"], optimization_level=1)
+    out = QuantumCircuit(*base.qregs)
+    for inst in base.data:
+        op, qubits = inst.operation, inst.qubits
+        idx = [base.find_bit(q).index for q in qubits]
+        if op.name == "cx":
+            out.cx(*idx)
+        elif op.name == 'x':
+            out.x(*idx)
+        elif op.name == 'sx':
+            out.sx(*idx)
+        elif op.name == 'rz':
+            approx = gridsynth_rz(op.params[0], epsilon)
+            out.compose(approx, [idx[0]], inplace=True)
+        elif op.name == 'u' or op.name == 'u3':
+            approx = gridsynth_unitary(Operator(op).data, epsilon)
+            out.compose(approx, [idx[0]], inplace=True)
+        else:
+            raise ValueError(f"unexpected {op.num_qubits}-qubit gate {op.name!r}")
+    return out
+
