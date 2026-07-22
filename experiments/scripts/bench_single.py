@@ -64,20 +64,20 @@ def main():
     t0 = time.perf_counter()
     if args.compiler == "tket":
         circ_opt = bench_utils.tket_pass(
-            data["paulis"], data["coeffs"], greedy=args.tket_greedy, coupling_map=coupling_map, with_O3=args.O3
+            data["paulis"], data["coeffs"], greedy=args.tket_greedy, coupling_map=coupling_map
         )
     elif args.compiler == "qiskit":
-        circ_opt = bench_utils.qiskit_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, with_O3=args.O3)
+        circ_opt = bench_utils.qiskit_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map)
     elif args.compiler == "paulihedral":
         circ_opt = bench_utils.paulihedral_pass(
-            data["paulis"], data["coeffs"], coupling_map=coupling_map, with_O3=args.O3
+            data["paulis"], data["coeffs"], coupling_map=coupling_map
         )
     elif args.compiler == "tetris":
-        circ_opt = bench_utils.tetris_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, with_O3=args.O3)
+        circ_opt = bench_utils.tetris_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map)
     elif args.compiler == "pauliopt":
-        circ_opt = bench_utils.pauliopt_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, with_O3=args.O3)
+        circ_opt = bench_utils.pauliopt_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map)
     elif args.compiler == "quclear":
-        circ_opt = bench_utils.quclear_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, with_O3=args.O3)
+        circ_opt = bench_utils.quclear_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map)
     elif args.compiler == "phoenix":
         circ_opt = bench_utils.phoenix_pass(
             data["paulis"], data["coeffs"], grouping="support", coupling_map=coupling_map

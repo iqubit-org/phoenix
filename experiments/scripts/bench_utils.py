@@ -43,6 +43,7 @@ def phoenix_pass(
     coeffs: List[float],
     grouping: str | None = None,
     coupling_map: CouplingMap = None,
+    optimize: bool = True
 ) -> qiskit.QuantumCircuit:
     """Phoenix's high-level optimization.
 
@@ -52,7 +53,7 @@ def phoenix_pass(
         p[::-1] for p in paulis
     ]  # ! PHOENIX uses little-endian convention for Pauli strings, reverse the input strings here
     ham = phoenix.Hamiltonian(paulis, coeffs)
-    qc = phoenix.compile_hamiltonian_simulation(ham, grouping=grouping)
+    qc = phoenix.compile_hamiltonian_simulation(ham, grouping=grouping, optimize=optimize)
 
     if not (coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)):
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
@@ -127,11 +128,12 @@ def tetris_pass(
 def quclear_pass(
     paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None
 ) -> qiskit.QuantumCircuit:
-    from quclear.CE_module import construct_qcc_circuit, CE_recur_tree
-    from qiskit.synthesis import synth_clifford_greedy
     from qiskit.quantum_info import Clifford
+    from qiskit.synthesis import synth_clifford_greedy
+    from quclear.CE_module import CE_recur_tree
 
-    qc, append_clifford, sorted_entanglers = CE_recur_tree(entanglers=paulis, params=coeffs, barrier=False)
+    params = np.array(coeffs).real * 2.0
+    qc, append_clifford, _ = CE_recur_tree(entanglers=paulis, params=params, barrier=False)
     # append_clifford = append_clifford.decompose("swap")
     append_clifford = synth_clifford_greedy(Clifford(append_clifford))
     qc.compose(append_clifford, inplace=True)
@@ -240,18 +242,18 @@ def pauliopt_pass(
 
 
 def tket_pass(
-    paulis: List[str], coeffs: List[float], greedy: bool = True, coupling_map: CouplingMap = None
+    paulis: List[str], coeffs: List[float], greedy: bool = True, coupling_map: CouplingMap = None, optimize: bool = True
 ) -> qiskit.QuantumCircuit:
-    qc = phoenix.utils.compile_by_tket(paulis, coeffs, greedy=greedy, little_endian=False)
+    qc = phoenix.utils.compile_by_tket(paulis, coeffs, greedy=greedy, little_endian=False, optimize=optimize)
     if not (coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)):
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
     return qc
 
 
 def qiskit_pass(
-    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, optimize: bool = True
 ) -> qiskit.QuantumCircuit:
-    qc = phoenix.utils.compile_by_qiskit(paulis, coeffs, little_endian=False)
+    qc = phoenix.utils.compile_by_qiskit(paulis, coeffs, little_endian=False, optimize=optimize)
     if not (coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)):
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
     return qc

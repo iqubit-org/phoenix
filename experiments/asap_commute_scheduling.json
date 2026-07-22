@@ -1,0 +1,2734 @@
+{
+  "metadata": {
+    "metric": "two-qubit circuit depth after phoenix.compile_hamiltonian_simulation",
+    "ratio_definition": "SCHEDULE_ASAP=True depth / SCHEDULE_ASAP=False depth",
+    "improvement_rate_definition": "(depth_ratio_on_over_off - 1) * 100; negative is better",
+    "comparisons": {
+      "asap_without_commute": {
+        "label": "ASAP w/o Commute",
+        "off_key": "asap_off_commute_off",
+        "on_key": "asap_on_commute_off",
+        "description": "SCHEDULE_ASAP on/off with SCHEDULE_EXACT_COMMUTE=False."
+      },
+      "asap_with_commute": {
+        "label": "ASAP w/ Commute",
+        "off_key": "asap_off_commute_on",
+        "on_key": "asap_on_commute_on",
+        "description": "SCHEDULE_ASAP on/off with SCHEDULE_EXACT_COMMUTE=True."
+      }
+    }
+  },
+  "results": {
+    "binaryoptimization": [
+      {
+        "category": "binaryoptimization",
+        "name": "flat100-4-flat100-7.cnf-90-cc",
+        "qubits": 90,
+        "paulis": 223,
+        "depth_2q": {
+          "asap_off_commute_off": 24,
+          "asap_on_commute_off": 16,
+          "asap_off_commute_on": 23,
+          "asap_on_commute_on": 16
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 24,
+            "on_depth_2q": 16,
+            "depth_ratio_on_over_off": 0.6666666666666666,
+            "improvement_rate_pct": -33.333333333333336
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 23,
+            "on_depth_2q": 16,
+            "depth_ratio_on_over_off": 0.6956521739130435,
+            "improvement_rate_pct": -30.434782608695656
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-complete_bipart-complbipart-n-10_a-5_b-5",
+        "qubits": 10,
+        "paulis": 75,
+        "depth_2q": {
+          "asap_off_commute_off": 27,
+          "asap_on_commute_off": 21,
+          "asap_off_commute_on": 27,
+          "asap_on_commute_on": 21
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 27,
+            "on_depth_2q": 21,
+            "depth_ratio_on_over_off": 0.7777777777777778,
+            "improvement_rate_pct": -22.22222222222222
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 27,
+            "on_depth_2q": 21,
+            "depth_ratio_on_over_off": 0.7777777777777778,
+            "improvement_rate_pct": -22.22222222222222
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-2-gnp-k_2_n-4_rinst-05",
+        "qubits": 4,
+        "paulis": 12,
+        "depth_2q": {
+          "asap_off_commute_off": 12,
+          "asap_on_commute_off": 9,
+          "asap_off_commute_on": 12,
+          "asap_on_commute_on": 9
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 12,
+            "on_depth_2q": 9,
+            "depth_ratio_on_over_off": 0.75,
+            "improvement_rate_pct": -25.0
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 12,
+            "on_depth_2q": 9,
+            "depth_ratio_on_over_off": 0.75,
+            "improvement_rate_pct": -25.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-4-gnp-k_4_n-40_rinst-07",
+        "qubits": 40,
+        "paulis": 804,
+        "depth_2q": {
+          "asap_off_commute_off": 144,
+          "asap_on_commute_off": 57,
+          "asap_off_commute_on": 144,
+          "asap_on_commute_on": 57
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 144,
+            "on_depth_2q": 57,
+            "depth_ratio_on_over_off": 0.3958333333333333,
+            "improvement_rate_pct": -60.41666666666667
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 144,
+            "on_depth_2q": 57,
+            "depth_ratio_on_over_off": 0.3958333333333333,
+            "improvement_rate_pct": -60.41666666666667
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-4-gnp-k_4_n-6_rinst-15",
+        "qubits": 6,
+        "paulis": 45,
+        "depth_2q": {
+          "asap_off_commute_off": 27,
+          "asap_on_commute_off": 18,
+          "asap_off_commute_on": 27,
+          "asap_on_commute_on": 18
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 27,
+            "on_depth_2q": 18,
+            "depth_ratio_on_over_off": 0.6666666666666666,
+            "improvement_rate_pct": -33.333333333333336
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 27,
+            "on_depth_2q": 18,
+            "depth_ratio_on_over_off": 0.6666666666666666,
+            "improvement_rate_pct": -33.333333333333336
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-5-gnp-k_5_n-24_rinst-04",
+        "qubits": 24,
+        "paulis": 188,
+        "depth_2q": {
+          "asap_off_commute_off": 80,
+          "asap_on_commute_off": 46,
+          "asap_off_commute_on": 80,
+          "asap_on_commute_on": 46
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 80,
+            "on_depth_2q": 46,
+            "depth_ratio_on_over_off": 0.575,
+            "improvement_rate_pct": -42.50000000000001
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 80,
+            "on_depth_2q": 46,
+            "depth_ratio_on_over_off": 0.575,
+            "improvement_rate_pct": -42.50000000000001
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-5-gnp-k_5_n-60_rinst-19",
+        "qubits": 60,
+        "paulis": 1971,
+        "depth_2q": {
+          "asap_off_commute_off": 255,
+          "asap_on_commute_off": 99,
+          "asap_off_commute_on": 255,
+          "asap_on_commute_on": 99
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 255,
+            "on_depth_2q": 99,
+            "depth_ratio_on_over_off": 0.38823529411764707,
+            "improvement_rate_pct": -61.1764705882353
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 255,
+            "on_depth_2q": 99,
+            "depth_ratio_on_over_off": 0.38823529411764707,
+            "improvement_rate_pct": -61.1764705882353
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-5-gnp-k_5_n-90_rinst-02",
+        "qubits": 90,
+        "paulis": 2958,
+        "depth_2q": {
+          "asap_off_commute_off": 300,
+          "asap_on_commute_off": 99,
+          "asap_off_commute_on": 300,
+          "asap_on_commute_on": 99
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 300,
+            "on_depth_2q": 99,
+            "depth_ratio_on_over_off": 0.33,
+            "improvement_rate_pct": -67.0
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 300,
+            "on_depth_2q": 99,
+            "depth_ratio_on_over_off": 0.33,
+            "improvement_rate_pct": -67.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-regular_reg-4-reg-4_n-90_rinst-07",
+        "qubits": 90,
+        "paulis": 540,
+        "depth_2q": {
+          "asap_off_commute_off": 54,
+          "asap_on_commute_off": 18,
+          "asap_off_commute_on": 54,
+          "asap_on_commute_on": 18
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 54,
+            "on_depth_2q": 18,
+            "depth_ratio_on_over_off": 0.3333333333333333,
+            "improvement_rate_pct": -66.66666666666667
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 54,
+            "on_depth_2q": 18,
+            "depth_ratio_on_over_off": 0.3333333333333333,
+            "improvement_rate_pct": -66.66666666666667
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uf100-2-uf100-0396.cnf-46-res",
+        "qubits": 46,
+        "paulis": 271,
+        "depth_2q": {
+          "asap_off_commute_off": 148,
+          "asap_on_commute_off": 69,
+          "asap_off_commute_on": 190,
+          "asap_on_commute_on": 65
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 148,
+            "on_depth_2q": 69,
+            "depth_ratio_on_over_off": 0.46621621621621623,
+            "improvement_rate_pct": -53.37837837837838
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 190,
+            "on_depth_2q": 65,
+            "depth_ratio_on_over_off": 0.34210526315789475,
+            "improvement_rate_pct": -65.78947368421053
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uf100-2-uf100-0601.cnf-46-res",
+        "qubits": 46,
+        "paulis": 284,
+        "depth_2q": {
+          "asap_off_commute_off": 179,
+          "asap_on_commute_off": 69,
+          "asap_off_commute_on": 265,
+          "asap_on_commute_on": 68
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 179,
+            "on_depth_2q": 69,
+            "depth_ratio_on_over_off": 0.3854748603351955,
+            "improvement_rate_pct": -61.452513966480446
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 265,
+            "on_depth_2q": 68,
+            "depth_ratio_on_over_off": 0.25660377358490566,
+            "improvement_rate_pct": -74.33962264150944
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uf100-4-uf100-0246.cnf-70-res",
+        "qubits": 70,
+        "paulis": 688,
+        "depth_2q": {
+          "asap_off_commute_off": 365,
+          "asap_on_commute_off": 148,
+          "asap_off_commute_on": 502,
+          "asap_on_commute_on": 121
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 365,
+            "on_depth_2q": 148,
+            "depth_ratio_on_over_off": 0.4054794520547945,
+            "improvement_rate_pct": -59.45205479452055
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 502,
+            "on_depth_2q": 121,
+            "depth_ratio_on_over_off": 0.2410358565737052,
+            "improvement_rate_pct": -75.89641434262948
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uf20-7-uf20-0384.cnf-8-res",
+        "qubits": 8,
+        "paulis": 29,
+        "depth_2q": {
+          "asap_off_commute_off": 23,
+          "asap_on_commute_off": 16,
+          "asap_off_commute_on": 29,
+          "asap_on_commute_on": 16
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 23,
+            "on_depth_2q": 16,
+            "depth_ratio_on_over_off": 0.6956521739130435,
+            "improvement_rate_pct": -30.434782608695656
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 29,
+            "on_depth_2q": 16,
+            "depth_ratio_on_over_off": 0.5517241379310345,
+            "improvement_rate_pct": -44.827586206896555
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uuf100-0-uuf100-0810.cnf-40-res",
+        "qubits": 40,
+        "paulis": 187,
+        "depth_2q": {
+          "asap_off_commute_off": 101,
+          "asap_on_commute_off": 51,
+          "asap_off_commute_on": 117,
+          "asap_on_commute_on": 44
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 101,
+            "on_depth_2q": 51,
+            "depth_ratio_on_over_off": 0.504950495049505,
+            "improvement_rate_pct": -49.504950495049506
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 117,
+            "on_depth_2q": 44,
+            "depth_ratio_on_over_off": 0.37606837606837606,
+            "improvement_rate_pct": -62.39316239316239
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uuf100-8-uuf100-0509.cnf-40-cc",
+        "qubits": 40,
+        "paulis": 206,
+        "depth_2q": {
+          "asap_off_commute_off": 106,
+          "asap_on_commute_off": 52,
+          "asap_off_commute_on": 144,
+          "asap_on_commute_on": 50
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 106,
+            "on_depth_2q": 52,
+            "depth_ratio_on_over_off": 0.49056603773584906,
+            "improvement_rate_pct": -50.943396226415096
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 144,
+            "on_depth_2q": 50,
+            "depth_ratio_on_over_off": 0.3472222222222222,
+            "improvement_rate_pct": -65.27777777777779
+          }
+        }
+      }
+    ],
+    "discreteoptimization": [
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-10-tsp_prob-pr76_Ncity-10_enc-unary",
+        "qubits": 100,
+        "paulis": 1000,
+        "depth_2q": {
+          "asap_off_commute_off": 194,
+          "asap_on_commute_off": 54,
+          "asap_off_commute_on": 194,
+          "asap_on_commute_on": 54
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 194,
+            "on_depth_2q": 54,
+            "depth_ratio_on_over_off": 0.27835051546391754,
+            "improvement_rate_pct": -72.16494845360825
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 194,
+            "on_depth_2q": 54,
+            "depth_ratio_on_over_off": 0.27835051546391754,
+            "improvement_rate_pct": -72.16494845360825
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-10-tsp_prob-st70_Ncity-10_enc-unary",
+        "qubits": 100,
+        "paulis": 1000,
+        "depth_2q": {
+          "asap_off_commute_off": 194,
+          "asap_on_commute_off": 54,
+          "asap_off_commute_on": 194,
+          "asap_on_commute_on": 54
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 194,
+            "on_depth_2q": 54,
+            "depth_ratio_on_over_off": 0.27835051546391754,
+            "improvement_rate_pct": -72.16494845360825
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 194,
+            "on_depth_2q": 54,
+            "depth_ratio_on_over_off": 0.27835051546391754,
+            "improvement_rate_pct": -72.16494845360825
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-16-tsp_prob-fl417_Ncity-16_enc-stdbinary",
+        "qubits": 64,
+        "paulis": 3840,
+        "depth_2q": {
+          "asap_off_commute_off": 1837,
+          "asap_on_commute_off": 898,
+          "asap_off_commute_on": 2051,
+          "asap_on_commute_on": 780
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 1837,
+            "on_depth_2q": 898,
+            "depth_ratio_on_over_off": 0.48884050081654873,
+            "improvement_rate_pct": -51.11594991834513
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 2051,
+            "on_depth_2q": 780,
+            "depth_ratio_on_over_off": 0.3803022915650902,
+            "improvement_rate_pct": -61.96977084349098
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-16-tsp_prob-kroD100_Ncity-16_enc-stdbinary",
+        "qubits": 64,
+        "paulis": 3840,
+        "depth_2q": {
+          "asap_off_commute_off": 1837,
+          "asap_on_commute_off": 898,
+          "asap_off_commute_on": 2051,
+          "asap_on_commute_on": 780
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 1837,
+            "on_depth_2q": 898,
+            "depth_ratio_on_over_off": 0.48884050081654873,
+            "improvement_rate_pct": -51.11594991834513
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 2051,
+            "on_depth_2q": 780,
+            "depth_ratio_on_over_off": 0.3803022915650902,
+            "improvement_rate_pct": -61.96977084349098
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-4-tsp_rand-002_Ncity-4_enc-stdbinary",
+        "qubits": 8,
+        "paulis": 48,
+        "depth_2q": {
+          "asap_off_commute_off": 44,
+          "asap_on_commute_off": 34,
+          "asap_off_commute_on": 48,
+          "asap_on_commute_on": 37
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 44,
+            "on_depth_2q": 34,
+            "depth_ratio_on_over_off": 0.7727272727272727,
+            "improvement_rate_pct": -22.72727272727273
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 48,
+            "on_depth_2q": 37,
+            "depth_ratio_on_over_off": 0.7708333333333334,
+            "improvement_rate_pct": -22.916666666666664
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-5-tsp_prob-ts225_Ncity-5_enc-unary",
+        "qubits": 25,
+        "paulis": 125,
+        "depth_2q": {
+          "asap_off_commute_off": 44,
+          "asap_on_commute_off": 22,
+          "asap_off_commute_on": 44,
+          "asap_on_commute_on": 22
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 44,
+            "on_depth_2q": 22,
+            "depth_ratio_on_over_off": 0.5,
+            "improvement_rate_pct": -50.0
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 44,
+            "on_depth_2q": 22,
+            "depth_ratio_on_over_off": 0.5,
+            "improvement_rate_pct": -50.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-7-tsp_prob-lin105_Ncity-7_enc-unary",
+        "qubits": 49,
+        "paulis": 343,
+        "depth_2q": {
+          "asap_off_commute_off": 92,
+          "asap_on_commute_off": 36,
+          "asap_off_commute_on": 92,
+          "asap_on_commute_on": 36
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 92,
+            "on_depth_2q": 36,
+            "depth_ratio_on_over_off": 0.391304347826087,
+            "improvement_rate_pct": -60.86956521739131
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 92,
+            "on_depth_2q": 36,
+            "depth_ratio_on_over_off": 0.391304347826087,
+            "improvement_rate_pct": -60.86956521739131
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-8-tsp_prob-d198_Ncity-8_enc-unary",
+        "qubits": 64,
+        "paulis": 512,
+        "depth_2q": {
+          "asap_off_commute_off": 122,
+          "asap_on_commute_off": 28,
+          "asap_off_commute_on": 122,
+          "asap_on_commute_on": 28
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 122,
+            "on_depth_2q": 28,
+            "depth_ratio_on_over_off": 0.22950819672131148,
+            "improvement_rate_pct": -77.04918032786885
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 122,
+            "on_depth_2q": 28,
+            "depth_ratio_on_over_off": 0.22950819672131148,
+            "improvement_rate_pct": -77.04918032786885
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-8-tsp_prob-ulysses22_Ncity-8_enc-stdbinary",
+        "qubits": 24,
+        "paulis": 448,
+        "depth_2q": {
+          "asap_off_commute_off": 343,
+          "asap_on_commute_off": 199,
+          "asap_off_commute_on": 339,
+          "asap_on_commute_on": 188
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 343,
+            "on_depth_2q": 199,
+            "depth_ratio_on_over_off": 0.5801749271137027,
+            "improvement_rate_pct": -41.98250728862973
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 339,
+            "on_depth_2q": 188,
+            "depth_ratio_on_over_off": 0.5545722713864307,
+            "improvement_rate_pct": -44.54277286135693
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "binary-color02-dsjc1000.1_k-3-dsjc1000.1",
+        "qubits": 72,
+        "paulis": 675,
+        "depth_2q": {
+          "asap_off_commute_off": 191,
+          "asap_on_commute_off": 157,
+          "asap_off_commute_on": 340,
+          "asap_on_commute_on": 156
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 191,
+            "on_depth_2q": 157,
+            "depth_ratio_on_over_off": 0.8219895287958116,
+            "improvement_rate_pct": -17.801047120418843
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 340,
+            "on_depth_2q": 156,
+            "depth_ratio_on_over_off": 0.4588235294117647,
+            "improvement_rate_pct": -54.117647058823536
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "binary-graph-regular_k-5-reg-5_n-10_rinst-07",
+        "qubits": 30,
+        "paulis": 1295,
+        "depth_2q": {
+          "asap_off_commute_off": 702,
+          "asap_on_commute_off": 684,
+          "asap_off_commute_on": 989,
+          "asap_on_commute_on": 622
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 702,
+            "on_depth_2q": 684,
+            "depth_ratio_on_over_off": 0.9743589743589743,
+            "improvement_rate_pct": -2.564102564102566
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 989,
+            "on_depth_2q": 622,
+            "depth_ratio_on_over_off": 0.6289180990899899,
+            "improvement_rate_pct": -37.10819009100101
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "gray-color02-1-fullins_5_k-5-1-fullins_5",
+        "qubits": 144,
+        "paulis": 5334,
+        "depth_2q": {
+          "asap_off_commute_off": 2155,
+          "asap_on_commute_off": 1638,
+          "asap_off_commute_on": 3066,
+          "asap_on_commute_on": 1559
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 2155,
+            "on_depth_2q": 1638,
+            "depth_ratio_on_over_off": 0.760092807424594,
+            "improvement_rate_pct": -23.990719257540604
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 3066,
+            "on_depth_2q": 1559,
+            "depth_ratio_on_over_off": 0.5084801043705154,
+            "improvement_rate_pct": -49.15198956294846
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "gray-color02-will199gpia_k-3-will199gpia",
+        "qubits": 120,
+        "paulis": 1512,
+        "depth_2q": {
+          "asap_off_commute_off": 269,
+          "asap_on_commute_off": 281,
+          "asap_off_commute_on": 622,
+          "asap_on_commute_on": 279
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 269,
+            "on_depth_2q": 281,
+            "depth_ratio_on_over_off": 1.0446096654275092,
+            "improvement_rate_pct": 4.4609665427509215
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 622,
+            "on_depth_2q": 279,
+            "depth_ratio_on_over_off": 0.44855305466237944,
+            "improvement_rate_pct": -55.14469453376205
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "unary-color02-ash608gpia_k-3-ash608gpia",
+        "qubits": 480,
+        "paulis": 1614,
+        "depth_2q": {
+          "asap_off_commute_off": 108,
+          "asap_on_commute_off": 28,
+          "asap_off_commute_on": 108,
+          "asap_on_commute_on": 28
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 108,
+            "on_depth_2q": 28,
+            "depth_ratio_on_over_off": 0.25925925925925924,
+            "improvement_rate_pct": -74.07407407407408
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 108,
+            "on_depth_2q": 28,
+            "depth_ratio_on_over_off": 0.25925925925925924,
+            "improvement_rate_pct": -74.07407407407408
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "unary-color02-queen13_13_k-4-queen13_13",
+        "qubits": 112,
+        "paulis": 412,
+        "depth_2q": {
+          "asap_off_commute_off": 58,
+          "asap_on_commute_off": 18,
+          "asap_off_commute_on": 58,
+          "asap_on_commute_on": 18
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 58,
+            "on_depth_2q": 18,
+            "depth_ratio_on_over_off": 0.3103448275862069,
+            "improvement_rate_pct": -68.96551724137932
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 58,
+            "on_depth_2q": 18,
+            "depth_ratio_on_over_off": 0.3103448275862069,
+            "improvement_rate_pct": -68.96551724137932
+          }
+        }
+      }
+    ],
+    "chemistry": [
+      {
+        "category": "chemistry",
+        "name": "BH-JW-10",
+        "qubits": 10,
+        "paulis": 275,
+        "depth_2q": {
+          "asap_off_commute_off": 393,
+          "asap_on_commute_off": 390,
+          "asap_off_commute_on": 433,
+          "asap_on_commute_on": 354
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 393,
+            "on_depth_2q": 390,
+            "depth_ratio_on_over_off": 0.9923664122137404,
+            "improvement_rate_pct": -0.7633587786259555
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 433,
+            "on_depth_2q": 354,
+            "depth_ratio_on_over_off": 0.8175519630484989,
+            "improvement_rate_pct": -18.244803695150114
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "Be2-JW-6",
+        "qubits": 6,
+        "paulis": 61,
+        "depth_2q": {
+          "asap_off_commute_off": 97,
+          "asap_on_commute_off": 89,
+          "asap_off_commute_on": 101,
+          "asap_on_commute_on": 83
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 97,
+            "on_depth_2q": 89,
+            "depth_ratio_on_over_off": 0.9175257731958762,
+            "improvement_rate_pct": -8.247422680412376
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 101,
+            "on_depth_2q": 83,
+            "depth_ratio_on_over_off": 0.8217821782178217,
+            "improvement_rate_pct": -17.821782178217827
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "C2-JW-18",
+        "qubits": 18,
+        "paulis": 1883,
+        "depth_2q": {
+          "asap_off_commute_off": 2251,
+          "asap_on_commute_off": 2136,
+          "asap_off_commute_on": 2412,
+          "asap_on_commute_on": 2011
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 2251,
+            "on_depth_2q": 2136,
+            "depth_ratio_on_over_off": 0.9489115948467348,
+            "improvement_rate_pct": -5.108840515326518
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 2412,
+            "on_depth_2q": 2011,
+            "depth_ratio_on_over_off": 0.8337479270315091,
+            "improvement_rate_pct": -16.625207296849087
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "H2-JW-8",
+        "qubits": 8,
+        "paulis": 184,
+        "depth_2q": {
+          "asap_off_commute_off": 254,
+          "asap_on_commute_off": 235,
+          "asap_off_commute_on": 253,
+          "asap_on_commute_on": 222
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 254,
+            "on_depth_2q": 235,
+            "depth_ratio_on_over_off": 0.9251968503937008,
+            "improvement_rate_pct": -7.480314960629919
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 253,
+            "on_depth_2q": 222,
+            "depth_ratio_on_over_off": 0.8774703557312253,
+            "improvement_rate_pct": -12.252964426877465
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "HF-BK12",
+        "qubits": 12,
+        "paulis": 630,
+        "depth_2q": {
+          "asap_off_commute_off": 782,
+          "asap_on_commute_off": 726,
+          "asap_off_commute_on": 785,
+          "asap_on_commute_on": 668
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 782,
+            "on_depth_2q": 726,
+            "depth_ratio_on_over_off": 0.928388746803069,
+            "improvement_rate_pct": -7.161125319693095
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 785,
+            "on_depth_2q": 668,
+            "depth_ratio_on_over_off": 0.8509554140127389,
+            "improvement_rate_pct": -14.904458598726112
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "HF-parity10",
+        "qubits": 10,
+        "paulis": 275,
+        "depth_2q": {
+          "asap_off_commute_off": 386,
+          "asap_on_commute_off": 371,
+          "asap_off_commute_on": 401,
+          "asap_on_commute_on": 359
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 386,
+            "on_depth_2q": 371,
+            "depth_ratio_on_over_off": 0.961139896373057,
+            "improvement_rate_pct": -3.886010362694303
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 401,
+            "on_depth_2q": 359,
+            "depth_ratio_on_over_off": 0.8952618453865336,
+            "improvement_rate_pct": -10.473815461346636
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "Li2-JW14",
+        "qubits": 14,
+        "paulis": 669,
+        "depth_2q": {
+          "asap_off_commute_off": 873,
+          "asap_on_commute_off": 815,
+          "asap_off_commute_on": 964,
+          "asap_on_commute_on": 784
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 873,
+            "on_depth_2q": 815,
+            "depth_ratio_on_over_off": 0.9335624284077892,
+            "improvement_rate_pct": -6.643757159221075
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 964,
+            "on_depth_2q": 784,
+            "depth_ratio_on_over_off": 0.8132780082987552,
+            "improvement_rate_pct": -18.672199170124482
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "LiH-parity-4",
+        "qubits": 4,
+        "paulis": 26,
+        "depth_2q": {
+          "asap_off_commute_off": 40,
+          "asap_on_commute_off": 32,
+          "asap_off_commute_on": 37,
+          "asap_on_commute_on": 32
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 40,
+            "on_depth_2q": 32,
+            "depth_ratio_on_over_off": 0.8,
+            "improvement_rate_pct": -19.999999999999996
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 37,
+            "on_depth_2q": 32,
+            "depth_ratio_on_over_off": 0.8648648648648649,
+            "improvement_rate_pct": -13.513513513513509
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "N2-JW-22",
+        "qubits": 22,
+        "paulis": 4577,
+        "depth_2q": {
+          "asap_off_commute_off": 5314,
+          "asap_on_commute_off": 5076,
+          "asap_off_commute_on": 5416,
+          "asap_on_commute_on": 4730
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 5314,
+            "on_depth_2q": 5076,
+            "depth_ratio_on_over_off": 0.9552126458411743,
+            "improvement_rate_pct": -4.478735415882573
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 5416,
+            "on_depth_2q": 4730,
+            "depth_ratio_on_over_off": 0.8733382570162481,
+            "improvement_rate_pct": -12.666174298375187
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "N2-parity-14",
+        "qubits": 14,
+        "paulis": 669,
+        "depth_2q": {
+          "asap_off_commute_off": 993,
+          "asap_on_commute_off": 970,
+          "asap_off_commute_on": 989,
+          "asap_on_commute_on": 901
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 993,
+            "on_depth_2q": 970,
+            "depth_ratio_on_over_off": 0.9768378650553877,
+            "improvement_rate_pct": -2.316213494461228
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 989,
+            "on_depth_2q": 901,
+            "depth_ratio_on_over_off": 0.9110212335692619,
+            "improvement_rate_pct": -8.89787664307381
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "NH-BK-14",
+        "qubits": 14,
+        "paulis": 1085,
+        "depth_2q": {
+          "asap_off_commute_off": 1327,
+          "asap_on_commute_off": 1226,
+          "asap_off_commute_on": 1310,
+          "asap_on_commute_on": 1155
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 1327,
+            "on_depth_2q": 1226,
+            "depth_ratio_on_over_off": 0.9238884702336096,
+            "improvement_rate_pct": -7.611152976639035
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 1310,
+            "on_depth_2q": 1155,
+            "depth_ratio_on_over_off": 0.8816793893129771,
+            "improvement_rate_pct": -11.832061068702293
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "NH-JW-14",
+        "qubits": 14,
+        "paulis": 1085,
+        "depth_2q": {
+          "asap_off_commute_off": 1197,
+          "asap_on_commute_off": 1165,
+          "asap_off_commute_on": 1295,
+          "asap_on_commute_on": 1088
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 1197,
+            "on_depth_2q": 1165,
+            "depth_ratio_on_over_off": 0.9732664995822891,
+            "improvement_rate_pct": -2.6733500417710943
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 1295,
+            "on_depth_2q": 1088,
+            "depth_ratio_on_over_off": 0.8401544401544402,
+            "improvement_rate_pct": -15.984555984555982
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "Na2-JW24",
+        "qubits": 24,
+        "paulis": 6508,
+        "depth_2q": {
+          "asap_off_commute_off": 5421,
+          "asap_on_commute_off": 5341,
+          "asap_off_commute_on": 5616,
+          "asap_on_commute_on": 5015
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 5421,
+            "on_depth_2q": 5341,
+            "depth_ratio_on_over_off": 0.9852425751706327,
+            "improvement_rate_pct": -1.475742482936726
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 5616,
+            "on_depth_2q": 5015,
+            "depth_ratio_on_over_off": 0.8929843304843305,
+            "improvement_rate_pct": -10.701566951566955
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "O3-BK22",
+        "qubits": 22,
+        "paulis": 5465,
+        "depth_2q": {
+          "asap_off_commute_off": 6082,
+          "asap_on_commute_off": 5508,
+          "asap_off_commute_on": 6026,
+          "asap_on_commute_on": 5178
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 6082,
+            "on_depth_2q": 5508,
+            "depth_ratio_on_over_off": 0.9056231502795133,
+            "improvement_rate_pct": -9.437684972048665
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 6026,
+            "on_depth_2q": 5178,
+            "depth_ratio_on_over_off": 0.859276468635911,
+            "improvement_rate_pct": -14.0723531364089
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "OH-JW10",
+        "qubits": 10,
+        "paulis": 275,
+        "depth_2q": {
+          "asap_off_commute_off": 398,
+          "asap_on_commute_off": 392,
+          "asap_off_commute_on": 437,
+          "asap_on_commute_on": 352
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 398,
+            "on_depth_2q": 392,
+            "depth_ratio_on_over_off": 0.9849246231155779,
+            "improvement_rate_pct": -1.5075376884422065
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 437,
+            "on_depth_2q": 352,
+            "depth_ratio_on_over_off": 0.8054919908466819,
+            "improvement_rate_pct": -19.45080091533181
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "OH-JW12",
+        "qubits": 12,
+        "paulis": 630,
+        "depth_2q": {
+          "asap_off_commute_off": 870,
+          "asap_on_commute_off": 823,
+          "asap_off_commute_on": 894,
+          "asap_on_commute_on": 738
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 870,
+            "on_depth_2q": 823,
+            "depth_ratio_on_over_off": 0.9459770114942528,
+            "improvement_rate_pct": -5.4022988505747165
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 894,
+            "on_depth_2q": 738,
+            "depth_ratio_on_over_off": 0.825503355704698,
+            "improvement_rate_pct": -17.4496644295302
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "OH-parity12",
+        "qubits": 12,
+        "paulis": 630,
+        "depth_2q": {
+          "asap_off_commute_off": 869,
+          "asap_on_commute_off": 845,
+          "asap_off_commute_on": 900,
+          "asap_on_commute_on": 794
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 869,
+            "on_depth_2q": 845,
+            "depth_ratio_on_over_off": 0.9723820483314154,
+            "improvement_rate_pct": -2.7617951668584606
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 900,
+            "on_depth_2q": 794,
+            "depth_ratio_on_over_off": 0.8822222222222222,
+            "improvement_rate_pct": -11.777777777777775
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-bh-enc_stdbinary_dvalues_d-level-4",
+        "qubits": 2,
+        "paulis": 9,
+        "depth_2q": {
+          "asap_off_commute_off": 3,
+          "asap_on_commute_off": 3,
+          "asap_off_commute_on": 3,
+          "asap_on_commute_on": 3
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 3,
+            "on_depth_2q": 3,
+            "depth_ratio_on_over_off": 1.0,
+            "improvement_rate_pct": 0.0
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 3,
+            "on_depth_2q": 3,
+            "depth_ratio_on_over_off": 1.0,
+            "improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-bhf2-mu_y_prime_enc_stdbinary_dvalues_8-8-8-8-8-8",
+        "qubits": 6,
+        "paulis": 24,
+        "depth_2q": {
+          "asap_off_commute_off": 12,
+          "asap_on_commute_off": 12,
+          "asap_off_commute_on": 10,
+          "asap_on_commute_on": 12
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 12,
+            "on_depth_2q": 12,
+            "depth_ratio_on_over_off": 1.0,
+            "improvement_rate_pct": 0.0
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 10,
+            "on_depth_2q": 12,
+            "depth_ratio_on_over_off": 1.2,
+            "improvement_rate_pct": 19.999999999999996
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-c2h-mu_y_prime_enc_stdbinary_dvalues_8-8-4-4",
+        "qubits": 3,
+        "paulis": 12,
+        "depth_2q": {
+          "asap_off_commute_off": 12,
+          "asap_on_commute_off": 10,
+          "asap_off_commute_on": 10,
+          "asap_on_commute_on": 10
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 12,
+            "on_depth_2q": 10,
+            "depth_ratio_on_over_off": 0.8333333333333334,
+            "improvement_rate_pct": -16.666666666666664
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 10,
+            "on_depth_2q": 10,
+            "depth_ratio_on_over_off": 1.0,
+            "improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-c2h-mu_z_prime_enc_gray_dvalues_4-4-4-4",
+        "qubits": 4,
+        "paulis": 8,
+        "depth_2q": {
+          "asap_off_commute_off": 2,
+          "asap_on_commute_off": 2,
+          "asap_off_commute_on": 2,
+          "asap_on_commute_on": 2
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 2,
+            "on_depth_2q": 2,
+            "depth_ratio_on_over_off": 1.0,
+            "improvement_rate_pct": 0.0
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 2,
+            "on_depth_2q": 2,
+            "depth_ratio_on_over_off": 1.0,
+            "improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-ch2-mu_y_prime_enc_gray_dvalues_16-16-16",
+        "qubits": 4,
+        "paulis": 32,
+        "depth_2q": {
+          "asap_off_commute_off": 40,
+          "asap_on_commute_off": 33,
+          "asap_off_commute_on": 40,
+          "asap_on_commute_on": 33
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 40,
+            "on_depth_2q": 33,
+            "depth_ratio_on_over_off": 0.825,
+            "improvement_rate_pct": -17.500000000000004
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 40,
+            "on_depth_2q": 33,
+            "depth_ratio_on_over_off": 0.825,
+            "improvement_rate_pct": -17.500000000000004
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-cyclo_propene-mu_x_prime_enc_stdbinary_dvalues_8-8-8-8-8-8-8-8-8-4-4-4-4-4-4",
+        "qubits": 11,
+        "paulis": 40,
+        "depth_2q": {
+          "asap_off_commute_off": 12,
+          "asap_on_commute_off": 12,
+          "asap_off_commute_on": 10,
+          "asap_on_commute_on": 12
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 12,
+            "on_depth_2q": 12,
+            "depth_ratio_on_over_off": 1.0,
+            "improvement_rate_pct": 0.0
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 10,
+            "on_depth_2q": 12,
+            "depth_ratio_on_over_off": 1.2,
+            "improvement_rate_pct": 19.999999999999996
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-cyclo_propene-mu_x_prime_enc_unary_dvalues_16-16-16-16-16-16-16-16-16-16-16-16-16-16-16",
+        "qubits": 64,
+        "paulis": 120,
+        "depth_2q": {
+          "asap_off_commute_off": 30,
+          "asap_on_commute_off": 4,
+          "asap_off_commute_on": 30,
+          "asap_on_commute_on": 4
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 30,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.13333333333333333,
+            "improvement_rate_pct": -86.66666666666667
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 30,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.13333333333333333,
+            "improvement_rate_pct": -86.66666666666667
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-f2-enc_gray_dvalues_d-level-16",
+        "qubits": 4,
+        "paulis": 98,
+        "depth_2q": {
+          "asap_off_commute_off": 79,
+          "asap_on_commute_off": 70,
+          "asap_off_commute_on": 77,
+          "asap_on_commute_on": 70
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 79,
+            "on_depth_2q": 70,
+            "depth_ratio_on_over_off": 0.8860759493670886,
+            "improvement_rate_pct": -11.392405063291145
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 77,
+            "on_depth_2q": 70,
+            "depth_ratio_on_over_off": 0.9090909090909091,
+            "improvement_rate_pct": -9.090909090909093
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-fccf-enc_gray_dvalues_4-4-4-4-4-4-4",
+        "qubits": 14,
+        "paulis": 1035,
+        "depth_2q": {
+          "asap_off_commute_off": 986,
+          "asap_on_commute_off": 1025,
+          "asap_off_commute_on": 1131,
+          "asap_on_commute_on": 986
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 986,
+            "on_depth_2q": 1025,
+            "depth_ratio_on_over_off": 1.039553752535497,
+            "improvement_rate_pct": 3.9553752535496978
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 1131,
+            "on_depth_2q": 986,
+            "depth_ratio_on_over_off": 0.8717948717948718,
+            "improvement_rate_pct": -12.82051282051282
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-fccf-mu_y_prime_enc_stdbinary_dvalues_16-16-16-16-8-8-8",
+        "qubits": 4,
+        "paulis": 32,
+        "depth_2q": {
+          "asap_off_commute_off": 39,
+          "asap_on_commute_off": 32,
+          "asap_off_commute_on": 40,
+          "asap_on_commute_on": 32
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 39,
+            "on_depth_2q": 32,
+            "depth_ratio_on_over_off": 0.8205128205128205,
+            "improvement_rate_pct": -17.948717948717952
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 40,
+            "on_depth_2q": 32,
+            "depth_ratio_on_over_off": 0.8,
+            "improvement_rate_pct": -19.999999999999996
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-fccf-mu_y_prime_enc_unary_dvalues_8-8-8-8-8-8-8",
+        "qubits": 8,
+        "paulis": 14,
+        "depth_2q": {
+          "asap_off_commute_off": 14,
+          "asap_on_commute_off": 4,
+          "asap_off_commute_on": 14,
+          "asap_on_commute_on": 4
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 14,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.2857142857142857,
+            "improvement_rate_pct": -71.42857142857143
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 14,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.2857142857142857,
+            "improvement_rate_pct": -71.42857142857143
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-fccf-mu_z_prime_enc_unary_dvalues_16-16-16-16-16-16-16",
+        "qubits": 16,
+        "paulis": 30,
+        "depth_2q": {
+          "asap_off_commute_off": 30,
+          "asap_on_commute_off": 4,
+          "asap_off_commute_on": 30,
+          "asap_on_commute_on": 4
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 30,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.13333333333333333,
+            "improvement_rate_pct": -86.66666666666667
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 30,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.13333333333333333,
+            "improvement_rate_pct": -86.66666666666667
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-h2co-mu_y_prime_enc_unary_dvalues_16-16-16-16-16-16",
+        "qubits": 32,
+        "paulis": 60,
+        "depth_2q": {
+          "asap_off_commute_off": 30,
+          "asap_on_commute_off": 4,
+          "asap_off_commute_on": 30,
+          "asap_on_commute_on": 4
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 30,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.13333333333333333,
+            "improvement_rate_pct": -86.66666666666667
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 30,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.13333333333333333,
+            "improvement_rate_pct": -86.66666666666667
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-hc3h2cn-mu_y_prime_enc_stdbinary_dvalues_4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4",
+        "qubits": 24,
+        "paulis": 48,
+        "depth_2q": {
+          "asap_off_commute_off": 2,
+          "asap_on_commute_off": 2,
+          "asap_off_commute_on": 2,
+          "asap_on_commute_on": 2
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 2,
+            "on_depth_2q": 2,
+            "depth_ratio_on_over_off": 1.0,
+            "improvement_rate_pct": 0.0
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 2,
+            "on_depth_2q": 2,
+            "depth_ratio_on_over_off": 1.0,
+            "improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-hco-enc_unary_dvalues_4-4-4",
+        "qubits": 12,
+        "paulis": 1788,
+        "depth_2q": {
+          "asap_off_commute_off": 2905,
+          "asap_on_commute_off": 2876,
+          "asap_off_commute_on": 2903,
+          "asap_on_commute_on": 2650
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 2905,
+            "on_depth_2q": 2876,
+            "depth_ratio_on_over_off": 0.9900172117039587,
+            "improvement_rate_pct": -0.9982788296041267
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 2903,
+            "on_depth_2q": 2650,
+            "depth_ratio_on_over_off": 0.9128487771271099,
+            "improvement_rate_pct": -8.715122287289013
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-hno-mu_x_prime_enc_unary_dvalues_4-4-4",
+        "qubits": 12,
+        "paulis": 18,
+        "depth_2q": {
+          "asap_off_commute_off": 6,
+          "asap_on_commute_off": 4,
+          "asap_off_commute_on": 6,
+          "asap_on_commute_on": 4
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 6,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.6666666666666666,
+            "improvement_rate_pct": -33.333333333333336
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 6,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.6666666666666666,
+            "improvement_rate_pct": -33.333333333333336
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-o3-enc_gray_dvalues_8-8-8",
+        "qubits": 9,
+        "paulis": 2801,
+        "depth_2q": {
+          "asap_off_commute_off": 3595,
+          "asap_on_commute_off": 3539,
+          "asap_off_commute_on": 3729,
+          "asap_on_commute_on": 3324
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 3595,
+            "on_depth_2q": 3539,
+            "depth_ratio_on_over_off": 0.98442280945758,
+            "improvement_rate_pct": -1.5577190542420016
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 3729,
+            "on_depth_2q": 3324,
+            "depth_ratio_on_over_off": 0.8913917940466614,
+            "improvement_rate_pct": -10.860820595333864
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-o3-mu_y_prime_enc_unary_dvalues_4-4-4",
+        "qubits": 4,
+        "paulis": 6,
+        "depth_2q": {
+          "asap_off_commute_off": 6,
+          "asap_on_commute_off": 4,
+          "asap_off_commute_on": 6,
+          "asap_on_commute_on": 4
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 6,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.6666666666666666,
+            "improvement_rate_pct": -33.333333333333336
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 6,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.6666666666666666,
+            "improvement_rate_pct": -33.333333333333336
+          }
+        }
+      }
+    ],
+    "condensedmatter": [
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-nonpbc-qubitnodes_Lx-12_U-40_enc-unary_d-4",
+        "qubits": 48,
+        "paulis": 816,
+        "depth_2q": {
+          "asap_off_commute_off": 460,
+          "asap_on_commute_off": 344,
+          "asap_off_commute_on": 473,
+          "asap_on_commute_on": 351
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 460,
+            "on_depth_2q": 344,
+            "depth_ratio_on_over_off": 0.7478260869565218,
+            "improvement_rate_pct": -25.217391304347824
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 473,
+            "on_depth_2q": 351,
+            "depth_ratio_on_over_off": 0.7420718816067653,
+            "improvement_rate_pct": -25.79281183932347
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-14_U-10_enc-stdbinary_d-4",
+        "qubits": 28,
+        "paulis": 490,
+        "depth_2q": {
+          "asap_off_commute_off": 151,
+          "asap_on_commute_off": 82,
+          "asap_off_commute_on": 149,
+          "asap_on_commute_on": 82
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 151,
+            "on_depth_2q": 82,
+            "depth_ratio_on_over_off": 0.543046357615894,
+            "improvement_rate_pct": -45.6953642384106
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 149,
+            "on_depth_2q": 82,
+            "depth_ratio_on_over_off": 0.5503355704697986,
+            "improvement_rate_pct": -44.966442953020135
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-24_U-20_enc-stdbinary_d-4",
+        "qubits": 48,
+        "paulis": 840,
+        "depth_2q": {
+          "asap_off_commute_off": 251,
+          "asap_on_commute_off": 83,
+          "asap_off_commute_on": 239,
+          "asap_on_commute_on": 83
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 251,
+            "on_depth_2q": 83,
+            "depth_ratio_on_over_off": 0.33067729083665337,
+            "improvement_rate_pct": -66.93227091633467
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 239,
+            "on_depth_2q": 83,
+            "depth_ratio_on_over_off": 0.3472803347280335,
+            "improvement_rate_pct": -65.27196652719664
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-46_U-2_enc-gray_d-4",
+        "qubits": 92,
+        "paulis": 1610,
+        "depth_2q": {
+          "asap_off_commute_off": 480,
+          "asap_on_commute_off": 55,
+          "asap_off_commute_on": 377,
+          "asap_on_commute_on": 60
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 480,
+            "on_depth_2q": 55,
+            "depth_ratio_on_over_off": 0.11458333333333333,
+            "improvement_rate_pct": -88.54166666666666
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 377,
+            "on_depth_2q": 60,
+            "depth_ratio_on_over_off": 0.15915119363395225,
+            "improvement_rate_pct": -84.08488063660478
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-60_U-10_enc-stdbinary_d-4",
+        "qubits": 120,
+        "paulis": 2100,
+        "depth_2q": {
+          "asap_off_commute_off": 611,
+          "asap_on_commute_off": 83,
+          "asap_off_commute_on": 563,
+          "asap_on_commute_on": 83
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 611,
+            "on_depth_2q": 83,
+            "depth_ratio_on_over_off": 0.13584288052373159,
+            "improvement_rate_pct": -86.41571194762683
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 563,
+            "on_depth_2q": 83,
+            "depth_ratio_on_over_off": 0.14742451154529307,
+            "improvement_rate_pct": -85.2575488454707
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-10_U-30_enc-unary_d-8",
+        "qubits": 80,
+        "paulis": 3980,
+        "depth_2q": {
+          "asap_off_commute_off": 2119,
+          "asap_on_commute_off": 2096,
+          "asap_off_commute_on": 2358,
+          "asap_on_commute_on": 1818
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 2119,
+            "on_depth_2q": 2096,
+            "depth_ratio_on_over_off": 0.9891458235016517,
+            "improvement_rate_pct": -1.08541764983483
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 2358,
+            "on_depth_2q": 1818,
+            "depth_ratio_on_over_off": 0.7709923664122137,
+            "improvement_rate_pct": -22.90076335877863
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-4_U-40_enc-gray_d-8",
+        "qubits": 12,
+        "paulis": 1176,
+        "depth_2q": {
+          "asap_off_commute_off": 611,
+          "asap_on_commute_off": 555,
+          "asap_off_commute_on": 608,
+          "asap_on_commute_on": 543
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 611,
+            "on_depth_2q": 555,
+            "depth_ratio_on_over_off": 0.9083469721767594,
+            "improvement_rate_pct": -9.165302782324058
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 608,
+            "on_depth_2q": 543,
+            "depth_ratio_on_over_off": 0.8930921052631579,
+            "improvement_rate_pct": -10.690789473684214
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-grid-nonpbc-qubitnodes_Lx-7_Ly-7_U-70_enc-gray_d-4",
+        "qubits": 98,
+        "paulis": 2835,
+        "depth_2q": {
+          "asap_off_commute_off": 357,
+          "asap_on_commute_off": 118,
+          "asap_off_commute_on": 230,
+          "asap_on_commute_on": 118
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 357,
+            "on_depth_2q": 118,
+            "depth_ratio_on_over_off": 0.33053221288515405,
+            "improvement_rate_pct": -66.9467787114846
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 230,
+            "on_depth_2q": 118,
+            "depth_ratio_on_over_off": 0.5130434782608696,
+            "improvement_rate_pct": -48.69565217391304
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-11_Ly-11_U-100_enc-gray_d-4",
+        "qubits": 156,
+        "paulis": 6570,
+        "depth_2q": {
+          "asap_off_commute_off": 518,
+          "asap_on_commute_off": 192,
+          "asap_off_commute_on": 347,
+          "asap_on_commute_on": 192
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 518,
+            "on_depth_2q": 192,
+            "depth_ratio_on_over_off": 0.37065637065637064,
+            "improvement_rate_pct": -62.934362934362944
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 347,
+            "on_depth_2q": 192,
+            "depth_ratio_on_over_off": 0.553314121037464,
+            "improvement_rate_pct": -44.6685878962536
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-5_U-30_enc-gray_d-4",
+        "qubits": 28,
+        "paulis": 938,
+        "depth_2q": {
+          "asap_off_commute_off": 187,
+          "asap_on_commute_off": 191,
+          "asap_off_commute_on": 151,
+          "asap_on_commute_on": 191
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 187,
+            "on_depth_2q": 191,
+            "depth_ratio_on_over_off": 1.0213903743315509,
+            "improvement_rate_pct": 2.1390374331550888
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 151,
+            "on_depth_2q": 191,
+            "depth_ratio_on_over_off": 1.2649006622516556,
+            "improvement_rate_pct": 26.490066225165563
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-10_Ly-10_U-30_enc-stdbinary_d-4",
+        "qubits": 100,
+        "paulis": 4950,
+        "depth_2q": {
+          "asap_off_commute_off": 533,
+          "asap_on_commute_off": 375,
+          "asap_off_commute_on": 551,
+          "asap_on_commute_on": 348
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 533,
+            "on_depth_2q": 375,
+            "depth_ratio_on_over_off": 0.7035647279549718,
+            "improvement_rate_pct": -29.643527204502817
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 551,
+            "on_depth_2q": 348,
+            "depth_ratio_on_over_off": 0.631578947368421,
+            "improvement_rate_pct": -36.8421052631579
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-3_Ly-22_U-70_enc-unary_d-4",
+        "qubits": 132,
+        "paulis": 7194,
+        "depth_2q": {
+          "asap_off_commute_off": 2333,
+          "asap_on_commute_off": 2402,
+          "asap_off_commute_on": 2676,
+          "asap_on_commute_on": 2267
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 2333,
+            "on_depth_2q": 2402,
+            "depth_ratio_on_over_off": 1.0295756536648093,
+            "improvement_rate_pct": 2.95756536648093
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 2676,
+            "on_depth_2q": 2267,
+            "depth_ratio_on_over_off": 0.8471599402092675,
+            "improvement_rate_pct": -15.284005979073246
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-5_Ly-5_U-30_enc-unary_d-4",
+        "qubits": 60,
+        "paulis": 3270,
+        "depth_2q": {
+          "asap_off_commute_off": 1894,
+          "asap_on_commute_off": 1423,
+          "asap_off_commute_on": 2283,
+          "asap_on_commute_on": 1297
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 1894,
+            "on_depth_2q": 1423,
+            "depth_ratio_on_over_off": 0.7513199577613516,
+            "improvement_rate_pct": -24.868004223864837
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 2283,
+            "on_depth_2q": 1297,
+            "depth_ratio_on_over_off": 0.5681121331581253,
+            "improvement_rate_pct": -43.18878668418748
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-3_d-4-bh_graph-3D-grid-nonpbc-qubitnodes_Lx-2_Ly-2_Lz-2_U-20_enc-unary_d-4",
+        "qubits": 32,
+        "paulis": 880,
+        "depth_2q": {
+          "asap_off_commute_off": 571,
+          "asap_on_commute_off": 566,
+          "asap_off_commute_on": 694,
+          "asap_on_commute_on": 582
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 571,
+            "on_depth_2q": 566,
+            "depth_ratio_on_over_off": 0.9912434325744308,
+            "improvement_rate_pct": -0.8756567425569184
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 694,
+            "on_depth_2q": 582,
+            "depth_ratio_on_over_off": 0.8386167146974063,
+            "improvement_rate_pct": -16.138328530259372
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-1-fh-graph-1D-grid-nonpbc-qubitnodes_Lx-90_U-2_enc-jw",
+        "qubits": 180,
+        "paulis": 626,
+        "depth_2q": {
+          "asap_off_commute_off": 184,
+          "asap_on_commute_off": 6,
+          "asap_off_commute_on": 184,
+          "asap_on_commute_on": 6
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 184,
+            "on_depth_2q": 6,
+            "depth_ratio_on_over_off": 0.03260869565217391,
+            "improvement_rate_pct": -96.73913043478261
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 184,
+            "on_depth_2q": 6,
+            "depth_ratio_on_over_off": 0.03260869565217391,
+            "improvement_rate_pct": -96.73913043478261
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-160_U-12_enc-parity",
+        "qubits": 320,
+        "paulis": 1120,
+        "depth_2q": {
+          "asap_off_commute_off": 65,
+          "asap_on_commute_off": 61,
+          "asap_off_commute_on": 360,
+          "asap_on_commute_on": 55
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 65,
+            "on_depth_2q": 61,
+            "depth_ratio_on_over_off": 0.9384615384615385,
+            "improvement_rate_pct": -6.153846153846154
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 360,
+            "on_depth_2q": 55,
+            "depth_ratio_on_over_off": 0.1527777777777778,
+            "improvement_rate_pct": -84.72222222222221
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-50_U-2_enc-jw",
+        "qubits": 100,
+        "paulis": 350,
+        "depth_2q": {
+          "asap_off_commute_off": 154,
+          "asap_on_commute_off": 104,
+          "asap_off_commute_on": 150,
+          "asap_on_commute_on": 103
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 154,
+            "on_depth_2q": 104,
+            "depth_ratio_on_over_off": 0.6753246753246753,
+            "improvement_rate_pct": -32.467532467532465
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 150,
+            "on_depth_2q": 103,
+            "depth_ratio_on_over_off": 0.6866666666666666,
+            "improvement_rate_pct": -31.333333333333336
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-105_U-8_enc-bk",
+        "qubits": 420,
+        "paulis": 1890,
+        "depth_2q": {
+          "asap_off_commute_off": 99,
+          "asap_on_commute_off": 94,
+          "asap_off_commute_on": 91,
+          "asap_on_commute_on": 86
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 99,
+            "on_depth_2q": 94,
+            "depth_ratio_on_over_off": 0.9494949494949495,
+            "improvement_rate_pct": -5.05050505050505
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 91,
+            "on_depth_2q": 86,
+            "depth_ratio_on_over_off": 0.945054945054945,
+            "improvement_rate_pct": -5.494505494505497
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-72_U-0_enc-parity",
+        "qubits": 720,
+        "paulis": 2880,
+        "depth_2q": {
+          "asap_off_commute_off": 376,
+          "asap_on_commute_off": 373,
+          "asap_off_commute_on": 378,
+          "asap_on_commute_on": 350
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 376,
+            "on_depth_2q": 373,
+            "depth_ratio_on_over_off": 0.9920212765957447,
+            "improvement_rate_pct": -0.7978723404255317
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 378,
+            "on_depth_2q": 350,
+            "depth_ratio_on_over_off": 0.9259259259259259,
+            "improvement_rate_pct": -7.4074074074074066
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-2-fh-graph-2D-triag-nonpbc-qubitnodes_Lx-16_Ly-16_U-4_enc-bk",
+        "qubits": 306,
+        "paulis": 2091,
+        "depth_2q": {
+          "asap_off_commute_off": 280,
+          "asap_on_commute_off": 262,
+          "asap_off_commute_on": 273,
+          "asap_on_commute_on": 245
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 280,
+            "on_depth_2q": 262,
+            "depth_ratio_on_over_off": 0.9357142857142857,
+            "improvement_rate_pct": -6.428571428571428
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 273,
+            "on_depth_2q": 245,
+            "depth_ratio_on_over_off": 0.8974358974358975,
+            "improvement_rate_pct": -10.256410256410254
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-4_Ly-133_h-0.1",
+        "qubits": 532,
+        "paulis": 3313,
+        "depth_2q": {
+          "asap_off_commute_off": 816,
+          "asap_on_commute_off": 12,
+          "asap_off_commute_on": 816,
+          "asap_on_commute_on": 12
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 816,
+            "on_depth_2q": 12,
+            "depth_ratio_on_over_off": 0.014705882352941176,
+            "improvement_rate_pct": -98.52941176470588
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 816,
+            "on_depth_2q": 12,
+            "depth_ratio_on_over_off": 0.014705882352941176,
+            "improvement_rate_pct": -98.52941176470588
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-186_h-0.5",
+        "qubits": 930,
+        "paulis": 5937,
+        "depth_2q": {
+          "asap_off_commute_off": 1143,
+          "asap_on_commute_off": 12,
+          "asap_off_commute_on": 1143,
+          "asap_on_commute_on": 12
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 1143,
+            "on_depth_2q": 12,
+            "depth_ratio_on_over_off": 0.010498687664041995,
+            "improvement_rate_pct": -98.9501312335958
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 1143,
+            "on_depth_2q": 12,
+            "depth_ratio_on_over_off": 0.010498687664041995,
+            "improvement_rate_pct": -98.9501312335958
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-58_h-2",
+        "qubits": 290,
+        "paulis": 1841,
+        "depth_2q": {
+          "asap_off_commute_off": 375,
+          "asap_on_commute_off": 12,
+          "asap_off_commute_on": 375,
+          "asap_on_commute_on": 12
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 375,
+            "on_depth_2q": 12,
+            "depth_ratio_on_over_off": 0.032,
+            "improvement_rate_pct": -96.8
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 375,
+            "on_depth_2q": 12,
+            "depth_ratio_on_over_off": 0.032,
+            "improvement_rate_pct": -96.8
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-185_h-0.5",
+        "qubits": 370,
+        "paulis": 2035,
+        "depth_2q": {
+          "asap_off_commute_off": 1104,
+          "asap_on_commute_off": 12,
+          "asap_off_commute_on": 1104,
+          "asap_on_commute_on": 12
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 1104,
+            "on_depth_2q": 12,
+            "depth_ratio_on_over_off": 0.010869565217391304,
+            "improvement_rate_pct": -98.91304347826086
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 1104,
+            "on_depth_2q": 12,
+            "depth_ratio_on_over_off": 0.010869565217391304,
+            "improvement_rate_pct": -98.91304347826086
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-190_h-0",
+        "qubits": 760,
+        "paulis": 4560,
+        "depth_2q": {
+          "asap_off_commute_off": 1713,
+          "asap_on_commute_off": 15,
+          "asap_off_commute_on": 1713,
+          "asap_on_commute_on": 15
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 1713,
+            "on_depth_2q": 15,
+            "depth_ratio_on_over_off": 0.008756567425569177,
+            "improvement_rate_pct": -99.12434325744309
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 1713,
+            "on_depth_2q": 15,
+            "depth_ratio_on_over_off": 0.008756567425569177,
+            "improvement_rate_pct": -99.12434325744309
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-186_h-3",
+        "qubits": 930,
+        "paulis": 6510,
+        "depth_2q": {
+          "asap_off_commute_off": 1683,
+          "asap_on_commute_off": 15,
+          "asap_off_commute_on": 1683,
+          "asap_on_commute_on": 15
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 1683,
+            "on_depth_2q": 15,
+            "depth_ratio_on_over_off": 0.008912655971479501,
+            "improvement_rate_pct": -99.10873440285205
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 1683,
+            "on_depth_2q": 15,
+            "depth_ratio_on_over_off": 0.008912655971479501,
+            "improvement_rate_pct": -99.10873440285205
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-triag-nonpbc-qubitnodes_Lx-40_Ly-40_h-0.1",
+        "qubits": 861,
+        "paulis": 8241,
+        "depth_2q": {
+          "asap_off_commute_off": 768,
+          "asap_on_commute_off": 18,
+          "asap_off_commute_on": 768,
+          "asap_on_commute_on": 18
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 768,
+            "on_depth_2q": 18,
+            "depth_ratio_on_over_off": 0.0234375,
+            "improvement_rate_pct": -97.65625
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 768,
+            "on_depth_2q": 18,
+            "depth_ratio_on_over_off": 0.0234375,
+            "improvement_rate_pct": -97.65625
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-1D-grid-pbc-qubitnodes_Lx-16_h-2",
+        "qubits": 16,
+        "paulis": 32,
+        "depth_2q": {
+          "asap_off_commute_off": 28,
+          "asap_on_commute_off": 4,
+          "asap_off_commute_on": 28,
+          "asap_on_commute_on": 4
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 28,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.14285714285714285,
+            "improvement_rate_pct": -85.71428571428572
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 28,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.14285714285714285,
+            "improvement_rate_pct": -85.71428571428572
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-1D-grid-pbc-qubitnodes_Lx-26_h-6",
+        "qubits": 26,
+        "paulis": 52,
+        "depth_2q": {
+          "asap_off_commute_off": 48,
+          "asap_on_commute_off": 4,
+          "asap_off_commute_on": 48,
+          "asap_on_commute_on": 4
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 48,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.08333333333333333,
+            "improvement_rate_pct": -91.66666666666666
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 48,
+            "on_depth_2q": 4,
+            "depth_ratio_on_over_off": 0.08333333333333333,
+            "improvement_rate_pct": -91.66666666666666
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-19_Ly-19_h-5",
+        "qubits": 361,
+        "paulis": 1045,
+        "depth_2q": {
+          "asap_off_commute_off": 178,
+          "asap_on_commute_off": 8,
+          "asap_off_commute_on": 178,
+          "asap_on_commute_on": 8
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 178,
+            "on_depth_2q": 8,
+            "depth_ratio_on_over_off": 0.0449438202247191,
+            "improvement_rate_pct": -95.50561797752809
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 178,
+            "on_depth_2q": 8,
+            "depth_ratio_on_over_off": 0.0449438202247191,
+            "improvement_rate_pct": -95.50561797752809
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-15_h-3",
+        "qubits": 75,
+        "paulis": 205,
+        "depth_2q": {
+          "asap_off_commute_off": 78,
+          "asap_on_commute_off": 8,
+          "asap_off_commute_on": 78,
+          "asap_on_commute_on": 8
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 78,
+            "on_depth_2q": 8,
+            "depth_ratio_on_over_off": 0.10256410256410256,
+            "improvement_rate_pct": -89.74358974358975
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 78,
+            "on_depth_2q": 8,
+            "depth_ratio_on_over_off": 0.10256410256410256,
+            "improvement_rate_pct": -89.74358974358975
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-148_h-6",
+        "qubits": 592,
+        "paulis": 1776,
+        "depth_2q": {
+          "asap_off_commute_off": 890,
+          "asap_on_commute_off": 10,
+          "asap_off_commute_on": 890,
+          "asap_on_commute_on": 10
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 890,
+            "on_depth_2q": 10,
+            "depth_ratio_on_over_off": 0.011235955056179775,
+            "improvement_rate_pct": -98.87640449438202
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 890,
+            "on_depth_2q": 10,
+            "depth_ratio_on_over_off": 0.011235955056179775,
+            "improvement_rate_pct": -98.87640449438202
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-160_h-0.1",
+        "qubits": 324,
+        "paulis": 1127,
+        "depth_2q": {
+          "asap_off_commute_off": 344,
+          "asap_on_commute_off": 14,
+          "asap_off_commute_on": 344,
+          "asap_on_commute_on": 14
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 344,
+            "on_depth_2q": 14,
+            "depth_ratio_on_over_off": 0.040697674418604654,
+            "improvement_rate_pct": -95.93023255813954
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 344,
+            "on_depth_2q": 14,
+            "depth_ratio_on_over_off": 0.040697674418604654,
+            "improvement_rate_pct": -95.93023255813954
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-triag-pbc-qubitnodes_Lx-13_Ly-13_h-0.1",
+        "qubits": 91,
+        "paulis": 364,
+        "depth_2q": {
+          "asap_off_commute_off": 148,
+          "asap_on_commute_off": 16,
+          "asap_off_commute_on": 148,
+          "asap_on_commute_on": 16
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 148,
+            "on_depth_2q": 16,
+            "depth_ratio_on_over_off": 0.10810810810810811,
+            "improvement_rate_pct": -89.1891891891892
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 148,
+            "on_depth_2q": 16,
+            "depth_ratio_on_over_off": 0.10810810810810811,
+            "improvement_rate_pct": -89.1891891891892
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-triag-pbc-qubitnodes_Lx-19_Ly-19_h-0.5",
+        "qubits": 190,
+        "paulis": 760,
+        "depth_2q": {
+          "asap_off_commute_off": 272,
+          "asap_on_commute_off": 18,
+          "asap_off_commute_on": 272,
+          "asap_on_commute_on": 18
+        },
+        "comparisons": {
+          "asap_without_commute": {
+            "off_depth_2q": 272,
+            "on_depth_2q": 18,
+            "depth_ratio_on_over_off": 0.0661764705882353,
+            "improvement_rate_pct": -93.38235294117648
+          },
+          "asap_with_commute": {
+            "off_depth_2q": 272,
+            "on_depth_2q": 18,
+            "depth_ratio_on_over_off": 0.0661764705882353,
+            "improvement_rate_pct": -93.38235294117648
+          }
+        }
+      }
+    ]
+  },
+  "errors": [],
+  "summary": [
+    {
+      "category": "binaryoptimization",
+      "category_label": "Binary optimization",
+      "expected_cases": 15,
+      "completed_cases": 15,
+      "asap_without_commute": {
+        "valid_cases": 15,
+        "depth_ratio_geomean": 0.5012097681740767,
+        "improvement_rate_geomean_pct": -49.87902318259233,
+        "best_depth_ratio": 0.33,
+        "best_improvement_rate_pct": -67.0
+      },
+      "asap_with_commute": {
+        "valid_cases": 15,
+        "depth_ratio_geomean": 0.4367159863291783,
+        "improvement_rate_geomean_pct": -56.32840136708217,
+        "best_depth_ratio": 0.2410358565737052,
+        "best_improvement_rate_pct": -75.89641434262948
+      }
+    },
+    {
+      "category": "discreteoptimization",
+      "category_label": "Discrete optimization",
+      "expected_cases": 15,
+      "completed_cases": 15,
+      "asap_without_commute": {
+        "valid_cases": 15,
+        "depth_ratio_geomean": 0.48457173855227875,
+        "improvement_rate_geomean_pct": -51.54282614477212,
+        "best_depth_ratio": 0.22950819672131148,
+        "best_improvement_rate_pct": -77.04918032786885
+      },
+      "asap_with_commute": {
+        "valid_cases": 15,
+        "depth_ratio_geomean": 0.40157806897206133,
+        "improvement_rate_geomean_pct": -59.842193102793864,
+        "best_depth_ratio": 0.22950819672131148,
+        "best_improvement_rate_pct": -77.04918032786885
+      }
+    },
+    {
+      "category": "chemistry",
+      "category_label": "Chemistry",
+      "expected_cases": 35,
+      "completed_cases": 35,
+      "asap_without_commute": {
+        "valid_cases": 35,
+        "depth_ratio_geomean": 0.7556364344809237,
+        "improvement_rate_geomean_pct": -24.436356551907636,
+        "best_depth_ratio": 0.13333333333333333,
+        "best_improvement_rate_pct": -86.66666666666667
+      },
+      "asap_with_commute": {
+        "valid_cases": 35,
+        "depth_ratio_geomean": 0.7249251218744643,
+        "improvement_rate_geomean_pct": -27.507487812553567,
+        "best_depth_ratio": 0.13333333333333333,
+        "best_improvement_rate_pct": -86.66666666666667
+      }
+    },
+    {
+      "category": "condensedmatter",
+      "category_label": "Condensed matter",
+      "expected_cases": 35,
+      "completed_cases": 35,
+      "asap_without_commute": {
+        "valid_cases": 35,
+        "depth_ratio_geomean": 0.15447304185485203,
+        "improvement_rate_geomean_pct": -84.5526958145148,
+        "best_depth_ratio": 0.008756567425569177,
+        "best_improvement_rate_pct": -99.12434325744309
+      },
+      "asap_with_commute": {
+        "valid_cases": 35,
+        "depth_ratio_geomean": 0.1483708171108688,
+        "improvement_rate_geomean_pct": -85.16291828891312,
+        "best_depth_ratio": 0.008756567425569177,
+        "best_improvement_rate_pct": -99.12434325744309
+      }
+    },
+    {
+      "category": "all",
+      "category_label": "All",
+      "expected_cases": 100,
+      "completed_cases": 100,
+      "asap_without_commute": {
+        "valid_cases": 100,
+        "depth_ratio_geomean": 0.3813419625040263,
+        "improvement_rate_geomean_pct": -61.86580374959737,
+        "best_depth_ratio": 0.008756567425569177,
+        "best_improvement_rate_pct": -99.12434325744309
+      },
+      "asap_with_commute": {
+        "valid_cases": 100,
+        "depth_ratio_geomean": 0.35291485165524883,
+        "improvement_rate_geomean_pct": -64.70851483447511,
+        "best_depth_ratio": 0.008756567425569177,
+        "best_improvement_rate_pct": -99.12434325744309
+      }
+    }
+  ]
+}
