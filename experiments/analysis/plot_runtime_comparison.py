@@ -132,7 +132,7 @@ def draw_grid(axis) -> None:
     axis.spines["bottom"].set_color("#777777")
     axis.spines["top"].set_color("#777777")
     axis.spines["right"].set_color("#777777")
-    axis.tick_params(colors="#555555", labelsize=9.5)
+    axis.tick_params(colors="#555555", labelsize=12)
 
 
 def main() -> None:
@@ -176,7 +176,7 @@ def main() -> None:
         {
             "font.family": "sans-serif",
             "font.sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
-            "font.size": 10.5,
+            "font.size": 12,
             "axes.linewidth": 0.9,
             "pdf.fonttype": 42,
             "ps.fonttype": 42,
@@ -223,8 +223,8 @@ def main() -> None:
 
     axis.set_xscale("log")
     axis.set_yscale("log")
-    axis.set_xlabel("Program size (#2Q in naive synthesis)", color=INK, labelpad=9, fontsize=12)
-    axis.set_ylabel("Compilation latency (s)", color=INK, fontdict={"weight": "bold"}, fontsize=12)
+    axis.set_xlabel("Program size (#2Q in naive synthesis)", color=INK, labelpad=9, fontsize=15)
+    axis.set_ylabel("Compilation latency (s)", color=INK, fontdict={"weight": "bold"}, fontsize=15)
     # axis.set_title("Absolute compilation runtime", color=INK, pad=10)
     draw_grid(axis)
 
@@ -233,7 +233,7 @@ def main() -> None:
         loc="upper center",
         ncol=7,
         frameon=False,
-        fontsize=10,
+        fontsize=10.5,
         handlelength=2.2,
         columnspacing=1.4,
         bbox_to_anchor=(0.54, 0.82),

@@ -1,0 +1,11 @@
+category,program,num_qubits,num_paulis,t_count,t_depth,elapsed
+binaryoptimization,flat100-4-flat100-7.cnf-90-cc,90,223,23012,1043,4.054
+binaryoptimization,graph-complete_bipart-complbipart-n-10_a-5_b-5,10,75,7800,3536,3.872
+binaryoptimization,graph-gnp_k-2-gnp-k_2_n-4_rinst-05,4,12,1248,728,3.824
+binaryoptimization,graph-gnp_k-4-gnp-k_4_n-40_rinst-07,40,804,83616,41080,4.553
+binaryoptimization,graph-gnp_k-4-gnp-k_4_n-6_rinst-15,6,45,4680,2392,3.849
+binaryoptimization,graph-gnp_k-5-gnp-k_5_n-24_rinst-04,24,188,19552,4680,3.808
+binaryoptimization,graph-gnp_k-5-gnp-k_5_n-60_rinst-19,60,1971,204984,108472,13.616
+binaryoptimization,graph-gnp_k-5-gnp-k_5_n-90_rinst-02,90,2958,307632,169624,51.926
+binaryoptimization,graph-regular_reg-4-reg-4_n-90_rinst-07,90,540,56160,14144,0.841
+binaryoptimization,uf20-7-uf20-0384.cnf-8-res,8,29,3027,1153,0.124

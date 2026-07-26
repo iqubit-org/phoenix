@@ -255,10 +255,10 @@ def plot_baseline_metrics(label, key, out_path):
     ax.legend(
         handles=handles,
         title=f"Geomean {label}/{HERO_LABEL}",
-        title_fontsize=11,
+        title_fontsize=12,
         loc="upper left",
         frameon=True,
-        fontsize=11
+        fontsize=12
     )
     for side in ("top", "right"):
         ax.spines[side].set_visible(True)
@@ -270,8 +270,8 @@ def plot_baseline_metrics(label, key, out_path):
 
 def main():
     sns.set_theme(context="paper", style="ticks", font="DejaVu Sans",
-                  rc={"axes.labelsize": 13, "legend.fontsize": 11,
-                      "xtick.labelsize": 10, "ytick.labelsize": 10,
+                  rc={"axes.labelsize": 15, "legend.fontsize": 13,
+                      "xtick.labelsize": 11, "ytick.labelsize": 11,
                       "pdf.fonttype": 42, "ps.fonttype": 42})
     for metric, cfg in METRICS.items():
         plot_metric(metric, OUT_DIR / cfg["out"])
