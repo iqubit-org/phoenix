@@ -63,3 +63,16 @@ condensedmatter,FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-50_U-2_enc-jw,100,350,
 discreteoptimization,TSP_Ncity-7-tsp_prob-lin105_Ncity-7_enc-unary,49,343,35112,3101,129.977
 condensedmatter,BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-60_U-10_enc-stdbinary_d-4,120,2100,217080,123019,190.273
 binaryoptimization,graph-gnp_k-5-gnp-k_5_n-60_rinst-19,60,1971,204984,64792,252.076
+condensedmatter,BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-5_Ly-5_U-30_enc-unary_d-4,60,3270,331507,132672,313.731
+condensedmatter,tfim-graph-2D-triag-pbc-qubitnodes_Lx-13_Ly-13_h-0.1,91,364,36946,3640,381.092
+condensedmatter,BH_D-2_d-4-bh_graph-2D-grid-nonpbc-qubitnodes_Lx-7_Ly-7_U-70_enc-gray_d-4,98,2835,292747,123067,468.851
+condensedmatter,BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-10_U-30_enc-unary_d-8,80,3980,404992,207637,477.17
+discreteoptimization,TSP_Ncity-8-tsp_prob-d198_Ncity-8_enc-unary,64,512,52408,4576,482.079
+condensedmatter,BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-10_Ly-10_U-30_enc-stdbinary_d-4,100,4950,510800,196893,720.142
+discreteoptimization,unary-color02-queen13_13_k-4-queen13_13,112,412,42664,1663,730.89
+condensedmatter,FH_D-1-fh-graph-1D-grid-nonpbc-qubitnodes_Lx-90_U-2_enc-jw,180,626,65730,28245,825.736
+discreteoptimization,binary-color02-dsjc1000.1_k-3-dsjc1000.1,72,675,69177,8504,942.102
+binaryoptimization,uf100-4-uf100-0246.cnf-70-res,70,688,72582,12052,971.292
+binaryoptimization,graph-gnp_k-5-gnp-k_5_n-90_rinst-02,90,2958,307632,92248,1051.995
+discreteoptimization,binary-graph-regular_k-5-reg-5_n-10_rinst-07,30,1295,133565,41811,1240.821
+condensedmatter,BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-11_Ly-11_U-100_enc-gray_d-4,156,6570,680986,227600,2756.596
