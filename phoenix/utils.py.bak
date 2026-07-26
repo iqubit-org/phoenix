@@ -432,13 +432,14 @@ def _synth_rz_angles(angles: list[float], epsilon: float, num_workers: int | Non
     chunk = max(1, len(keys) // (num_workers * 4))
     batches = [[uniq[k] for k in keys[i:i + chunk]] for i in range(0, len(keys), chunk)]
 
-    # "fork" rather than the macOS/Windows default "spawn": spawn (and forkserver)
-    # re-import ``__main__`` in every worker, which crashes plain benchmark scripts
-    # that lack an ``if __name__ == '__main__'`` guard, and re-imports qiskit per
-    # worker. Children here only call the Rust gridsynth kernel and exit.
+    # "forkserver" over the default "spawn": workers do not re-import ``__main__``
+    # (so plain scripts need no ``if __name__ == '__main__'`` guard) and qiskit is
+    # imported once in the server rather than in every worker. Unlike "fork", the
+    # server is a clean process, so qiskit's rayon threads are not inherited.
     try:
-        ctx = mp.get_context("fork")
-    except ValueError:  # Windows
+        ctx = mp.get_context("forkserver")
+        ctx.set_forkserver_preload(["phoenix.utils"])
+    except ValueError:  # not available on this platform
         ctx = mp.get_context("spawn")
 
     try:
@@ -461,13 +462,10 @@ def synth_to_clifford_t(qc: QuantumCircuit, epsilon=1e-10, num_workers: int | No
         num_workers: processes used for the Ross-Selinger synthesis of the Rz angles,
             which dominates the runtime. ``None`` picks a sensible default from the CPU
             count, ``1`` forces the serial path.
-
-    Note:
-        ``gridsynth_rz`` results depend on per-process internal state, so the exact
-        circuit is not reproducible across runs -- this is true of the serial path as
-        well. T-count varies by ~0.003% with ``num_workers``; pin it if a benchmark
-        table needs byte-identical numbers.
     """
+    from qiskit.synthesis import gridsynth_unitary
+
+    # base = qiskit.transpile(qc, basis_gates=["u", "cx"], optimization_level=1)
     base = qiskit.transpile(qc, basis_gates=["rz", "sx", "x", "cx"], optimization_level=1)
 
     rz_angles = [float(inst.operation.params[0]) for inst in base.data if inst.operation.name == 'rz']
@@ -485,6 +483,9 @@ def synth_to_clifford_t(qc: QuantumCircuit, epsilon=1e-10, num_workers: int | No
             out.sx(*idx)
         elif op.name == 'rz':
             out.compose(rz_cache[float(op.params[0]).hex()], [idx[0]], inplace=True)
+        elif op.name == 'u' or op.name == 'u3':
+            approx = gridsynth_unitary(Operator(op).data, epsilon)
+            out.compose(approx, [idx[0]], inplace=True)
         else:
             raise ValueError(f"unexpected {op.num_qubits}-qubit gate {op.name!r}")
     return out

@@ -14,7 +14,7 @@ therefore a ratio below one, or a negative ``(ratio - 1) * 100`` percentage,
 means a shallower two-qubit circuit.
 
 Outputs:
-    experiments/asap_commute_scheduling.json
+    experiments/analysis/asap_commute_scheduling.json
         Per-benchmark depths and ratios for all four configurations.
     experiments/analysis/asap_commute_scheduling.csv
         Per-category and overall geometric-mean / best-case summary table.
@@ -43,7 +43,7 @@ from phoenix.hamiltonian import Hamiltonian
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 EXPERIMENTS = os.path.join(REPO, "experiments")
 HAMLIB = os.path.join(REPO, "benchmarks", "hamlib")
-JSON_PATH = os.path.join(EXPERIMENTS, "asap_commute_scheduling.json")
+JSON_PATH = os.path.join(EXPERIMENTS, "analysis", "asap_commute_scheduling.json")
 CSV_PATH = os.path.join(EXPERIMENTS, "analysis", "asap_commute_scheduling.csv")
 
 # Keep this order aligned with the requested terminal/CSV table.

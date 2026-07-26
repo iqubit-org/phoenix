@@ -126,18 +126,22 @@ def tetris_pass(
 
 
 def quclear_pass(
-    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, optimize: bool = True
 ) -> qiskit.QuantumCircuit:
     from qiskit.quantum_info import Clifford
     from qiskit.synthesis import synth_clifford_greedy
     from quclear.CE_module import CE_recur_tree
 
+    paulis = [
+        p[::-1] for p in paulis
+    ]  # ! QuCLEAR uses little-endian convention for Pauli strings, reverse the input strings here
     params = np.array(coeffs).real * 2.0
     qc, append_clifford, _ = CE_recur_tree(entanglers=paulis, params=params, barrier=False)
     # append_clifford = append_clifford.decompose("swap")
     append_clifford = synth_clifford_greedy(Clifford(append_clifford))
     qc.compose(append_clifford, inplace=True)
-    qc = phoenix.utils.post_transpile(qc)
+    if optimize:
+        qc = phoenix.utils.post_transpile(qc)
 
     if not (coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)):
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)

@@ -18,8 +18,7 @@ warnings.filterwarnings("ignore")
 import numpy as np
 import pandas as pd
 
-import phoenix
-from phoenix.hamiltonian import Hamiltonian
+from phoenix import Hamiltonian
 
 REPO = Path(__file__).resolve().parents[2]
 UCCSD = REPO / "benchmarks" / "uccsd"

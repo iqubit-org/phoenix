@@ -25,6 +25,7 @@ from math import isfinite
 from pathlib import Path
 
 ANALYSIS_DIR = Path(__file__).resolve().parent
+RUNTIME_DATA_DIR = ANALYSIS_DIR / "runtime_data"
 EXPERIMENTS_DIR = ANALYSIS_DIR.parent
 REPO_ROOT = EXPERIMENTS_DIR.parent
 BENCHMARK_DIR = REPO_ROOT / "benchmarks" / "uccsd"
@@ -140,14 +141,14 @@ def main() -> None:
     loaded: dict[str, tuple[str, str, dict[str, float]]] = {}
     missing: list[Path] = []
     for label, key, marker in COMPILERS:
-        path = ANALYSIS_DIR / f"runtime_uccsd_{key}.csv"
+        path = RUNTIME_DATA_DIR / f"runtime_uccsd_{key}.csv"
         if not path.exists():
             missing.append(path)
             continue
         loaded[key] = (label, marker, load_runtime_csv(path))
 
     if HERO_KEY not in loaded:
-        raise SystemExit(f"Missing required Symphony runtime data: {ANALYSIS_DIR / 'runtime_uccsd_phoenixpp.csv'}")
+        raise SystemExit(f"Missing required Symphony runtime data: {RUNTIME_DATA_DIR / 'runtime_uccsd_phoenixpp.csv'}")
     if len(loaded) < 2:
         raise SystemExit("At least Symphony and one baseline CSV are required")
     if missing:

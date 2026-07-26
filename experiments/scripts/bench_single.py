@@ -11,6 +11,7 @@ import bench_utils
 
 import phoenix
 import phoenix.utils
+from qiskit.quantum_info import Operator
 
 warnings.filterwarnings("ignore")
 
@@ -59,6 +60,7 @@ def main():
 
     ham = phoenix.Hamiltonian(data["paulis"], data["coeffs"])
     circ = ham.generate_circuit()
+    u = ham.unitary_evolution() if ham.num_qubits < 10 else None
     phoenix.utils.print_circ_info(circ, title="Original circuit")
 
     t0 = time.perf_counter()
@@ -94,6 +96,9 @@ def main():
         circ_opt,
         title=f"Optimized circuit (compiler={args.compiler}, O3={args.O3}, {elapsed:.2f}s)",
     )
+    if u is not None:
+        infidelity = phoenix.utils.infidelity(u, Operator(circ_opt).reverse_qargs().to_matrix())
+        print(f"Infidelity: {infidelity:.2e}")
 
 
 if __name__ == "__main__":
