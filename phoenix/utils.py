@@ -422,7 +422,7 @@ def _synth_rz_angles(angles: list[float], epsilon: float, num_workers: int | Non
     keys = list(uniq)
 
     if num_workers is None:
-        num_workers = min(os.cpu_count() or 1, 24)
+        num_workers = min(os.cpu_count() or 1, 16)
     # Process startup (spawn re-imports qiskit) only amortizes over enough angles,
     # and nested pools are not allowed inside a worker process.
     if num_workers <= 1 or len(keys) < _PARALLEL_GRIDSYNTH_MIN_ANGLES or mp.parent_process() is not None:
