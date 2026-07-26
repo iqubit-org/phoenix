@@ -182,7 +182,7 @@ def main() -> None:
             "ps.fonttype": 42,
         }
     )
-    fig, axis = plt.subplots(figsize=(9, 6))
+    fig, axis = plt.subplots(figsize=(9, 7))
     palette = sns.color_palette("Set2", len(COMPILERS))
 
     legend_handles: list[Line2D] = []
@@ -201,7 +201,7 @@ def main() -> None:
             linestyle=linestyle,
             linewidth=1.8 if hero else 1.45,
             marker=marker,
-            markersize=11 if hero else 8,
+            markersize=11 if hero else 9,
             markeredgecolor="grey" if hero else color,
             markeredgewidth=0.75 if hero else 0.0,
             zorder=4 if hero else 2,
@@ -214,7 +214,7 @@ def main() -> None:
                 marker=marker,
                 linestyle=linestyle,
                 linewidth=1.8 if hero else 1.45,
-                markersize=11 if hero else 8,
+                markersize=11 if hero else 9,
                 markeredgecolor="grey" if hero else color,
                 markeredgewidth=0.75 if hero else 0.0,
                 label=f"{label}",
@@ -233,7 +233,7 @@ def main() -> None:
         loc="upper center",
         ncol=7,
         frameon=False,
-        fontsize=10.5,
+        fontsize=11,
         handlelength=2.2,
         columnspacing=1.4,
         bbox_to_anchor=(0.54, 0.82),
