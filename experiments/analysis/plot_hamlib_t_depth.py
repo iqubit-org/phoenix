@@ -102,7 +102,7 @@ def legend_label(label: str, st: dict, n_hero: int) -> str:
 
 def main() -> None:
     sns.set_theme(context="paper", style="ticks", font="DejaVu Sans",
-                  rc={"axes.labelsize": 15, "legend.fontsize": 13,
+                  rc={"axes.labelsize": 13, "legend.fontsize": 12,
                       "xtick.labelsize": 11, "ytick.labelsize": 11,
                       "pdf.fonttype": 42, "ps.fonttype": 42})
 
@@ -115,7 +115,7 @@ def main() -> None:
     xlo, xhi = axis_limits(x_all)
     ylo, yhi = axis_limits(y_all)
 
-    fig, ax = plt.subplots(figsize=(6.5, 4), constrained_layout=True)
+    fig, ax = plt.subplots(figsize=(7, 4.2), constrained_layout=True)
     draw_reference(ax, min(xlo, ylo), max(xhi, yhi))
 
     for label, _ in T_BASELINES:

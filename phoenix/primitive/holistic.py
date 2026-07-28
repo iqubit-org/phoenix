@@ -38,6 +38,7 @@ from qiskit.quantum_info import Clifford, Pauli
 
 from ..hamiltonian import Hamiltonian
 from ..basics import CLIFFORD_OPTIONS, _CLIFFORD_BLOCKS
+from .utils import asap_order as _asap_order, cnot_equiv_commute, schedule_cnot_equiv_clifford
 
 
 # ---------------------------------------------------------------------------
@@ -226,21 +227,12 @@ def peel_forward(ham: Hamiltonian, verbose: bool = False) -> PeelResult:
 # V2-A commutation-aware ASAP scheduling
 SCHEDULE_ASAP = True
 
-# Exact-commutation-aware scheduling
-SCHEDULE_EXACT_COMMUTE = True
-
-
-def _move_axis_on(move_item: dict, q: int) -> str:
-    """Pauli axis a CNOT-equivalent move imprints on qubit ``q``: ``P0`` on its
-    control leg (local qubit 0), ``P1`` on its target leg (local qubit 1)."""
-    a, b = move_item["qubits"]
-    c = move_item["cliff"]
-    return c.pauli_0 if q == a else c.pauli_1
+# Exact-commutation-aware scheduling with ASAP
+SCHEDULE_ASAP_COMMUTE = SCHEDULE_ASAP and True
 
 
 def _moves_commute(mi: dict, mj: dict) -> bool:
-    return all(_move_axis_on(mi, q) == _move_axis_on(mj, q)
-               for q in set(mi["qubits"]) & set(mj["qubits"]))
+    return cnot_equiv_commute(mi["cliff"], mi["qubits"], mj["cliff"], mj["qubits"])
 
 
 def _move_fixes_block(move_item: dict, block_item: dict, n: int) -> bool:
@@ -295,7 +287,10 @@ def peel_circuit(result: PeelResult, terminal: str = "auto", phase_exact: bool =
     terminal:
       - ``"auto"`` (default): the cheaper (by 2q count) of replay and synth;
       - ``"replay"``: the T self-inverse gates replayed in reverse (phase-exact
-        by construction);
+        by construction); with :data:`SCHEDULE_ASAP_COMMUTE` the pure
+        CNOT-equiv tail is post-processed by the operator-exact standalone
+        pass :func:`schedule_cnot_equiv_clifford` (commutation-reachable
+        self-inverse cancellation + exact-commutation ASAP depth packing);
       - ``"synth"``: ONE Clifford resynthesized at full width (greedy method,
         <= O(n^2/log n) 2q gates);
       - ``"absorb"``: omitted — QuCLEAR-style observable-absorption semantics,
@@ -364,7 +359,7 @@ def peel_circuit(result: PeelResult, terminal: str = "auto", phase_exact: bool =
             items.append({"kind": "move", "qubits": (a, b), "deps": deps, "cliff": cliff})
             last_move[a] = last_move[b] = mid
 
-    if SCHEDULE_EXACT_COMMUTE:
+    if SCHEDULE_ASAP_COMMUTE:
         for it, d in zip(items, _exact_commute_deps(items, n)):
             it["deps"] = d
     order = _asap_order(items, n) if SCHEDULE_ASAP else _sequential_order(items)
@@ -380,12 +375,14 @@ def peel_circuit(result: PeelResult, terminal: str = "auto", phase_exact: bool =
         replay = QuantumCircuit(n)
         for cliff, (a, b) in reversed(result.moves):
             replay.append(cliff, (a, b))
+        if SCHEDULE_ASAP_COMMUTE:
+            replay = schedule_cnot_equiv_clifford(replay)
         tail = replay
         if terminal in ("auto", "synth"):
             synth = _synth_terminal(result.moves, n, phase_exact=phase_exact)
             if synth is not None:
                 n2_synth = sum(1 for inst in synth.data if inst.operation.num_qubits == 2)
-                if terminal == "synth" or n2_synth < len(result.moves):
+                if terminal == "synth" or n2_synth < replay.size():
                     tail = synth
         qc.compose(tail, inplace=True)
     elif terminal != "absorb" and terminal not in ("auto", "replay", "synth"):
@@ -393,60 +390,6 @@ def peel_circuit(result: PeelResult, terminal: str = "auto", phase_exact: bool =
             f"Unknown terminal mode: {terminal!r}; options: 'auto', 'replay', 'synth', 'absorb'"
         )
     return qc.decompose("PauliEvolution")
-
-
-def _asap_order(items: list[dict], n: int) -> list[int]:
-    """Greedy ASAP list scheduling over the commutation partial order.
-
-    Each item occupies its qubits for one unit layer; an item starts at the
-    max of its dependencies' finish layers and its qubits' free layers. A lazy
-    min-heap on (start, id) yields a deterministic minimal-start order; start
-    estimates only ever grow, so stale entries are re-pushed on pop.
-    """
-    import heapq
-    from collections import defaultdict
-
-    nitems = len(items)
-    finish = [0] * nitems
-    placed = [False] * nitems
-    ndeps = [len(it["deps"]) for it in items]
-    dependents = defaultdict(list)
-    for i, it in enumerate(items):
-        for d in it["deps"]:
-            dependents[d].append(i)
-    qubit_free = [0] * n
-
-    def start_of(i: int) -> int:
-        it = items[i]
-        s = 0
-        for d in it["deps"]:
-            s = max(s, finish[d])
-        for q in it["qubits"]:
-            s = max(s, qubit_free[q])
-        return s
-
-    heap = [(start_of(i), i) for i in range(nitems) if ndeps[i] == 0]
-    heapq.heapify(heap)
-    order: list[int] = []
-    while heap:
-        s, i = heapq.heappop(heap)
-        if placed[i]:
-            continue
-        cur = start_of(i)
-        if cur > s and heap and heap[0][0] < cur:
-            heapq.heappush(heap, (cur, i))  # stale estimate: requeue
-            continue
-        placed[i] = True
-        finish[i] = cur + 1
-        for q in items[i]["qubits"]:
-            qubit_free[q] = cur + 1
-        order.append(i)
-        for j in dependents[i]:
-            ndeps[j] -= 1
-            if ndeps[j] == 0:
-                heapq.heappush(heap, (start_of(j), j))
-    assert len(order) == nitems, "scheduling must place every item (deps form a DAG)"
-    return order
 
 
 def _sequential_order(items: list[dict]) -> list[int]:

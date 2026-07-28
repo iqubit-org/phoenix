@@ -1,0 +1,3561 @@
+{
+  "metadata": {
+    "metric": "2q gate count and 2q depth after phoenix.compile_hamiltonian_simulation",
+    "ratio_definition": "SCHEDULE_TERMINAL_COMMUTE=True / False, terminal mode fixed per comparison",
+    "configurations": [
+      [
+        "auto_tc_off",
+        "auto",
+        false
+      ],
+      [
+        "auto_tc_on",
+        "auto",
+        true
+      ],
+      [
+        "replay_tc_off",
+        "replay",
+        false
+      ],
+      [
+        "replay_tc_on",
+        "replay",
+        true
+      ]
+    ]
+  },
+  "results": {
+    "binaryoptimization": [
+      {
+        "category": "binaryoptimization",
+        "name": "flat100-4-flat100-7.cnf-90-cc",
+        "qubits": 90,
+        "paulis": 223,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 276,
+            "depth_2q": 16
+          },
+          "auto_tc_on": {
+            "num_2q": 276,
+            "depth_2q": 16
+          },
+          "replay_tc_off": {
+            "num_2q": 276,
+            "depth_2q": 16
+          },
+          "replay_tc_on": {
+            "num_2q": 276,
+            "depth_2q": 16
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-complete_bipart-complbipart-n-10_a-5_b-5",
+        "qubits": 10,
+        "paulis": 75,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 75,
+            "depth_2q": 21
+          },
+          "auto_tc_on": {
+            "num_2q": 75,
+            "depth_2q": 21
+          },
+          "replay_tc_off": {
+            "num_2q": 75,
+            "depth_2q": 21
+          },
+          "replay_tc_on": {
+            "num_2q": 75,
+            "depth_2q": 21
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-2-gnp-k_2_n-4_rinst-05",
+        "qubits": 4,
+        "paulis": 12,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 12,
+            "depth_2q": 9
+          },
+          "auto_tc_on": {
+            "num_2q": 12,
+            "depth_2q": 9
+          },
+          "replay_tc_off": {
+            "num_2q": 12,
+            "depth_2q": 9
+          },
+          "replay_tc_on": {
+            "num_2q": 12,
+            "depth_2q": 9
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-4-gnp-k_4_n-40_rinst-07",
+        "qubits": 40,
+        "paulis": 804,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 804,
+            "depth_2q": 57
+          },
+          "auto_tc_on": {
+            "num_2q": 804,
+            "depth_2q": 57
+          },
+          "replay_tc_off": {
+            "num_2q": 804,
+            "depth_2q": 57
+          },
+          "replay_tc_on": {
+            "num_2q": 804,
+            "depth_2q": 57
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-4-gnp-k_4_n-6_rinst-15",
+        "qubits": 6,
+        "paulis": 45,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 45,
+            "depth_2q": 18
+          },
+          "auto_tc_on": {
+            "num_2q": 45,
+            "depth_2q": 18
+          },
+          "replay_tc_off": {
+            "num_2q": 45,
+            "depth_2q": 18
+          },
+          "replay_tc_on": {
+            "num_2q": 45,
+            "depth_2q": 18
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-5-gnp-k_5_n-24_rinst-04",
+        "qubits": 24,
+        "paulis": 188,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 376,
+            "depth_2q": 46
+          },
+          "auto_tc_on": {
+            "num_2q": 376,
+            "depth_2q": 46
+          },
+          "replay_tc_off": {
+            "num_2q": 376,
+            "depth_2q": 46
+          },
+          "replay_tc_on": {
+            "num_2q": 376,
+            "depth_2q": 46
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-5-gnp-k_5_n-60_rinst-19",
+        "qubits": 60,
+        "paulis": 1971,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1971,
+            "depth_2q": 99
+          },
+          "auto_tc_on": {
+            "num_2q": 1971,
+            "depth_2q": 99
+          },
+          "replay_tc_off": {
+            "num_2q": 1971,
+            "depth_2q": 99
+          },
+          "replay_tc_on": {
+            "num_2q": 1971,
+            "depth_2q": 99
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-5-gnp-k_5_n-90_rinst-02",
+        "qubits": 90,
+        "paulis": 2958,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 2958,
+            "depth_2q": 99
+          },
+          "auto_tc_on": {
+            "num_2q": 2958,
+            "depth_2q": 99
+          },
+          "replay_tc_off": {
+            "num_2q": 2958,
+            "depth_2q": 99
+          },
+          "replay_tc_on": {
+            "num_2q": 2958,
+            "depth_2q": 99
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-regular_reg-4-reg-4_n-90_rinst-07",
+        "qubits": 90,
+        "paulis": 540,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 540,
+            "depth_2q": 18
+          },
+          "auto_tc_on": {
+            "num_2q": 540,
+            "depth_2q": 18
+          },
+          "replay_tc_off": {
+            "num_2q": 540,
+            "depth_2q": 18
+          },
+          "replay_tc_on": {
+            "num_2q": 540,
+            "depth_2q": 18
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uf100-2-uf100-0396.cnf-46-res",
+        "qubits": 46,
+        "paulis": 271,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 557,
+            "depth_2q": 65
+          },
+          "auto_tc_on": {
+            "num_2q": 557,
+            "depth_2q": 65
+          },
+          "replay_tc_off": {
+            "num_2q": 558,
+            "depth_2q": 59
+          },
+          "replay_tc_on": {
+            "num_2q": 558,
+            "depth_2q": 59
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uf100-2-uf100-0601.cnf-46-res",
+        "qubits": 46,
+        "paulis": 284,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 582,
+            "depth_2q": 68
+          },
+          "auto_tc_on": {
+            "num_2q": 582,
+            "depth_2q": 68
+          },
+          "replay_tc_off": {
+            "num_2q": 597,
+            "depth_2q": 71
+          },
+          "replay_tc_on": {
+            "num_2q": 597,
+            "depth_2q": 69
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 0.971830985915493
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uf100-4-uf100-0246.cnf-70-res",
+        "qubits": 70,
+        "paulis": 688,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1552,
+            "depth_2q": 121
+          },
+          "auto_tc_on": {
+            "num_2q": 1552,
+            "depth_2q": 121
+          },
+          "replay_tc_off": {
+            "num_2q": 1585,
+            "depth_2q": 124
+          },
+          "replay_tc_on": {
+            "num_2q": 1583,
+            "depth_2q": 120
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9987381703470032,
+            "depth_2q_ratio": 0.967741935483871
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uf20-7-uf20-0384.cnf-8-res",
+        "qubits": 8,
+        "paulis": 29,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 46,
+            "depth_2q": 16
+          },
+          "auto_tc_on": {
+            "num_2q": 46,
+            "depth_2q": 16
+          },
+          "replay_tc_off": {
+            "num_2q": 46,
+            "depth_2q": 16
+          },
+          "replay_tc_on": {
+            "num_2q": 46,
+            "depth_2q": 16
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uuf100-0-uuf100-0810.cnf-40-res",
+        "qubits": 40,
+        "paulis": 187,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 353,
+            "depth_2q": 44
+          },
+          "auto_tc_on": {
+            "num_2q": 352,
+            "depth_2q": 42
+          },
+          "replay_tc_off": {
+            "num_2q": 352,
+            "depth_2q": 42
+          },
+          "replay_tc_on": {
+            "num_2q": 352,
+            "depth_2q": 42
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 0.9971671388101983,
+            "depth_2q_ratio": 0.9545454545454546
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uuf100-8-uuf100-0509.cnf-40-cc",
+        "qubits": 40,
+        "paulis": 206,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 397,
+            "depth_2q": 50
+          },
+          "auto_tc_on": {
+            "num_2q": 397,
+            "depth_2q": 50
+          },
+          "replay_tc_off": {
+            "num_2q": 398,
+            "depth_2q": 50
+          },
+          "replay_tc_on": {
+            "num_2q": 398,
+            "depth_2q": 50
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      }
+    ],
+    "discreteoptimization": [
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-10-tsp_prob-pr76_Ncity-10_enc-unary",
+        "qubits": 100,
+        "paulis": 1000,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1800,
+            "depth_2q": 54
+          },
+          "auto_tc_on": {
+            "num_2q": 1800,
+            "depth_2q": 54
+          },
+          "replay_tc_off": {
+            "num_2q": 1800,
+            "depth_2q": 54
+          },
+          "replay_tc_on": {
+            "num_2q": 1800,
+            "depth_2q": 54
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-10-tsp_prob-st70_Ncity-10_enc-unary",
+        "qubits": 100,
+        "paulis": 1000,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1800,
+            "depth_2q": 54
+          },
+          "auto_tc_on": {
+            "num_2q": 1800,
+            "depth_2q": 54
+          },
+          "replay_tc_off": {
+            "num_2q": 1800,
+            "depth_2q": 54
+          },
+          "replay_tc_on": {
+            "num_2q": 1800,
+            "depth_2q": 54
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-16-tsp_prob-fl417_Ncity-16_enc-stdbinary",
+        "qubits": 64,
+        "paulis": 3840,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 8585,
+            "depth_2q": 780
+          },
+          "auto_tc_on": {
+            "num_2q": 8585,
+            "depth_2q": 780
+          },
+          "replay_tc_off": {
+            "num_2q": 8942,
+            "depth_2q": 779
+          },
+          "replay_tc_on": {
+            "num_2q": 8943,
+            "depth_2q": 773
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0001118318049653,
+            "depth_2q_ratio": 0.9922978177150192
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-16-tsp_prob-kroD100_Ncity-16_enc-stdbinary",
+        "qubits": 64,
+        "paulis": 3840,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 8585,
+            "depth_2q": 780
+          },
+          "auto_tc_on": {
+            "num_2q": 8585,
+            "depth_2q": 780
+          },
+          "replay_tc_off": {
+            "num_2q": 8942,
+            "depth_2q": 779
+          },
+          "replay_tc_on": {
+            "num_2q": 8943,
+            "depth_2q": 773
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0001118318049653,
+            "depth_2q_ratio": 0.9922978177150192
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-4-tsp_rand-002_Ncity-4_enc-stdbinary",
+        "qubits": 8,
+        "paulis": 48,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 88,
+            "depth_2q": 37
+          },
+          "auto_tc_on": {
+            "num_2q": 88,
+            "depth_2q": 37
+          },
+          "replay_tc_off": {
+            "num_2q": 88,
+            "depth_2q": 37
+          },
+          "replay_tc_on": {
+            "num_2q": 88,
+            "depth_2q": 37
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-5-tsp_prob-ts225_Ncity-5_enc-unary",
+        "qubits": 25,
+        "paulis": 125,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 200,
+            "depth_2q": 22
+          },
+          "auto_tc_on": {
+            "num_2q": 200,
+            "depth_2q": 22
+          },
+          "replay_tc_off": {
+            "num_2q": 200,
+            "depth_2q": 22
+          },
+          "replay_tc_on": {
+            "num_2q": 200,
+            "depth_2q": 22
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-7-tsp_prob-lin105_Ncity-7_enc-unary",
+        "qubits": 49,
+        "paulis": 343,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 588,
+            "depth_2q": 36
+          },
+          "auto_tc_on": {
+            "num_2q": 588,
+            "depth_2q": 36
+          },
+          "replay_tc_off": {
+            "num_2q": 588,
+            "depth_2q": 36
+          },
+          "replay_tc_on": {
+            "num_2q": 588,
+            "depth_2q": 36
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-8-tsp_prob-d198_Ncity-8_enc-unary",
+        "qubits": 64,
+        "paulis": 512,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 896,
+            "depth_2q": 28
+          },
+          "auto_tc_on": {
+            "num_2q": 896,
+            "depth_2q": 28
+          },
+          "replay_tc_off": {
+            "num_2q": 896,
+            "depth_2q": 28
+          },
+          "replay_tc_on": {
+            "num_2q": 896,
+            "depth_2q": 28
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-8-tsp_prob-ulysses22_Ncity-8_enc-stdbinary",
+        "qubits": 24,
+        "paulis": 448,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 952,
+            "depth_2q": 188
+          },
+          "auto_tc_on": {
+            "num_2q": 952,
+            "depth_2q": 188
+          },
+          "replay_tc_off": {
+            "num_2q": 953,
+            "depth_2q": 185
+          },
+          "replay_tc_on": {
+            "num_2q": 953,
+            "depth_2q": 185
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "binary-color02-dsjc1000.1_k-3-dsjc1000.1",
+        "qubits": 72,
+        "paulis": 675,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1290,
+            "depth_2q": 156
+          },
+          "auto_tc_on": {
+            "num_2q": 1290,
+            "depth_2q": 156
+          },
+          "replay_tc_off": {
+            "num_2q": 1290,
+            "depth_2q": 156
+          },
+          "replay_tc_on": {
+            "num_2q": 1290,
+            "depth_2q": 156
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "binary-graph-regular_k-5-reg-5_n-10_rinst-07",
+        "qubits": 30,
+        "paulis": 1295,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 2686,
+            "depth_2q": 622
+          },
+          "auto_tc_on": {
+            "num_2q": 2686,
+            "depth_2q": 622
+          },
+          "replay_tc_off": {
+            "num_2q": 2686,
+            "depth_2q": 620
+          },
+          "replay_tc_on": {
+            "num_2q": 2686,
+            "depth_2q": 621
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0016129032258065
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "gray-color02-1-fullins_5_k-5-1-fullins_5",
+        "qubits": 144,
+        "paulis": 5334,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 11508,
+            "depth_2q": 1559
+          },
+          "auto_tc_on": {
+            "num_2q": 11508,
+            "depth_2q": 1559
+          },
+          "replay_tc_off": {
+            "num_2q": 11520,
+            "depth_2q": 1564
+          },
+          "replay_tc_on": {
+            "num_2q": 11518,
+            "depth_2q": 1562
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9998263888888889,
+            "depth_2q_ratio": 0.9987212276214834
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "gray-color02-will199gpia_k-3-will199gpia",
+        "qubits": 120,
+        "paulis": 1512,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 2928,
+            "depth_2q": 279
+          },
+          "auto_tc_on": {
+            "num_2q": 2928,
+            "depth_2q": 279
+          },
+          "replay_tc_off": {
+            "num_2q": 2928,
+            "depth_2q": 279
+          },
+          "replay_tc_on": {
+            "num_2q": 2928,
+            "depth_2q": 279
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "unary-color02-ash608gpia_k-3-ash608gpia",
+        "qubits": 480,
+        "paulis": 1614,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 2268,
+            "depth_2q": 28
+          },
+          "auto_tc_on": {
+            "num_2q": 2268,
+            "depth_2q": 28
+          },
+          "replay_tc_off": {
+            "num_2q": 2268,
+            "depth_2q": 28
+          },
+          "replay_tc_on": {
+            "num_2q": 2268,
+            "depth_2q": 28
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "unary-color02-queen13_13_k-4-queen13_13",
+        "qubits": 112,
+        "paulis": 412,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 600,
+            "depth_2q": 18
+          },
+          "auto_tc_on": {
+            "num_2q": 600,
+            "depth_2q": 18
+          },
+          "replay_tc_off": {
+            "num_2q": 600,
+            "depth_2q": 18
+          },
+          "replay_tc_on": {
+            "num_2q": 600,
+            "depth_2q": 18
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      }
+    ],
+    "chemistry": [
+      {
+        "category": "chemistry",
+        "name": "BH-JW-10",
+        "qubits": 10,
+        "paulis": 275,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 667,
+            "depth_2q": 354
+          },
+          "auto_tc_on": {
+            "num_2q": 667,
+            "depth_2q": 354
+          },
+          "replay_tc_off": {
+            "num_2q": 750,
+            "depth_2q": 397
+          },
+          "replay_tc_on": {
+            "num_2q": 748,
+            "depth_2q": 392
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9973333333333333,
+            "depth_2q_ratio": 0.9874055415617129
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "Be2-JW-6",
+        "qubits": 6,
+        "paulis": 61,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 129,
+            "depth_2q": 83
+          },
+          "auto_tc_on": {
+            "num_2q": 129,
+            "depth_2q": 83
+          },
+          "replay_tc_off": {
+            "num_2q": 130,
+            "depth_2q": 81
+          },
+          "replay_tc_on": {
+            "num_2q": 130,
+            "depth_2q": 81
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "C2-JW-18",
+        "qubits": 18,
+        "paulis": 1883,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 4628,
+            "depth_2q": 2011
+          },
+          "auto_tc_on": {
+            "num_2q": 4628,
+            "depth_2q": 2011
+          },
+          "replay_tc_off": {
+            "num_2q": 5371,
+            "depth_2q": 2272
+          },
+          "replay_tc_on": {
+            "num_2q": 5377,
+            "depth_2q": 2234
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0011171104077452,
+            "depth_2q_ratio": 0.983274647887324
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "H2-JW-8",
+        "qubits": 8,
+        "paulis": 184,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 408,
+            "depth_2q": 222
+          },
+          "auto_tc_on": {
+            "num_2q": 408,
+            "depth_2q": 222
+          },
+          "replay_tc_off": {
+            "num_2q": 444,
+            "depth_2q": 242
+          },
+          "replay_tc_on": {
+            "num_2q": 441,
+            "depth_2q": 241
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9932432432432432,
+            "depth_2q_ratio": 0.9958677685950413
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "HF-BK12",
+        "qubits": 12,
+        "paulis": 630,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1324,
+            "depth_2q": 668
+          },
+          "auto_tc_on": {
+            "num_2q": 1324,
+            "depth_2q": 668
+          },
+          "replay_tc_off": {
+            "num_2q": 1445,
+            "depth_2q": 735
+          },
+          "replay_tc_on": {
+            "num_2q": 1446,
+            "depth_2q": 736
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0006920415224914,
+            "depth_2q_ratio": 1.0013605442176872
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "HF-parity10",
+        "qubits": 10,
+        "paulis": 275,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 639,
+            "depth_2q": 359
+          },
+          "auto_tc_on": {
+            "num_2q": 639,
+            "depth_2q": 359
+          },
+          "replay_tc_off": {
+            "num_2q": 684,
+            "depth_2q": 381
+          },
+          "replay_tc_on": {
+            "num_2q": 686,
+            "depth_2q": 389
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0029239766081872,
+            "depth_2q_ratio": 1.020997375328084
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "Li2-JW14",
+        "qubits": 14,
+        "paulis": 669,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1644,
+            "depth_2q": 784
+          },
+          "auto_tc_on": {
+            "num_2q": 1644,
+            "depth_2q": 784
+          },
+          "replay_tc_off": {
+            "num_2q": 1964,
+            "depth_2q": 914
+          },
+          "replay_tc_on": {
+            "num_2q": 1963,
+            "depth_2q": 912
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9994908350305499,
+            "depth_2q_ratio": 0.9978118161925602
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "LiH-parity-4",
+        "qubits": 4,
+        "paulis": 26,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 40,
+            "depth_2q": 32
+          },
+          "auto_tc_on": {
+            "num_2q": 40,
+            "depth_2q": 32
+          },
+          "replay_tc_off": {
+            "num_2q": 42,
+            "depth_2q": 32
+          },
+          "replay_tc_on": {
+            "num_2q": 42,
+            "depth_2q": 32
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "N2-JW-22",
+        "qubits": 22,
+        "paulis": 4577,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 11652,
+            "depth_2q": 4730
+          },
+          "auto_tc_on": {
+            "num_2q": 11652,
+            "depth_2q": 4730
+          },
+          "replay_tc_off": {
+            "num_2q": 13501,
+            "depth_2q": 5364
+          },
+          "replay_tc_on": {
+            "num_2q": 13505,
+            "depth_2q": 5332
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.000296274350048,
+            "depth_2q_ratio": 0.994034302759135
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "N2-parity-14",
+        "qubits": 14,
+        "paulis": 669,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1754,
+            "depth_2q": 901
+          },
+          "auto_tc_on": {
+            "num_2q": 1754,
+            "depth_2q": 901
+          },
+          "replay_tc_off": {
+            "num_2q": 2056,
+            "depth_2q": 1032
+          },
+          "replay_tc_on": {
+            "num_2q": 2049,
+            "depth_2q": 1007
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9965953307392996,
+            "depth_2q_ratio": 0.9757751937984496
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "NH-BK-14",
+        "qubits": 14,
+        "paulis": 1085,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 2316,
+            "depth_2q": 1155
+          },
+          "auto_tc_on": {
+            "num_2q": 2316,
+            "depth_2q": 1155
+          },
+          "replay_tc_off": {
+            "num_2q": 2544,
+            "depth_2q": 1236
+          },
+          "replay_tc_on": {
+            "num_2q": 2542,
+            "depth_2q": 1231
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9992138364779874,
+            "depth_2q_ratio": 0.9959546925566343
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "NH-JW-14",
+        "qubits": 14,
+        "paulis": 1085,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 2352,
+            "depth_2q": 1088
+          },
+          "auto_tc_on": {
+            "num_2q": 2352,
+            "depth_2q": 1088
+          },
+          "replay_tc_off": {
+            "num_2q": 2618,
+            "depth_2q": 1171
+          },
+          "replay_tc_on": {
+            "num_2q": 2621,
+            "depth_2q": 1176
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0011459129106188,
+            "depth_2q_ratio": 1.004269854824936
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "Na2-JW24",
+        "qubits": 24,
+        "paulis": 6508,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 12434,
+            "depth_2q": 5015
+          },
+          "auto_tc_on": {
+            "num_2q": 12434,
+            "depth_2q": 5015
+          },
+          "replay_tc_off": {
+            "num_2q": 14870,
+            "depth_2q": 5657
+          },
+          "replay_tc_on": {
+            "num_2q": 14869,
+            "depth_2q": 5647
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9999327505043712,
+            "depth_2q_ratio": 0.9982322785928938
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "O3-BK22",
+        "qubits": 22,
+        "paulis": 5465,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 11936,
+            "depth_2q": 5178
+          },
+          "auto_tc_on": {
+            "num_2q": 11936,
+            "depth_2q": 5178
+          },
+          "replay_tc_off": {
+            "num_2q": 13556,
+            "depth_2q": 5740
+          },
+          "replay_tc_on": {
+            "num_2q": 13569,
+            "depth_2q": 5730
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.000958984951313,
+            "depth_2q_ratio": 0.9982578397212544
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "OH-JW10",
+        "qubits": 10,
+        "paulis": 275,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 671,
+            "depth_2q": 352
+          },
+          "auto_tc_on": {
+            "num_2q": 671,
+            "depth_2q": 352
+          },
+          "replay_tc_off": {
+            "num_2q": 754,
+            "depth_2q": 395
+          },
+          "replay_tc_on": {
+            "num_2q": 752,
+            "depth_2q": 390
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9973474801061007,
+            "depth_2q_ratio": 0.9873417721518988
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "OH-JW12",
+        "qubits": 12,
+        "paulis": 630,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1480,
+            "depth_2q": 738
+          },
+          "auto_tc_on": {
+            "num_2q": 1480,
+            "depth_2q": 738
+          },
+          "replay_tc_off": {
+            "num_2q": 1684,
+            "depth_2q": 839
+          },
+          "replay_tc_on": {
+            "num_2q": 1684,
+            "depth_2q": 833
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 0.9928486293206198
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "OH-parity12",
+        "qubits": 12,
+        "paulis": 630,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1452,
+            "depth_2q": 794
+          },
+          "auto_tc_on": {
+            "num_2q": 1452,
+            "depth_2q": 794
+          },
+          "replay_tc_off": {
+            "num_2q": 1643,
+            "depth_2q": 884
+          },
+          "replay_tc_on": {
+            "num_2q": 1644,
+            "depth_2q": 879
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0006086427267193,
+            "depth_2q_ratio": 0.994343891402715
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-bh-enc_stdbinary_dvalues_d-level-4",
+        "qubits": 2,
+        "paulis": 9,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 3,
+            "depth_2q": 3
+          },
+          "auto_tc_on": {
+            "num_2q": 3,
+            "depth_2q": 3
+          },
+          "replay_tc_off": {
+            "num_2q": 3,
+            "depth_2q": 3
+          },
+          "replay_tc_on": {
+            "num_2q": 3,
+            "depth_2q": 3
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-bhf2-mu_y_prime_enc_stdbinary_dvalues_8-8-8-8-8-8",
+        "qubits": 6,
+        "paulis": 24,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 22,
+            "depth_2q": 12
+          },
+          "auto_tc_on": {
+            "num_2q": 22,
+            "depth_2q": 12
+          },
+          "replay_tc_off": {
+            "num_2q": 22,
+            "depth_2q": 12
+          },
+          "replay_tc_on": {
+            "num_2q": 22,
+            "depth_2q": 12
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-c2h-mu_y_prime_enc_stdbinary_dvalues_8-8-4-4",
+        "qubits": 3,
+        "paulis": 12,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 10,
+            "depth_2q": 10
+          },
+          "auto_tc_on": {
+            "num_2q": 10,
+            "depth_2q": 10
+          },
+          "replay_tc_off": {
+            "num_2q": 10,
+            "depth_2q": 10
+          },
+          "replay_tc_on": {
+            "num_2q": 10,
+            "depth_2q": 10
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-c2h-mu_z_prime_enc_gray_dvalues_4-4-4-4",
+        "qubits": 4,
+        "paulis": 8,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 4,
+            "depth_2q": 2
+          },
+          "auto_tc_on": {
+            "num_2q": 4,
+            "depth_2q": 2
+          },
+          "replay_tc_off": {
+            "num_2q": 4,
+            "depth_2q": 2
+          },
+          "replay_tc_on": {
+            "num_2q": 4,
+            "depth_2q": 2
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-ch2-mu_y_prime_enc_gray_dvalues_16-16-16",
+        "qubits": 4,
+        "paulis": 32,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 46,
+            "depth_2q": 33
+          },
+          "auto_tc_on": {
+            "num_2q": 46,
+            "depth_2q": 33
+          },
+          "replay_tc_off": {
+            "num_2q": 47,
+            "depth_2q": 33
+          },
+          "replay_tc_on": {
+            "num_2q": 47,
+            "depth_2q": 32
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 0.9696969696969697
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-cyclo_propene-mu_x_prime_enc_stdbinary_dvalues_8-8-8-8-8-8-8-8-8-4-4-4-4-4-4",
+        "qubits": 11,
+        "paulis": 40,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 38,
+            "depth_2q": 12
+          },
+          "auto_tc_on": {
+            "num_2q": 38,
+            "depth_2q": 12
+          },
+          "replay_tc_off": {
+            "num_2q": 38,
+            "depth_2q": 12
+          },
+          "replay_tc_on": {
+            "num_2q": 38,
+            "depth_2q": 12
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-cyclo_propene-mu_x_prime_enc_unary_dvalues_16-16-16-16-16-16-16-16-16-16-16-16-16-16-16",
+        "qubits": 64,
+        "paulis": 120,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 120,
+            "depth_2q": 4
+          },
+          "auto_tc_on": {
+            "num_2q": 120,
+            "depth_2q": 4
+          },
+          "replay_tc_off": {
+            "num_2q": 120,
+            "depth_2q": 4
+          },
+          "replay_tc_on": {
+            "num_2q": 120,
+            "depth_2q": 4
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-f2-enc_gray_dvalues_d-level-16",
+        "qubits": 4,
+        "paulis": 98,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 104,
+            "depth_2q": 70
+          },
+          "auto_tc_on": {
+            "num_2q": 104,
+            "depth_2q": 70
+          },
+          "replay_tc_off": {
+            "num_2q": 108,
+            "depth_2q": 72
+          },
+          "replay_tc_on": {
+            "num_2q": 108,
+            "depth_2q": 72
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-fccf-enc_gray_dvalues_4-4-4-4-4-4-4",
+        "qubits": 14,
+        "paulis": 1035,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1814,
+            "depth_2q": 986
+          },
+          "auto_tc_on": {
+            "num_2q": 1814,
+            "depth_2q": 986
+          },
+          "replay_tc_off": {
+            "num_2q": 1871,
+            "depth_2q": 999
+          },
+          "replay_tc_on": {
+            "num_2q": 1879,
+            "depth_2q": 999
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0042757883484768,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-fccf-mu_y_prime_enc_stdbinary_dvalues_16-16-16-16-8-8-8",
+        "qubits": 4,
+        "paulis": 32,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 46,
+            "depth_2q": 32
+          },
+          "auto_tc_on": {
+            "num_2q": 46,
+            "depth_2q": 32
+          },
+          "replay_tc_off": {
+            "num_2q": 45,
+            "depth_2q": 32
+          },
+          "replay_tc_on": {
+            "num_2q": 45,
+            "depth_2q": 32
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-fccf-mu_y_prime_enc_unary_dvalues_8-8-8-8-8-8-8",
+        "qubits": 8,
+        "paulis": 14,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 14,
+            "depth_2q": 4
+          },
+          "auto_tc_on": {
+            "num_2q": 14,
+            "depth_2q": 4
+          },
+          "replay_tc_off": {
+            "num_2q": 14,
+            "depth_2q": 4
+          },
+          "replay_tc_on": {
+            "num_2q": 14,
+            "depth_2q": 4
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-fccf-mu_z_prime_enc_unary_dvalues_16-16-16-16-16-16-16",
+        "qubits": 16,
+        "paulis": 30,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 30,
+            "depth_2q": 4
+          },
+          "auto_tc_on": {
+            "num_2q": 30,
+            "depth_2q": 4
+          },
+          "replay_tc_off": {
+            "num_2q": 30,
+            "depth_2q": 4
+          },
+          "replay_tc_on": {
+            "num_2q": 30,
+            "depth_2q": 4
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-h2co-mu_y_prime_enc_unary_dvalues_16-16-16-16-16-16",
+        "qubits": 32,
+        "paulis": 60,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 60,
+            "depth_2q": 4
+          },
+          "auto_tc_on": {
+            "num_2q": 60,
+            "depth_2q": 4
+          },
+          "replay_tc_off": {
+            "num_2q": 60,
+            "depth_2q": 4
+          },
+          "replay_tc_on": {
+            "num_2q": 60,
+            "depth_2q": 4
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-hc3h2cn-mu_y_prime_enc_stdbinary_dvalues_4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4",
+        "qubits": 24,
+        "paulis": 48,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 24,
+            "depth_2q": 2
+          },
+          "auto_tc_on": {
+            "num_2q": 24,
+            "depth_2q": 2
+          },
+          "replay_tc_off": {
+            "num_2q": 24,
+            "depth_2q": 2
+          },
+          "replay_tc_on": {
+            "num_2q": 24,
+            "depth_2q": 2
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-hco-enc_unary_dvalues_4-4-4",
+        "qubits": 12,
+        "paulis": 1788,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 4577,
+            "depth_2q": 2650
+          },
+          "auto_tc_on": {
+            "num_2q": 4577,
+            "depth_2q": 2650
+          },
+          "replay_tc_off": {
+            "num_2q": 5383,
+            "depth_2q": 3098
+          },
+          "replay_tc_on": {
+            "num_2q": 5382,
+            "depth_2q": 3059
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9998142299832807,
+            "depth_2q_ratio": 0.9874112330535829
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-hno-mu_x_prime_enc_unary_dvalues_4-4-4",
+        "qubits": 12,
+        "paulis": 18,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 18,
+            "depth_2q": 4
+          },
+          "auto_tc_on": {
+            "num_2q": 18,
+            "depth_2q": 4
+          },
+          "replay_tc_off": {
+            "num_2q": 18,
+            "depth_2q": 4
+          },
+          "replay_tc_on": {
+            "num_2q": 18,
+            "depth_2q": 4
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-o3-enc_gray_dvalues_8-8-8",
+        "qubits": 9,
+        "paulis": 2801,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 5291,
+            "depth_2q": 3324
+          },
+          "auto_tc_on": {
+            "num_2q": 5291,
+            "depth_2q": 3324
+          },
+          "replay_tc_off": {
+            "num_2q": 5998,
+            "depth_2q": 3761
+          },
+          "replay_tc_on": {
+            "num_2q": 5975,
+            "depth_2q": 3701
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.996165388462821,
+            "depth_2q_ratio": 0.9840467960648763
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-o3-mu_y_prime_enc_unary_dvalues_4-4-4",
+        "qubits": 4,
+        "paulis": 6,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 6,
+            "depth_2q": 4
+          },
+          "auto_tc_on": {
+            "num_2q": 6,
+            "depth_2q": 4
+          },
+          "replay_tc_off": {
+            "num_2q": 6,
+            "depth_2q": 4
+          },
+          "replay_tc_on": {
+            "num_2q": 6,
+            "depth_2q": 4
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      }
+    ],
+    "condensedmatter": [
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-nonpbc-qubitnodes_Lx-12_U-40_enc-unary_d-4",
+        "qubits": 48,
+        "paulis": 816,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1892,
+            "depth_2q": 351
+          },
+          "auto_tc_on": {
+            "num_2q": 1892,
+            "depth_2q": 351
+          },
+          "replay_tc_off": {
+            "num_2q": 1918,
+            "depth_2q": 350
+          },
+          "replay_tc_on": {
+            "num_2q": 1920,
+            "depth_2q": 347
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0010427528675705,
+            "depth_2q_ratio": 0.9914285714285714
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-14_U-10_enc-stdbinary_d-4",
+        "qubits": 28,
+        "paulis": 490,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 656,
+            "depth_2q": 82
+          },
+          "auto_tc_on": {
+            "num_2q": 656,
+            "depth_2q": 82
+          },
+          "replay_tc_off": {
+            "num_2q": 657,
+            "depth_2q": 82
+          },
+          "replay_tc_on": {
+            "num_2q": 656,
+            "depth_2q": 82
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9984779299847792,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-24_U-20_enc-stdbinary_d-4",
+        "qubits": 48,
+        "paulis": 840,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1130,
+            "depth_2q": 83
+          },
+          "auto_tc_on": {
+            "num_2q": 1130,
+            "depth_2q": 83
+          },
+          "replay_tc_off": {
+            "num_2q": 1131,
+            "depth_2q": 83
+          },
+          "replay_tc_on": {
+            "num_2q": 1130,
+            "depth_2q": 83
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9991158267020336,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-46_U-2_enc-gray_d-4",
+        "qubits": 92,
+        "paulis": 1610,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1635,
+            "depth_2q": 60
+          },
+          "auto_tc_on": {
+            "num_2q": 1635,
+            "depth_2q": 60
+          },
+          "replay_tc_off": {
+            "num_2q": 1635,
+            "depth_2q": 60
+          },
+          "replay_tc_on": {
+            "num_2q": 1635,
+            "depth_2q": 60
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-60_U-10_enc-stdbinary_d-4",
+        "qubits": 120,
+        "paulis": 2100,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 2840,
+            "depth_2q": 83
+          },
+          "auto_tc_on": {
+            "num_2q": 2840,
+            "depth_2q": 83
+          },
+          "replay_tc_off": {
+            "num_2q": 2841,
+            "depth_2q": 83
+          },
+          "replay_tc_on": {
+            "num_2q": 2840,
+            "depth_2q": 83
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9996480112636396,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-10_U-30_enc-unary_d-8",
+        "qubits": 80,
+        "paulis": 3980,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 8437,
+            "depth_2q": 1818
+          },
+          "auto_tc_on": {
+            "num_2q": 8437,
+            "depth_2q": 1818
+          },
+          "replay_tc_off": {
+            "num_2q": 8539,
+            "depth_2q": 1802
+          },
+          "replay_tc_on": {
+            "num_2q": 8530,
+            "depth_2q": 1796
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9989460124136316,
+            "depth_2q_ratio": 0.9966703662597114
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-4_U-40_enc-gray_d-8",
+        "qubits": 12,
+        "paulis": 1176,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1478,
+            "depth_2q": 543
+          },
+          "auto_tc_on": {
+            "num_2q": 1478,
+            "depth_2q": 543
+          },
+          "replay_tc_off": {
+            "num_2q": 1478,
+            "depth_2q": 539
+          },
+          "replay_tc_on": {
+            "num_2q": 1478,
+            "depth_2q": 539
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-grid-nonpbc-qubitnodes_Lx-7_Ly-7_U-70_enc-gray_d-4",
+        "qubits": 98,
+        "paulis": 2835,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 2880,
+            "depth_2q": 118
+          },
+          "auto_tc_on": {
+            "num_2q": 2880,
+            "depth_2q": 118
+          },
+          "replay_tc_off": {
+            "num_2q": 2880,
+            "depth_2q": 118
+          },
+          "replay_tc_on": {
+            "num_2q": 2880,
+            "depth_2q": 118
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-11_Ly-11_U-100_enc-gray_d-4",
+        "qubits": 156,
+        "paulis": 6570,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 6652,
+            "depth_2q": 192
+          },
+          "auto_tc_on": {
+            "num_2q": 6652,
+            "depth_2q": 192
+          },
+          "replay_tc_off": {
+            "num_2q": 6652,
+            "depth_2q": 192
+          },
+          "replay_tc_on": {
+            "num_2q": 6652,
+            "depth_2q": 192
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-5_U-30_enc-gray_d-4",
+        "qubits": 28,
+        "paulis": 938,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 952,
+            "depth_2q": 191
+          },
+          "auto_tc_on": {
+            "num_2q": 952,
+            "depth_2q": 191
+          },
+          "replay_tc_off": {
+            "num_2q": 952,
+            "depth_2q": 191
+          },
+          "replay_tc_on": {
+            "num_2q": 952,
+            "depth_2q": 191
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-10_Ly-10_U-30_enc-stdbinary_d-4",
+        "qubits": 100,
+        "paulis": 4950,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 5631,
+            "depth_2q": 348
+          },
+          "auto_tc_on": {
+            "num_2q": 5631,
+            "depth_2q": 348
+          },
+          "replay_tc_off": {
+            "num_2q": 5632,
+            "depth_2q": 346
+          },
+          "replay_tc_on": {
+            "num_2q": 5632,
+            "depth_2q": 346
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-3_Ly-22_U-70_enc-unary_d-4",
+        "qubits": 132,
+        "paulis": 7194,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 15531,
+            "depth_2q": 2267
+          },
+          "auto_tc_on": {
+            "num_2q": 15531,
+            "depth_2q": 2267
+          },
+          "replay_tc_off": {
+            "num_2q": 15676,
+            "depth_2q": 2263
+          },
+          "replay_tc_on": {
+            "num_2q": 15671,
+            "depth_2q": 2264
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 0.9996810410819087,
+            "depth_2q_ratio": 1.0004418912947415
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-5_Ly-5_U-30_enc-unary_d-4",
+        "qubits": 60,
+        "paulis": 3270,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 6941,
+            "depth_2q": 1297
+          },
+          "auto_tc_on": {
+            "num_2q": 6941,
+            "depth_2q": 1297
+          },
+          "replay_tc_off": {
+            "num_2q": 7018,
+            "depth_2q": 1289
+          },
+          "replay_tc_on": {
+            "num_2q": 7021,
+            "depth_2q": 1289
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.000427472214306,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-3_d-4-bh_graph-3D-grid-nonpbc-qubitnodes_Lx-2_Ly-2_Lz-2_U-20_enc-unary_d-4",
+        "qubits": 32,
+        "paulis": 880,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1971,
+            "depth_2q": 582
+          },
+          "auto_tc_on": {
+            "num_2q": 1971,
+            "depth_2q": 582
+          },
+          "replay_tc_off": {
+            "num_2q": 1998,
+            "depth_2q": 576
+          },
+          "replay_tc_on": {
+            "num_2q": 2000,
+            "depth_2q": 578
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.001001001001001,
+            "depth_2q_ratio": 1.0034722222222223
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-1-fh-graph-1D-grid-nonpbc-qubitnodes_Lx-90_U-2_enc-jw",
+        "qubits": 180,
+        "paulis": 626,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 536,
+            "depth_2q": 6
+          },
+          "auto_tc_on": {
+            "num_2q": 536,
+            "depth_2q": 6
+          },
+          "replay_tc_off": {
+            "num_2q": 536,
+            "depth_2q": 6
+          },
+          "replay_tc_on": {
+            "num_2q": 536,
+            "depth_2q": 6
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-160_U-12_enc-parity",
+        "qubits": 320,
+        "paulis": 1120,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 2325,
+            "depth_2q": 55
+          },
+          "auto_tc_on": {
+            "num_2q": 2325,
+            "depth_2q": 55
+          },
+          "replay_tc_off": {
+            "num_2q": 2325,
+            "depth_2q": 55
+          },
+          "replay_tc_on": {
+            "num_2q": 2325,
+            "depth_2q": 55
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-50_U-2_enc-jw",
+        "qubits": 100,
+        "paulis": 350,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 492,
+            "depth_2q": 103
+          },
+          "auto_tc_on": {
+            "num_2q": 492,
+            "depth_2q": 103
+          },
+          "replay_tc_off": {
+            "num_2q": 492,
+            "depth_2q": 103
+          },
+          "replay_tc_on": {
+            "num_2q": 492,
+            "depth_2q": 103
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-105_U-8_enc-bk",
+        "qubits": 420,
+        "paulis": 1890,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 4613,
+            "depth_2q": 86
+          },
+          "auto_tc_on": {
+            "num_2q": 4614,
+            "depth_2q": 78
+          },
+          "replay_tc_off": {
+            "num_2q": 4613,
+            "depth_2q": 86
+          },
+          "replay_tc_on": {
+            "num_2q": 4614,
+            "depth_2q": 78
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.000216778668979,
+            "depth_2q_ratio": 0.9069767441860465
+          },
+          "replay": {
+            "num_2q_ratio": 1.000216778668979,
+            "depth_2q_ratio": 0.9069767441860465
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-72_U-0_enc-parity",
+        "qubits": 720,
+        "paulis": 2880,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 11017,
+            "depth_2q": 350
+          },
+          "auto_tc_on": {
+            "num_2q": 11007,
+            "depth_2q": 339
+          },
+          "replay_tc_off": {
+            "num_2q": 11017,
+            "depth_2q": 350
+          },
+          "replay_tc_on": {
+            "num_2q": 11007,
+            "depth_2q": 339
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 0.9990923118816375,
+            "depth_2q_ratio": 0.9685714285714285
+          },
+          "replay": {
+            "num_2q_ratio": 0.9990923118816375,
+            "depth_2q_ratio": 0.9685714285714285
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-2-fh-graph-2D-triag-nonpbc-qubitnodes_Lx-16_Ly-16_U-4_enc-bk",
+        "qubits": 306,
+        "paulis": 2091,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 6378,
+            "depth_2q": 245
+          },
+          "auto_tc_on": {
+            "num_2q": 6364,
+            "depth_2q": 232
+          },
+          "replay_tc_off": {
+            "num_2q": 6378,
+            "depth_2q": 245
+          },
+          "replay_tc_on": {
+            "num_2q": 6364,
+            "depth_2q": 232
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 0.997804954531201,
+            "depth_2q_ratio": 0.9469387755102041
+          },
+          "replay": {
+            "num_2q_ratio": 0.997804954531201,
+            "depth_2q_ratio": 0.9469387755102041
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-4_Ly-133_h-0.1",
+        "qubits": 532,
+        "paulis": 3313,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 2781,
+            "depth_2q": 12
+          },
+          "auto_tc_on": {
+            "num_2q": 2781,
+            "depth_2q": 12
+          },
+          "replay_tc_off": {
+            "num_2q": 2781,
+            "depth_2q": 12
+          },
+          "replay_tc_on": {
+            "num_2q": 2781,
+            "depth_2q": 12
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-186_h-0.5",
+        "qubits": 930,
+        "paulis": 5937,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 5007,
+            "depth_2q": 12
+          },
+          "auto_tc_on": {
+            "num_2q": 5007,
+            "depth_2q": 12
+          },
+          "replay_tc_off": {
+            "num_2q": 5007,
+            "depth_2q": 12
+          },
+          "replay_tc_on": {
+            "num_2q": 5007,
+            "depth_2q": 12
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-58_h-2",
+        "qubits": 290,
+        "paulis": 1841,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1551,
+            "depth_2q": 12
+          },
+          "auto_tc_on": {
+            "num_2q": 1551,
+            "depth_2q": 12
+          },
+          "replay_tc_off": {
+            "num_2q": 1551,
+            "depth_2q": 12
+          },
+          "replay_tc_on": {
+            "num_2q": 1551,
+            "depth_2q": 12
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-185_h-0.5",
+        "qubits": 370,
+        "paulis": 2035,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1665,
+            "depth_2q": 12
+          },
+          "auto_tc_on": {
+            "num_2q": 1665,
+            "depth_2q": 12
+          },
+          "replay_tc_off": {
+            "num_2q": 1665,
+            "depth_2q": 12
+          },
+          "replay_tc_on": {
+            "num_2q": 1665,
+            "depth_2q": 12
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-190_h-0",
+        "qubits": 760,
+        "paulis": 4560,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 4560,
+            "depth_2q": 15
+          },
+          "auto_tc_on": {
+            "num_2q": 4560,
+            "depth_2q": 15
+          },
+          "replay_tc_off": {
+            "num_2q": 4560,
+            "depth_2q": 15
+          },
+          "replay_tc_on": {
+            "num_2q": 4560,
+            "depth_2q": 15
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-186_h-3",
+        "qubits": 930,
+        "paulis": 6510,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 5580,
+            "depth_2q": 15
+          },
+          "auto_tc_on": {
+            "num_2q": 5580,
+            "depth_2q": 15
+          },
+          "replay_tc_off": {
+            "num_2q": 5580,
+            "depth_2q": 15
+          },
+          "replay_tc_on": {
+            "num_2q": 5580,
+            "depth_2q": 15
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-triag-nonpbc-qubitnodes_Lx-40_Ly-40_h-0.1",
+        "qubits": 861,
+        "paulis": 8241,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 7380,
+            "depth_2q": 18
+          },
+          "auto_tc_on": {
+            "num_2q": 7380,
+            "depth_2q": 18
+          },
+          "replay_tc_off": {
+            "num_2q": 7380,
+            "depth_2q": 18
+          },
+          "replay_tc_on": {
+            "num_2q": 7380,
+            "depth_2q": 18
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-1D-grid-pbc-qubitnodes_Lx-16_h-2",
+        "qubits": 16,
+        "paulis": 32,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 32,
+            "depth_2q": 4
+          },
+          "auto_tc_on": {
+            "num_2q": 32,
+            "depth_2q": 4
+          },
+          "replay_tc_off": {
+            "num_2q": 32,
+            "depth_2q": 4
+          },
+          "replay_tc_on": {
+            "num_2q": 32,
+            "depth_2q": 4
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-1D-grid-pbc-qubitnodes_Lx-26_h-6",
+        "qubits": 26,
+        "paulis": 52,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 52,
+            "depth_2q": 4
+          },
+          "auto_tc_on": {
+            "num_2q": 52,
+            "depth_2q": 4
+          },
+          "replay_tc_off": {
+            "num_2q": 52,
+            "depth_2q": 4
+          },
+          "replay_tc_on": {
+            "num_2q": 52,
+            "depth_2q": 4
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-19_Ly-19_h-5",
+        "qubits": 361,
+        "paulis": 1045,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1368,
+            "depth_2q": 8
+          },
+          "auto_tc_on": {
+            "num_2q": 1368,
+            "depth_2q": 8
+          },
+          "replay_tc_off": {
+            "num_2q": 1368,
+            "depth_2q": 8
+          },
+          "replay_tc_on": {
+            "num_2q": 1368,
+            "depth_2q": 8
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-15_h-3",
+        "qubits": 75,
+        "paulis": 205,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 260,
+            "depth_2q": 8
+          },
+          "auto_tc_on": {
+            "num_2q": 260,
+            "depth_2q": 8
+          },
+          "replay_tc_off": {
+            "num_2q": 260,
+            "depth_2q": 8
+          },
+          "replay_tc_on": {
+            "num_2q": 260,
+            "depth_2q": 8
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-148_h-6",
+        "qubits": 592,
+        "paulis": 1776,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 2368,
+            "depth_2q": 10
+          },
+          "auto_tc_on": {
+            "num_2q": 2368,
+            "depth_2q": 10
+          },
+          "replay_tc_off": {
+            "num_2q": 2368,
+            "depth_2q": 10
+          },
+          "replay_tc_on": {
+            "num_2q": 2368,
+            "depth_2q": 10
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-160_h-0.1",
+        "qubits": 324,
+        "paulis": 1127,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1606,
+            "depth_2q": 14
+          },
+          "auto_tc_on": {
+            "num_2q": 1606,
+            "depth_2q": 14
+          },
+          "replay_tc_off": {
+            "num_2q": 1606,
+            "depth_2q": 14
+          },
+          "replay_tc_on": {
+            "num_2q": 1606,
+            "depth_2q": 14
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-triag-pbc-qubitnodes_Lx-13_Ly-13_h-0.1",
+        "qubits": 91,
+        "paulis": 364,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 546,
+            "depth_2q": 16
+          },
+          "auto_tc_on": {
+            "num_2q": 546,
+            "depth_2q": 16
+          },
+          "replay_tc_off": {
+            "num_2q": 546,
+            "depth_2q": 16
+          },
+          "replay_tc_on": {
+            "num_2q": 546,
+            "depth_2q": 16
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-triag-pbc-qubitnodes_Lx-19_Ly-19_h-0.5",
+        "qubits": 190,
+        "paulis": 760,
+        "arms": {
+          "auto_tc_off": {
+            "num_2q": 1140,
+            "depth_2q": 18
+          },
+          "auto_tc_on": {
+            "num_2q": 1140,
+            "depth_2q": 18
+          },
+          "replay_tc_off": {
+            "num_2q": 1140,
+            "depth_2q": 18
+          },
+          "replay_tc_on": {
+            "num_2q": 1140,
+            "depth_2q": 18
+          }
+        },
+        "comparisons": {
+          "auto": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          },
+          "replay": {
+            "num_2q_ratio": 1.0,
+            "depth_2q_ratio": 1.0
+          }
+        }
+      }
+    ]
+  },
+  "errors": [],
+  "summary": [
+    {
+      "category": "binaryoptimization",
+      "category_label": "Binary optimization",
+      "expected_cases": 15,
+      "completed_cases": 15,
+      "auto": {
+        "valid_cases": 15,
+        "num_2q_ratio_geomean": 0.9998108924607386,
+        "num_2q_improvement_geomean_pct": -0.018910753926137946,
+        "num_2q_ratio_best": 0.9971671388101983,
+        "depth_2q_ratio_geomean": 0.9969034697940664,
+        "depth_2q_improvement_geomean_pct": -0.309653020593359,
+        "depth_2q_ratio_best": 0.9545454545454546
+      },
+      "replay": {
+        "valid_cases": 15,
+        "num_2q_ratio_geomean": 0.999915828447266,
+        "num_2q_improvement_geomean_pct": -0.008417155273399146,
+        "num_2q_ratio_best": 0.9987381703470032,
+        "depth_2q_ratio_geomean": 0.9959174765651392,
+        "depth_2q_improvement_geomean_pct": -0.40825234348608186,
+        "depth_2q_ratio_best": 0.967741935483871
+      }
+    },
+    {
+      "category": "discreteoptimization",
+      "category_label": "Discrete optimization",
+      "expected_cases": 15,
+      "completed_cases": 15,
+      "auto": {
+        "valid_cases": 15,
+        "num_2q_ratio_geomean": 1.0,
+        "num_2q_improvement_geomean_pct": 0.0,
+        "num_2q_ratio_best": 1.0,
+        "depth_2q_ratio_geomean": 1.0,
+        "depth_2q_improvement_geomean_pct": 0.0,
+        "depth_2q_ratio_best": 1.0
+      },
+      "replay": {
+        "valid_cases": 15,
+        "num_2q_ratio_geomean": 1.0000033350003108,
+        "num_2q_improvement_geomean_pct": 0.000333500031080014,
+        "num_2q_ratio_best": 0.9998263888888889,
+        "depth_2q_ratio_geomean": 0.9989917099078768,
+        "depth_2q_improvement_geomean_pct": -0.10082900921232207,
+        "depth_2q_ratio_best": 0.9922978177150192
+      }
+    },
+    {
+      "category": "chemistry",
+      "category_label": "Chemistry",
+      "expected_cases": 35,
+      "completed_cases": 35,
+      "auto": {
+        "valid_cases": 35,
+        "num_2q_ratio_geomean": 1.0,
+        "num_2q_improvement_geomean_pct": 0.0,
+        "num_2q_ratio_best": 1.0,
+        "depth_2q_ratio_geomean": 1.0,
+        "depth_2q_improvement_geomean_pct": 0.0,
+        "depth_2q_ratio_best": 1.0
+      },
+      "replay": {
+        "valid_cases": 35,
+        "num_2q_ratio_geomean": 0.9997456299522789,
+        "num_2q_improvement_geomean_pct": -0.02543700477211086,
+        "num_2q_ratio_best": 0.9932432432432432,
+        "depth_2q_ratio_geomean": 0.9962170086826783,
+        "depth_2q_improvement_geomean_pct": -0.3782991317321738,
+        "depth_2q_ratio_best": 0.9696969696969697
+      }
+    },
+    {
+      "category": "condensedmatter",
+      "category_label": "Condensed matter",
+      "expected_cases": 35,
+      "completed_cases": 35,
+      "auto": {
+        "valid_cases": 35,
+        "num_2q_ratio_geomean": 0.9999174661703005,
+        "num_2q_improvement_geomean_pct": -0.008253382969947154,
+        "num_2q_ratio_best": 0.997804954531201,
+        "depth_2q_ratio_geomean": 0.9947540268437773,
+        "depth_2q_improvement_geomean_pct": -0.5245973156222661,
+        "depth_2q_ratio_best": 0.9069767441860465
+      },
+      "replay": {
+        "valid_cases": 35,
+        "num_2q_ratio_geomean": 0.9998699481622054,
+        "num_2q_improvement_geomean_pct": -0.013005183779457585,
+        "num_2q_ratio_best": 0.997804954531201,
+        "depth_2q_ratio_geomean": 0.9945256699777705,
+        "depth_2q_improvement_geomean_pct": -0.5474330022229523,
+        "depth_2q_ratio_best": 0.9069767441860465
+      }
+    },
+    {
+      "category": "all",
+      "category_label": "All",
+      "expected_cases": 100,
+      "completed_cases": 100,
+      "auto": {
+        "valid_cases": 100,
+        "num_2q_ratio_geomean": 0.9999427447932587,
+        "num_2q_improvement_geomean_pct": -0.005725520674126905,
+        "num_2q_ratio_best": 0.9971671388101983,
+        "depth_2q_ratio_geomean": 0.997696533348589,
+        "depth_2q_improvement_geomean_pct": -0.23034666514110125,
+        "depth_2q_ratio_best": 0.9069767441860465
+      },
+      "replay": {
+        "valid_cases": 100,
+        "num_2q_ratio_geomean": 0.9998533227978736,
+        "num_2q_improvement_geomean_pct": -0.014667720212635516,
+        "num_2q_ratio_best": 0.9932432432432432,
+        "depth_2q_ratio_geomean": 0.9959952518099962,
+        "depth_2q_improvement_geomean_pct": -0.40047481900038484,
+        "depth_2q_ratio_best": 0.9069767441860465
+      }
+    }
+  ]
+}

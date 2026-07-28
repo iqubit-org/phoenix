@@ -166,7 +166,9 @@ class Hamiltonian(SparsePauliOp):
     def to_pauli_evolution_gate(self) -> PauliEvolutionGate:
         return PauliEvolutionGate(self)
 
-    def generate_circuit(self, time: float | Parameter = 1.0) -> QuantumCircuit:
+    def generate_circuit(self, time: float | Parameter = 1.0, decompose: bool = True) -> QuantumCircuit:
         qc = QuantumCircuit(self.num_qubits)
         qc.append(PauliEvolutionGate(self, time), range(self.num_qubits))
-        return qc.decompose()
+        if decompose:
+            qc = qc.decompose()
+        return qc
