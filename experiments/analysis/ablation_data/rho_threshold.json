@@ -1,0 +1,4790 @@
+{
+  "metadata": {
+    "schema_version": 2,
+    "complete": true,
+    "benchmark_suite": "HAMLib (100 programs)",
+    "pipeline": "phoenix.compile_hamiltonian_simulation with every default setting except rho_threshold",
+    "arms": {
+      "rho_0_00": {
+        "rho_threshold": 0.0,
+        "description": "Fixed weight-1 emission"
+      },
+      "rho_0_35": {
+        "rho_threshold": 0.35,
+        "description": "Adaptive production policy"
+      },
+      "rho_1_00": {
+        "rho_threshold": 1.0,
+        "description": "Fixed aggressive weight-2 emission"
+      }
+    },
+    "comparisons": {
+      "rho_0_35_over_0_00": {
+        "baseline": "rho_0_00",
+        "candidate": "rho_0_35"
+      },
+      "rho_1_00_over_0_00": {
+        "baseline": "rho_0_00",
+        "candidate": "rho_1_00"
+      },
+      "rho_0_35_over_1_00": {
+        "baseline": "rho_1_00",
+        "candidate": "rho_0_35"
+      }
+    },
+    "ratio_definition": "candidate / baseline",
+    "improvement_rate_definition": "(ratio - 1) * 100; negative is better",
+    "metrics": [
+      "num_2q",
+      "depth_2q"
+    ]
+  },
+  "results": {
+    "binaryoptimization": [
+      {
+        "category": "binaryoptimization",
+        "name": "flat100-4-flat100-7.cnf-90-cc",
+        "qubits": 90,
+        "paulis": 223,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 308,
+            "depth_2q": 33,
+            "compile_seconds": 0.6601688750088215
+          },
+          "rho_0_35": {
+            "num_2q": 276,
+            "depth_2q": 14,
+            "compile_seconds": 0.15687383385375142
+          },
+          "rho_1_00": {
+            "num_2q": 276,
+            "depth_2q": 14,
+            "compile_seconds": 0.15250695822760463
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.8961038961038961,
+            "num_2q_improvement_rate_pct": -10.389610389610393,
+            "depth_2q_ratio": 0.42424242424242425,
+            "depth_2q_improvement_rate_pct": -57.57575757575757
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.8961038961038961,
+            "num_2q_improvement_rate_pct": -10.389610389610393,
+            "depth_2q_ratio": 0.42424242424242425,
+            "depth_2q_improvement_rate_pct": -57.57575757575757
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-complete_bipart-complbipart-n-10_a-5_b-5",
+        "qubits": 10,
+        "paulis": 75,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 114,
+            "depth_2q": 56,
+            "compile_seconds": 0.20648325001820922
+          },
+          "rho_0_35": {
+            "num_2q": 75,
+            "depth_2q": 21,
+            "compile_seconds": 0.03538075042888522
+          },
+          "rho_1_00": {
+            "num_2q": 75,
+            "depth_2q": 21,
+            "compile_seconds": 0.03902591671794653
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.6578947368421053,
+            "num_2q_improvement_rate_pct": -34.210526315789465,
+            "depth_2q_ratio": 0.375,
+            "depth_2q_improvement_rate_pct": -62.5
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.6578947368421053,
+            "num_2q_improvement_rate_pct": -34.210526315789465,
+            "depth_2q_ratio": 0.375,
+            "depth_2q_improvement_rate_pct": -62.5
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-2-gnp-k_2_n-4_rinst-05",
+        "qubits": 4,
+        "paulis": 12,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 19,
+            "depth_2q": 19,
+            "compile_seconds": 0.06330358376726508
+          },
+          "rho_0_35": {
+            "num_2q": 19,
+            "depth_2q": 19,
+            "compile_seconds": 0.030700374860316515
+          },
+          "rho_1_00": {
+            "num_2q": 12,
+            "depth_2q": 9,
+            "compile_seconds": 0.008077332749962807
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.631578947368421,
+            "num_2q_improvement_rate_pct": -36.8421052631579,
+            "depth_2q_ratio": 0.47368421052631576,
+            "depth_2q_improvement_rate_pct": -52.63157894736843
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.5833333333333333,
+            "num_2q_improvement_rate_pct": 58.33333333333333,
+            "depth_2q_ratio": 2.111111111111111,
+            "depth_2q_improvement_rate_pct": 111.11111111111111
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-4-gnp-k_4_n-40_rinst-07",
+        "qubits": 40,
+        "paulis": 804,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1474,
+            "depth_2q": 379,
+            "compile_seconds": 4.886181707959622
+          },
+          "rho_0_35": {
+            "num_2q": 804,
+            "depth_2q": 57,
+            "compile_seconds": 0.4435910419560969
+          },
+          "rho_1_00": {
+            "num_2q": 804,
+            "depth_2q": 57,
+            "compile_seconds": 0.43968008272349834
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.5454545454545454,
+            "num_2q_improvement_rate_pct": -45.45454545454546,
+            "depth_2q_ratio": 0.1503957783641161,
+            "depth_2q_improvement_rate_pct": -84.96042216358839
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.5454545454545454,
+            "num_2q_improvement_rate_pct": -45.45454545454546,
+            "depth_2q_ratio": 0.1503957783641161,
+            "depth_2q_improvement_rate_pct": -84.96042216358839
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-4-gnp-k_4_n-6_rinst-15",
+        "qubits": 6,
+        "paulis": 45,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 68,
+            "depth_2q": 55,
+            "compile_seconds": 0.11139004118740559
+          },
+          "rho_0_35": {
+            "num_2q": 45,
+            "depth_2q": 18,
+            "compile_seconds": 0.021854416001588106
+          },
+          "rho_1_00": {
+            "num_2q": 45,
+            "depth_2q": 18,
+            "compile_seconds": 0.02137191640213132
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.6617647058823529,
+            "num_2q_improvement_rate_pct": -33.82352941176471,
+            "depth_2q_ratio": 0.32727272727272727,
+            "depth_2q_improvement_rate_pct": -67.27272727272727
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.6617647058823529,
+            "num_2q_improvement_rate_pct": -33.82352941176471,
+            "depth_2q_ratio": 0.32727272727272727,
+            "depth_2q_improvement_rate_pct": -67.27272727272727
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-5-gnp-k_5_n-24_rinst-04",
+        "qubits": 24,
+        "paulis": 188,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 289,
+            "depth_2q": 128,
+            "compile_seconds": 0.7528202501125634
+          },
+          "rho_0_35": {
+            "num_2q": 376,
+            "depth_2q": 46,
+            "compile_seconds": 0.10277824988588691
+          },
+          "rho_1_00": {
+            "num_2q": 376,
+            "depth_2q": 46,
+            "compile_seconds": 0.10368754109367728
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.301038062283737,
+            "num_2q_improvement_rate_pct": 30.1038062283737,
+            "depth_2q_ratio": 0.359375,
+            "depth_2q_improvement_rate_pct": -64.0625
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.301038062283737,
+            "num_2q_improvement_rate_pct": 30.1038062283737,
+            "depth_2q_ratio": 0.359375,
+            "depth_2q_improvement_rate_pct": -64.0625
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-5-gnp-k_5_n-60_rinst-19",
+        "qubits": 60,
+        "paulis": 1971,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 3662,
+            "depth_2q": 877,
+            "compile_seconds": 17.158201791346073
+          },
+          "rho_0_35": {
+            "num_2q": 1971,
+            "depth_2q": 99,
+            "compile_seconds": 1.2395747499540448
+          },
+          "rho_1_00": {
+            "num_2q": 1971,
+            "depth_2q": 99,
+            "compile_seconds": 1.1676915409043431
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.5382304751501912,
+            "num_2q_improvement_rate_pct": -46.17695248498088,
+            "depth_2q_ratio": 0.11288483466362599,
+            "depth_2q_improvement_rate_pct": -88.71151653363741
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.5382304751501912,
+            "num_2q_improvement_rate_pct": -46.17695248498088,
+            "depth_2q_ratio": 0.11288483466362599,
+            "depth_2q_improvement_rate_pct": -88.71151653363741
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-gnp_k-5-gnp-k_5_n-90_rinst-02",
+        "qubits": 90,
+        "paulis": 2958,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 5924,
+            "depth_2q": 1234,
+            "compile_seconds": 28.591106625273824
+          },
+          "rho_0_35": {
+            "num_2q": 2958,
+            "depth_2q": 99,
+            "compile_seconds": 1.830465791746974
+          },
+          "rho_1_00": {
+            "num_2q": 2958,
+            "depth_2q": 99,
+            "compile_seconds": 1.9333167499862611
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.49932478055367996,
+            "num_2q_improvement_rate_pct": -50.067521944632,
+            "depth_2q_ratio": 0.08022690437601297,
+            "depth_2q_improvement_rate_pct": -91.9773095623987
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.49932478055367996,
+            "num_2q_improvement_rate_pct": -50.067521944632,
+            "depth_2q_ratio": 0.08022690437601297,
+            "depth_2q_improvement_rate_pct": -91.9773095623987
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "graph-regular_reg-4-reg-4_n-90_rinst-07",
+        "qubits": 90,
+        "paulis": 540,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 985,
+            "depth_2q": 108,
+            "compile_seconds": 2.2612496251240373
+          },
+          "rho_0_35": {
+            "num_2q": 540,
+            "depth_2q": 18,
+            "compile_seconds": 0.2940716249868274
+          },
+          "rho_1_00": {
+            "num_2q": 540,
+            "depth_2q": 18,
+            "compile_seconds": 0.28766320925205946
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.5482233502538071,
+            "num_2q_improvement_rate_pct": -45.17766497461929,
+            "depth_2q_ratio": 0.16666666666666666,
+            "depth_2q_improvement_rate_pct": -83.33333333333334
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.5482233502538071,
+            "num_2q_improvement_rate_pct": -45.17766497461929,
+            "depth_2q_ratio": 0.16666666666666666,
+            "depth_2q_improvement_rate_pct": -83.33333333333334
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uf100-2-uf100-0396.cnf-46-res",
+        "qubits": 46,
+        "paulis": 271,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 434,
+            "depth_2q": 125,
+            "compile_seconds": 0.9397191251628101
+          },
+          "rho_0_35": {
+            "num_2q": 559,
+            "depth_2q": 67,
+            "compile_seconds": 0.41778900008648634
+          },
+          "rho_1_00": {
+            "num_2q": 557,
+            "depth_2q": 63,
+            "compile_seconds": 0.4452538341283798
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.2880184331797235,
+            "num_2q_improvement_rate_pct": 28.801843317972352,
+            "depth_2q_ratio": 0.536,
+            "depth_2q_improvement_rate_pct": -46.4
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.2834101382488479,
+            "num_2q_improvement_rate_pct": 28.341013824884786,
+            "depth_2q_ratio": 0.504,
+            "depth_2q_improvement_rate_pct": -49.6
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0035906642728905,
+            "num_2q_improvement_rate_pct": 0.35906642728904536,
+            "depth_2q_ratio": 1.0634920634920635,
+            "depth_2q_improvement_rate_pct": 6.349206349206349
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uf100-2-uf100-0601.cnf-46-res",
+        "qubits": 46,
+        "paulis": 284,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 441,
+            "depth_2q": 119,
+            "compile_seconds": 1.0012025418691337
+          },
+          "rho_0_35": {
+            "num_2q": 582,
+            "depth_2q": 68,
+            "compile_seconds": 0.46710779098793864
+          },
+          "rho_1_00": {
+            "num_2q": 582,
+            "depth_2q": 66,
+            "compile_seconds": 0.4377593747340143
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.3197278911564625,
+            "num_2q_improvement_rate_pct": 31.97278911564625,
+            "depth_2q_ratio": 0.5714285714285714,
+            "depth_2q_improvement_rate_pct": -42.85714285714286
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.3197278911564625,
+            "num_2q_improvement_rate_pct": 31.97278911564625,
+            "depth_2q_ratio": 0.5546218487394958,
+            "depth_2q_improvement_rate_pct": -44.53781512605042
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0303030303030303,
+            "depth_2q_improvement_rate_pct": 3.0303030303030276
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uf100-4-uf100-0246.cnf-70-res",
+        "qubits": 70,
+        "paulis": 688,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1243,
+            "depth_2q": 277,
+            "compile_seconds": 6.237204791978002
+          },
+          "rho_0_35": {
+            "num_2q": 1552,
+            "depth_2q": 132,
+            "compile_seconds": 1.3409971660003066
+          },
+          "rho_1_00": {
+            "num_2q": 1554,
+            "depth_2q": 126,
+            "compile_seconds": 1.6428063339553773
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.248592115848753,
+            "num_2q_improvement_rate_pct": 24.859211584875297,
+            "depth_2q_ratio": 0.47653429602888087,
+            "depth_2q_improvement_rate_pct": -52.34657039711191
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.250201126307321,
+            "num_2q_improvement_rate_pct": 25.020112630732093,
+            "depth_2q_ratio": 0.4548736462093863,
+            "depth_2q_improvement_rate_pct": -54.51263537906137
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.9987129987129987,
+            "num_2q_improvement_rate_pct": -0.12870012870013214,
+            "depth_2q_ratio": 1.0476190476190477,
+            "depth_2q_improvement_rate_pct": 4.761904761904767
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uf20-7-uf20-0384.cnf-8-res",
+        "qubits": 8,
+        "paulis": 29,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 36,
+            "depth_2q": 24,
+            "compile_seconds": 0.17327612498775125
+          },
+          "rho_0_35": {
+            "num_2q": 47,
+            "depth_2q": 17,
+            "compile_seconds": 0.04518766701221466
+          },
+          "rho_1_00": {
+            "num_2q": 46,
+            "depth_2q": 16,
+            "compile_seconds": 0.02778375009074807
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.3055555555555556,
+            "num_2q_improvement_rate_pct": 30.555555555555557,
+            "depth_2q_ratio": 0.7083333333333334,
+            "depth_2q_improvement_rate_pct": -29.166666666666664
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.2777777777777777,
+            "num_2q_improvement_rate_pct": 27.777777777777768,
+            "depth_2q_ratio": 0.6666666666666666,
+            "depth_2q_improvement_rate_pct": -33.333333333333336
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0217391304347827,
+            "num_2q_improvement_rate_pct": 2.1739130434782705,
+            "depth_2q_ratio": 1.0625,
+            "depth_2q_improvement_rate_pct": 6.25
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uuf100-0-uuf100-0810.cnf-40-res",
+        "qubits": 40,
+        "paulis": 187,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 295,
+            "depth_2q": 95,
+            "compile_seconds": 1.1158432909287512
+          },
+          "rho_0_35": {
+            "num_2q": 352,
+            "depth_2q": 44,
+            "compile_seconds": 0.3223307910375297
+          },
+          "rho_1_00": {
+            "num_2q": 352,
+            "depth_2q": 44,
+            "compile_seconds": 0.27977920789271593
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.193220338983051,
+            "num_2q_improvement_rate_pct": 19.32203389830509,
+            "depth_2q_ratio": 0.4631578947368421,
+            "depth_2q_improvement_rate_pct": -53.68421052631579
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.193220338983051,
+            "num_2q_improvement_rate_pct": 19.32203389830509,
+            "depth_2q_ratio": 0.4631578947368421,
+            "depth_2q_improvement_rate_pct": -53.68421052631579
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "binaryoptimization",
+        "name": "uuf100-8-uuf100-0509.cnf-40-cc",
+        "qubits": 40,
+        "paulis": 206,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 315,
+            "depth_2q": 99,
+            "compile_seconds": 1.2927362914197147
+          },
+          "rho_0_35": {
+            "num_2q": 397,
+            "depth_2q": 49,
+            "compile_seconds": 0.30831558303907514
+          },
+          "rho_1_00": {
+            "num_2q": 397,
+            "depth_2q": 47,
+            "compile_seconds": 0.2937098750844598
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.2603174603174603,
+            "num_2q_improvement_rate_pct": 26.031746031746028,
+            "depth_2q_ratio": 0.494949494949495,
+            "depth_2q_improvement_rate_pct": -50.5050505050505
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.2603174603174603,
+            "num_2q_improvement_rate_pct": 26.031746031746028,
+            "depth_2q_ratio": 0.47474747474747475,
+            "depth_2q_improvement_rate_pct": -52.52525252525253
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0425531914893618,
+            "depth_2q_improvement_rate_pct": 4.255319148936176
+          }
+        }
+      }
+    ],
+    "discreteoptimization": [
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-10-tsp_prob-pr76_Ncity-10_enc-unary",
+        "qubits": 100,
+        "paulis": 1000,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1863,
+            "depth_2q": 167,
+            "compile_seconds": 11.400377875193954
+          },
+          "rho_0_35": {
+            "num_2q": 1800,
+            "depth_2q": 54,
+            "compile_seconds": 1.4550793329253793
+          },
+          "rho_1_00": {
+            "num_2q": 1800,
+            "depth_2q": 54,
+            "compile_seconds": 1.3363199168816209
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.966183574879227,
+            "num_2q_improvement_rate_pct": -3.3816425120772986,
+            "depth_2q_ratio": 0.32335329341317365,
+            "depth_2q_improvement_rate_pct": -67.66467065868264
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.966183574879227,
+            "num_2q_improvement_rate_pct": -3.3816425120772986,
+            "depth_2q_ratio": 0.32335329341317365,
+            "depth_2q_improvement_rate_pct": -67.66467065868264
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-10-tsp_prob-st70_Ncity-10_enc-unary",
+        "qubits": 100,
+        "paulis": 1000,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1863,
+            "depth_2q": 167,
+            "compile_seconds": 11.57098637521267
+          },
+          "rho_0_35": {
+            "num_2q": 1800,
+            "depth_2q": 54,
+            "compile_seconds": 1.4630722501315176
+          },
+          "rho_1_00": {
+            "num_2q": 1800,
+            "depth_2q": 54,
+            "compile_seconds": 1.4062576657161117
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.966183574879227,
+            "num_2q_improvement_rate_pct": -3.3816425120772986,
+            "depth_2q_ratio": 0.32335329341317365,
+            "depth_2q_improvement_rate_pct": -67.66467065868264
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.966183574879227,
+            "num_2q_improvement_rate_pct": -3.3816425120772986,
+            "depth_2q_ratio": 0.32335329341317365,
+            "depth_2q_improvement_rate_pct": -67.66467065868264
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-16-tsp_prob-fl417_Ncity-16_enc-stdbinary",
+        "qubits": 64,
+        "paulis": 3840,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 4784,
+            "depth_2q": 823,
+            "compile_seconds": 23.00953962514177
+          },
+          "rho_0_35": {
+            "num_2q": 8590,
+            "depth_2q": 770,
+            "compile_seconds": 8.470756790600717
+          },
+          "rho_1_00": {
+            "num_2q": 8585,
+            "depth_2q": 780,
+            "compile_seconds": 7.499211624730378
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.7955685618729098,
+            "num_2q_improvement_rate_pct": 79.55685618729098,
+            "depth_2q_ratio": 0.9356014580801945,
+            "depth_2q_improvement_rate_pct": -6.4398541919805545
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.7945234113712374,
+            "num_2q_improvement_rate_pct": 79.45234113712374,
+            "depth_2q_ratio": 0.9477521263669502,
+            "depth_2q_improvement_rate_pct": -5.2247873633049835
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0005824111822947,
+            "num_2q_improvement_rate_pct": 0.058241118229473976,
+            "depth_2q_ratio": 0.9871794871794872,
+            "depth_2q_improvement_rate_pct": -1.2820512820512775
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-16-tsp_prob-kroD100_Ncity-16_enc-stdbinary",
+        "qubits": 64,
+        "paulis": 3840,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 4784,
+            "depth_2q": 823,
+            "compile_seconds": 23.475867500063032
+          },
+          "rho_0_35": {
+            "num_2q": 8590,
+            "depth_2q": 770,
+            "compile_seconds": 7.635859332978725
+          },
+          "rho_1_00": {
+            "num_2q": 8585,
+            "depth_2q": 780,
+            "compile_seconds": 6.551307917106897
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.7955685618729098,
+            "num_2q_improvement_rate_pct": 79.55685618729098,
+            "depth_2q_ratio": 0.9356014580801945,
+            "depth_2q_improvement_rate_pct": -6.4398541919805545
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.7945234113712374,
+            "num_2q_improvement_rate_pct": 79.45234113712374,
+            "depth_2q_ratio": 0.9477521263669502,
+            "depth_2q_improvement_rate_pct": -5.2247873633049835
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0005824111822947,
+            "num_2q_improvement_rate_pct": 0.058241118229473976,
+            "depth_2q_ratio": 0.9871794871794872,
+            "depth_2q_improvement_rate_pct": -1.2820512820512775
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-4-tsp_rand-002_Ncity-4_enc-stdbinary",
+        "qubits": 8,
+        "paulis": 48,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 58,
+            "depth_2q": 32,
+            "compile_seconds": 0.20571562508121133
+          },
+          "rho_0_35": {
+            "num_2q": 87,
+            "depth_2q": 45,
+            "compile_seconds": 0.09025545790791512
+          },
+          "rho_1_00": {
+            "num_2q": 88,
+            "depth_2q": 37,
+            "compile_seconds": 0.04615550022572279
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.5,
+            "num_2q_improvement_rate_pct": 50.0,
+            "depth_2q_ratio": 1.40625,
+            "depth_2q_improvement_rate_pct": 40.625
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.5172413793103448,
+            "num_2q_improvement_rate_pct": 51.72413793103448,
+            "depth_2q_ratio": 1.15625,
+            "depth_2q_improvement_rate_pct": 15.625
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.9886363636363636,
+            "num_2q_improvement_rate_pct": -1.1363636363636354,
+            "depth_2q_ratio": 1.2162162162162162,
+            "depth_2q_improvement_rate_pct": 21.62162162162162
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-5-tsp_prob-ts225_Ncity-5_enc-unary",
+        "qubits": 25,
+        "paulis": 125,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 216,
+            "depth_2q": 63,
+            "compile_seconds": 0.6546668750233948
+          },
+          "rho_0_35": {
+            "num_2q": 200,
+            "depth_2q": 22,
+            "compile_seconds": 0.07501283288002014
+          },
+          "rho_1_00": {
+            "num_2q": 200,
+            "depth_2q": 22,
+            "compile_seconds": 0.08444050000980496
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.9259259259259259,
+            "num_2q_improvement_rate_pct": -7.4074074074074066,
+            "depth_2q_ratio": 0.3492063492063492,
+            "depth_2q_improvement_rate_pct": -65.07936507936508
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.9259259259259259,
+            "num_2q_improvement_rate_pct": -7.4074074074074066,
+            "depth_2q_ratio": 0.3492063492063492,
+            "depth_2q_improvement_rate_pct": -65.07936507936508
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-7-tsp_prob-lin105_Ncity-7_enc-unary",
+        "qubits": 49,
+        "paulis": 343,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 608,
+            "depth_2q": 118,
+            "compile_seconds": 2.3155743326060474
+          },
+          "rho_0_35": {
+            "num_2q": 588,
+            "depth_2q": 36,
+            "compile_seconds": 0.25559050031006336
+          },
+          "rho_1_00": {
+            "num_2q": 588,
+            "depth_2q": 36,
+            "compile_seconds": 0.27467729104682803
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.9671052631578947,
+            "num_2q_improvement_rate_pct": -3.289473684210531,
+            "depth_2q_ratio": 0.3050847457627119,
+            "depth_2q_improvement_rate_pct": -69.4915254237288
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.9671052631578947,
+            "num_2q_improvement_rate_pct": -3.289473684210531,
+            "depth_2q_ratio": 0.3050847457627119,
+            "depth_2q_improvement_rate_pct": -69.4915254237288
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-8-tsp_prob-d198_Ncity-8_enc-unary",
+        "qubits": 64,
+        "paulis": 512,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 910,
+            "depth_2q": 106,
+            "compile_seconds": 3.7985877501778305
+          },
+          "rho_0_35": {
+            "num_2q": 896,
+            "depth_2q": 28,
+            "compile_seconds": 0.4839567500166595
+          },
+          "rho_1_00": {
+            "num_2q": 896,
+            "depth_2q": 28,
+            "compile_seconds": 0.5230921246111393
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.9846153846153847,
+            "num_2q_improvement_rate_pct": -1.538461538461533,
+            "depth_2q_ratio": 0.2641509433962264,
+            "depth_2q_improvement_rate_pct": -73.58490566037736
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.9846153846153847,
+            "num_2q_improvement_rate_pct": -1.538461538461533,
+            "depth_2q_ratio": 0.2641509433962264,
+            "depth_2q_improvement_rate_pct": -73.58490566037736
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "TSP_Ncity-8-tsp_prob-ulysses22_Ncity-8_enc-stdbinary",
+        "qubits": 24,
+        "paulis": 448,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 585,
+            "depth_2q": 190,
+            "compile_seconds": 1.5870669996365905
+          },
+          "rho_0_35": {
+            "num_2q": 958,
+            "depth_2q": 192,
+            "compile_seconds": 0.4919491671025753
+          },
+          "rho_1_00": {
+            "num_2q": 952,
+            "depth_2q": 188,
+            "compile_seconds": 0.533747332636267
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.6376068376068376,
+            "num_2q_improvement_rate_pct": 63.760683760683754,
+            "depth_2q_ratio": 1.0105263157894737,
+            "depth_2q_improvement_rate_pct": 1.0526315789473717
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.6273504273504273,
+            "num_2q_improvement_rate_pct": 62.73504273504273,
+            "depth_2q_ratio": 0.9894736842105263,
+            "depth_2q_improvement_rate_pct": -1.0526315789473717
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0063025210084033,
+            "num_2q_improvement_rate_pct": 0.6302521008403339,
+            "depth_2q_ratio": 1.0212765957446808,
+            "depth_2q_improvement_rate_pct": 2.127659574468077
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "binary-color02-dsjc1000.1_k-3-dsjc1000.1",
+        "qubits": 72,
+        "paulis": 675,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 868,
+            "depth_2q": 146,
+            "compile_seconds": 3.1338678747415543
+          },
+          "rho_0_35": {
+            "num_2q": 1291,
+            "depth_2q": 156,
+            "compile_seconds": 0.8022372499108315
+          },
+          "rho_1_00": {
+            "num_2q": 1290,
+            "depth_2q": 156,
+            "compile_seconds": 0.7405886249616742
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.487327188940092,
+            "num_2q_improvement_rate_pct": 48.73271889400921,
+            "depth_2q_ratio": 1.0684931506849316,
+            "depth_2q_improvement_rate_pct": 6.849315068493156
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.4861751152073732,
+            "num_2q_improvement_rate_pct": 48.617511520737324,
+            "depth_2q_ratio": 1.0684931506849316,
+            "depth_2q_improvement_rate_pct": 6.849315068493156
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0007751937984497,
+            "num_2q_improvement_rate_pct": 0.07751937984497026,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "binary-graph-regular_k-5-reg-5_n-10_rinst-07",
+        "qubits": 30,
+        "paulis": 1295,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1725,
+            "depth_2q": 762,
+            "compile_seconds": 6.948345999699086
+          },
+          "rho_0_35": {
+            "num_2q": 2692,
+            "depth_2q": 630,
+            "compile_seconds": 1.6999625829048455
+          },
+          "rho_1_00": {
+            "num_2q": 2686,
+            "depth_2q": 622,
+            "compile_seconds": 1.916945292148739
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.5605797101449275,
+            "num_2q_improvement_rate_pct": 56.05797101449275,
+            "depth_2q_ratio": 0.8267716535433071,
+            "depth_2q_improvement_rate_pct": -17.322834645669293
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.5571014492753623,
+            "num_2q_improvement_rate_pct": 55.710144927536234,
+            "depth_2q_ratio": 0.8162729658792651,
+            "depth_2q_improvement_rate_pct": -18.372703412073488
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0022338049143709,
+            "num_2q_improvement_rate_pct": 0.22338049143708627,
+            "depth_2q_ratio": 1.0128617363344052,
+            "depth_2q_improvement_rate_pct": 1.2861736334405238
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "gray-color02-1-fullins_5_k-5-1-fullins_5",
+        "qubits": 144,
+        "paulis": 5334,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 6589,
+            "depth_2q": 1093,
+            "compile_seconds": 64.75495162513107
+          },
+          "rho_0_35": {
+            "num_2q": 11505,
+            "depth_2q": 1559,
+            "compile_seconds": 12.955319917295128
+          },
+          "rho_1_00": {
+            "num_2q": 11508,
+            "depth_2q": 1559,
+            "compile_seconds": 20.237860375083983
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.7460919714675975,
+            "num_2q_improvement_rate_pct": 74.60919714675975,
+            "depth_2q_ratio": 1.4263494967978043,
+            "depth_2q_improvement_rate_pct": 42.63494967978043
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.7465472757626348,
+            "num_2q_improvement_rate_pct": 74.65472757626348,
+            "depth_2q_ratio": 1.4263494967978043,
+            "depth_2q_improvement_rate_pct": 42.63494967978043
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.9997393117831074,
+            "num_2q_improvement_rate_pct": -0.02606882168926239,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "gray-color02-will199gpia_k-3-will199gpia",
+        "qubits": 120,
+        "paulis": 1512,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 2056,
+            "depth_2q": 383,
+            "compile_seconds": 13.660756250377744
+          },
+          "rho_0_35": {
+            "num_2q": 2929,
+            "depth_2q": 281,
+            "compile_seconds": 2.0576661666855216
+          },
+          "rho_1_00": {
+            "num_2q": 2928,
+            "depth_2q": 279,
+            "compile_seconds": 2.0841902499087155
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.4246108949416343,
+            "num_2q_improvement_rate_pct": 42.46108949416343,
+            "depth_2q_ratio": 0.7336814621409922,
+            "depth_2q_improvement_rate_pct": -26.631853785900784
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.424124513618677,
+            "num_2q_improvement_rate_pct": 42.41245136186771,
+            "depth_2q_ratio": 0.7284595300261096,
+            "depth_2q_improvement_rate_pct": -27.154046997389038
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0003415300546448,
+            "num_2q_improvement_rate_pct": 0.03415300546447675,
+            "depth_2q_ratio": 1.007168458781362,
+            "depth_2q_improvement_rate_pct": 0.7168458781362075
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "unary-color02-ash608gpia_k-3-ash608gpia",
+        "qubits": 480,
+        "paulis": 1614,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 2463,
+            "depth_2q": 83,
+            "compile_seconds": 19.233926416374743
+          },
+          "rho_0_35": {
+            "num_2q": 2268,
+            "depth_2q": 28,
+            "compile_seconds": 5.983251791913062
+          },
+          "rho_1_00": {
+            "num_2q": 2268,
+            "depth_2q": 28,
+            "compile_seconds": 5.703101458027959
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.9208282582216809,
+            "num_2q_improvement_rate_pct": -7.917174177831909,
+            "depth_2q_ratio": 0.3373493975903614,
+            "depth_2q_improvement_rate_pct": -66.26506024096386
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.9208282582216809,
+            "num_2q_improvement_rate_pct": -7.917174177831909,
+            "depth_2q_ratio": 0.3373493975903614,
+            "depth_2q_improvement_rate_pct": -66.26506024096386
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "discreteoptimization",
+        "name": "unary-color02-queen13_13_k-4-queen13_13",
+        "qubits": 112,
+        "paulis": 412,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 599,
+            "depth_2q": 42,
+            "compile_seconds": 2.549011458642781
+          },
+          "rho_0_35": {
+            "num_2q": 600,
+            "depth_2q": 18,
+            "compile_seconds": 0.39271791698411107
+          },
+          "rho_1_00": {
+            "num_2q": 600,
+            "depth_2q": 18,
+            "compile_seconds": 0.40865945909172297
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.001669449081803,
+            "num_2q_improvement_rate_pct": 0.16694490818029983,
+            "depth_2q_ratio": 0.42857142857142855,
+            "depth_2q_improvement_rate_pct": -57.14285714285714
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.001669449081803,
+            "num_2q_improvement_rate_pct": 0.16694490818029983,
+            "depth_2q_ratio": 0.42857142857142855,
+            "depth_2q_improvement_rate_pct": -57.14285714285714
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      }
+    ],
+    "chemistry": [
+      {
+        "category": "chemistry",
+        "name": "BH-JW-10",
+        "qubits": 10,
+        "paulis": 275,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 430,
+            "depth_2q": 273,
+            "compile_seconds": 1.7303339578211308
+          },
+          "rho_0_35": {
+            "num_2q": 430,
+            "depth_2q": 273,
+            "compile_seconds": 1.4039160409010947
+          },
+          "rho_1_00": {
+            "num_2q": 667,
+            "depth_2q": 354,
+            "compile_seconds": 0.5070929587818682
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.5511627906976744,
+            "num_2q_improvement_rate_pct": 55.11627906976744,
+            "depth_2q_ratio": 1.2967032967032968,
+            "depth_2q_improvement_rate_pct": 29.670329670329675
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.6446776611694153,
+            "num_2q_improvement_rate_pct": -35.532233883058474,
+            "depth_2q_ratio": 0.7711864406779662,
+            "depth_2q_improvement_rate_pct": -22.881355932203384
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "Be2-JW-6",
+        "qubits": 6,
+        "paulis": 61,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 79,
+            "depth_2q": 67,
+            "compile_seconds": 0.23876720760017633
+          },
+          "rho_0_35": {
+            "num_2q": 79,
+            "depth_2q": 67,
+            "compile_seconds": 0.16444425005465746
+          },
+          "rho_1_00": {
+            "num_2q": 129,
+            "depth_2q": 82,
+            "compile_seconds": 0.08271287474781275
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.6329113924050633,
+            "num_2q_improvement_rate_pct": 63.29113924050633,
+            "depth_2q_ratio": 1.2238805970149254,
+            "depth_2q_improvement_rate_pct": 22.388059701492537
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.6124031007751938,
+            "num_2q_improvement_rate_pct": -38.759689922480625,
+            "depth_2q_ratio": 0.8170731707317073,
+            "depth_2q_improvement_rate_pct": -18.292682926829272
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "C2-JW-18",
+        "qubits": 18,
+        "paulis": 1883,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 3619,
+            "depth_2q": 1630,
+            "compile_seconds": 13.560872334055603
+          },
+          "rho_0_35": {
+            "num_2q": 3619,
+            "depth_2q": 1630,
+            "compile_seconds": 13.898105833213776
+          },
+          "rho_1_00": {
+            "num_2q": 4628,
+            "depth_2q": 2014,
+            "compile_seconds": 5.1626285831443965
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.2788063000828958,
+            "num_2q_improvement_rate_pct": 27.880630008289575,
+            "depth_2q_ratio": 1.2355828220858895,
+            "depth_2q_improvement_rate_pct": 23.558282208588956
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.7819792566983578,
+            "num_2q_improvement_rate_pct": -21.802074330164224,
+            "depth_2q_ratio": 0.8093346573982125,
+            "depth_2q_improvement_rate_pct": -19.06653426017875
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "H2-JW-8",
+        "qubits": 8,
+        "paulis": 184,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 252,
+            "depth_2q": 169,
+            "compile_seconds": 0.5795895420014858
+          },
+          "rho_0_35": {
+            "num_2q": 252,
+            "depth_2q": 169,
+            "compile_seconds": 0.501911582890898
+          },
+          "rho_1_00": {
+            "num_2q": 408,
+            "depth_2q": 222,
+            "compile_seconds": 0.306423292029649
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.619047619047619,
+            "num_2q_improvement_rate_pct": 61.904761904761905,
+            "depth_2q_ratio": 1.3136094674556213,
+            "depth_2q_improvement_rate_pct": 31.360946745562135
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.6176470588235294,
+            "num_2q_improvement_rate_pct": -38.23529411764706,
+            "depth_2q_ratio": 0.7612612612612613,
+            "depth_2q_improvement_rate_pct": -23.873873873873876
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "HF-BK12",
+        "qubits": 12,
+        "paulis": 630,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 969,
+            "depth_2q": 567,
+            "compile_seconds": 2.445301791187376
+          },
+          "rho_0_35": {
+            "num_2q": 969,
+            "depth_2q": 567,
+            "compile_seconds": 2.692429957911372
+          },
+          "rho_1_00": {
+            "num_2q": 1324,
+            "depth_2q": 668,
+            "compile_seconds": 1.1579642500728369
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.3663570691434468,
+            "num_2q_improvement_rate_pct": 36.63570691434468,
+            "depth_2q_ratio": 1.1781305114638447,
+            "depth_2q_improvement_rate_pct": 17.813051146384474
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.7318731117824774,
+            "num_2q_improvement_rate_pct": -26.81268882175226,
+            "depth_2q_ratio": 0.8488023952095808,
+            "depth_2q_improvement_rate_pct": -15.119760479041922
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "HF-parity10",
+        "qubits": 10,
+        "paulis": 275,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 438,
+            "depth_2q": 289,
+            "compile_seconds": 0.9415730000473559
+          },
+          "rho_0_35": {
+            "num_2q": 438,
+            "depth_2q": 289,
+            "compile_seconds": 1.1531127500347793
+          },
+          "rho_1_00": {
+            "num_2q": 641,
+            "depth_2q": 358,
+            "compile_seconds": 0.4681443748995662
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.4634703196347032,
+            "num_2q_improvement_rate_pct": 46.34703196347032,
+            "depth_2q_ratio": 1.2387543252595157,
+            "depth_2q_improvement_rate_pct": 23.875432525951567
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.6833073322932918,
+            "num_2q_improvement_rate_pct": -31.669266770670824,
+            "depth_2q_ratio": 0.8072625698324022,
+            "depth_2q_improvement_rate_pct": -19.27374301675978
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "Li2-JW14",
+        "qubits": 14,
+        "paulis": 669,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1331,
+            "depth_2q": 667,
+            "compile_seconds": 4.498505750205368
+          },
+          "rho_0_35": {
+            "num_2q": 1331,
+            "depth_2q": 667,
+            "compile_seconds": 5.263215499930084
+          },
+          "rho_1_00": {
+            "num_2q": 1644,
+            "depth_2q": 784,
+            "compile_seconds": 1.9816255830228329
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.2351615326821939,
+            "num_2q_improvement_rate_pct": 23.516153268219387,
+            "depth_2q_ratio": 1.1754122938530736,
+            "depth_2q_improvement_rate_pct": 17.541229385307354
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.809610705596107,
+            "num_2q_improvement_rate_pct": -19.038929440389296,
+            "depth_2q_ratio": 0.8507653061224489,
+            "depth_2q_improvement_rate_pct": -14.923469387755105
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "LiH-parity-4",
+        "qubits": 4,
+        "paulis": 26,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 29,
+            "depth_2q": 27,
+            "compile_seconds": 0.059353540651500225
+          },
+          "rho_0_35": {
+            "num_2q": 29,
+            "depth_2q": 27,
+            "compile_seconds": 0.06077958317473531
+          },
+          "rho_1_00": {
+            "num_2q": 40,
+            "depth_2q": 32,
+            "compile_seconds": 0.03385916678234935
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.3793103448275863,
+            "num_2q_improvement_rate_pct": 37.93103448275863,
+            "depth_2q_ratio": 1.1851851851851851,
+            "depth_2q_improvement_rate_pct": 18.518518518518512
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.725,
+            "num_2q_improvement_rate_pct": -27.500000000000004,
+            "depth_2q_ratio": 0.84375,
+            "depth_2q_improvement_rate_pct": -15.625
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "N2-JW-22",
+        "qubits": 22,
+        "paulis": 4577,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 8156,
+            "depth_2q": 3665,
+            "compile_seconds": 39.448964291252196
+          },
+          "rho_0_35": {
+            "num_2q": 8151,
+            "depth_2q": 3658,
+            "compile_seconds": 82.96488762460649
+          },
+          "rho_1_00": {
+            "num_2q": 11652,
+            "depth_2q": 4730,
+            "compile_seconds": 106.7230512923561
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.9993869543894066,
+            "num_2q_improvement_rate_pct": -0.06130456105933879,
+            "depth_2q_ratio": 0.9980900409276944,
+            "depth_2q_improvement_rate_pct": -0.19099590723056226
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.428641490926925,
+            "num_2q_improvement_rate_pct": 42.86414909269249,
+            "depth_2q_ratio": 1.290586630286494,
+            "depth_2q_improvement_rate_pct": 29.05866302864939
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.6995365602471678,
+            "num_2q_improvement_rate_pct": -30.046343975283218,
+            "depth_2q_ratio": 0.7733615221987316,
+            "depth_2q_improvement_rate_pct": -22.663847780126844
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "N2-parity-14",
+        "qubits": 14,
+        "paulis": 669,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1254,
+            "depth_2q": 682,
+            "compile_seconds": 4.69032916566357
+          },
+          "rho_0_35": {
+            "num_2q": 1254,
+            "depth_2q": 682,
+            "compile_seconds": 3.7229788340628147
+          },
+          "rho_1_00": {
+            "num_2q": 1754,
+            "depth_2q": 901,
+            "compile_seconds": 2.034885124769062
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.3987240829346093,
+            "num_2q_improvement_rate_pct": 39.87240829346093,
+            "depth_2q_ratio": 1.3211143695014662,
+            "depth_2q_improvement_rate_pct": 32.11143695014662
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.7149372862029647,
+            "num_2q_improvement_rate_pct": -28.50627137970353,
+            "depth_2q_ratio": 0.7569367369589345,
+            "depth_2q_improvement_rate_pct": -24.306326304106552
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "NH-BK-14",
+        "qubits": 14,
+        "paulis": 1085,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1690,
+            "depth_2q": 914,
+            "compile_seconds": 5.761750208213925
+          },
+          "rho_0_35": {
+            "num_2q": 1690,
+            "depth_2q": 914,
+            "compile_seconds": 5.145349083002657
+          },
+          "rho_1_00": {
+            "num_2q": 2316,
+            "depth_2q": 1155,
+            "compile_seconds": 2.202132834121585
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.370414201183432,
+            "num_2q_improvement_rate_pct": 37.0414201183432,
+            "depth_2q_ratio": 1.263676148796499,
+            "depth_2q_improvement_rate_pct": 26.367614879649892
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.729706390328152,
+            "num_2q_improvement_rate_pct": -27.0293609671848,
+            "depth_2q_ratio": 0.7913419913419913,
+            "depth_2q_improvement_rate_pct": -20.865800865800864
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "NH-JW-14",
+        "qubits": 14,
+        "paulis": 1085,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1726,
+            "depth_2q": 917,
+            "compile_seconds": 5.39565487485379
+          },
+          "rho_0_35": {
+            "num_2q": 1726,
+            "depth_2q": 917,
+            "compile_seconds": 4.977691083680838
+          },
+          "rho_1_00": {
+            "num_2q": 2351,
+            "depth_2q": 1082,
+            "compile_seconds": 2.454793875105679
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.362108922363847,
+            "num_2q_improvement_rate_pct": 36.210892236384694,
+            "depth_2q_ratio": 1.1799345692475462,
+            "depth_2q_improvement_rate_pct": 17.993456924754625
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.7341556784347086,
+            "num_2q_improvement_rate_pct": -26.584432156529136,
+            "depth_2q_ratio": 0.8475046210720887,
+            "depth_2q_improvement_rate_pct": -15.249537892791132
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "Na2-JW24",
+        "qubits": 24,
+        "paulis": 6508,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 10053,
+            "depth_2q": 4561,
+            "compile_seconds": 79.22358216624707
+          },
+          "rho_0_35": {
+            "num_2q": 10053,
+            "depth_2q": 4561,
+            "compile_seconds": 284.69658404169604
+          },
+          "rho_1_00": {
+            "num_2q": 12434,
+            "depth_2q": 5015,
+            "compile_seconds": 48.00579491723329
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.2368447229682682,
+            "num_2q_improvement_rate_pct": 23.68447229682682,
+            "depth_2q_ratio": 1.099539574654681,
+            "depth_2q_improvement_rate_pct": 9.9539574654681
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.8085089271352742,
+            "num_2q_improvement_rate_pct": -19.149107286472578,
+            "depth_2q_ratio": 0.9094715852442672,
+            "depth_2q_improvement_rate_pct": -9.052841475573281
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "O3-BK22",
+        "qubits": 22,
+        "paulis": 5465,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 10837,
+            "depth_2q": 4810,
+            "compile_seconds": 122.066479915753
+          },
+          "rho_0_35": {
+            "num_2q": 10833,
+            "depth_2q": 4800,
+            "compile_seconds": 237.5635167909786
+          },
+          "rho_1_00": {
+            "num_2q": 11936,
+            "depth_2q": 5178,
+            "compile_seconds": 23.72664100024849
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.9996308941589,
+            "num_2q_improvement_rate_pct": -0.036910584109994815,
+            "depth_2q_ratio": 0.997920997920998,
+            "depth_2q_improvement_rate_pct": -0.20790020790020236
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.1014118298422073,
+            "num_2q_improvement_rate_pct": 10.14118298422073,
+            "depth_2q_ratio": 1.0765072765072765,
+            "depth_2q_improvement_rate_pct": 7.650727650727651
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.9075904825737265,
+            "num_2q_improvement_rate_pct": -9.240951742627345,
+            "depth_2q_ratio": 0.9269988412514485,
+            "depth_2q_improvement_rate_pct": -7.300115874855151
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "OH-JW10",
+        "qubits": 10,
+        "paulis": 275,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 430,
+            "depth_2q": 273,
+            "compile_seconds": 1.4089014157652855
+          },
+          "rho_0_35": {
+            "num_2q": 430,
+            "depth_2q": 273,
+            "compile_seconds": 1.0722722080536187
+          },
+          "rho_1_00": {
+            "num_2q": 671,
+            "depth_2q": 352,
+            "compile_seconds": 0.507364708930254
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.5604651162790697,
+            "num_2q_improvement_rate_pct": 56.046511627906966,
+            "depth_2q_ratio": 1.2893772893772895,
+            "depth_2q_improvement_rate_pct": 28.937728937728945
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.6408345752608048,
+            "num_2q_improvement_rate_pct": -35.91654247391952,
+            "depth_2q_ratio": 0.7755681818181818,
+            "depth_2q_improvement_rate_pct": -22.443181818181824
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "OH-JW12",
+        "qubits": 12,
+        "paulis": 630,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1001,
+            "depth_2q": 577,
+            "compile_seconds": 3.305908374954015
+          },
+          "rho_0_35": {
+            "num_2q": 1001,
+            "depth_2q": 577,
+            "compile_seconds": 2.7577956249006093
+          },
+          "rho_1_00": {
+            "num_2q": 1480,
+            "depth_2q": 738,
+            "compile_seconds": 1.0338362497277558
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.4785214785214784,
+            "num_2q_improvement_rate_pct": 47.852147852147844,
+            "depth_2q_ratio": 1.2790294627383016,
+            "depth_2q_improvement_rate_pct": 27.902946273830164
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.6763513513513514,
+            "num_2q_improvement_rate_pct": -32.36486486486486,
+            "depth_2q_ratio": 0.7818428184281843,
+            "depth_2q_improvement_rate_pct": -21.815718157181575
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "OH-parity12",
+        "qubits": 12,
+        "paulis": 630,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1031,
+            "depth_2q": 574,
+            "compile_seconds": 3.5292205829173326
+          },
+          "rho_0_35": {
+            "num_2q": 1031,
+            "depth_2q": 574,
+            "compile_seconds": 2.7074047080241144
+          },
+          "rho_1_00": {
+            "num_2q": 1452,
+            "depth_2q": 795,
+            "compile_seconds": 1.2441592910327017
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.408341416100873,
+            "num_2q_improvement_rate_pct": 40.83414161008729,
+            "depth_2q_ratio": 1.3850174216027875,
+            "depth_2q_improvement_rate_pct": 38.50174216027875
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.7100550964187328,
+            "num_2q_improvement_rate_pct": -28.994490358126722,
+            "depth_2q_ratio": 0.7220125786163522,
+            "depth_2q_improvement_rate_pct": -27.798742138364783
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-bh-enc_stdbinary_dvalues_d-level-4",
+        "qubits": 2,
+        "paulis": 9,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 3,
+            "depth_2q": 3,
+            "compile_seconds": 0.010254167020320892
+          },
+          "rho_0_35": {
+            "num_2q": 3,
+            "depth_2q": 3,
+            "compile_seconds": 0.009455541148781776
+          },
+          "rho_1_00": {
+            "num_2q": 3,
+            "depth_2q": 3,
+            "compile_seconds": 0.0053964173421263695
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-bhf2-mu_y_prime_enc_stdbinary_dvalues_8-8-8-8-8-8",
+        "qubits": 6,
+        "paulis": 24,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 20,
+            "depth_2q": 10,
+            "compile_seconds": 0.10138095868751407
+          },
+          "rho_0_35": {
+            "num_2q": 19,
+            "depth_2q": 10,
+            "compile_seconds": 0.028521042317152023
+          },
+          "rho_1_00": {
+            "num_2q": 22,
+            "depth_2q": 12,
+            "compile_seconds": 0.032118458300828934
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.95,
+            "num_2q_improvement_rate_pct": -5.000000000000004,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.1,
+            "num_2q_improvement_rate_pct": 10.000000000000009,
+            "depth_2q_ratio": 1.2,
+            "depth_2q_improvement_rate_pct": 19.999999999999996
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.8636363636363636,
+            "num_2q_improvement_rate_pct": -13.636363636363635,
+            "depth_2q_ratio": 0.8333333333333334,
+            "depth_2q_improvement_rate_pct": -16.666666666666664
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-c2h-mu_y_prime_enc_stdbinary_dvalues_8-8-4-4",
+        "qubits": 3,
+        "paulis": 12,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 10,
+            "depth_2q": 10,
+            "compile_seconds": 0.021713083144277334
+          },
+          "rho_0_35": {
+            "num_2q": 10,
+            "depth_2q": 10,
+            "compile_seconds": 0.020471957977861166
+          },
+          "rho_1_00": {
+            "num_2q": 10,
+            "depth_2q": 10,
+            "compile_seconds": 0.018058874644339085
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-c2h-mu_z_prime_enc_gray_dvalues_4-4-4-4",
+        "qubits": 4,
+        "paulis": 8,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 4,
+            "depth_2q": 2,
+            "compile_seconds": 0.013066125102341175
+          },
+          "rho_0_35": {
+            "num_2q": 4,
+            "depth_2q": 2,
+            "compile_seconds": 0.01296912506222725
+          },
+          "rho_1_00": {
+            "num_2q": 4,
+            "depth_2q": 2,
+            "compile_seconds": 0.006181500386446714
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-ch2-mu_y_prime_enc_gray_dvalues_16-16-16",
+        "qubits": 4,
+        "paulis": 32,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 25,
+            "depth_2q": 19,
+            "compile_seconds": 0.06064133299514651
+          },
+          "rho_0_35": {
+            "num_2q": 25,
+            "depth_2q": 19,
+            "compile_seconds": 0.06074404111132026
+          },
+          "rho_1_00": {
+            "num_2q": 46,
+            "depth_2q": 33,
+            "compile_seconds": 0.03266129130497575
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.84,
+            "num_2q_improvement_rate_pct": 84.00000000000001,
+            "depth_2q_ratio": 1.736842105263158,
+            "depth_2q_improvement_rate_pct": 73.6842105263158
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.5434782608695652,
+            "num_2q_improvement_rate_pct": -45.652173913043484,
+            "depth_2q_ratio": 0.5757575757575758,
+            "depth_2q_improvement_rate_pct": -42.42424242424242
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-cyclo_propene-mu_x_prime_enc_stdbinary_dvalues_8-8-8-8-8-8-8-8-8-4-4-4-4-4-4",
+        "qubits": 11,
+        "paulis": 40,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 32,
+            "depth_2q": 10,
+            "compile_seconds": 0.05796304205432534
+          },
+          "rho_0_35": {
+            "num_2q": 38,
+            "depth_2q": 12,
+            "compile_seconds": 0.04705495899543166
+          },
+          "rho_1_00": {
+            "num_2q": 38,
+            "depth_2q": 12,
+            "compile_seconds": 0.04557204060256481
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.1875,
+            "num_2q_improvement_rate_pct": 18.75,
+            "depth_2q_ratio": 1.2,
+            "depth_2q_improvement_rate_pct": 19.999999999999996
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.1875,
+            "num_2q_improvement_rate_pct": 18.75,
+            "depth_2q_ratio": 1.2,
+            "depth_2q_improvement_rate_pct": 19.999999999999996
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-cyclo_propene-mu_x_prime_enc_unary_dvalues_16-16-16-16-16-16-16-16-16-16-16-16-16-16-16",
+        "qubits": 64,
+        "paulis": 120,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 152,
+            "depth_2q": 8,
+            "compile_seconds": 0.33809166587889194
+          },
+          "rho_0_35": {
+            "num_2q": 120,
+            "depth_2q": 4,
+            "compile_seconds": 0.08185708336532116
+          },
+          "rho_1_00": {
+            "num_2q": 120,
+            "depth_2q": 4,
+            "compile_seconds": 0.08164295786991715
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.7894736842105263,
+            "num_2q_improvement_rate_pct": -21.052631578947366,
+            "depth_2q_ratio": 0.5,
+            "depth_2q_improvement_rate_pct": -50.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.7894736842105263,
+            "num_2q_improvement_rate_pct": -21.052631578947366,
+            "depth_2q_ratio": 0.5,
+            "depth_2q_improvement_rate_pct": -50.0
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-f2-enc_gray_dvalues_d-level-16",
+        "qubits": 4,
+        "paulis": 98,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 59,
+            "depth_2q": 51,
+            "compile_seconds": 0.16698154155164957
+          },
+          "rho_0_35": {
+            "num_2q": 59,
+            "depth_2q": 51,
+            "compile_seconds": 0.1496852501295507
+          },
+          "rho_1_00": {
+            "num_2q": 104,
+            "depth_2q": 70,
+            "compile_seconds": 0.08880229061469436
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.7627118644067796,
+            "num_2q_improvement_rate_pct": 76.27118644067797,
+            "depth_2q_ratio": 1.3725490196078431,
+            "depth_2q_improvement_rate_pct": 37.254901960784316
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.5673076923076923,
+            "num_2q_improvement_rate_pct": -43.269230769230774,
+            "depth_2q_ratio": 0.7285714285714285,
+            "depth_2q_improvement_rate_pct": -27.142857142857146
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-fccf-enc_gray_dvalues_4-4-4-4-4-4-4",
+        "qubits": 14,
+        "paulis": 1035,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1304,
+            "depth_2q": 720,
+            "compile_seconds": 4.094676375389099
+          },
+          "rho_0_35": {
+            "num_2q": 1795,
+            "depth_2q": 974,
+            "compile_seconds": 1.3661176660098135
+          },
+          "rho_1_00": {
+            "num_2q": 1814,
+            "depth_2q": 985,
+            "compile_seconds": 1.1623094999231398
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.3765337423312884,
+            "num_2q_improvement_rate_pct": 37.653374233128844,
+            "depth_2q_ratio": 1.3527777777777779,
+            "depth_2q_improvement_rate_pct": 35.277777777777786
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.3911042944785277,
+            "num_2q_improvement_rate_pct": 39.110429447852766,
+            "depth_2q_ratio": 1.3680555555555556,
+            "depth_2q_improvement_rate_pct": 36.80555555555556
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.9895259095920618,
+            "num_2q_improvement_rate_pct": -1.047409040793823,
+            "depth_2q_ratio": 0.9888324873096447,
+            "depth_2q_improvement_rate_pct": -1.116751269035532
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-fccf-mu_y_prime_enc_stdbinary_dvalues_16-16-16-16-8-8-8",
+        "qubits": 4,
+        "paulis": 32,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 29,
+            "depth_2q": 24,
+            "compile_seconds": 0.0670325830578804
+          },
+          "rho_0_35": {
+            "num_2q": 29,
+            "depth_2q": 24,
+            "compile_seconds": 0.06532487506046891
+          },
+          "rho_1_00": {
+            "num_2q": 46,
+            "depth_2q": 32,
+            "compile_seconds": 0.044855750165879726
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.5862068965517242,
+            "num_2q_improvement_rate_pct": 58.62068965517242,
+            "depth_2q_ratio": 1.3333333333333333,
+            "depth_2q_improvement_rate_pct": 33.33333333333333
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.6304347826086957,
+            "num_2q_improvement_rate_pct": -36.95652173913043,
+            "depth_2q_ratio": 0.75,
+            "depth_2q_improvement_rate_pct": -25.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-fccf-mu_y_prime_enc_unary_dvalues_8-8-8-8-8-8-8",
+        "qubits": 8,
+        "paulis": 14,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 16,
+            "depth_2q": 7,
+            "compile_seconds": 0.04235154204070568
+          },
+          "rho_0_35": {
+            "num_2q": 14,
+            "depth_2q": 4,
+            "compile_seconds": 0.011896499898284674
+          },
+          "rho_1_00": {
+            "num_2q": 14,
+            "depth_2q": 4,
+            "compile_seconds": 0.011586375068873167
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.875,
+            "num_2q_improvement_rate_pct": -12.5,
+            "depth_2q_ratio": 0.5714285714285714,
+            "depth_2q_improvement_rate_pct": -42.85714285714286
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.875,
+            "num_2q_improvement_rate_pct": -12.5,
+            "depth_2q_ratio": 0.5714285714285714,
+            "depth_2q_improvement_rate_pct": -42.85714285714286
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-fccf-mu_z_prime_enc_unary_dvalues_16-16-16-16-16-16-16",
+        "qubits": 16,
+        "paulis": 30,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 38,
+            "depth_2q": 8,
+            "compile_seconds": 0.12709491699934006
+          },
+          "rho_0_35": {
+            "num_2q": 30,
+            "depth_2q": 4,
+            "compile_seconds": 0.027952542062848806
+          },
+          "rho_1_00": {
+            "num_2q": 30,
+            "depth_2q": 4,
+            "compile_seconds": 0.022536917123943567
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.7894736842105263,
+            "num_2q_improvement_rate_pct": -21.052631578947366,
+            "depth_2q_ratio": 0.5,
+            "depth_2q_improvement_rate_pct": -50.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.7894736842105263,
+            "num_2q_improvement_rate_pct": -21.052631578947366,
+            "depth_2q_ratio": 0.5,
+            "depth_2q_improvement_rate_pct": -50.0
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-h2co-mu_y_prime_enc_unary_dvalues_16-16-16-16-16-16",
+        "qubits": 32,
+        "paulis": 60,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 76,
+            "depth_2q": 8,
+            "compile_seconds": 0.17172849969938397
+          },
+          "rho_0_35": {
+            "num_2q": 60,
+            "depth_2q": 4,
+            "compile_seconds": 0.0388391250744462
+          },
+          "rho_1_00": {
+            "num_2q": 60,
+            "depth_2q": 4,
+            "compile_seconds": 0.0416550412774086
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.7894736842105263,
+            "num_2q_improvement_rate_pct": -21.052631578947366,
+            "depth_2q_ratio": 0.5,
+            "depth_2q_improvement_rate_pct": -50.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.7894736842105263,
+            "num_2q_improvement_rate_pct": -21.052631578947366,
+            "depth_2q_ratio": 0.5,
+            "depth_2q_improvement_rate_pct": -50.0
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-hc3h2cn-mu_y_prime_enc_stdbinary_dvalues_4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4",
+        "qubits": 24,
+        "paulis": 48,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 24,
+            "depth_2q": 2,
+            "compile_seconds": 0.05607262486591935
+          },
+          "rho_0_35": {
+            "num_2q": 24,
+            "depth_2q": 2,
+            "compile_seconds": 0.031472332775592804
+          },
+          "rho_1_00": {
+            "num_2q": 24,
+            "depth_2q": 2,
+            "compile_seconds": 0.028569333720952272
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-hco-enc_unary_dvalues_4-4-4",
+        "qubits": 12,
+        "paulis": 1788,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 2665,
+            "depth_2q": 1583,
+            "compile_seconds": 10.096491625066847
+          },
+          "rho_0_35": {
+            "num_2q": 2665,
+            "depth_2q": 1583,
+            "compile_seconds": 10.352467832621187
+          },
+          "rho_1_00": {
+            "num_2q": 4577,
+            "depth_2q": 2650,
+            "compile_seconds": 6.2475876663811505
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.7174484052532832,
+            "num_2q_improvement_rate_pct": 71.74484052532833,
+            "depth_2q_ratio": 1.6740366392924826,
+            "depth_2q_improvement_rate_pct": 67.40366392924825
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.5822591216954337,
+            "num_2q_improvement_rate_pct": -41.77408783045663,
+            "depth_2q_ratio": 0.5973584905660377,
+            "depth_2q_improvement_rate_pct": -40.264150943396224
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-hno-mu_x_prime_enc_unary_dvalues_4-4-4",
+        "qubits": 12,
+        "paulis": 18,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 18,
+            "depth_2q": 5,
+            "compile_seconds": 0.04424254223704338
+          },
+          "rho_0_35": {
+            "num_2q": 18,
+            "depth_2q": 4,
+            "compile_seconds": 0.014261874835938215
+          },
+          "rho_1_00": {
+            "num_2q": 18,
+            "depth_2q": 4,
+            "compile_seconds": 0.013894291128963232
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 0.8,
+            "depth_2q_improvement_rate_pct": -19.999999999999996
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 0.8,
+            "depth_2q_improvement_rate_pct": -19.999999999999996
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-o3-enc_gray_dvalues_8-8-8",
+        "qubits": 9,
+        "paulis": 2801,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 2912,
+            "depth_2q": 1962,
+            "compile_seconds": 12.78209266718477
+          },
+          "rho_0_35": {
+            "num_2q": 2912,
+            "depth_2q": 1962,
+            "compile_seconds": 24.879224666394293
+          },
+          "rho_1_00": {
+            "num_2q": 5291,
+            "depth_2q": 3324,
+            "compile_seconds": 20.23286083433777
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.8169642857142858,
+            "num_2q_improvement_rate_pct": 81.69642857142858,
+            "depth_2q_ratio": 1.694189602446483,
+            "depth_2q_improvement_rate_pct": 69.4189602446483
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.5503685503685504,
+            "num_2q_improvement_rate_pct": -44.96314496314496,
+            "depth_2q_ratio": 0.5902527075812274,
+            "depth_2q_improvement_rate_pct": -40.97472924187726
+          }
+        }
+      },
+      {
+        "category": "chemistry",
+        "name": "all-vib-o3-mu_y_prime_enc_unary_dvalues_4-4-4",
+        "qubits": 4,
+        "paulis": 6,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 6,
+            "depth_2q": 5,
+            "compile_seconds": 0.029181749559938908
+          },
+          "rho_0_35": {
+            "num_2q": 6,
+            "depth_2q": 5,
+            "compile_seconds": 0.025664625223726034
+          },
+          "rho_1_00": {
+            "num_2q": 6,
+            "depth_2q": 4,
+            "compile_seconds": 0.00860345782712102
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 0.8,
+            "depth_2q_improvement_rate_pct": -19.999999999999996
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.25,
+            "depth_2q_improvement_rate_pct": 25.0
+          }
+        }
+      }
+    ],
+    "condensedmatter": [
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-nonpbc-qubitnodes_Lx-12_U-40_enc-unary_d-4",
+        "qubits": 48,
+        "paulis": 816,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1760,
+            "depth_2q": 502,
+            "compile_seconds": 13.415841958019882
+          },
+          "rho_0_35": {
+            "num_2q": 1891,
+            "depth_2q": 351,
+            "compile_seconds": 4.327053542248905
+          },
+          "rho_1_00": {
+            "num_2q": 1892,
+            "depth_2q": 351,
+            "compile_seconds": 6.690911042038351
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0744318181818182,
+            "num_2q_improvement_rate_pct": 7.443181818181821,
+            "depth_2q_ratio": 0.6992031872509961,
+            "depth_2q_improvement_rate_pct": -30.079681274900395
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.075,
+            "num_2q_improvement_rate_pct": 7.499999999999996,
+            "depth_2q_ratio": 0.6992031872509961,
+            "depth_2q_improvement_rate_pct": -30.079681274900395
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.9994714587737844,
+            "num_2q_improvement_rate_pct": -0.05285412262155953,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-14_U-10_enc-stdbinary_d-4",
+        "qubits": 28,
+        "paulis": 490,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 605,
+            "depth_2q": 181,
+            "compile_seconds": 7.488280500285327
+          },
+          "rho_0_35": {
+            "num_2q": 657,
+            "depth_2q": 86,
+            "compile_seconds": 1.407434250228107
+          },
+          "rho_1_00": {
+            "num_2q": 656,
+            "depth_2q": 82,
+            "compile_seconds": 1.3903001672588289
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0859504132231406,
+            "num_2q_improvement_rate_pct": 8.595041322314056,
+            "depth_2q_ratio": 0.47513812154696133,
+            "depth_2q_improvement_rate_pct": -52.48618784530387
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.084297520661157,
+            "num_2q_improvement_rate_pct": 8.429752066115693,
+            "depth_2q_ratio": 0.4530386740331492,
+            "depth_2q_improvement_rate_pct": -54.69613259668509
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0015243902439024,
+            "num_2q_improvement_rate_pct": 0.1524390243902385,
+            "depth_2q_ratio": 1.048780487804878,
+            "depth_2q_improvement_rate_pct": 4.878048780487809
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-24_U-20_enc-stdbinary_d-4",
+        "qubits": 48,
+        "paulis": 840,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1033,
+            "depth_2q": 191,
+            "compile_seconds": 11.45576454186812
+          },
+          "rho_0_35": {
+            "num_2q": 1131,
+            "depth_2q": 87,
+            "compile_seconds": 2.7277765832841396
+          },
+          "rho_1_00": {
+            "num_2q": 1130,
+            "depth_2q": 83,
+            "compile_seconds": 2.9474827921949327
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.09486931268151,
+            "num_2q_improvement_rate_pct": 9.486931268151011,
+            "depth_2q_ratio": 0.45549738219895286,
+            "depth_2q_improvement_rate_pct": -54.45026178010471
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0939012584704744,
+            "num_2q_improvement_rate_pct": 9.390125847047436,
+            "depth_2q_ratio": 0.43455497382198954,
+            "depth_2q_improvement_rate_pct": -56.544502617801044
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0008849557522124,
+            "num_2q_improvement_rate_pct": 0.08849557522123686,
+            "depth_2q_ratio": 1.0481927710843373,
+            "depth_2q_improvement_rate_pct": 4.819277108433728
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-46_U-2_enc-gray_d-4",
+        "qubits": 92,
+        "paulis": 1610,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 2016,
+            "depth_2q": 169,
+            "compile_seconds": 24.32197883306071
+          },
+          "rho_0_35": {
+            "num_2q": 1650,
+            "depth_2q": 75,
+            "compile_seconds": 8.311216082889587
+          },
+          "rho_1_00": {
+            "num_2q": 1635,
+            "depth_2q": 58,
+            "compile_seconds": 4.688316583633423
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.8184523809523809,
+            "num_2q_improvement_rate_pct": -18.154761904761905,
+            "depth_2q_ratio": 0.4437869822485207,
+            "depth_2q_improvement_rate_pct": -55.62130177514793
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.8110119047619048,
+            "num_2q_improvement_rate_pct": -18.898809523809522,
+            "depth_2q_ratio": 0.3431952662721893,
+            "depth_2q_improvement_rate_pct": -65.68047337278107
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0091743119266054,
+            "num_2q_improvement_rate_pct": 0.917431192660545,
+            "depth_2q_ratio": 1.293103448275862,
+            "depth_2q_improvement_rate_pct": 29.31034482758621
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-60_U-10_enc-stdbinary_d-4",
+        "qubits": 120,
+        "paulis": 2100,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 2544,
+            "depth_2q": 263,
+            "compile_seconds": 55.569793708156794
+          },
+          "rho_0_35": {
+            "num_2q": 2841,
+            "depth_2q": 87,
+            "compile_seconds": 22.283312374725938
+          },
+          "rho_1_00": {
+            "num_2q": 2840,
+            "depth_2q": 83,
+            "compile_seconds": 26.948626124765724
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.116745283018868,
+            "num_2q_improvement_rate_pct": 11.674528301886799,
+            "depth_2q_ratio": 0.33079847908745247,
+            "depth_2q_improvement_rate_pct": -66.92015209125475
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.1163522012578617,
+            "num_2q_improvement_rate_pct": 11.635220125786173,
+            "depth_2q_ratio": 0.3155893536121673,
+            "depth_2q_improvement_rate_pct": -68.44106463878327
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0003521126760564,
+            "num_2q_improvement_rate_pct": 0.03521126760563931,
+            "depth_2q_ratio": 1.0481927710843373,
+            "depth_2q_improvement_rate_pct": 4.819277108433728
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-10_U-30_enc-unary_d-8",
+        "qubits": 80,
+        "paulis": 3980,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 8680,
+            "depth_2q": 2399,
+            "compile_seconds": 229.4541987502016
+          },
+          "rho_0_35": {
+            "num_2q": 8450,
+            "depth_2q": 1825,
+            "compile_seconds": 22.380036916118115
+          },
+          "rho_1_00": {
+            "num_2q": 8437,
+            "depth_2q": 1818,
+            "compile_seconds": 17.579867624677718
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.9735023041474654,
+            "num_2q_improvement_rate_pct": -2.6497695852534586,
+            "depth_2q_ratio": 0.7607336390162568,
+            "depth_2q_improvement_rate_pct": -23.92663609837432
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.9720046082949308,
+            "num_2q_improvement_rate_pct": -2.799539170506915,
+            "depth_2q_ratio": 0.7578157565652355,
+            "depth_2q_improvement_rate_pct": -24.218424343476453
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0015408320493067,
+            "num_2q_improvement_rate_pct": 0.15408320493066618,
+            "depth_2q_ratio": 1.0038503850385039,
+            "depth_2q_improvement_rate_pct": 0.38503850385038785
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-4_U-40_enc-gray_d-8",
+        "qubits": 12,
+        "paulis": 1176,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1394,
+            "depth_2q": 706,
+            "compile_seconds": 32.8216817076318
+          },
+          "rho_0_35": {
+            "num_2q": 1420,
+            "depth_2q": 672,
+            "compile_seconds": 54.945033291354775
+          },
+          "rho_1_00": {
+            "num_2q": 1480,
+            "depth_2q": 547,
+            "compile_seconds": 6.361676666885614
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.018651362984218,
+            "num_2q_improvement_rate_pct": 1.865136298421799,
+            "depth_2q_ratio": 0.9518413597733711,
+            "depth_2q_improvement_rate_pct": -4.815864022662886
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0616929698708752,
+            "num_2q_improvement_rate_pct": 6.169296987087525,
+            "depth_2q_ratio": 0.7747875354107648,
+            "depth_2q_improvement_rate_pct": -22.521246458923518
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.9594594594594594,
+            "num_2q_improvement_rate_pct": -4.054054054054057,
+            "depth_2q_ratio": 1.2285191956124315,
+            "depth_2q_improvement_rate_pct": 22.85191956124315
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-grid-nonpbc-qubitnodes_Lx-7_Ly-7_U-70_enc-gray_d-4",
+        "qubits": 98,
+        "paulis": 2835,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 4009,
+            "depth_2q": 461,
+            "compile_seconds": 85.87062224978581
+          },
+          "rho_0_35": {
+            "num_2q": 2880,
+            "depth_2q": 121,
+            "compile_seconds": 11.607097125146538
+          },
+          "rho_1_00": {
+            "num_2q": 2880,
+            "depth_2q": 118,
+            "compile_seconds": 6.026818082667887
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.7183836368171614,
+            "num_2q_improvement_rate_pct": -28.161636318283854,
+            "depth_2q_ratio": 0.26247288503253796,
+            "depth_2q_improvement_rate_pct": -73.7527114967462
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.7183836368171614,
+            "num_2q_improvement_rate_pct": -28.161636318283854,
+            "depth_2q_ratio": 0.2559652928416486,
+            "depth_2q_improvement_rate_pct": -74.40347071583514
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0254237288135593,
+            "depth_2q_improvement_rate_pct": 2.5423728813559254
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-11_Ly-11_U-100_enc-gray_d-4",
+        "qubits": 156,
+        "paulis": 6570,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 9861,
+            "depth_2q": 1324,
+            "compile_seconds": 184.35490570869297
+          },
+          "rho_0_35": {
+            "num_2q": 6652,
+            "depth_2q": 195,
+            "compile_seconds": 8.534378666896373
+          },
+          "rho_1_00": {
+            "num_2q": 6652,
+            "depth_2q": 192,
+            "compile_seconds": 8.902604416944087
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.6745766149477741,
+            "num_2q_improvement_rate_pct": -32.54233850522259,
+            "depth_2q_ratio": 0.1472809667673716,
+            "depth_2q_improvement_rate_pct": -85.27190332326285
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.6745766149477741,
+            "num_2q_improvement_rate_pct": -32.54233850522259,
+            "depth_2q_ratio": 0.14501510574018128,
+            "depth_2q_improvement_rate_pct": -85.49848942598187
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.015625,
+            "depth_2q_improvement_rate_pct": 1.5625
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-5_U-30_enc-gray_d-4",
+        "qubits": 28,
+        "paulis": 938,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1340,
+            "depth_2q": 458,
+            "compile_seconds": 19.190072999801487
+          },
+          "rho_0_35": {
+            "num_2q": 952,
+            "depth_2q": 190,
+            "compile_seconds": 2.7511032912880182
+          },
+          "rho_1_00": {
+            "num_2q": 952,
+            "depth_2q": 189,
+            "compile_seconds": 1.9030909589491785
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.7104477611940299,
+            "num_2q_improvement_rate_pct": -28.955223880597014,
+            "depth_2q_ratio": 0.4148471615720524,
+            "depth_2q_improvement_rate_pct": -58.515283842794766
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.7104477611940299,
+            "num_2q_improvement_rate_pct": -28.955223880597014,
+            "depth_2q_ratio": 0.4126637554585153,
+            "depth_2q_improvement_rate_pct": -58.73362445414847
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0052910052910053,
+            "depth_2q_improvement_rate_pct": 0.5291005291005346
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-10_Ly-10_U-30_enc-stdbinary_d-4",
+        "qubits": 100,
+        "paulis": 4950,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 7344,
+            "depth_2q": 1208,
+            "compile_seconds": 125.80145050026476
+          },
+          "rho_0_35": {
+            "num_2q": 5644,
+            "depth_2q": 356,
+            "compile_seconds": 8.235455125104636
+          },
+          "rho_1_00": {
+            "num_2q": 5644,
+            "depth_2q": 354,
+            "compile_seconds": 8.9668722092174
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.7685185185185185,
+            "num_2q_improvement_rate_pct": -23.148148148148152,
+            "depth_2q_ratio": 0.2947019867549669,
+            "depth_2q_improvement_rate_pct": -70.52980132450331
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.7685185185185185,
+            "num_2q_improvement_rate_pct": -23.148148148148152,
+            "depth_2q_ratio": 0.29304635761589404,
+            "depth_2q_improvement_rate_pct": -70.69536423841059
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0056497175141244,
+            "depth_2q_improvement_rate_pct": 0.5649717514124353
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-3_Ly-22_U-70_enc-unary_d-4",
+        "qubits": 132,
+        "paulis": 7194,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 13967,
+            "depth_2q": 3084,
+            "compile_seconds": 140.49735641712323
+          },
+          "rho_0_35": {
+            "num_2q": 15520,
+            "depth_2q": 2267,
+            "compile_seconds": 17.49534520925954
+          },
+          "rho_1_00": {
+            "num_2q": 15531,
+            "depth_2q": 2267,
+            "compile_seconds": 45.216325709130615
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.1111906637073101,
+            "num_2q_improvement_rate_pct": 11.119066370731012,
+            "depth_2q_ratio": 0.7350843060959793,
+            "depth_2q_improvement_rate_pct": -26.49156939040207
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.11197823440968,
+            "num_2q_improvement_rate_pct": 11.197823440968001,
+            "depth_2q_ratio": 0.7350843060959793,
+            "depth_2q_improvement_rate_pct": -26.49156939040207
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.9992917391024403,
+            "num_2q_improvement_rate_pct": -0.07082608975597093,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-5_Ly-5_U-30_enc-unary_d-4",
+        "qubits": 60,
+        "paulis": 3270,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 6674,
+            "depth_2q": 2321,
+            "compile_seconds": 37.64294016640633
+          },
+          "rho_0_35": {
+            "num_2q": 6937,
+            "depth_2q": 1286,
+            "compile_seconds": 6.386575500015169
+          },
+          "rho_1_00": {
+            "num_2q": 6941,
+            "depth_2q": 1297,
+            "compile_seconds": 5.828050957992673
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0394066526820498,
+            "num_2q_improvement_rate_pct": 3.940665268204979,
+            "depth_2q_ratio": 0.5540715208961654,
+            "depth_2q_improvement_rate_pct": -44.59284791038346
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.040005993407252,
+            "num_2q_improvement_rate_pct": 4.000599340725208,
+            "depth_2q_ratio": 0.5588108573890564,
+            "depth_2q_improvement_rate_pct": -44.11891426109435
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.9994237141622244,
+            "num_2q_improvement_rate_pct": -0.057628583777558084,
+            "depth_2q_ratio": 0.9915188897455667,
+            "depth_2q_improvement_rate_pct": -0.8481110254433322
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "BH_D-3_d-4-bh_graph-3D-grid-nonpbc-qubitnodes_Lx-2_Ly-2_Lz-2_U-20_enc-unary_d-4",
+        "qubits": 32,
+        "paulis": 880,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1958,
+            "depth_2q": 734,
+            "compile_seconds": 7.126886249985546
+          },
+          "rho_0_35": {
+            "num_2q": 1976,
+            "depth_2q": 589,
+            "compile_seconds": 1.543745958711952
+          },
+          "rho_1_00": {
+            "num_2q": 1971,
+            "depth_2q": 582,
+            "compile_seconds": 1.7492082500830293
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0091930541368743,
+            "num_2q_improvement_rate_pct": 0.9193054136874323,
+            "depth_2q_ratio": 0.8024523160762943,
+            "depth_2q_improvement_rate_pct": -19.75476839237057
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0066394279877426,
+            "num_2q_improvement_rate_pct": 0.6639427987742641,
+            "depth_2q_ratio": 0.7929155313351499,
+            "depth_2q_improvement_rate_pct": -20.70844686648501
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0025367833587011,
+            "num_2q_improvement_rate_pct": 0.2536783358701111,
+            "depth_2q_ratio": 1.0120274914089347,
+            "depth_2q_improvement_rate_pct": 1.2027491408934665
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-1-fh-graph-1D-grid-nonpbc-qubitnodes_Lx-90_U-2_enc-jw",
+        "qubits": 180,
+        "paulis": 626,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 698,
+            "depth_2q": 95,
+            "compile_seconds": 3.121497916057706
+          },
+          "rho_0_35": {
+            "num_2q": 536,
+            "depth_2q": 6,
+            "compile_seconds": 0.7278680000454187
+          },
+          "rho_1_00": {
+            "num_2q": 536,
+            "depth_2q": 6,
+            "compile_seconds": 0.6885557495988905
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.7679083094555874,
+            "num_2q_improvement_rate_pct": -23.209169054441258,
+            "depth_2q_ratio": 0.06315789473684211,
+            "depth_2q_improvement_rate_pct": -93.6842105263158
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.7679083094555874,
+            "num_2q_improvement_rate_pct": -23.209169054441258,
+            "depth_2q_ratio": 0.06315789473684211,
+            "depth_2q_improvement_rate_pct": -93.6842105263158
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-160_U-12_enc-parity",
+        "qubits": 320,
+        "paulis": 1120,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 2787,
+            "depth_2q": 92,
+            "compile_seconds": 13.369444457814097
+          },
+          "rho_0_35": {
+            "num_2q": 2246,
+            "depth_2q": 54,
+            "compile_seconds": 11.63147983327508
+          },
+          "rho_1_00": {
+            "num_2q": 2245,
+            "depth_2q": 53,
+            "compile_seconds": 8.471021875273436
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.8058844635809114,
+            "num_2q_improvement_rate_pct": -19.411553641908863,
+            "depth_2q_ratio": 0.5869565217391305,
+            "depth_2q_improvement_rate_pct": -41.30434782608695
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.8055256548259777,
+            "num_2q_improvement_rate_pct": -19.44743451740223,
+            "depth_2q_ratio": 0.5760869565217391,
+            "depth_2q_improvement_rate_pct": -42.391304347826086
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.000445434298441,
+            "num_2q_improvement_rate_pct": 0.044543429844101645,
+            "depth_2q_ratio": 1.0188679245283019,
+            "depth_2q_improvement_rate_pct": 1.8867924528301883
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-50_U-2_enc-jw",
+        "qubits": 100,
+        "paulis": 350,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 728,
+            "depth_2q": 286,
+            "compile_seconds": 2.302768833003938
+          },
+          "rho_0_35": {
+            "num_2q": 492,
+            "depth_2q": 104,
+            "compile_seconds": 2.8343723327852786
+          },
+          "rho_1_00": {
+            "num_2q": 492,
+            "depth_2q": 104,
+            "compile_seconds": 2.9625544999726117
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.6758241758241759,
+            "num_2q_improvement_rate_pct": -32.417582417582416,
+            "depth_2q_ratio": 0.36363636363636365,
+            "depth_2q_improvement_rate_pct": -63.63636363636363
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.6758241758241759,
+            "num_2q_improvement_rate_pct": -32.417582417582416,
+            "depth_2q_ratio": 0.36363636363636365,
+            "depth_2q_improvement_rate_pct": -63.63636363636363
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-105_U-8_enc-bk",
+        "qubits": 420,
+        "paulis": 1890,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 4341,
+            "depth_2q": 79,
+            "compile_seconds": 25.479385500308126
+          },
+          "rho_0_35": {
+            "num_2q": 4557,
+            "depth_2q": 79,
+            "compile_seconds": 14.350666500162333
+          },
+          "rho_1_00": {
+            "num_2q": 4556,
+            "depth_2q": 79,
+            "compile_seconds": 15.19158212468028
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0497581202487907,
+            "num_2q_improvement_rate_pct": 4.975812024879067,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0495277585809721,
+            "num_2q_improvement_rate_pct": 4.952775858097214,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0002194907813873,
+            "num_2q_improvement_rate_pct": 0.021949078138727707,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-72_U-0_enc-parity",
+        "qubits": 720,
+        "paulis": 2880,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 10343,
+            "depth_2q": 179,
+            "compile_seconds": 121.74935845891014
+          },
+          "rho_0_35": {
+            "num_2q": 11009,
+            "depth_2q": 339,
+            "compile_seconds": 100.17693404201418
+          },
+          "rho_1_00": {
+            "num_2q": 11007,
+            "depth_2q": 339,
+            "compile_seconds": 81.21673937514424
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0643913758097263,
+            "num_2q_improvement_rate_pct": 6.4391375809726314,
+            "depth_2q_ratio": 1.893854748603352,
+            "depth_2q_improvement_rate_pct": 89.3854748603352
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0641980083148024,
+            "num_2q_improvement_rate_pct": 6.419800831480238,
+            "depth_2q_ratio": 1.893854748603352,
+            "depth_2q_improvement_rate_pct": 89.3854748603352
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.000181702552921,
+            "num_2q_improvement_rate_pct": 0.018170255292093707,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "FH_D-2-fh-graph-2D-triag-nonpbc-qubitnodes_Lx-16_Ly-16_U-4_enc-bk",
+        "qubits": 306,
+        "paulis": 2091,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 6960,
+            "depth_2q": 286,
+            "compile_seconds": 26.14789183391258
+          },
+          "rho_0_35": {
+            "num_2q": 6370,
+            "depth_2q": 232,
+            "compile_seconds": 16.463076875079423
+          },
+          "rho_1_00": {
+            "num_2q": 6371,
+            "depth_2q": 232,
+            "compile_seconds": 50.06110579241067
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.9152298850574713,
+            "num_2q_improvement_rate_pct": -8.477011494252872,
+            "depth_2q_ratio": 0.8111888111888111,
+            "depth_2q_improvement_rate_pct": -18.881118881118887
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.9153735632183908,
+            "num_2q_improvement_rate_pct": -8.46264367816092,
+            "depth_2q_ratio": 0.8111888111888111,
+            "depth_2q_improvement_rate_pct": -18.881118881118887
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 0.9998430387694239,
+            "num_2q_improvement_rate_pct": -0.015696123057606925,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-4_Ly-133_h-0.1",
+        "qubits": 532,
+        "paulis": 3313,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 4820,
+            "depth_2q": 741,
+            "compile_seconds": 102.31076629227027
+          },
+          "rho_0_35": {
+            "num_2q": 2781,
+            "depth_2q": 12,
+            "compile_seconds": 8.532216500025243
+          },
+          "rho_1_00": {
+            "num_2q": 2781,
+            "depth_2q": 12,
+            "compile_seconds": 7.212927042040974
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.5769709543568464,
+            "num_2q_improvement_rate_pct": -42.302904564315355,
+            "depth_2q_ratio": 0.016194331983805668,
+            "depth_2q_improvement_rate_pct": -98.38056680161942
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.5769709543568464,
+            "num_2q_improvement_rate_pct": -42.302904564315355,
+            "depth_2q_ratio": 0.016194331983805668,
+            "depth_2q_improvement_rate_pct": -98.38056680161942
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-186_h-0.5",
+        "qubits": 930,
+        "paulis": 5937,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 9631,
+            "depth_2q": 638,
+            "compile_seconds": 305.65042379219085
+          },
+          "rho_0_35": {
+            "num_2q": 5007,
+            "depth_2q": 12,
+            "compile_seconds": 19.044878667220473
+          },
+          "rho_1_00": {
+            "num_2q": 5007,
+            "depth_2q": 12,
+            "compile_seconds": 18.442566249985248
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.5198837088568166,
+            "num_2q_improvement_rate_pct": -48.011629114318346,
+            "depth_2q_ratio": 0.018808777429467086,
+            "depth_2q_improvement_rate_pct": -98.11912225705329
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.5198837088568166,
+            "num_2q_improvement_rate_pct": -48.011629114318346,
+            "depth_2q_ratio": 0.018808777429467086,
+            "depth_2q_improvement_rate_pct": -98.11912225705329
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-58_h-2",
+        "qubits": 290,
+        "paulis": 1841,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 2876,
+            "depth_2q": 219,
+            "compile_seconds": 57.650685500353575
+          },
+          "rho_0_35": {
+            "num_2q": 1551,
+            "depth_2q": 12,
+            "compile_seconds": 2.3891224591061473
+          },
+          "rho_1_00": {
+            "num_2q": 1551,
+            "depth_2q": 12,
+            "compile_seconds": 2.200421125162393
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.5392906815020863,
+            "num_2q_improvement_rate_pct": -46.07093184979137,
+            "depth_2q_ratio": 0.0547945205479452,
+            "depth_2q_improvement_rate_pct": -94.52054794520548
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.5392906815020863,
+            "num_2q_improvement_rate_pct": -46.07093184979137,
+            "depth_2q_ratio": 0.0547945205479452,
+            "depth_2q_improvement_rate_pct": -94.52054794520548
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-185_h-0.5",
+        "qubits": 370,
+        "paulis": 2035,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 2650,
+            "depth_2q": 283,
+            "compile_seconds": 30.89039529208094
+          },
+          "rho_0_35": {
+            "num_2q": 1665,
+            "depth_2q": 12,
+            "compile_seconds": 2.8787996671162546
+          },
+          "rho_1_00": {
+            "num_2q": 1665,
+            "depth_2q": 12,
+            "compile_seconds": 2.942758417222649
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.6283018867924528,
+            "num_2q_improvement_rate_pct": -37.16981132075472,
+            "depth_2q_ratio": 0.04240282685512368,
+            "depth_2q_improvement_rate_pct": -95.75971731448763
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.6283018867924528,
+            "num_2q_improvement_rate_pct": -37.16981132075472,
+            "depth_2q_ratio": 0.04240282685512368,
+            "depth_2q_improvement_rate_pct": -95.75971731448763
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-190_h-0",
+        "qubits": 760,
+        "paulis": 4560,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 7744,
+            "depth_2q": 807,
+            "compile_seconds": 188.5555872921832
+          },
+          "rho_0_35": {
+            "num_2q": 4560,
+            "depth_2q": 15,
+            "compile_seconds": 10.546802292112261
+          },
+          "rho_1_00": {
+            "num_2q": 4560,
+            "depth_2q": 15,
+            "compile_seconds": 10.97664187476039
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.5888429752066116,
+            "num_2q_improvement_rate_pct": -41.11570247933884,
+            "depth_2q_ratio": 0.01858736059479554,
+            "depth_2q_improvement_rate_pct": -98.14126394052045
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.5888429752066116,
+            "num_2q_improvement_rate_pct": -41.11570247933884,
+            "depth_2q_ratio": 0.01858736059479554,
+            "depth_2q_improvement_rate_pct": -98.14126394052045
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-186_h-3",
+        "qubits": 930,
+        "paulis": 6510,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 9793,
+            "depth_2q": 815,
+            "compile_seconds": 313.5781646659598
+          },
+          "rho_0_35": {
+            "num_2q": 5580,
+            "depth_2q": 15,
+            "compile_seconds": 19.164382208138704
+          },
+          "rho_1_00": {
+            "num_2q": 5580,
+            "depth_2q": 15,
+            "compile_seconds": 18.992504416033626
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.5697947513530073,
+            "num_2q_improvement_rate_pct": -43.02052486469927,
+            "depth_2q_ratio": 0.018404907975460124,
+            "depth_2q_improvement_rate_pct": -98.15950920245399
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.5697947513530073,
+            "num_2q_improvement_rate_pct": -43.02052486469927,
+            "depth_2q_ratio": 0.018404907975460124,
+            "depth_2q_improvement_rate_pct": -98.15950920245399
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "heis-graph-2D-triag-nonpbc-qubitnodes_Lx-40_Ly-40_h-0.1",
+        "qubits": 861,
+        "paulis": 8241,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 12221,
+            "depth_2q": 493,
+            "compile_seconds": 356.7900036671199
+          },
+          "rho_0_35": {
+            "num_2q": 7380,
+            "depth_2q": 18,
+            "compile_seconds": 21.84470900008455
+          },
+          "rho_1_00": {
+            "num_2q": 7380,
+            "depth_2q": 18,
+            "compile_seconds": 21.107590415980667
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.6038785696751493,
+            "num_2q_improvement_rate_pct": -39.61214303248507,
+            "depth_2q_ratio": 0.036511156186612576,
+            "depth_2q_improvement_rate_pct": -96.34888438133873
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.6038785696751493,
+            "num_2q_improvement_rate_pct": -39.61214303248507,
+            "depth_2q_ratio": 0.036511156186612576,
+            "depth_2q_improvement_rate_pct": -96.34888438133873
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-1D-grid-pbc-qubitnodes_Lx-16_h-2",
+        "qubits": 16,
+        "paulis": 32,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 35,
+            "depth_2q": 8,
+            "compile_seconds": 0.06810404174029827
+          },
+          "rho_0_35": {
+            "num_2q": 32,
+            "depth_2q": 6,
+            "compile_seconds": 0.02376333298161626
+          },
+          "rho_1_00": {
+            "num_2q": 32,
+            "depth_2q": 6,
+            "compile_seconds": 0.022767249960452318
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.9142857142857143,
+            "num_2q_improvement_rate_pct": -8.571428571428575,
+            "depth_2q_ratio": 0.75,
+            "depth_2q_improvement_rate_pct": -25.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.9142857142857143,
+            "num_2q_improvement_rate_pct": -8.571428571428575,
+            "depth_2q_ratio": 0.75,
+            "depth_2q_improvement_rate_pct": -25.0
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-1D-grid-pbc-qubitnodes_Lx-26_h-6",
+        "qubits": 26,
+        "paulis": 52,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 58,
+            "depth_2q": 8,
+            "compile_seconds": 0.1273445407859981
+          },
+          "rho_0_35": {
+            "num_2q": 52,
+            "depth_2q": 6,
+            "compile_seconds": 0.03592595877125859
+          },
+          "rho_1_00": {
+            "num_2q": 52,
+            "depth_2q": 6,
+            "compile_seconds": 0.03707425016909838
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.896551724137931,
+            "num_2q_improvement_rate_pct": -10.344827586206895,
+            "depth_2q_ratio": 0.75,
+            "depth_2q_improvement_rate_pct": -25.0
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.896551724137931,
+            "num_2q_improvement_rate_pct": -10.344827586206895,
+            "depth_2q_ratio": 0.75,
+            "depth_2q_improvement_rate_pct": -25.0
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-19_Ly-19_h-5",
+        "qubits": 361,
+        "paulis": 1045,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1539,
+            "depth_2q": 34,
+            "compile_seconds": 10.432908958755434
+          },
+          "rho_0_35": {
+            "num_2q": 1368,
+            "depth_2q": 10,
+            "compile_seconds": 1.8249403331428766
+          },
+          "rho_1_00": {
+            "num_2q": 1368,
+            "depth_2q": 10,
+            "compile_seconds": 1.8994038752280176
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.8888888888888888,
+            "num_2q_improvement_rate_pct": -11.111111111111116,
+            "depth_2q_ratio": 0.29411764705882354,
+            "depth_2q_improvement_rate_pct": -70.58823529411764
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.8888888888888888,
+            "num_2q_improvement_rate_pct": -11.111111111111116,
+            "depth_2q_ratio": 0.29411764705882354,
+            "depth_2q_improvement_rate_pct": -70.58823529411764
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-15_h-3",
+        "qubits": 75,
+        "paulis": 205,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 301,
+            "depth_2q": 21,
+            "compile_seconds": 0.8706239168532193
+          },
+          "rho_0_35": {
+            "num_2q": 260,
+            "depth_2q": 10,
+            "compile_seconds": 0.16304249968379736
+          },
+          "rho_1_00": {
+            "num_2q": 260,
+            "depth_2q": 10,
+            "compile_seconds": 0.16070720832794905
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.8637873754152824,
+            "num_2q_improvement_rate_pct": -13.621262458471762,
+            "depth_2q_ratio": 0.47619047619047616,
+            "depth_2q_improvement_rate_pct": -52.38095238095239
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.8637873754152824,
+            "num_2q_improvement_rate_pct": -13.621262458471762,
+            "depth_2q_ratio": 0.47619047619047616,
+            "depth_2q_improvement_rate_pct": -52.38095238095239
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-148_h-6",
+        "qubits": 592,
+        "paulis": 1776,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 2619,
+            "depth_2q": 27,
+            "compile_seconds": 41.17199291661382
+          },
+          "rho_0_35": {
+            "num_2q": 2368,
+            "depth_2q": 10,
+            "compile_seconds": 9.077340708114207
+          },
+          "rho_1_00": {
+            "num_2q": 2368,
+            "depth_2q": 10,
+            "compile_seconds": 8.282638750039041
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 0.9041618938526155,
+            "num_2q_improvement_rate_pct": -9.583810614738454,
+            "depth_2q_ratio": 0.37037037037037035,
+            "depth_2q_improvement_rate_pct": -62.96296296296296
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 0.9041618938526155,
+            "num_2q_improvement_rate_pct": -9.583810614738454,
+            "depth_2q_ratio": 0.37037037037037035,
+            "depth_2q_improvement_rate_pct": -62.96296296296296
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-160_h-0.1",
+        "qubits": 324,
+        "paulis": 1127,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1523,
+            "depth_2q": 257,
+            "compile_seconds": 14.205739582888782
+          },
+          "rho_0_35": {
+            "num_2q": 1606,
+            "depth_2q": 14,
+            "compile_seconds": 1.8982668751850724
+          },
+          "rho_1_00": {
+            "num_2q": 1606,
+            "depth_2q": 14,
+            "compile_seconds": 2.552798666059971
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0544977019041366,
+            "num_2q_improvement_rate_pct": 5.449770190413661,
+            "depth_2q_ratio": 0.054474708171206226,
+            "depth_2q_improvement_rate_pct": -94.55252918287937
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0544977019041366,
+            "num_2q_improvement_rate_pct": 5.449770190413661,
+            "depth_2q_ratio": 0.054474708171206226,
+            "depth_2q_improvement_rate_pct": -94.55252918287937
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-triag-pbc-qubitnodes_Lx-13_Ly-13_h-0.1",
+        "qubits": 91,
+        "paulis": 364,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 524,
+            "depth_2q": 60,
+            "compile_seconds": 1.4681095411069691
+          },
+          "rho_0_35": {
+            "num_2q": 546,
+            "depth_2q": 16,
+            "compile_seconds": 0.2899239999242127
+          },
+          "rho_1_00": {
+            "num_2q": 546,
+            "depth_2q": 16,
+            "compile_seconds": 0.4058090830221772
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0419847328244274,
+            "num_2q_improvement_rate_pct": 4.198473282442738,
+            "depth_2q_ratio": 0.26666666666666666,
+            "depth_2q_improvement_rate_pct": -73.33333333333334
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0419847328244274,
+            "num_2q_improvement_rate_pct": 4.198473282442738,
+            "depth_2q_ratio": 0.26666666666666666,
+            "depth_2q_improvement_rate_pct": -73.33333333333334
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      },
+      {
+        "category": "condensedmatter",
+        "name": "tfim-graph-2D-triag-pbc-qubitnodes_Lx-19_Ly-19_h-0.5",
+        "qubits": 190,
+        "paulis": 760,
+        "arms": {
+          "rho_0_00": {
+            "num_2q": 1097,
+            "depth_2q": 75,
+            "compile_seconds": 4.177024999633431
+          },
+          "rho_0_35": {
+            "num_2q": 1140,
+            "depth_2q": 14,
+            "compile_seconds": 0.9215836250223219
+          },
+          "rho_1_00": {
+            "num_2q": 1140,
+            "depth_2q": 14,
+            "compile_seconds": 0.9115248750895262
+          }
+        },
+        "comparisons": {
+          "rho_0_35_over_0_00": {
+            "num_2q_ratio": 1.0391978122151322,
+            "num_2q_improvement_rate_pct": 3.919781221513219,
+            "depth_2q_ratio": 0.18666666666666668,
+            "depth_2q_improvement_rate_pct": -81.33333333333333
+          },
+          "rho_1_00_over_0_00": {
+            "num_2q_ratio": 1.0391978122151322,
+            "num_2q_improvement_rate_pct": 3.919781221513219,
+            "depth_2q_ratio": 0.18666666666666668,
+            "depth_2q_improvement_rate_pct": -81.33333333333333
+          },
+          "rho_0_35_over_1_00": {
+            "num_2q_ratio": 1.0,
+            "num_2q_improvement_rate_pct": 0.0,
+            "depth_2q_ratio": 1.0,
+            "depth_2q_improvement_rate_pct": 0.0
+          }
+        }
+      }
+    ]
+  },
+  "errors": [],
+  "summary": [
+    {
+      "category": "binaryoptimization",
+      "category_label": "Binary optimization",
+      "completed_cases": 15,
+      "expected_cases": 15,
+      "comparison": "rho_0_35_over_0_00",
+      "baseline": "rho_0_00",
+      "candidate": "rho_0_35",
+      "num_2q_valid_cases": 15,
+      "num_2q_ratio_geomean": 0.8885733012011496,
+      "num_2q_improvement_geomean_pct": -11.142669879885037,
+      "num_2q_ratio_best": 0.49932478055367996,
+      "num_2q_improvement_best_pct": -50.067521944632,
+      "num_2q_ratio_worst": 1.3197278911564625,
+      "num_2q_improvement_worst_pct": 31.97278911564625,
+      "num_2q_improved_cases": 7,
+      "num_2q_equal_cases": 1,
+      "num_2q_regressed_cases": 7,
+      "depth_2q_valid_cases": 15,
+      "depth_2q_ratio_geomean": 0.3416064856312544,
+      "depth_2q_improvement_geomean_pct": -65.83935143687457,
+      "depth_2q_ratio_best": 0.08022690437601297,
+      "depth_2q_improvement_best_pct": -91.9773095623987,
+      "depth_2q_ratio_worst": 1.0,
+      "depth_2q_improvement_worst_pct": 0.0,
+      "depth_2q_improved_cases": 14,
+      "depth_2q_equal_cases": 1,
+      "depth_2q_regressed_cases": 0
+    },
+    {
+      "category": "binaryoptimization",
+      "category_label": "Binary optimization",
+      "completed_cases": 15,
+      "expected_cases": 15,
+      "comparison": "rho_1_00_over_0_00",
+      "baseline": "rho_0_00",
+      "candidate": "rho_1_00",
+      "num_2q_valid_cases": 15,
+      "num_2q_ratio_geomean": 0.8603977780775425,
+      "num_2q_improvement_geomean_pct": -13.960222192245752,
+      "num_2q_ratio_best": 0.49932478055367996,
+      "num_2q_improvement_best_pct": -50.067521944632,
+      "num_2q_ratio_worst": 1.3197278911564625,
+      "num_2q_improvement_worst_pct": 31.97278911564625,
+      "num_2q_improved_cases": 8,
+      "num_2q_equal_cases": 0,
+      "num_2q_regressed_cases": 7,
+      "depth_2q_valid_cases": 15,
+      "depth_2q_ratio_geomean": 0.3198429012498088,
+      "depth_2q_improvement_geomean_pct": -68.01570987501913,
+      "depth_2q_ratio_best": 0.08022690437601297,
+      "depth_2q_improvement_best_pct": -91.9773095623987,
+      "depth_2q_ratio_worst": 0.6666666666666666,
+      "depth_2q_improvement_worst_pct": -33.333333333333336,
+      "depth_2q_improved_cases": 15,
+      "depth_2q_equal_cases": 0,
+      "depth_2q_regressed_cases": 0
+    },
+    {
+      "category": "binaryoptimization",
+      "category_label": "Binary optimization",
+      "completed_cases": 15,
+      "expected_cases": 15,
+      "comparison": "rho_0_35_over_1_00",
+      "baseline": "rho_1_00",
+      "candidate": "rho_0_35",
+      "num_2q_valid_cases": 15,
+      "num_2q_ratio_geomean": 1.0327470895921675,
+      "num_2q_improvement_geomean_pct": 3.2747089592167544,
+      "num_2q_ratio_best": 0.9987129987129987,
+      "num_2q_improvement_best_pct": -0.12870012870013214,
+      "num_2q_ratio_worst": 1.5833333333333333,
+      "num_2q_improvement_worst_pct": 58.33333333333333,
+      "num_2q_improved_cases": 1,
+      "num_2q_equal_cases": 11,
+      "num_2q_regressed_cases": 3,
+      "depth_2q_valid_cases": 15,
+      "depth_2q_ratio_geomean": 1.0680446065752998,
+      "depth_2q_improvement_geomean_pct": 6.804460657529976,
+      "depth_2q_ratio_best": 1.0,
+      "depth_2q_improvement_best_pct": 0.0,
+      "depth_2q_ratio_worst": 2.111111111111111,
+      "depth_2q_improvement_worst_pct": 111.11111111111111,
+      "depth_2q_improved_cases": 0,
+      "depth_2q_equal_cases": 9,
+      "depth_2q_regressed_cases": 6
+    },
+    {
+      "category": "discreteoptimization",
+      "category_label": "Discrete optimization",
+      "completed_cases": 15,
+      "expected_cases": 15,
+      "comparison": "rho_0_35_over_0_00",
+      "baseline": "rho_0_00",
+      "candidate": "rho_0_35",
+      "num_2q_valid_cases": 15,
+      "num_2q_ratio_geomean": 1.2667764495839031,
+      "num_2q_improvement_geomean_pct": 26.67764495839031,
+      "num_2q_ratio_best": 0.9208282582216809,
+      "num_2q_improvement_best_pct": -7.917174177831909,
+      "num_2q_ratio_worst": 1.7955685618729098,
+      "num_2q_improvement_worst_pct": 79.55685618729098,
+      "num_2q_improved_cases": 6,
+      "num_2q_equal_cases": 0,
+      "num_2q_regressed_cases": 9,
+      "depth_2q_valid_cases": 15,
+      "depth_2q_ratio_geomean": 0.6015887216280933,
+      "depth_2q_improvement_geomean_pct": -39.84112783719067,
+      "depth_2q_ratio_best": 0.2641509433962264,
+      "depth_2q_improvement_best_pct": -73.58490566037736,
+      "depth_2q_ratio_worst": 1.4263494967978043,
+      "depth_2q_improvement_worst_pct": 42.63494967978043,
+      "depth_2q_improved_cases": 11,
+      "depth_2q_equal_cases": 0,
+      "depth_2q_regressed_cases": 4
+    },
+    {
+      "category": "discreteoptimization",
+      "category_label": "Discrete optimization",
+      "completed_cases": 15,
+      "expected_cases": 15,
+      "comparison": "rho_1_00_over_0_00",
+      "baseline": "rho_0_00",
+      "candidate": "rho_1_00",
+      "num_2q_valid_cases": 15,
+      "num_2q_ratio_geomean": 1.2668519950056452,
+      "num_2q_improvement_geomean_pct": 26.685199500564515,
+      "num_2q_ratio_best": 0.9208282582216809,
+      "num_2q_improvement_best_pct": -7.917174177831909,
+      "num_2q_ratio_worst": 1.7945234113712374,
+      "num_2q_improvement_worst_pct": 79.45234113712374,
+      "num_2q_improved_cases": 6,
+      "num_2q_equal_cases": 0,
+      "num_2q_regressed_cases": 9,
+      "depth_2q_valid_cases": 15,
+      "depth_2q_ratio_geomean": 0.5931890232410577,
+      "depth_2q_improvement_geomean_pct": -40.68109767589423,
+      "depth_2q_ratio_best": 0.2641509433962264,
+      "depth_2q_improvement_best_pct": -73.58490566037736,
+      "depth_2q_ratio_worst": 1.4263494967978043,
+      "depth_2q_improvement_worst_pct": 42.63494967978043,
+      "depth_2q_improved_cases": 12,
+      "depth_2q_equal_cases": 0,
+      "depth_2q_regressed_cases": 3
+    },
+    {
+      "category": "discreteoptimization",
+      "category_label": "Discrete optimization",
+      "completed_cases": 15,
+      "expected_cases": 15,
+      "comparison": "rho_0_35_over_1_00",
+      "baseline": "rho_1_00",
+      "candidate": "rho_0_35",
+      "num_2q_valid_cases": 15,
+      "num_2q_ratio_geomean": 0.9999403676024983,
+      "num_2q_improvement_geomean_pct": -0.005963239750172988,
+      "num_2q_ratio_best": 0.9886363636363636,
+      "num_2q_improvement_best_pct": -1.1363636363636354,
+      "num_2q_ratio_worst": 1.0063025210084033,
+      "num_2q_improvement_worst_pct": 0.6302521008403339,
+      "num_2q_improved_cases": 2,
+      "num_2q_equal_cases": 7,
+      "num_2q_regressed_cases": 6,
+      "depth_2q_valid_cases": 15,
+      "depth_2q_ratio_geomean": 1.0141602390771518,
+      "depth_2q_improvement_geomean_pct": 1.4160239077151804,
+      "depth_2q_ratio_best": 0.9871794871794872,
+      "depth_2q_improvement_best_pct": -1.2820512820512775,
+      "depth_2q_ratio_worst": 1.2162162162162162,
+      "depth_2q_improvement_worst_pct": 21.62162162162162,
+      "depth_2q_improved_cases": 2,
+      "depth_2q_equal_cases": 9,
+      "depth_2q_regressed_cases": 4
+    },
+    {
+      "category": "chemistry",
+      "category_label": "Chemistry",
+      "completed_cases": 35,
+      "expected_cases": 35,
+      "comparison": "rho_0_35_over_0_00",
+      "baseline": "rho_0_00",
+      "candidate": "rho_0_35",
+      "num_2q_valid_cases": 35,
+      "num_2q_ratio_geomean": 0.9885360854156788,
+      "num_2q_improvement_geomean_pct": -1.1463914584321167,
+      "num_2q_ratio_best": 0.7894736842105263,
+      "num_2q_improvement_best_pct": -21.052631578947366,
+      "num_2q_ratio_worst": 1.3765337423312884,
+      "num_2q_improvement_worst_pct": 37.653374233128844,
+      "num_2q_improved_cases": 7,
+      "num_2q_equal_cases": 26,
+      "num_2q_regressed_cases": 2,
+      "depth_2q_valid_cases": 35,
+      "depth_2q_ratio_geomean": 0.9342147710977667,
+      "depth_2q_improvement_geomean_pct": -6.578522890223326,
+      "depth_2q_ratio_best": 0.5,
+      "depth_2q_improvement_best_pct": -50.0,
+      "depth_2q_ratio_worst": 1.3527777777777779,
+      "depth_2q_improvement_worst_pct": 35.277777777777786,
+      "depth_2q_improved_cases": 7,
+      "depth_2q_equal_cases": 26,
+      "depth_2q_regressed_cases": 2
+    },
+    {
+      "category": "chemistry",
+      "category_label": "Chemistry",
+      "completed_cases": 35,
+      "expected_cases": 35,
+      "comparison": "rho_1_00_over_0_00",
+      "baseline": "rho_0_00",
+      "candidate": "rho_1_00",
+      "num_2q_valid_cases": 35,
+      "num_2q_ratio_geomean": 1.264635501784645,
+      "num_2q_improvement_geomean_pct": 26.46355017846449,
+      "num_2q_ratio_best": 0.7894736842105263,
+      "num_2q_improvement_best_pct": -21.052631578947366,
+      "num_2q_ratio_worst": 1.84,
+      "num_2q_improvement_worst_pct": 84.00000000000001,
+      "num_2q_improved_cases": 4,
+      "num_2q_equal_cases": 6,
+      "num_2q_regressed_cases": 25,
+      "depth_2q_valid_cases": 35,
+      "depth_2q_ratio_geomean": 1.1012284523678966,
+      "depth_2q_improvement_geomean_pct": 10.122845236789658,
+      "depth_2q_ratio_best": 0.5,
+      "depth_2q_improvement_best_pct": -50.0,
+      "depth_2q_ratio_worst": 1.736842105263158,
+      "depth_2q_improvement_worst_pct": 73.6842105263158,
+      "depth_2q_improved_cases": 6,
+      "depth_2q_equal_cases": 4,
+      "depth_2q_regressed_cases": 25
+    },
+    {
+      "category": "chemistry",
+      "category_label": "Chemistry",
+      "completed_cases": 35,
+      "expected_cases": 35,
+      "comparison": "rho_0_35_over_1_00",
+      "baseline": "rho_1_00",
+      "candidate": "rho_0_35",
+      "num_2q_valid_cases": 35,
+      "num_2q_ratio_geomean": 0.7816766839304001,
+      "num_2q_improvement_geomean_pct": -21.832331606959986,
+      "num_2q_ratio_best": 0.5434782608695652,
+      "num_2q_improvement_best_pct": -45.652173913043484,
+      "num_2q_ratio_worst": 1.0,
+      "num_2q_improvement_worst_pct": 0.0,
+      "num_2q_improved_cases": 24,
+      "num_2q_equal_cases": 11,
+      "num_2q_regressed_cases": 0,
+      "depth_2q_valid_cases": 35,
+      "depth_2q_ratio_geomean": 0.8483387521353887,
+      "depth_2q_improvement_geomean_pct": -15.166124786461133,
+      "depth_2q_ratio_best": 0.5757575757575758,
+      "depth_2q_improvement_best_pct": -42.42424242424242,
+      "depth_2q_ratio_worst": 1.25,
+      "depth_2q_improvement_worst_pct": 25.0,
+      "depth_2q_improved_cases": 24,
+      "depth_2q_equal_cases": 10,
+      "depth_2q_regressed_cases": 1
+    },
+    {
+      "category": "condensedmatter",
+      "category_label": "Condensed matter",
+      "completed_cases": 35,
+      "expected_cases": 35,
+      "comparison": "rho_0_35_over_0_00",
+      "baseline": "rho_0_00",
+      "candidate": "rho_0_35",
+      "num_2q_valid_cases": 35,
+      "num_2q_ratio_geomean": 0.8378270074517221,
+      "num_2q_improvement_geomean_pct": -16.21729925482779,
+      "num_2q_ratio_best": 0.5198837088568166,
+      "num_2q_improvement_best_pct": -48.011629114318346,
+      "num_2q_ratio_worst": 1.116745283018868,
+      "num_2q_improvement_worst_pct": 11.674528301886799,
+      "num_2q_improved_cases": 22,
+      "num_2q_equal_cases": 0,
+      "num_2q_regressed_cases": 13,
+      "depth_2q_valid_cases": 35,
+      "depth_2q_ratio_geomean": 0.24396016053624173,
+      "depth_2q_improvement_geomean_pct": -75.60398394637583,
+      "depth_2q_ratio_best": 0.016194331983805668,
+      "depth_2q_improvement_best_pct": -98.38056680161942,
+      "depth_2q_ratio_worst": 1.893854748603352,
+      "depth_2q_improvement_worst_pct": 89.3854748603352,
+      "depth_2q_improved_cases": 33,
+      "depth_2q_equal_cases": 1,
+      "depth_2q_regressed_cases": 1
+    },
+    {
+      "category": "condensedmatter",
+      "category_label": "Condensed matter",
+      "completed_cases": 35,
+      "expected_cases": 35,
+      "comparison": "rho_1_00_over_0_00",
+      "baseline": "rho_0_00",
+      "candidate": "rho_1_00",
+      "num_2q_valid_cases": 35,
+      "num_2q_ratio_geomean": 0.8384626516953803,
+      "num_2q_improvement_geomean_pct": -16.153734830461975,
+      "num_2q_ratio_best": 0.5198837088568166,
+      "num_2q_improvement_best_pct": -48.011629114318346,
+      "num_2q_ratio_worst": 1.1163522012578617,
+      "num_2q_improvement_worst_pct": 11.635220125786173,
+      "num_2q_improved_cases": 22,
+      "num_2q_equal_cases": 0,
+      "num_2q_regressed_cases": 13,
+      "depth_2q_valid_cases": 35,
+      "depth_2q_ratio_geomean": 0.23925167068765607,
+      "depth_2q_improvement_geomean_pct": -76.0748329312344,
+      "depth_2q_ratio_best": 0.016194331983805668,
+      "depth_2q_improvement_best_pct": -98.38056680161942,
+      "depth_2q_ratio_worst": 1.893854748603352,
+      "depth_2q_improvement_worst_pct": 89.3854748603352,
+      "depth_2q_improved_cases": 33,
+      "depth_2q_equal_cases": 1,
+      "depth_2q_regressed_cases": 1
+    },
+    {
+      "category": "condensedmatter",
+      "category_label": "Condensed matter",
+      "completed_cases": 35,
+      "expected_cases": 35,
+      "comparison": "rho_0_35_over_1_00",
+      "baseline": "rho_1_00",
+      "candidate": "rho_0_35",
+      "num_2q_valid_cases": 35,
+      "num_2q_ratio_geomean": 0.9992418931930089,
+      "num_2q_improvement_geomean_pct": -0.07581068069910657,
+      "num_2q_ratio_best": 0.9594594594594594,
+      "num_2q_improvement_best_pct": -4.054054054054057,
+      "num_2q_ratio_worst": 1.0091743119266054,
+      "num_2q_improvement_worst_pct": 0.917431192660545,
+      "num_2q_improved_cases": 5,
+      "num_2q_equal_cases": 21,
+      "num_2q_regressed_cases": 9,
+      "depth_2q_valid_cases": 35,
+      "depth_2q_ratio_geomean": 1.0196800709272063,
+      "depth_2q_improvement_geomean_pct": 1.968007092720625,
+      "depth_2q_ratio_best": 0.9915188897455667,
+      "depth_2q_improvement_best_pct": -0.8481110254433322,
+      "depth_2q_ratio_worst": 1.293103448275862,
+      "depth_2q_improvement_worst_pct": 29.31034482758621,
+      "depth_2q_improved_cases": 1,
+      "depth_2q_equal_cases": 22,
+      "depth_2q_regressed_cases": 12
+    },
+    {
+      "category": "all",
+      "category_label": "All",
+      "completed_cases": 100,
+      "expected_cases": 100,
+      "comparison": "rho_0_35_over_0_00",
+      "baseline": "rho_0_00",
+      "candidate": "rho_0_35",
+      "num_2q_valid_cases": 100,
+      "num_2q_ratio_geomean": 0.9529286739838123,
+      "num_2q_improvement_geomean_pct": -4.707132601618769,
+      "num_2q_ratio_best": 0.49932478055367996,
+      "num_2q_improvement_best_pct": -50.067521944632,
+      "num_2q_ratio_worst": 1.7955685618729098,
+      "num_2q_improvement_worst_pct": 79.55685618729098,
+      "num_2q_improved_cases": 42,
+      "num_2q_equal_cases": 27,
+      "num_2q_regressed_cases": 31,
+      "depth_2q_valid_cases": 100,
+      "depth_2q_ratio_geomean": 0.47004760375439875,
+      "depth_2q_improvement_geomean_pct": -52.99523962456012,
+      "depth_2q_ratio_best": 0.016194331983805668,
+      "depth_2q_improvement_best_pct": -98.38056680161942,
+      "depth_2q_ratio_worst": 1.893854748603352,
+      "depth_2q_improvement_worst_pct": 89.3854748603352,
+      "depth_2q_improved_cases": 65,
+      "depth_2q_equal_cases": 28,
+      "depth_2q_regressed_cases": 7
+    },
+    {
+      "category": "all",
+      "category_label": "All",
+      "completed_cases": 100,
+      "expected_cases": 100,
+      "comparison": "rho_1_00_over_0_00",
+      "baseline": "rho_0_00",
+      "candidate": "rho_1_00",
+      "num_2q_valid_cases": 100,
+      "num_2q_ratio_geomean": 1.0340009936049583,
+      "num_2q_improvement_geomean_pct": 3.400099360495834,
+      "num_2q_ratio_best": 0.49932478055367996,
+      "num_2q_improvement_best_pct": -50.067521944632,
+      "num_2q_ratio_worst": 1.84,
+      "num_2q_improvement_worst_pct": 84.00000000000001,
+      "num_2q_improved_cases": 40,
+      "num_2q_equal_cases": 6,
+      "num_2q_regressed_cases": 54,
+      "depth_2q_valid_cases": 100,
+      "depth_2q_ratio_geomean": 0.4886251472494822,
+      "depth_2q_improvement_geomean_pct": -51.13748527505177,
+      "depth_2q_ratio_best": 0.016194331983805668,
+      "depth_2q_improvement_best_pct": -98.38056680161942,
+      "depth_2q_ratio_worst": 1.893854748603352,
+      "depth_2q_improvement_worst_pct": 89.3854748603352,
+      "depth_2q_improved_cases": 66,
+      "depth_2q_equal_cases": 5,
+      "depth_2q_regressed_cases": 29
+    },
+    {
+      "category": "all",
+      "category_label": "All",
+      "completed_cases": 100,
+      "expected_cases": 100,
+      "comparison": "rho_0_35_over_1_00",
+      "baseline": "rho_1_00",
+      "candidate": "rho_0_35",
+      "num_2q_valid_cases": 100,
+      "num_2q_ratio_geomean": 0.9215935766768519,
+      "num_2q_improvement_geomean_pct": -7.840642332314807,
+      "num_2q_ratio_best": 0.5434782608695652,
+      "num_2q_improvement_best_pct": -45.652173913043484,
+      "num_2q_ratio_worst": 1.5833333333333333,
+      "num_2q_improvement_worst_pct": 58.33333333333333,
+      "num_2q_improved_cases": 32,
+      "num_2q_equal_cases": 50,
+      "num_2q_regressed_cases": 18,
+      "depth_2q_valid_cases": 100,
+      "depth_2q_ratio_geomean": 0.9619799684898367,
+      "depth_2q_improvement_geomean_pct": -3.802003151016331,
+      "depth_2q_ratio_best": 0.5757575757575758,
+      "depth_2q_improvement_best_pct": -42.42424242424242,
+      "depth_2q_ratio_worst": 2.111111111111111,
+      "depth_2q_improvement_worst_pct": 111.11111111111111,
+      "depth_2q_improved_cases": 27,
+      "depth_2q_equal_cases": 50,
+      "depth_2q_regressed_cases": 23
+    }
+  ]
+}

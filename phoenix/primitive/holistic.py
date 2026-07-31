@@ -4,7 +4,9 @@ Design: ``docs/peel_forward_design.md``. The holistic engine replaces the
 support-grouped BSF search (greedy + tabu + stall machinery) with a single
 guaranteed-descent loop over the whole table — grouping is fully emergent:
 
-- every active row with weight <= 2 is *emitted* (frozen) immediately;
+- every active row with weight <= 1 is *emitted* (frozen) immediately, while
+  weight-2 rows are emitted only in the sparse active-tableau regime selected
+  by a density threshold;
 - a *target* row (min weight; ties by pattern popularity) is locked and
   reduced by 2-qubit Clifford conjugations restricted to pairs inside its own
   support and constrained to strictly decrease its weight (always possible —
@@ -18,8 +20,8 @@ guaranteed-descent loop over the whole table — grouping is fully emergent:
   (replayed, resynthesized, or absorbed into observables).
 
 Termination: the potential (#active rows, target weight) strictly decreases
-lexicographically at every move — at most m*(n-2) moves, no visited set, no
-patience, no fission. Zero numeric hyperparameters.
+lexicographically at every move — at most m*(n-1) moves, no visited set, no
+patience, no fission.  Emission has one calibrated density threshold.
 
 Circuit identity (phoenix ``frame='s'`` convention, all 9 options self-inverse):
 
@@ -104,26 +106,38 @@ class PeelResult:
     num_qubits: int
 
 
-def peel_forward(
-    ham: Hamiltonian, verbose: bool = False, emit_max_weight: int = 2
-) -> PeelResult:
-    """Run the holistic peeling engine. Deterministic; zero numeric hyperparameters.
+RHO_THRESHOLD = 0.35
 
-    Target-descent loop: emit every active row of weight <= ``emit_max_weight``, then lock the
-    cheapest active row as the target and reduce it with guaranteed-descent
-    2-qubit Clifford conjugations (verified lemma) until it emits; repeat until
-    the table is empty. The potential (#active rows, target weight) strictly
-    decreases lexicographically at every move — at most
-    m(n-``emit_max_weight``) moves.  The production default is 2; a value of 1
-    is exposed solely for the single-qubit-versus-two-qubit emission ablation.
+def peel_forward(
+    ham: Hamiltonian,
+    verbose: bool = False,
+    rho_threshold: float = None,
+) -> PeelResult:
+    """Run the deterministic holistic peeling engine.
+
+    Weight-1 rows are always emitted.  Weight-2 rows are emitted only if the
+    current active-tableau density
+
+    ``mean(active row weight) / number of active qubits``
+
+    is at most ``rho_threshold``.  Otherwise they remain active and are peeled
+    to weight 1.  ``rho_threshold=0.0`` recovers the fixed weight-1 baseline,
+    while ``rho_threshold=1.0`` recovers fixed aggressive weight-2 emission.
+
+    The loop then locks the cheapest active row as the target and reduces it
+    with guaranteed-descent 2-qubit Clifford conjugations until it emits.  The
+    potential (#active rows, target weight) strictly decreases
+    lexicographically at every move, giving the general bound m(n-1).
 
     (The retired v3 certified-holistic-search Tier-1 that used to gate this
     loop is archived in ``backup/peel_v3.py``; its full-matrix ablation,
     ``experiments/attic/ablate_v3.json``, showed it net-worse on UCCSD, so it
     was removed.)
     """
-    if emit_max_weight not in (1, 2):
-        raise ValueError("emit_max_weight must be either 1 or 2.")
+    if rho_threshold is None:
+        rho_threshold = RHO_THRESHOLD
+    if not np.isfinite(rho_threshold) or not 0.0 <= rho_threshold <= 1.0:
+        raise ValueError("rho_threshold must be a finite number between 0 and 1.")
 
     x = np.asarray(ham.paulis.x, dtype=np.uint8).copy()
     z = np.asarray(ham.paulis.z, dtype=np.uint8).copy()
@@ -138,7 +152,22 @@ def peel_forward(
 
     def _emit():
         nonlocal target
-        rows = np.where(active & (w <= emit_max_weight))[0]
+        rows = np.where(active & (w <= 1))[0]
+        rows_weight_2 = np.where(active & (w == 2))[0]
+        if rows_weight_2.size:
+            active_rows = np.where(active)[0]
+            active_qubits = int(
+                np.any((x[active_rows] | z[active_rows]) != 0, axis=0).sum()
+            )
+            active_density = float(w[active_rows].mean()) / max(active_qubits, 1)
+            emit_weight_2 = active_density <= rho_threshold
+            if emit_weight_2:
+                rows = np.concatenate((rows, rows_weight_2))
+            if verbose:
+                print(
+                    f"  [emit-policy] rho={active_density:.4f}, "
+                    f"threshold={rho_threshold:.4f}, emit_weight_2={emit_weight_2}"
+                )
         if rows.size == 0:
             return
         # NOTE: ``str(Pauli)`` truncates labels beyond 50 qubits ("II...");
@@ -503,7 +532,7 @@ def holistic_compile(
     terminal: str = "auto",
     phase_exact: bool = False,
     verbose: bool = False,
-    emit_max_weight: int = 2,
+    rho_threshold: float = None,
 ) -> QuantumCircuit:
     """Engine + circuit construction (pre-optimizer).
 
@@ -512,7 +541,11 @@ def holistic_compile(
     ``phase_exact=True`` for controlled/QPE use).
     """
     return peel_circuit(
-        peel_forward(ham, verbose=verbose, emit_max_weight=emit_max_weight),
+        peel_forward(
+            ham,
+            verbose=verbose,
+            rho_threshold=rho_threshold,
+        ),
         terminal=terminal,
         phase_exact=phase_exact,
     )

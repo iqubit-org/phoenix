@@ -43,18 +43,24 @@ def phoenix_pass(
     coeffs: List[float],
     grouping: str | None = None,
     coupling_map: CouplingMap = None,
-    emit_max_weight: int = 2,
+    rho_threshold: float = None,
     optimize: bool = True
 ) -> qiskit.QuantumCircuit:
     """Phoenix's high-level optimization.
 
     ``grouping`` accepts the public modes (None/'holistic'/'support').
+    ``rho_threshold`` controls adaptive weight-2 emission in holistic mode.
     """
     paulis = [
         p[::-1] for p in paulis
     ]  # ! PHOENIX uses little-endian convention for Pauli strings, reverse the input strings here
     ham = phoenix.Hamiltonian(paulis, coeffs)
-    qc = phoenix.compile_hamiltonian_simulation(ham, grouping=grouping, optimize=optimize, emit_max_weight=emit_max_weight)
+    qc = phoenix.compile_hamiltonian_simulation(
+        ham,
+        grouping=grouping,
+        optimize=optimize,
+        rho_threshold=rho_threshold,
+    )
 
     if not (coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)):
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)

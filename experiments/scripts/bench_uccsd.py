@@ -36,7 +36,7 @@ COMPILER_PASSES = {
     "pauliopt": bench_utils.pauliopt_pass,
     "quclear": bench_utils.quclear_pass,
     "phoenix": partial(bench_utils.phoenix_pass, grouping="support"),
-    "phoenixpp": partial(bench_utils.phoenix_pass, grouping="holistic", emit_max_weight=1),
+    "phoenixpp": partial(bench_utils.phoenix_pass, grouping="holistic"),
 }
 
 COUPLING_MAP_GENS = {

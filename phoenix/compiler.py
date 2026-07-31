@@ -50,7 +50,7 @@ def compile_hamiltonian_simulation(
     backend: str = "sequential",
     search_patience: int | None = None,
     optimize: bool = True,
-    emit_max_weight: int = 2,
+    rho_threshold: float = None,
 ) -> QuantumCircuit:
     """Compile a Hamiltonian simulation circuit using the Phoenix framework.
 
@@ -59,9 +59,8 @@ def compile_hamiltonian_simulation(
         grouping: Compilation strategy for Pauli terms:
             - ``None`` (default) or ``"holistic"``: the holistic engine —
               forward-frame two-qubit peeling over the whole table, grouping
-              fully emergent, guaranteed termination, zero numeric
-              hyperparameters (see ``primitive.holistic`` /
-              docs/peel_forward_design.md);
+              fully emergent, adaptive density-gated weight-2 emission, and
+              guaranteed termination;
             - ``"support"``: exact same-support grouping + legacy BSF greedy
               search (DAC'25 behavior, kept as the ablation baseline).
         optimize: Whether to apply Qiskit post-optimization.
@@ -71,17 +70,19 @@ def compile_hamiltonian_simulation(
             "concurrent.futures", or "sequential"). Ignored by the holistic engine.
         search_patience: Stall patience of the legacy BSF search safety net
             (support mode only). Default: max(16, 2·#active qubits).
-        emit_max_weight: Maximum Pauli weight emitted by the holistic peeling
-            engine.  The production default is 2; 1 is available for the
-            single-qubit-versus-two-qubit emission ablation. Ignored in
-            support mode.
+        rho_threshold: Emit active weight-2 rows when their active-tableau
+            density is at most this value. Default: None means 0.35. A value of 1.0
+            recovers fixed aggressive weight-2 emission, while 0.0 recovers
+            the fixed weight-1 baseline. Ignored in support mode.
 
     Returns:
         The compiled quantum circuit.
     """
     if grouping is None or grouping == "holistic":
         qc = holistic_compile(
-            hamiltonian, terminal=terminal, emit_max_weight=emit_max_weight
+            hamiltonian,
+            terminal=terminal,
+            rho_threshold=rho_threshold,
         )
     elif grouping == "support":
         hams = hamiltonian.group_same_weights()

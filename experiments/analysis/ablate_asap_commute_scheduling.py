@@ -3,10 +3,10 @@
 
 For every Hamlib benchmark, this script compiles the four configurations:
 
-    1. SCHEDULE_ASAP=False, SCHEDULE_EXACT_COMMUTE=False
-    2. SCHEDULE_ASAP=True,  SCHEDULE_EXACT_COMMUTE=False
-    3. SCHEDULE_ASAP=False, SCHEDULE_EXACT_COMMUTE=True
-    4. SCHEDULE_ASAP=True,  SCHEDULE_EXACT_COMMUTE=True
+    1. SCHEDULE_ASAP=False, SCHEDULE_ASAP_COMMUTE=False
+    2. SCHEDULE_ASAP=True,  SCHEDULE_ASAP_COMMUTE=False
+    3. SCHEDULE_ASAP=False, SCHEDULE_ASAP_COMMUTE=True
+    4. SCHEDULE_ASAP=True,  SCHEDULE_ASAP_COMMUTE=True
 
 The two reported comparisons hold the exact-commute setting fixed and measure
 the effect of turning ASAP on.  Their depth ratio is ``asap_on / asap_off``;
@@ -66,13 +66,13 @@ COMPARISONS = {
         "label": "ASAP w/o Commute",
         "off_key": "asap_off_commute_off",
         "on_key": "asap_on_commute_off",
-        "description": "SCHEDULE_ASAP on/off with SCHEDULE_EXACT_COMMUTE=False.",
+        "description": "SCHEDULE_ASAP on/off with SCHEDULE_ASAP_COMMUTE=False.",
     },
     "asap_with_commute": {
         "label": "ASAP w/ Commute",
         "off_key": "asap_off_commute_on",
         "on_key": "asap_on_commute_on",
-        "description": "SCHEDULE_ASAP on/off with SCHEDULE_EXACT_COMMUTE=True.",
+        "description": "SCHEDULE_ASAP on/off with SCHEDULE_ASAP_COMMUTE=True.",
     },
 }
 
@@ -84,16 +84,16 @@ def two_qubit_depth(qc: Any) -> int:
 def compile_depth(ham: Hamiltonian, *, asap: bool, exact_commute: bool) -> int:
     """Compile one arm while restoring global scheduler flags afterwards."""
     old_asap = holistic_mod.SCHEDULE_ASAP
-    old_exact_commute = holistic_mod.SCHEDULE_EXACT_COMMUTE
+    old_exact_commute = holistic_mod.SCHEDULE_ASAP_COMMUTE
     try:
         holistic_mod.SCHEDULE_ASAP = asap
-        holistic_mod.SCHEDULE_EXACT_COMMUTE = exact_commute
+        holistic_mod.SCHEDULE_ASAP_COMMUTE = exact_commute
         with contextlib.redirect_stdout(io.StringIO()):
             qc = phoenix.compile_hamiltonian_simulation(ham)
         return two_qubit_depth(qc)
     finally:
         holistic_mod.SCHEDULE_ASAP = old_asap
-        holistic_mod.SCHEDULE_EXACT_COMMUTE = old_exact_commute
+        holistic_mod.SCHEDULE_ASAP_COMMUTE = old_exact_commute
 
 
 def ratio_and_improvement(on_depth: int, off_depth: int) -> tuple[float | None, float | None]:
@@ -264,6 +264,17 @@ def write_csv(summary: list[dict[str, Any]]) -> None:
 
 
 def main() -> None:
+    # Fail fast on a renamed/removed scheduler flag. Without this, every case
+    # raises AttributeError, is caught per-case below, and the run still
+    # overwrites the saved results with an all-"n/a" summary.
+    for flag in ("SCHEDULE_ASAP", "SCHEDULE_ASAP_COMMUTE"):
+        if not hasattr(holistic_mod, flag):
+            raise SystemExit(
+                f"phoenix.primitive.holistic has no attribute {flag!r}; the scheduler "
+                "flags were renamed or removed. Update this script before rerunning "
+                "(the existing result files are left untouched)."
+            )
+
     results = {category: [] for category, _label, _count in CATEGORIES}
     errors: list[dict[str, str]] = []
 

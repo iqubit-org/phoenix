@@ -1,20 +1,23 @@
 #!/usr/bin/env python
-"""Ablate weight-1 versus weight-2 emission in holistic compilation.
+"""Ablate density-gated two-qubit emission in holistic compilation.
 
 Every HAMLib benchmark is compiled through the full default Phoenix pipeline
-twice.  The two arms differ only in the predicate used by ``peel_forward``'s
-``_emit`` closure:
+with three ``rho_threshold`` values.  The arms differ only in the predicate
+used by ``peel_forward``'s ``_emit`` closure:
 
-    1. ``weight <= 1``: peel every two-qubit Pauli down to one qubit;
-    2. ``weight <= 2``: production default, allowing aggressive 2Q blocks.
+    1. ``rho_threshold=0.00``: fixed weight-1 emission;
+    2. ``rho_threshold=0.35``: the production adaptive policy;
+    3. ``rho_threshold=1.00``: fixed aggressive weight-2 emission.
 
-Ratios are ``weight<=2 / weight<=1``.  Thus, a ratio below one and a negative
-improvement percentage mean that weight-2 emission produced a better circuit.
+Per-case JSON retains all three absolute circuit metrics.  The CSV reports
+each pairwise comparison by category and overall.  Ratios are
+``candidate / baseline``: a ratio below one (or negative percentage) is
+better.
 
 Outputs:
-    experiments/analysis/ablation_data/emit_weight_threshold.json
-        Per-benchmark metrics for both arms, errors, and aggregate summaries.
-    experiments/analysis/ablation_data/emit_weight_threshold.csv
+    experiments/analysis/ablation_data/rho_threshold.json
+        Per-benchmark metrics, pairwise comparisons, errors, and summaries.
+    experiments/analysis/ablation_data/rho_threshold.csv
         Per-category and overall geometric-mean / best-case summary table.
 
 The JSON and CSV are checkpointed after each completed benchmark, so an
@@ -43,8 +46,9 @@ warnings.filterwarnings("ignore")
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 HAMLIB = os.path.join(REPO, "benchmarks", "hamlib")
 DATA_DIR = os.path.join(REPO, "experiments", "analysis", "ablation_data")
-JSON_PATH = os.path.join(DATA_DIR, "emit_weight_threshold.json")
-CSV_PATH = os.path.join(DATA_DIR, "emit_weight_threshold.csv")
+JSON_PATH = os.path.join(DATA_DIR, "rho_threshold.json")
+CSV_PATH = os.path.join(DATA_DIR, "rho_threshold.csv")
+SCHEMA_VERSION = 2
 
 CATEGORIES = (
     ("binaryoptimization", "Binary optimization", 15),
@@ -53,9 +57,17 @@ CATEGORIES = (
     ("condensedmatter", "Condensed matter", 35),
 )
 
-ARMS = (("emit_w_le_1", 1), ("emit_w_le_2", 2))
-BASELINE_KEY = "emit_w_le_1"
-CANDIDATE_KEY = "emit_w_le_2"
+ARMS = (
+    ("rho_0_00", 0.00, "Fixed weight-1 emission"),
+    ("rho_0_35", 0.35, "Adaptive production policy"),
+    ("rho_1_00", 1.00, "Fixed aggressive weight-2 emission"),
+)
+ARM_THRESHOLDS = {key: rho for key, rho, _label in ARMS}
+COMPARISONS = (
+    ("rho_0_35_over_0_00", "rho_0_00", "rho_0_35"),
+    ("rho_1_00_over_0_00", "rho_0_00", "rho_1_00"),
+    ("rho_0_35_over_1_00", "rho_1_00", "rho_0_35"),
+)
 METRICS = ("num_2q", "depth_2q")
 
 
@@ -66,20 +78,32 @@ def circuit_metrics(qc: Any) -> dict[str, int]:
     }
 
 
-def compile_arm(ham: Any, emit_max_weight: int) -> dict[str, int | float]:
-    """Compile one arm with every option except the emission threshold at default."""
+def compile_arm(ham: Any, rho_threshold: float) -> dict[str, int | float]:
+    """Compile one density-threshold arm with every other option at default."""
     import phoenix
 
     start = time.perf_counter()
     with contextlib.redirect_stdout(io.StringIO()):
-        qc = phoenix.compile_hamiltonian_simulation(
-            ham,
-            emit_max_weight=emit_max_weight,
-        )
+        qc = phoenix.compile_hamiltonian_simulation(ham, rho_threshold=rho_threshold)
     return {
         **circuit_metrics(qc),
         "compile_seconds": time.perf_counter() - start,
     }
+
+
+def compare_arms(
+    arms: dict[str, dict[str, int | float]], baseline_key: str, candidate_key: str
+) -> dict[str, float | None]:
+    comparison: dict[str, float | None] = {}
+    for metric in METRICS:
+        baseline = arms[baseline_key][metric]
+        candidate = arms[candidate_key][metric]
+        ratio = candidate / baseline if baseline else None
+        comparison[f"{metric}_ratio"] = ratio
+        comparison[f"{metric}_improvement_rate_pct"] = (
+            None if ratio is None else 100.0 * (ratio - 1.0)
+        )
+    return comparison
 
 
 def run_case(category: str, path: str) -> dict[str, Any]:
@@ -89,25 +113,18 @@ def run_case(category: str, path: str) -> dict[str, Any]:
     with open(path) as handle:
         data = json.load(handle)
     ham = Hamiltonian(data["paulis"], data["coeffs"])
-    arms = {key: compile_arm(ham, threshold) for key, threshold in ARMS}
-
-    comparison: dict[str, float | None] = {}
-    for metric in METRICS:
-        baseline = arms[BASELINE_KEY][metric]
-        candidate = arms[CANDIDATE_KEY][metric]
-        ratio = candidate / baseline if baseline else None
-        comparison[f"{metric}_ratio"] = ratio
-        comparison[f"{metric}_improvement_rate_pct"] = (
-            None if ratio is None else 100.0 * (ratio - 1.0)
-        )
-
+    arms = {key: compile_arm(ham, rho) for key, rho, _label in ARMS}
+    comparisons = {
+        key: compare_arms(arms, baseline_key, candidate_key)
+        for key, baseline_key, candidate_key in COMPARISONS
+    }
     return {
         "category": category,
         "name": os.path.basename(path)[:-5],
         "qubits": ham.num_qubits,
         "paulis": len(ham.paulis),
         "arms": arms,
-        "comparison": comparison,
+        "comparisons": comparisons,
     }
 
 
@@ -118,14 +135,14 @@ def geometric_mean(values: list[float]) -> float | None:
     return math.exp(sum(math.log(value) for value in positive) / len(positive))
 
 
-def summarize_cases(cases: list[dict[str, Any]]) -> dict[str, Any]:
+def summarize_cases(cases: list[dict[str, Any]], comparison_key: str) -> dict[str, Any]:
     summary: dict[str, Any] = {}
     for metric in METRICS:
         ratios = [
-            case["comparison"][f"{metric}_ratio"]
+            case["comparisons"][comparison_key][f"{metric}_ratio"]
             for case in cases
-            if case["comparison"][f"{metric}_ratio"] is not None
-            and case["comparison"][f"{metric}_ratio"] > 0.0
+            if case["comparisons"][comparison_key][f"{metric}_ratio"] is not None
+            and case["comparisons"][comparison_key][f"{metric}_ratio"] > 0.0
         ]
         ratio_geomean = geometric_mean(ratios)
         ratio_best = min(ratios, default=None)
@@ -155,32 +172,42 @@ def summarize_cases(cases: list[dict[str, Any]]) -> dict[str, Any]:
 
 def build_summary(results: dict[str, list[dict[str, Any]]]) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
-    all_cases = [case for category, _label, _count in CATEGORIES for case in results[category]]
-    for category, label, expected_cases in CATEGORIES:
-        cases = results[category]
-        rows.append(
-            {
-                "category": category,
-                "category_label": label,
-                "completed_cases": len(cases),
-                "expected_cases": expected_cases,
-                **summarize_cases(cases),
-            }
+    category_rows = list(CATEGORIES) + [
+        (
+            "all",
+            "All",
+            sum(count for _category, _label, count in CATEGORIES),
         )
-    rows.append(
-        {
-            "category": "all",
-            "category_label": "All",
-            "completed_cases": len(all_cases),
-            "expected_cases": sum(count for _category, _label, count in CATEGORIES),
-            **summarize_cases(all_cases),
-        }
-    )
+    ]
+    all_cases = [case for category, _label, _count in CATEGORIES for case in results[category]]
+    for category, label, expected_cases in category_rows:
+        cases = all_cases if category == "all" else results[category]
+        for comparison_key, baseline_key, candidate_key in COMPARISONS:
+            rows.append(
+                {
+                    "category": category,
+                    "category_label": label,
+                    "completed_cases": len(cases),
+                    "expected_cases": expected_cases,
+                    "comparison": comparison_key,
+                    "baseline": baseline_key,
+                    "candidate": candidate_key,
+                    **summarize_cases(cases, comparison_key),
+                }
+            )
     return rows
 
 
 def csv_fieldnames() -> list[str]:
-    fields = ["category", "category_label", "completed_cases", "expected_cases"]
+    fields = [
+        "category",
+        "category_label",
+        "completed_cases",
+        "expected_cases",
+        "comparison",
+        "baseline",
+        "candidate",
+    ]
     for metric in METRICS:
         fields.extend(
             [
@@ -211,13 +238,22 @@ def write_csv(summary: list[dict[str, Any]]) -> None:
 
 def metadata(complete: bool) -> dict[str, Any]:
     return {
+        "schema_version": SCHEMA_VERSION,
         "complete": complete,
         "benchmark_suite": "HAMLib (100 programs)",
-        "pipeline": "phoenix.compile_hamiltonian_simulation with all defaults except emit_max_weight",
-        "arms": {key: {"emit_predicate": f"weight <= {threshold}"} for key, threshold in ARMS},
-        "baseline": BASELINE_KEY,
-        "candidate": CANDIDATE_KEY,
-        "ratio_definition": f"{CANDIDATE_KEY} / {BASELINE_KEY}",
+        "pipeline": (
+            "phoenix.compile_hamiltonian_simulation with every default setting "
+            "except rho_threshold"
+        ),
+        "arms": {
+            key: {"rho_threshold": rho, "description": description}
+            for key, rho, description in ARMS
+        },
+        "comparisons": {
+            key: {"baseline": baseline_key, "candidate": candidate_key}
+            for key, baseline_key, candidate_key in COMPARISONS
+        },
+        "ratio_definition": "candidate / baseline",
         "improvement_rate_definition": "(ratio - 1) * 100; negative is better",
         "metrics": list(METRICS),
     }
@@ -252,14 +288,16 @@ def fmt(ratio: float | None) -> str:
 
 
 def print_markdown_table(summary: list[dict[str, Any]]) -> None:
-    print("| Category (#) | 2Q count avg. | 2Q count max. | 2Q depth avg. | 2Q depth max. |")
-    print("| --- | ---: | ---: | ---: | ---: |")
+    print("| Category (#) | Candidate / baseline | 2Q count avg. | 2Q count best | 2Q depth avg. | 2Q depth best |")
+    print("| --- | --- | ---: | ---: | ---: | ---: |")
     for row in summary:
         count = f"{row['completed_cases']}/{row['expected_cases']}"
+        comparison = f"{row['candidate']} / {row['baseline']}"
         print(
-            "| {} ({}) | {} | {} | {} | {} |".format(
+            "| {} ({}) | {} | {} | {} | {} | {} |".format(
                 row["category_label"],
                 count,
+                comparison,
                 fmt(row["num_2q_ratio_geomean"]),
                 fmt(row["num_2q_ratio_best"]),
                 fmt(row["depth_2q_ratio_geomean"]),
@@ -271,7 +309,14 @@ def print_markdown_table(summary: list[dict[str, Any]]) -> None:
 def load_previous_results() -> tuple[dict[str, list[dict[str, Any]]], list[dict[str, str]]]:
     with open(JSON_PATH) as handle:
         payload = json.load(handle)
-    results = {category: list(payload["results"].get(category, [])) for category, _l, _n in CATEGORIES}
+    if payload.get("metadata", {}).get("schema_version") != SCHEMA_VERSION:
+        raise ValueError(
+            f"{JSON_PATH} uses an incompatible result schema; rerun without --resume."
+        )
+    results = {
+        category: list(payload["results"].get(category, []))
+        for category, _label, _count in CATEGORIES
+    }
     return results, list(payload.get("errors", []))
 
 
@@ -287,7 +332,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--resume",
         action="store_true",
-        help="reuse completed cases from an existing output JSON",
+        help="reuse completed cases from a matching output JSON",
     )
     return parser.parse_args()
 
@@ -329,11 +374,14 @@ def main() -> None:
             try:
                 case = future.result()
                 results[category].append(case)
-                count_ratio = case["comparison"]["num_2q_ratio"]
-                depth_ratio = case["comparison"]["depth_2q_ratio"]
+                adaptive = case["comparisons"]["rho_0_35_over_0_00"]
+                aggressive = case["comparisons"]["rho_1_00_over_0_00"]
                 print(
                     f"[{done}/{len(tasks)}] {category}/{filename}: "
-                    f"2q={count_ratio:.3f}x depth={depth_ratio:.3f}x",
+                    f"adaptive 2q={adaptive['num_2q_ratio']:.3f}x "
+                    f"depth={adaptive['depth_2q_ratio']:.3f}x; "
+                    f"aggressive 2q={aggressive['num_2q_ratio']:.3f}x "
+                    f"depth={aggressive['depth_2q_ratio']:.3f}x",
                     file=sys.stderr,
                     flush=True,
                 )
