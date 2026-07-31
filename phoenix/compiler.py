@@ -3,9 +3,10 @@ from __future__ import annotations
 from functools import partial
 
 from qiskit import QuantumCircuit
+
 from .hamiltonian import Hamiltonian
-from .primitive.ordering import order_circuits
 from .primitive.holistic import holistic_compile
+from .primitive.ordering import order_circuits
 from .primitive.simplification import simplify_hamiltonian
 from .primitive.utils import constr_circuit_from_simp_steps
 from .utils import post_transpile
@@ -49,6 +50,7 @@ def compile_hamiltonian_simulation(
     backend: str = "sequential",
     search_patience: int | None = None,
     optimize: bool = True,
+    emit_max_weight: int = 2,
 ) -> QuantumCircuit:
     """Compile a Hamiltonian simulation circuit using the Phoenix framework.
 
@@ -69,12 +71,18 @@ def compile_hamiltonian_simulation(
             "concurrent.futures", or "sequential"). Ignored by the holistic engine.
         search_patience: Stall patience of the legacy BSF search safety net
             (support mode only). Default: max(16, 2·#active qubits).
+        emit_max_weight: Maximum Pauli weight emitted by the holistic peeling
+            engine.  The production default is 2; 1 is available for the
+            single-qubit-versus-two-qubit emission ablation. Ignored in
+            support mode.
 
     Returns:
         The compiled quantum circuit.
     """
     if grouping is None or grouping == "holistic":
-        qc = holistic_compile(hamiltonian, terminal=terminal)
+        qc = holistic_compile(
+            hamiltonian, terminal=terminal, emit_max_weight=emit_max_weight
+        )
     elif grouping == "support":
         hams = hamiltonian.group_same_weights()
         circuits = _simplify_groups(hams, backend, parallel=parallel_search, patience=search_patience, optimize=optimize)

@@ -36,10 +36,13 @@ from qiskit import QuantumCircuit
 from qiskit.circuit.library import PauliEvolutionGate
 from qiskit.quantum_info import Clifford, Pauli
 
+from ..basics import _CLIFFORD_BLOCKS, CLIFFORD_OPTIONS
 from ..hamiltonian import Hamiltonian
-from ..basics import CLIFFORD_OPTIONS, _CLIFFORD_BLOCKS
-from .utils import asap_order as _asap_order, cnot_equiv_commute, schedule_cnot_equiv_clifford
-
+from .utils import asap_order as _asap_order
+from .utils import (
+    cnot_equiv_commute,
+    schedule_cnot_equiv_clifford,
+)
 
 # ---------------------------------------------------------------------------
 # Precomputed per-(clifford, 2q-code) tables.
@@ -101,21 +104,27 @@ class PeelResult:
     num_qubits: int
 
 
-def peel_forward(ham: Hamiltonian, verbose: bool = False) -> PeelResult:
+def peel_forward(
+    ham: Hamiltonian, verbose: bool = False, emit_max_weight: int = 2
+) -> PeelResult:
     """Run the holistic peeling engine. Deterministic; zero numeric hyperparameters.
 
-    Target-descent loop: emit every active row of weight <= 2, then lock the
+    Target-descent loop: emit every active row of weight <= ``emit_max_weight``, then lock the
     cheapest active row as the target and reduce it with guaranteed-descent
     2-qubit Clifford conjugations (verified lemma) until it emits; repeat until
     the table is empty. The potential (#active rows, target weight) strictly
-    decreases lexicographically at every move — at most m(n-2) moves. Zero
-    numeric hyperparameters.
+    decreases lexicographically at every move — at most
+    m(n-``emit_max_weight``) moves.  The production default is 2; a value of 1
+    is exposed solely for the single-qubit-versus-two-qubit emission ablation.
 
     (The retired v3 certified-holistic-search Tier-1 that used to gate this
     loop is archived in ``backup/peel_v3.py``; its full-matrix ablation,
     ``experiments/attic/ablate_v3.json``, showed it net-worse on UCCSD, so it
     was removed.)
     """
+    if emit_max_weight not in (1, 2):
+        raise ValueError("emit_max_weight must be either 1 or 2.")
+
     x = np.asarray(ham.paulis.x, dtype=np.uint8).copy()
     z = np.asarray(ham.paulis.z, dtype=np.uint8).copy()
     coeffs = np.real(np.asarray(ham.coeffs)).astype(np.float64).copy()
@@ -129,7 +138,7 @@ def peel_forward(ham: Hamiltonian, verbose: bool = False) -> PeelResult:
 
     def _emit():
         nonlocal target
-        rows = np.where(active & (w <= 2))[0]
+        rows = np.where(active & (w <= emit_max_weight))[0]
         if rows.size == 0:
             return
         # NOTE: ``str(Pauli)`` truncates labels beyond 50 qubits ("II...");
@@ -490,7 +499,11 @@ def _zero_amplitude(circ: QuantumCircuit) -> complex | None:
 
 
 def holistic_compile(
-    ham: Hamiltonian, terminal: str = "auto", phase_exact: bool = False, verbose: bool = False
+    ham: Hamiltonian,
+    terminal: str = "auto",
+    phase_exact: bool = False,
+    verbose: bool = False,
+    emit_max_weight: int = 2,
 ) -> QuantumCircuit:
     """Engine + circuit construction (pre-optimizer).
 
@@ -498,4 +511,8 @@ def holistic_compile(
     (default output is correct up to a global phase; pass
     ``phase_exact=True`` for controlled/QPE use).
     """
-    return peel_circuit(peel_forward(ham, verbose=verbose), terminal=terminal, phase_exact=phase_exact)
+    return peel_circuit(
+        peel_forward(ham, verbose=verbose, emit_max_weight=emit_max_weight),
+        terminal=terminal,
+        phase_exact=phase_exact,
+    )
