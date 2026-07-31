@@ -3,13 +3,22 @@ from __future__ import annotations
 import os
 import warnings
 import numpy as np
+import cirq
 import qiskit
 import rustworkx as rx
+from scipy import linalg
 import matplotlib.pyplot as plt
+from cirq.contrib.svg import SVGCircuit
 from prettytable import PrettyTable
+from collections.abc import Iterable
 from qiskit import QuantumCircuit
-from qiskit.quantum_info import Operator
+from qiskit.circuit import Gate
+from qiskit.quantum_info import Operator, Clifford
 from qiskit.transpiler import CouplingMap, PassManager, passes
+from qiskit.converters import circuit_to_dag, dag_to_circuit
+from qiskit.dagcircuit import DAGCircuit, DAGOpNode
+from qiskit.exceptions import QiskitError
+
 
 warnings.filterwarnings("ignore")
 
@@ -54,6 +63,73 @@ def infidelity(u: np.ndarray, v: np.ndarray) -> float:
         raise ValueError("u and v must have the same shape.")
     d = u.shape[0]
     return 1 - np.abs(np.trace(u.conj().T @ v)) / d
+
+
+def pauli_exp_synth_cost(paulis: list[str], coeffs: list[float] = None) -> int:
+    """Return the rank-based CNOT cost of a two-qubit Pauli exponential.
+
+    The input represents ``exp(-i * sum_j coeffs[j] * paulis[j])``.  Every
+    Pauli label must contain exactly two non-identity axes from ``X``, ``Y``,
+    and ``Z``.  The labels are assembled into the 3-by-3 interaction matrix
+    ``J`` whose row and column order is ``X, Y, Z``.
+
+    If ``coeffs`` is omitted, the coefficients are treated as independent
+    generic variables and the structural rank of ``J`` is obtained from a
+    maximum matching of its support graph.  If coefficients are supplied,
+    repeated Pauli terms are summed and the numerical rank is used instead.
+
+    The returned generic synthesis costs are 0 CNOTs for a zero generator,
+    2 CNOTs for ranks one or two, and 3 CNOTs for full rank.  This structural
+    criterion does not detect isolated special angles at which a nonzero
+    interaction may require fewer CNOTs.
+    """
+    axis_to_index = {"X": 0, "Y": 1, "Z": 2}
+    normalized_paulis = []
+    for pauli in paulis:
+        if not isinstance(pauli, str):
+            raise ValueError(f"Invalid 2Q Pauli label: {pauli!r}")
+        label = pauli.upper()
+        if len(label) != 2 or any(axis not in axis_to_index for axis in label):
+            raise ValueError(f"Invalid 2Q Pauli label: {pauli!r}")
+        normalized_paulis.append(label)
+
+    if coeffs is None:
+        support = {
+            (axis_to_index[label[0]], axis_to_index[label[1]]) for label in normalized_paulis
+        }
+        matched_left = [-1, -1, -1]
+
+        def augment(left: int, visited_right: set[int]) -> bool:
+            for right in range(3):
+                if (left, right) not in support or right in visited_right:
+                    continue
+                visited_right.add(right)
+                if matched_left[right] == -1 or augment(matched_left[right], visited_right):
+                    matched_left[right] = left
+                    return True
+            return False
+
+        rank = sum(augment(left, set()) for left in range(3))
+    else:
+        if len(coeffs) != len(normalized_paulis):
+            raise ValueError("The number of coefficients must match the number of Pauli labels.")
+        try:
+            coefficient_array = np.asarray(coeffs, dtype=float)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Coefficients must be finite real numbers.") from exc
+        if coefficient_array.ndim != 1 or not np.all(np.isfinite(coefficient_array)):
+            raise ValueError("Coefficients must be finite real numbers.")
+
+        interaction_matrix = np.zeros((3, 3), dtype=float)
+        for label, coefficient in zip(normalized_paulis, coefficient_array):
+            interaction_matrix[axis_to_index[label[0]], axis_to_index[label[1]]] += coefficient
+        rank = int(np.linalg.matrix_rank(interaction_matrix))
+
+    if rank == 0:
+        return 0
+    if rank <= 2:
+        return 2
+    return 3
 
 
 def print_circ_info(circ: QuantumCircuit, title=None):
@@ -378,6 +454,138 @@ def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), hide_axi
         plt.savefig(output_filename, dpi=350)
     plt.show()
 
+
+def plot_pauli_exponential_circuit(paulis, coeffs=None) -> SVGCircuit:
+
+    class MultiPauliRotation(cirq.Gate):
+        """Use universal controlled gates to represent generic 2Q Clifford gates"""
+
+        def __init__(self, pauli: str, time: float):
+            super(MultiPauliRotation, self).__init__()
+            self.pauli = pauli
+            self.time = time
+
+        def _num_qubits_(self):
+            return len(self.pauli) - self.pauli.count("I")
+
+        def _unitary_(self):
+            import qiskit.quantum_info as qi
+
+            return linalg.expm(-1j * qi.SparsePauliOp([self.pauli], [self.time]).to_matrix())
+
+        def _circuit_diagram_info_(self, args):
+            if self.time is None:
+                if self._num_qubits_() == 1:
+                    return ["R{}".format(p.lower()) for p in self.pauli if p != "I"]
+                return [p for p in self.pauli if p != "I"]
+            angle_str = "{:.1f}".format(self.time * 2)
+            return [p + "({})".format(angle_str) for p in self.pauli if p != "I"]
+
+    if coeffs is None:
+        coeffs = [None] * len(paulis)
+    num_qubits = len(paulis[0])
+    circ = cirq.Circuit()
+    qubits = cirq.LineQubit.range(num_qubits)
+    for pauli, coeff in zip(paulis, coeffs):
+        qubits_acted = [qubits[i] for i in range(num_qubits) if pauli[i] != "I"]
+        circ.append(MultiPauliRotation(pauli, coeff).on(*qubits_acted))
+
+    return SVGCircuit(circ)
+
+
+
+def peel_front_cliffords(circuit: QuantumCircuit) -> tuple[QuantumCircuit, QuantumCircuit]:
+    """Split off the maximal Clifford subcircuit reachable from ``circuit``'s inputs.
+
+    At every step, all operations with no predecessor operation are examined.
+    Clifford operations are removed together and the process repeats, allowing
+    another Clifford to become peelable.  A non-Clifford operation, measurement,
+    directive, or operation with classical bits remains in the remainder and
+    blocks only the operations that depend on it.
+
+    Returns:
+        ``(front_cliffords, remainder)``.  The two circuits use the original
+        registers and satisfy ``front_cliffords.compose(remainder) == circuit``
+        up to Qiskit's usual circuit-equivalence convention.  The input circuit
+        is never modified.
+    """
+
+    dag = circuit_to_dag(circuit)
+    front_layers: list[list[DAGOpNode]] = []
+    while True:
+        front_cliffords = [node for node in dag.front_layer() if _is_clifford_node(node)]
+        if not front_cliffords:
+            break
+        front_layers.append(front_cliffords)
+        for node in front_cliffords:
+            dag.remove_op_node(node)
+
+    return _circuit_from_layers(circuit, front_layers), dag_to_circuit(dag)
+
+
+def peel_tail_cliffords(circuit: QuantumCircuit) -> tuple[QuantumCircuit, QuantumCircuit]:
+    """Split off the maximal Clifford subcircuit reachable from ``circuit``'s outputs.
+
+    This is the output-side counterpart of :func:`peel_front_cliffords`.  At
+    each step it removes every terminal Clifford operation, then continues with
+    operations that become terminal.  It therefore peels a maximal trailing
+    Clifford subcircuit even when the circuit's instruction list interleaves
+    independent qubits.
+
+    Returns:
+        ``(remainder, tail_cliffords)``.  The two circuits use the original
+        registers and satisfy ``remainder.compose(tail_cliffords) == circuit``
+        up to Qiskit's usual circuit-equivalence convention.  The input circuit
+        is never modified.
+    """
+
+    dag = circuit_to_dag(circuit)
+    tail_layers: list[list[DAGOpNode]] = []
+    while True:
+        tail_cliffords = [node for node in _terminal_op_nodes(dag) if _is_clifford_node(node)]
+        if not tail_cliffords:
+            break
+        tail_layers.append(tail_cliffords)
+        for node in tail_cliffords:
+            dag.remove_op_node(node)
+
+    return dag_to_circuit(dag), _circuit_from_layers(circuit, reversed(tail_layers))
+
+
+def _terminal_op_nodes(dag: DAGCircuit) -> list[DAGOpNode]:
+    """Return operations with no successor operation in the circuit DAG."""
+
+    return [
+        node
+        for node in dag.op_nodes()
+        if not any(isinstance(successor, DAGOpNode) for successor in dag.successors(node))
+    ]
+
+
+def _circuit_from_layers(circuit: QuantumCircuit, layers: Iterable[Iterable[DAGOpNode]]) -> QuantumCircuit:
+    """Build a zero-phase subcircuit from dependency-ordered DAG node layers."""
+
+    subcircuit = circuit.copy_empty_like()
+    subcircuit.global_phase = 0
+    for layer in layers:
+        for node in layer:
+            subcircuit.append(node.op, node.qargs, node.cargs)
+    return subcircuit
+
+
+def _is_clifford_node(node: DAGOpNode) -> bool:
+    """Whether ``node`` is a unitary Clifford operation with no classical I/O."""
+
+    operation = node.op
+    has_classical_io = bool(operation.num_clbits or node.cargs)
+    if not isinstance(operation, Gate) or operation.num_qubits == 0 or has_classical_io:
+        return False
+
+    try:
+        Clifford(operation)
+    except (QiskitError, TypeError, ValueError):
+        return False
+    return True
 
 
 def _gridsynth_rz_batch(args: tuple[list[float], float]) -> list[tuple[list[str], float]]:

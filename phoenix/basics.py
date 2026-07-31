@@ -4,7 +4,7 @@ import numpy as np
 import qiskit.quantum_info as qi
 from qiskit.circuit import Gate, QuantumCircuit, QuantumRegister
 from qiskit.circuit._utils import with_gate_array
-from qiskit.circuit.library import CXGate, HGate, SdgGate, SGate
+from qiskit.circuit.library import CXGate, HGate, RZGate, SdgGate, SGate, SXdgGate, SXGate
 from qiskit.circuit.singleton import SingletonGate, stdlib_singleton_key
 
 
@@ -69,6 +69,75 @@ class fSwapGate(SingletonGate):
 
     def __eq__(self, other):
         return isinstance(other, fSwapGate)
+
+
+class RXYGate(Gate):
+    r"""A parametric two-qubit rotation about :math:`X \otimes Y`.
+
+    For qubits ``(q0, q1)``, this gate implements
+
+    .. math::
+
+        R_{XY}(\theta) = \exp\left(-i \frac{\theta}{2} X_{q0} \otimes Y_{q1}\right).
+
+    Qiskit's little-endian matrix ordering represents this Pauli product as
+    ``"YX"``.  The gate is maximally entangling at ``theta = pi / 2``.
+    """
+
+    def __init__(self, theta, label: str | None = None):
+        """Create an ``RXY(theta)`` gate."""
+
+        super().__init__("rxy", 2, [theta], label=label)
+
+    def _define(self):
+        """Default definition in the ``{CX, RZ, H, SX}`` basis."""
+        #      ┌───┐                       ┌───┐  
+        # q_0: ┤ H ├───■───────────────■───┤ H ├──
+        #      ├───┴┐┌─┴─┐┌─────────┐┌─┴─┐┌┴───┴─┐
+        # q_1: ┤ √X ├┤ X ├┤ Rz(0.1) ├┤ X ├┤ √Xdg ├
+        #      └────┘└───┘└─────────┘└───┘└──────┘
+
+        q = QuantumRegister(2, "q")
+        qc = QuantumCircuit(q, name=self.name)
+
+        rules = [
+            (HGate(), [q[0]]),
+            (SXGate(), [q[1]]),
+            (CXGate(), [q[0], q[1]]),
+            (RZGate(self.params[0]), [q[1]]),
+            (CXGate(), [q[0], q[1]]),
+            (HGate(), [q[0]]),
+            (SXdgGate(), [q[1]]),
+        ]
+        for instruction, qargs in rules:
+            qc._append(instruction, qargs, [])
+        self.definition = qc
+
+    def inverse(self, annotated: bool = False):
+        """Return the inverse rotation, ``RXY(-theta)``."""
+
+        return RXYGate(-self.params[0])
+
+    def __array__(self, dtype=None, copy=None):
+        """Return the numerical matrix for ``RXY(theta)``."""
+
+        if copy is False:
+            raise ValueError("unable to avoid copy while creating an array as requested")
+
+        theta = float(self.params[0])
+        pauli_xy = qi.Pauli("YX").to_matrix()
+        return np.array(
+            np.cos(theta / 2) * np.eye(4) - 1j * np.sin(theta / 2) * pauli_xy,
+            dtype=dtype,
+        )
+
+    def power(self, exponent: float, annotated: bool = False):
+        """Return ``RXY(exponent * theta)``."""
+
+        return RXYGate(exponent * self.params[0])
+
+    def __eq__(self, other):
+        return isinstance(other, RXYGate) and self._compare_parameters(other)
 
 
 # Pre-define rules and gates to avoid overhead
@@ -245,6 +314,9 @@ class fSwapEquivCliffordGate(Gate):
             and self.pauli_1 == other.pauli_1
         )
 
+
+
+    
 # Pre-defined two-qubit Clifford options
 CLIFFORD_OPTIONS = [
     CNOTEquivCliffordGate("X", "X"),

@@ -67,7 +67,7 @@ condensedmatter,FH_D-1-fh-graph-1D-grid-nonpbc-qubitnodes_Lx-90_U-2_enc-jw,180,2
 condensedmatter,FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-160_U-12_enc-parity,320,7164,4136,4620,3183,9679,3120,379,189
 condensedmatter,FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-50_U-2_enc-jw,100,2034,884,1275,686,1576,492,207,103
 condensedmatter,FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-105_U-8_enc-bk,420,16270,8872,3010,2321,13903,4502,150,75
-condensedmatter,FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-72_U-0_enc-parity,720,67452,33000,31654,26949,32553,10630,391,195
+condensedmatter,FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-72_U-0_enc-parity,720,67452,33000,31654,26949,32501,10608,368,184
 condensedmatter,FH_D-2-fh-graph-2D-triag-nonpbc-qubitnodes_Lx-16_Ly-16_U-4_enc-bk,306,32119,18060,10376,8701,19384,6367,455,227
 condensedmatter,heis-graph-2D-grid-nonpbc-qubitnodes_Lx-4_Ly-133_h-0.1,532,16291,5562,3537,1632,8875,2781,25,12
 condensedmatter,heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-186_h-0.5,930,29303,10014,4954,2286,15951,5007,25,12
