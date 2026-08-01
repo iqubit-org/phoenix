@@ -43,7 +43,7 @@ def phoenix_pass(
     coeffs: List[float],
     grouping: str | None = None,
     coupling_map: CouplingMap = None,
-    rho_threshold: float = None,
+    rho_threshold: float = 0.35,
     optimize: bool = True
 ) -> qiskit.QuantumCircuit:
     """Phoenix's high-level optimization.

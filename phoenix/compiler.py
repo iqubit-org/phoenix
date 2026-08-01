@@ -50,7 +50,7 @@ def compile_hamiltonian_simulation(
     backend: str = "sequential",
     search_patience: int | None = None,
     optimize: bool = True,
-    rho_threshold: float = None,
+    rho_threshold: float | None = None,
 ) -> QuantumCircuit:
     """Compile a Hamiltonian simulation circuit using the Phoenix framework.
 
@@ -71,9 +71,12 @@ def compile_hamiltonian_simulation(
         search_patience: Stall patience of the legacy BSF search safety net
             (support mode only). Default: max(16, 2·#active qubits).
         rho_threshold: Emit active weight-2 rows when their active-tableau
-            density is at most this value. Default: None means 0.35. A value of 1.0
-            recovers fixed aggressive weight-2 emission, while 0.0 recovers
-            the fixed weight-1 baseline. Ignored in support mode.
+            density is at most this value. A numeric value compiles one
+            candidate; ``None`` (default) scans 0.0, 0.25, 0.5, 0.75, and 1.0
+            in parallel and selects the pre-optimizer circuit minimizing
+            ``(num_2q_gates, depth_2q)``. A value of 1.0 recovers fixed
+            aggressive weight-2 emission, while 0.0 recovers the fixed
+            weight-1 baseline. Ignored in support mode.
 
     Returns:
         The compiled quantum circuit.

@@ -30,7 +30,7 @@ print(qc.draw(fold=-1))
 print('infidelity:', phoenix.utils.infidelity(Operator(qc).to_matrix(), u))
 
 console.rule("Holistic Grouping")
-qc = phoenix.compile_hamiltonian_simulation(ham, optimize=False, grouping='holistic', terminal='replay')
+qc = phoenix.compile_hamiltonian_simulation(ham, optimize=False, grouping='holistic', terminal='replay', rho_threshold=1.0)
 phoenix.utils.print_circ_info(qc)
 phoenix.utils.print_circ_info(phoenix.optimize_phoenix_circuit_by_qiskit(qc))
 print(qc.draw(fold=-1))

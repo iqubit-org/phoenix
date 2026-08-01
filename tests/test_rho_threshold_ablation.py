@@ -5,7 +5,14 @@ from qiskit.quantum_info import Operator
 
 from phoenix.compiler import compile_hamiltonian_simulation
 from phoenix.hamiltonian import Hamiltonian
-from phoenix.primitive.holistic import holistic_compile, peel_forward
+from phoenix.primitive.holistic import RHO_THRESHOLD_SCAN, holistic_compile, peel_forward
+
+
+def _two_qubit_metrics(circuit):
+    return (
+        sum(inst.operation.num_qubits == 2 for inst in circuit.data),
+        circuit.depth(lambda inst: inst.operation.num_qubits == 2),
+    )
 
 
 def test_explicit_adaptive_settings_match_the_production_default():
@@ -72,3 +79,21 @@ def test_invalid_density_threshold_is_rejected(rho_threshold):
 def test_retired_emit_max_weight_keyword_is_not_accepted(entry_point):
     with pytest.raises(TypeError, match="emit_max_weight"):
         entry_point(Hamiltonian(["X"], [0.2]), emit_max_weight=1)
+
+
+def test_rho_scan_selects_the_lexicographically_best_preoptimizer_circuit(capsys):
+    ham = Hamiltonian(["IIIIXX", "IIXXII", "XXIIII"], [0.1, 0.2, 0.3])
+    candidates = {
+        rho: _two_qubit_metrics(holistic_compile(ham, terminal="absorb", rho_threshold=rho))
+        for rho in RHO_THRESHOLD_SCAN
+    }
+
+    selected = holistic_compile(ham, terminal="absorb", rho_threshold=None, verbose=True)
+    selected_score = _two_qubit_metrics(selected)
+    expected_score = min((*score, rho) for rho, score in candidates.items())[:2]
+
+    assert selected_score == expected_score
+    output = capsys.readouterr().out
+    for rho in RHO_THRESHOLD_SCAN:
+        assert f"rho_threshold={rho:.2f}" in output
+    assert "selected rho_threshold=" in output

@@ -4,13 +4,14 @@ from dataclasses import dataclass
 
 from qiskit import QuantumCircuit
 from qiskit.circuit.library import PauliEvolutionGate
-
+from qiskit.circuit.library import CXGate, RXXGate, RYYGate, RZZGate, RZXGate
+from qiskit.transpiler import AnalysisPass, PassManager
+from qiskit.transpiler.passes import ConsolidateBlocks, UnitarySynthesis
 from ..basics import CNOTEquivCliffordGate, fSwapEquivCliffordGate
 from ..hamiltonian import Hamiltonian
 
-# _EACH_GROUP_SYNTHESIS_BASIS_GATES = ["cx", "rz", "sx", "x"]
-_EACH_GROUP_SYNTHESIS_BASIS_GATES = ["cx", "u"]
-_SUCCESSIVE_2Q_PAULI_ROTATION_GATES = {"rxx", "rxy", "rxz", "ryx", "ryy", "ryz", "rzx", "rzy", "rzz"}
+
+_PAULI_EXP_GATES = (RXXGate, RYYGate, RZZGate, RZXGate)
 
 @dataclass
 class SimplificationStep:
@@ -35,79 +36,12 @@ def constr_circuit_from_simp_steps(ham: Hamiltonian, steps: list[SimplificationS
     qc = qc_pre.compose(qc_post).decompose("PauliEvolution")
 
     if optimize:
-        qc = _optimize_phoenix_circuit_by_qiskit_each_group(qc)
+        qc = pauli_exp_consolidation.run(qc)
 
     return qc
 
 
-def _synthesize_successive_2q_pauli_rotation_block(block: QuantumCircuit) -> QuantumCircuit:
-    from qiskit.transpiler import PassManager, passes
 
-    pm = PassManager()
-    pm.append(passes.Collect2qBlocks())
-    pm.append(passes.ConsolidateBlocks(basis_gates=["cx"]))
-    pm.append(passes.UnitarySynthesis(basis_gates=_EACH_GROUP_SYNTHESIS_BASIS_GATES))
-    pm.append(passes.Optimize1qGatesDecomposition(basis=_EACH_GROUP_SYNTHESIS_BASIS_GATES[1:]))
-    pm.append(passes.CommutativeCancellation())
-    return pm.run(block)
-
-
-def _optimize_phoenix_circuit_by_qiskit_each_group(qc: QuantumCircuit) -> QuantumCircuit:
-    """Resynthesize only successive 2Q Pauli-rotation runs.
-
-    This is a narrow version of :func:`~phoenix.utils.post_transpile`:
-    it scans the circuit, finds maximal consecutive runs of 2-qubit Pauli
-    rotations acting on the same qubit pair, and applies 2-qubit unitary
-    synthesis to each run independently.  Other instructions are preserved
-    verbatim.
-    """
-
-    optimized = QuantumCircuit(*qc.qregs, *qc.cregs, name=qc.name)
-    run_instrs = []
-    run_pair_qubits = None
-
-    def flush_run():
-        nonlocal run_instrs, run_pair_qubits, optimized
-        if not run_instrs:
-            return
-
-        local_block = QuantumCircuit(2)
-        local_qubits = tuple(local_block.qubits)
-        for instr in run_instrs:
-            mapped_qargs = [local_qubits[run_pair_qubits.index(qubit)] for qubit in instr.qubits]
-            local_block.append(instr.operation, mapped_qargs, instr.clbits)
-
-        synthesized_block = _synthesize_successive_2q_pauli_rotation_block(local_block)
-        optimized.compose(synthesized_block, qubits=list(run_pair_qubits), inplace=True)
-
-        run_instrs = []
-        run_pair_qubits = None
-
-    for instr in qc.data:
-        if _is_successive_2q_pauli_rotation(instr):
-            pair = tuple(instr.qubits)
-            if not run_instrs:
-                run_instrs = [instr]
-                run_pair_qubits = pair
-                continue
-            if set(pair) == set(run_pair_qubits):
-                run_instrs.append(instr)
-                continue
-
-        flush_run()
-        optimized.append(instr.operation, instr.qubits, instr.clbits)
-
-    flush_run()
-    return optimized
-
-
-def _is_successive_2q_pauli_rotation(instr) -> bool:
-    return (
-        instr.operation.num_qubits == 2
-        and instr.operation.name in _SUCCESSIVE_2Q_PAULI_ROTATION_GATES
-        and len(instr.qubits) == 2
-        and instr.qubits[0] != instr.qubits[1]
-    )
 
 
 def cnot_equiv_commute(g1: CNOTEquivCliffordGate, q1: tuple,
@@ -213,3 +147,70 @@ def schedule_cnot_equiv_clifford(circ: QuantumCircuit, cancel: bool = True) -> Q
     for i in asap_order(items, circ.num_qubits):
         out.append(items[i]["gate"], items[i]["qubits"])
     return out
+
+
+def _is_twoq_pauli_exponential(node) -> bool:
+    """Whether a DAG node is one of the 2Q Pauli-rotation gates to fuse."""
+    return (
+        node.op.num_qubits == 2
+        and isinstance(node.op, _PAULI_EXP_GATES)
+    )
+
+
+class CollectSuccessive2QPauliExponentials(AnalysisPass):
+    """Collect maximal runs of >=2 target Pauli exponentials on one qubit pair.
+
+    Any other operation—including CNOTEquivCliffordGate—is a hard boundary
+    and is never included in a collected block.
+    """
+
+    def __init__(self, min_block_size: int = 1):
+        super().__init__()
+        self.min_block_size = min_block_size
+
+    def run(self, dag):
+        blocks = []
+
+        # This recognises adjacency on the relevant wires; unrelated operations
+        # on other qubits do not unnecessarily break a candidate block.
+        for run in dag.collect_2q_runs():
+            segment = []
+            segment_qargs = None
+
+            for node in run:
+                qargs = tuple(node.qargs)
+                eligible = _is_twoq_pauli_exponential(node)
+
+                if eligible and (
+                    segment_qargs is None or qargs == segment_qargs
+                ):
+                    segment.append(node)
+                    segment_qargs = qargs
+                    continue
+
+                # A non-target operation, e.g. cxy/cxz/czz, ends the segment.
+                if len(segment) >= self.min_block_size:
+                    blocks.append(tuple(segment))
+
+                segment = [node] if eligible else []
+                segment_qargs = qargs if eligible else None
+
+            if len(segment) >= self.min_block_size:
+                blocks.append(tuple(segment))
+
+        # ConsolidateBlocks consumes precisely this list.
+        self.property_set["block_list"] = blocks
+        return dag
+
+pauli_exp_consolidation = PassManager([
+    CollectSuccessive2QPauliExponentials(),
+    ConsolidateBlocks(
+        kak_basis_gate=CXGate(),
+        force_consolidate=True,
+    ),
+    UnitarySynthesis(
+        basis_gates=["u", "cx"],
+        min_qubits=2,
+        approximation_degree=1.0,
+    ),
+])

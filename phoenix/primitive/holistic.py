@@ -34,6 +34,7 @@ from dataclasses import dataclass
 from itertools import combinations
 
 import numpy as np
+from joblib import Parallel, delayed
 from qiskit import QuantumCircuit
 from qiskit.circuit.library import PauliEvolutionGate
 from qiskit.quantum_info import Clifford, Pauli
@@ -44,6 +45,7 @@ from .utils import asap_order as _asap_order
 from .utils import (
     cnot_equiv_commute,
     schedule_cnot_equiv_clifford,
+    pauli_exp_consolidation
 )
 
 # ---------------------------------------------------------------------------
@@ -106,7 +108,7 @@ class PeelResult:
     num_qubits: int
 
 
-RHO_THRESHOLD = 0.35
+RHO_THRESHOLD_SCAN = (1.0, 0.75, 0.5, 0.25, 0.0) 
 
 def peel_forward(
     ham: Hamiltonian,
@@ -135,7 +137,7 @@ def peel_forward(
     was removed.)
     """
     if rho_threshold is None:
-        rho_threshold = RHO_THRESHOLD
+        rho_threshold = 0.35
     if not np.isfinite(rho_threshold) or not 0.0 <= rho_threshold <= 1.0:
         raise ValueError("rho_threshold must be a finite number between 0 and 1.")
 
@@ -527,25 +529,81 @@ def _zero_amplitude(circ: QuantumCircuit) -> complex | None:
         return None
 
 
+def _two_qubit_score(circuit: QuantumCircuit) -> tuple[int, int]:
+    """Lexicographic 2Q objective used to select a rho-scan candidate."""
+    num_2q = circuit.num_nonlocal_gates()
+    depth_2q = circuit.depth(lambda inst: inst.operation.num_qubits == 2)
+    return num_2q, depth_2q
+
+
+def _compile_holistic_candidate(
+    ham: Hamiltonian,
+    terminal: str,
+    phase_exact: bool,
+    rho_threshold: float,
+) -> tuple[float, QuantumCircuit, tuple[int, int]]:
+    """Compile one independent density-threshold candidate.
+
+    This module-level helper is deliberately pickleable so the auto-tuning
+    path can use joblib's process backend.
+    """
+    circuit = peel_circuit(
+        peel_forward(ham, verbose=False, rho_threshold=rho_threshold),
+        terminal=terminal,
+        phase_exact=phase_exact,
+    )
+    return rho_threshold, circuit, _two_qubit_score(pauli_exp_consolidation.run(circuit))
+
+
 def holistic_compile(
     ham: Hamiltonian,
     terminal: str = "auto",
     phase_exact: bool = False,
     verbose: bool = False,
-    rho_threshold: float = None,
+    rho_threshold: float | None = None,
 ) -> QuantumCircuit:
     """Engine + circuit construction (pre-optimizer).
 
     See :func:`peel_circuit` for the ``terminal`` / ``phase_exact`` semantics
     (default output is correct up to a global phase; pass
     ``phase_exact=True`` for controlled/QPE use).
+
+    A numeric ``rho_threshold`` compiles one candidate. With ``None``, the
+    five values in :data:`RHO_THRESHOLD_SCAN` are compiled independently via
+    joblib, and the circuit with lexicographically smallest
+    ``(num_2q_gates, depth_2q, rho_threshold)`` is returned. This selection
+    happens before the caller's common post-transpilation pass.
     """
-    return peel_circuit(
-        peel_forward(
-            ham,
-            verbose=verbose,
-            rho_threshold=rho_threshold,
-        ),
-        terminal=terminal,
-        phase_exact=phase_exact,
+    if rho_threshold is not None:
+        return peel_circuit(
+            peel_forward(
+                ham,
+                verbose=verbose,
+                rho_threshold=rho_threshold,
+            ),
+            terminal=terminal,
+            phase_exact=phase_exact,
+        )
+
+    candidates = Parallel(n_jobs=len(RHO_THRESHOLD_SCAN), prefer="processes")(
+        delayed(_compile_holistic_candidate)(ham, terminal, phase_exact, rho)
+        for rho in RHO_THRESHOLD_SCAN
     )
+    if verbose:
+        for rho, _circuit, (num_2q, depth_2q) in candidates:
+            print(
+                f"[rho scan] rho_threshold={rho:.2f}: "
+                f"num_2q_gates={num_2q}, depth_2q={depth_2q}"
+            )
+    rho, circuit, (num_2q, depth_2q) = min(
+        candidates,
+        key=lambda candidate: candidate[2],
+    )
+    if verbose:
+        print(
+            f"[rho scan] selected rho_threshold={rho:.2f}: "
+            f"num_2q_gates={num_2q}, depth_2q={depth_2q}"
+        )
+    return circuit
+
+
