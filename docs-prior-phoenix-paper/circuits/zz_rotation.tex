@@ -1,0 +1,25 @@
+\documentclass[border=1px]{standalone}
+
+\usepackage{tikz}
+\usetikzlibrary{quantikz}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+
+\begin{document}
+
+
+        % \begin{adjustbox}{width=\columnwidth}
+            \begin{quantikz}[row sep=0.2cm, column sep=0.1cm, align equals at=1.5]
+                & \gate[2,disable auto height,style]{\begin{array}{l}Z \\ Z_\theta\end{array}} & \ghost{S^\dagger}\qw \\
+                & & \ghost{S^\dagger}\qw\\
+            \end{quantikz}\,=\begin{quantikz}[row sep=0.2cm, column sep=0.1cm, align equals at=1.5]
+                & \ctrl{1} & \qw & \ctrl{1} & \ghost{Z_\theta}\qw\\
+                & \targ{} & \gate{Z_\theta} & \targ{} & \qw
+            \end{quantikz}\,= \begin{quantikz}[row sep=0.2cm, column sep=0.1cm, align equals at=1.5]
+                & \targ{} & \gate{Z_\theta} & \targ{} & \qw\\
+                & \ctrl{-1} & \qw & \ctrl{-1} & \ghost{Z_\theta}\qw
+            \end{quantikz}
+        % \end{adjustbox}
+
+\end{document}
+

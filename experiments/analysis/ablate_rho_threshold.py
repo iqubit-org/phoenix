@@ -48,7 +48,7 @@ HAMLIB = os.path.join(REPO, "benchmarks", "hamlib")
 DATA_DIR = os.path.join(REPO, "experiments", "analysis", "ablation_data")
 JSON_PATH = os.path.join(DATA_DIR, "rho_threshold.json")
 CSV_PATH = os.path.join(DATA_DIR, "rho_threshold.csv")
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 CATEGORIES = (
     ("binaryoptimization", "Binary optimization", 15),
@@ -112,7 +112,8 @@ def run_case(category: str, path: str) -> dict[str, Any]:
 
     with open(path) as handle:
         data = json.load(handle)
-    ham = Hamiltonian(data["paulis"], data["coeffs"])
+    # HAMLib labels are big-endian; Phoenix expects little-endian Pauli strings.
+    ham = Hamiltonian([pauli[::-1] for pauli in data["paulis"]], data["coeffs"])
     arms = {key: compile_arm(ham, rho) for key, rho, _label in ARMS}
     comparisons = {
         key: compare_arms(arms, baseline_key, candidate_key)
@@ -245,6 +246,7 @@ def metadata(complete: bool) -> dict[str, Any]:
             "phoenix.compile_hamiltonian_simulation with every default setting "
             "except rho_threshold"
         ),
+        "pauli_input_conversion": "HAMLib big-endian labels reversed for Phoenix",
         "arms": {
             key: {"rho_threshold": rho, "description": description}
             for key, rho, description in ARMS

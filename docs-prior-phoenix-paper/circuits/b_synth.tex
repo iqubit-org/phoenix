@@ -1,0 +1,18 @@
+\documentclass[border=1px]{standalone}
+
+\usepackage{tikz}
+\usetikzlibrary{quantikz}
+\usepackage{graphicx}
+\usepackage{adjustbox}
+
+\begin{document}
+
+        \begin{quantikz}[row sep=0.2cm, column sep=0.2cm, align equals at=1.5]
+            & \qw & \gate{\mathrm{U3}}\gategroup[2,steps=5,style={dotted,cap=round,inner sep=0.01pt},background]{} & \gate[2,disable auto height,style]{B} & \gate{\mathrm{U3}} & \gate[2,disable auto height,style]{B} & \gate{\mathrm{U3}} \qw & \qw & \qw \\
+            & \gate[2,disable auto height,style]{C^\dagger} & \gate{\mathrm{U3}} & & \gate{\mathrm{U3}} & & \gate{\mathrm{U3}} & \gate[2,disable auto height,style]{C} & \qw  \\
+            & & \qw & \qw & \qw & \qw & \qw & & \qw
+        \end{quantikz}
+
+        
+\end{document}
+
