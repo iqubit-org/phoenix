@@ -69,3 +69,4 @@ condensedmatter,BH_D-2_d-4-bh_graph-2D-grid-nonpbc-qubitnodes_Lx-7_Ly-7_U-70_enc
 condensedmatter,BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-10_U-30_enc-unary_d-8,80,3980,404992,207637,480.896
 discreteoptimization,TSP_Ncity-8-tsp_prob-d198_Ncity-8_enc-unary,64,512,52408,4576,548.171
 discreteoptimization,unary-color02-queen13_13_k-4-queen13_13,112,412,42664,1663,639.229
+condensedmatter,BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-10_Ly-10_U-30_enc-stdbinary_d-4,100,4950,510800,196893,722.487
