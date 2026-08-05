@@ -411,10 +411,10 @@ def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), hide_axi
         paulis = [p[::-1] for p in paulis]
 
     color_map = {
-        "X": np.array([0.89, 0.58, 0.58]),  # soft red
-        "Y": np.array([0.55, 0.75, 0.55]),  # soft green
-        "Z": np.array([0.55, 0.67, 0.87]),  # soft blue
-        "I": np.array([0.78, 0.78, 0.78]),  # soft gray
+        "X": np.array([0.95, 0.70, 0.70]),  # soft red
+        "Y": np.array([0.70, 0.88, 0.70]),  # soft green
+        "Z": np.array([0.68, 0.80, 0.95]),  # soft blue
+        "I": np.array([0.93, 0.93, 0.93]),  # soft gray
     }
 
     img = np.zeros((n_rows, n_cols, 3), dtype=float)
@@ -436,13 +436,14 @@ def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), hide_axi
     ax.set_xticks(np.arange(n_cols))
     ax.set_xticklabels([f"q{i}" for i in range(n_cols)])
 
-    if hide_axis:
-        ax.set_xticks([])
-        ax.set_yticks([])
+    # if hide_axis:
+    #     ax.set_xticks([])
+    #     ax.set_yticks([])
 
     step = max(1, n_rows // 12)
-    ax.set_yticks(np.arange(0, n_rows, step))
-    ax.set_yticklabels(np.arange(0, n_rows, step))
+    yticks = np.arange(0, n_rows, step)
+    ax.set_yticks(yticks)
+    ax.set_yticklabels([f"$P_{{{i + 1}}}$" for i in yticks])
 
     ax.set_xticks(np.arange(-0.5, n_cols, 1), minor=True)
     ax.set_yticks(np.arange(-0.5, n_rows, 1), minor=True)
@@ -696,6 +697,3 @@ def synth_to_clifford_t(qc: QuantumCircuit, epsilon=1e-10, num_workers: int | No
         else:
             raise ValueError(f"unexpected {op.num_qubits}-qubit gate {op.name!r}")
     return out
-
-def estimate_t_cost(qc: QuantumCircuit, epsilon: float = 1e-10) -> tuple[int, int]:
-    """Estimate the T-count and T-depth of a quantum circuit without explicit Clifford + T synthesis."""
