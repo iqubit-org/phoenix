@@ -42,11 +42,7 @@ from qiskit.quantum_info import Clifford, Pauli
 from ..basics import _CLIFFORD_BLOCKS, CLIFFORD_OPTIONS
 from ..hamiltonian import Hamiltonian
 from .utils import asap_order as _asap_order
-from .utils import (
-    cnot_equiv_commute,
-    schedule_cnot_equiv_clifford,
-    pauli_exp_consolidation
-)
+from .utils import cnot_equiv_commute, pauli_exp_consolidation, schedule_cnot_equiv_clifford
 
 # ---------------------------------------------------------------------------
 # Precomputed per-(clifford, 2q-code) tables.

@@ -3,13 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from qiskit import QuantumCircuit
-from qiskit.circuit.library import PauliEvolutionGate
-from qiskit.circuit.library import CXGate, RXXGate, RYYGate, RZZGate, RZXGate
+from qiskit.circuit.library import CXGate, PauliEvolutionGate, RXXGate, RYYGate, RZXGate, RZZGate
 from qiskit.transpiler import AnalysisPass, PassManager
 from qiskit.transpiler.passes import ConsolidateBlocks, UnitarySynthesis
+
 from ..basics import CNOTEquivCliffordGate, fSwapEquivCliffordGate
 from ..hamiltonian import Hamiltonian
-
 
 _PAULI_EXP_GATES = (RXXGate, RYYGate, RZZGate, RZXGate)
 

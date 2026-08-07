@@ -2,23 +2,23 @@ from __future__ import annotations
 
 import os
 import warnings
-import numpy as np
+from collections.abc import Iterable
+
 import cirq
+import matplotlib.pyplot as plt
+import numpy as np
 import qiskit
 import rustworkx as rx
-from scipy import linalg
-import matplotlib.pyplot as plt
 from cirq.contrib.svg import SVGCircuit
 from prettytable import PrettyTable
-from collections.abc import Iterable
 from qiskit import QuantumCircuit
 from qiskit.circuit import Gate
-from qiskit.quantum_info import Operator, Clifford
-from qiskit.transpiler import CouplingMap, PassManager, passes
 from qiskit.converters import circuit_to_dag, dag_to_circuit
 from qiskit.dagcircuit import DAGCircuit, DAGOpNode
 from qiskit.exceptions import QiskitError
-
+from qiskit.quantum_info import Clifford, Operator
+from qiskit.transpiler import CouplingMap, PassManager, passes
+from scipy import linalg
 
 warnings.filterwarnings("ignore")
 
@@ -149,11 +149,6 @@ def print_circ_info(circ: QuantumCircuit, title=None):
     print(table)
 
 
-#############################################################################
-# Utilities for benchmarking convenience
-#############################################################################
-
-
 def is_all2all_coupling_map(coupling_map: CouplingMap) -> bool:
     # ! coupling_map.graph is a directed coupling map
     if coupling_map.size() * (coupling_map.size() - 1) == len(coupling_map.get_edges()):
@@ -188,6 +183,7 @@ def post_transpile(qc: QuantumCircuit) -> QuantumCircuit:
     O3-grade circuit-level optimization.
     """
     from itertools import product
+
     from qiskit.circuit.equivalence_library import SessionEquivalenceLibrary
 
     from .basics import CNOTEquivCliffordGate
@@ -462,7 +458,7 @@ def plot_pauli_exponential_circuit(paulis, coeffs=None) -> SVGCircuit:
         """Use universal controlled gates to represent generic 2Q Clifford gates"""
 
         def __init__(self, pauli: str, time: float):
-            super(MultiPauliRotation, self).__init__()
+            super().__init__()
             self.pauli = pauli
             self.time = time
 
@@ -477,10 +473,10 @@ def plot_pauli_exponential_circuit(paulis, coeffs=None) -> SVGCircuit:
         def _circuit_diagram_info_(self, args):
             if self.time is None:
                 if self._num_qubits_() == 1:
-                    return ["R{}".format(p.lower()) for p in self.pauli if p != "I"]
+                    return [f"R{p.lower()}" for p in self.pauli if p != "I"]
                 return [p for p in self.pauli if p != "I"]
-            angle_str = "{:.1f}".format(self.time * 2)
-            return [p + "({})".format(angle_str) for p in self.pauli if p != "I"]
+            angle_str = f"{self.time * 2:.1f}"
+            return [p + f"({angle_str})" for p in self.pauli if p != "I"]
 
     if coeffs is None:
         coeffs = [None] * len(paulis)
@@ -654,7 +650,7 @@ def _synth_rz_angles(angles: list[float], epsilon: float, num_workers: int | Non
         with ProcessPoolExecutor(max_workers=num_workers, mp_context=ctx) as pool:
             chunked = list(pool.map(_gridsynth_rz_batch, [(b, epsilon) for b in batches]))
     except Exception as exc:  # pool could not start (frozen app, restricted sandbox, ...)
-        warnings.warn(f"parallel gridsynth unavailable ({exc!r}); falling back to serial synthesis")
+        warnings.warn(f"parallel gridsynth unavailable ({exc!r}); falling back to serial synthesis", stacklevel=2)
         return {k: gridsynth_rz(uniq[k], epsilon) for k in keys}
 
     flat = [item for batch in chunked for item in batch]

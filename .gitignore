@@ -188,3 +188,6 @@ debug/
 phoenix/_version.py
 
 examples/qiskit_nature*
+
+/tests/
+/drawing/

@@ -4,8 +4,7 @@ from itertools import combinations
 
 import numpy as np
 
-from ..basics import CLIFFORD_OPTIONS, _CLIFFORD_BLOCKS
-from ..basics import CNOTEquivCliffordGate, fSwapEquivCliffordGate
+from ..basics import _CLIFFORD_BLOCKS, CLIFFORD_OPTIONS, CNOTEquivCliffordGate, fSwapEquivCliffordGate
 from ..hamiltonian import Hamiltonian
 from ..primitive.utils import SimplificationStep
 
