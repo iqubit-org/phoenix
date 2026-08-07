@@ -5,7 +5,6 @@ import warnings
 from collections.abc import Iterable
 
 import cirq
-import matplotlib.pyplot as plt
 import numpy as np
 import qiskit
 import rustworkx as rx
@@ -394,6 +393,8 @@ def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), hide_axi
     Y-axis: Pauli string index
     R/G/B/Gray color: X/Y/Z/I
     """
+    import matplotlib.pyplot as plt
+
     if not paulis:
         raise ValueError("paulis list cannot be empty")
 
