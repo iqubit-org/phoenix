@@ -16,26 +16,27 @@ Run:    python experiments/analysis/plot_hamlib_t_depth.py
 import os
 from pathlib import Path
 
+import matplotlib
 import numpy as np
 import pandas as pd
 from scipy.stats import gmean
 
-# Imported first: it configures MPLCONFIGDIR and the Agg backend before matplotlib
-# is loaded, and gives us the shared style/reference-band helpers.
+matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Shared style and reference-band helpers.
 from plot_hamlib_result import (
-    BASELINES,
+    EXP_DIR,
     KEY,
     OUT_DIR,
-    EXP_DIR,
     POINT_ZORDER,
     STYLE,
     axis_limits,
     draw_grid,
     draw_reference,
 )
-
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 DATA = Path(__file__).resolve().parent / "t_cost_data"
 OUT_PATH = OUT_DIR / "hamlib_t_depth.pdf"

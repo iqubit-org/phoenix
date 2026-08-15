@@ -19,7 +19,6 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import os
 from dataclasses import dataclass
 from math import isfinite
 from pathlib import Path
@@ -160,11 +159,6 @@ def main() -> None:
     metadata = load_uccsd_metadata(all_programs)
     programs = sorted(all_programs, key=lambda program: metadata[program].num_2q_gates)
 
-    # Configure a non-interactive backend only after MPLCONFIGDIR is isolated;
-    # this keeps repeated batch plotting from racing on a shared cache.
-    cache_dir = Path("/tmp") / f"matplotlib-cache-{os.getuid()}"
-    cache_dir.mkdir(parents=True, exist_ok=True)
-    os.environ.setdefault("MPLCONFIGDIR", str(cache_dir))
     import matplotlib
 
     matplotlib.use("Agg")

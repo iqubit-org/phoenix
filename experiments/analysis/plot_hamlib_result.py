@@ -19,23 +19,16 @@ Run from anywhere:  python experiments/analysis/plot_hamlib_result.py
 import os
 from pathlib import Path
 
+import matplotlib
 import numpy as np
 import pandas as pd
 from scipy.stats import gmean
 
-matplotlib_cache = Path("/tmp") / f"matplotlib-cache-{os.getuid()}"
-matplotlib_cache.mkdir(parents=True, exist_ok=True)
-os.environ.setdefault("MPLCONFIGDIR", str(matplotlib_cache))
-
-import matplotlib
-
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
 import seaborn as sns
-
-
+from matplotlib.lines import Line2D
 
 EXP_DIR = Path(__file__).resolve().parents[1]          # experiments/
 RESULTS = EXP_DIR / "results"

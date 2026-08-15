@@ -1,11 +1,6 @@
 # 🐦‍🔥 PHOENIX: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices
 
-[![PyPI](https://img.shields.io/pypi/v/phoenix-quantum?color=blue)](https://pypi.org/project/phoenix-quantum/)
-[![Python](https://img.shields.io/badge/python-3.9--3.12-blue)](https://pypi.org/project/phoenix-quantum/)
-[![License](https://img.shields.io/pypi/l/phoenix-quantum)](./LICENSE)
-[![CI](https://github.com/iqubit-org/phoenix/actions/workflows/ci.yml/badge.svg)](https://github.com/iqubit-org/phoenix/actions/workflows/ci.yml)
-[![Slides](https://img.shields.io/badge/Slides-PPTX-orange)](https://youngcius.github.io/docs/slides/phoenix_dac2025.pdf)
-[![Conference](https://img.shields.io/static/v1?label=Conference&message=DAC%202025&color=purple)](https://arxiv.org/abs/2504.03529)
+[![PyPI](https://img.shields.io/pypi/v/phoenix-quantum?logo=pypi&logoColor=white&color=3775A9)](https://pypi.org/project/phoenix-quantum/) [![Python](https://img.shields.io/badge/Python-3.9--3.12-3776AB?logo=python&logoColor=FFD43B)](https://pypi.org/project/phoenix-quantum/) [![License](https://img.shields.io/pypi/l/phoenix-quantum?logo=opensourceinitiative&logoColor=white&color=3DA639)](./LICENSE) [![CI](https://github.com/iqubit-org/phoenix/actions/workflows/ci.yml/badge.svg)](https://github.com/iqubit-org/phoenix/actions/workflows/ci.yml) [![Slides](https://img.shields.io/badge/Slides-PPTX-orange?logo=files&logoColor=white)](https://youngcius.github.io/docs/slides/phoenix_dac2025.pdf) [![Conference](https://img.shields.io/badge/Conference-DAC%202025-7B2CBF?logo=acm&logoColor=white)](https://arxiv.org/abs/2504.03529) [![arXiv](https://img.shields.io/badge/arXiv-2608.11579-B31B1B?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2608.11579)
 
 
 ## Overview
@@ -182,6 +177,13 @@ If you make use of Phoenix in your work, please cite the following publication:
   number={},
   pages={1-7},
   doi={10.1109/DAC63849.2025.11133028}
+}
+
+@article{yang2026efficient,
+  title={Efficient Compilation for Hamiltonian Simulation via Global Binary Symplectic Form Simplification},
+  author={Yang, Zhaohui and Han, Yuwei and Ding, Dawei and Chen, Jianxin and Feng, Yuan and Xie, Yuan}, 
+  journal={arXiv preprint arXiv:2608.11579},
+  year={2026}
 }
 ```
 
