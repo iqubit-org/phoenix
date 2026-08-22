@@ -10,8 +10,7 @@ Eight figures are produced (figsize 6.2x5.0):
 
 Every point is one (baseline, program) pair, coloured by baseline. Points ABOVE
 the y = x diagonal are cases where the baseline needs more two-qubit resources;
-the shaded bands mark 1.5x / 2x / 3x ratios. Baselines with a partial suite
-(Paulihedral 99, QuCLEAR 88) are joined per-program to Symphony.
+the shaded bands mark 1.5x / 2x / 3x ratios.
 
 Style follows experiments/analysis/reference_ratio_plotting/plot_routing_result.py.
 Run from anywhere:  python experiments/analysis/plot_hamlib_result.py
