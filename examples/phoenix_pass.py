@@ -57,7 +57,7 @@ def main():
     parser.add_argument("-o", "--output", type=str, help="Write the compiled circuit to the specified .qasm file")
     parser.add_argument("--O3", action="store_true", help="Apply Qiskit O3 post-optimization (default: False)")
     parser.add_argument(
-        "--no-optimize", action="store_true", help="Disable the internal optimize pass inside Phoenix (default: False)"
+        "--no-opt", action="store_true", help="Disable the circuit-level optimization pass (default: False)"
     )
     parser.add_argument(
         "--grouping",
@@ -97,6 +97,7 @@ def main():
         backend=args.backend,
         grouping=args.grouping,
         parallel_search=args.parallel_search,
+        optimize=not args.no_opt
     )
     if args.O3:
         circ_opt = phoenix.utils.qiskit_O3_all2all(circ_opt)

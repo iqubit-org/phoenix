@@ -4,6 +4,8 @@
 One compiler per invocation; the result lands in ``analysis/t_cost_data/<compiler>.csv``:
 
     python bench_hamlib_t_cost.py -c symphony            # all 100, all cores
+    python bench_hamlib_t_cost.py -c paulihedral         # Paulihedral baseline
+    python bench_hamlib_t_cost.py -c tetris              # Tetris baseline
     python bench_hamlib_t_cost.py -c qiskit -j 32        # pin the worker count
     python bench_hamlib_t_cost.py -c quclear --resume    # continue an interrupted run
 
@@ -43,13 +45,20 @@ sys.path.insert(0, str(SCRIPTS_DIR))
 
 import phoenix
 import phoenix.utils
-from bench_utils import phoenix_pass, qiskit_pass, quclear_pass, tket_pass
+from bench_utils import (
+    paulihedral_pass,
+    phoenix_pass,
+    qiskit_pass,
+    quclear_pass,
+    tetris_pass,
+    tket_pass,
+)
 
 SUITE_CSV = PROJECT_ROOT / "benchmarks" / "description_hamlib.csv"
 BENCH_DIR = PROJECT_ROOT / "benchmarks" / "hamlib"
 OUT_DIR = Path(__file__).resolve().parent / "t_cost_data"
 
-COMPILERS = ("symphony", "phoenix", "qiskit", "quclear", "tket")
+COMPILERS = ("symphony", "phoenix", "qiskit", "paulihedral", "tetris", "quclear", "tket")
 FIELDS = ["category", "program", "num_qubits", "num_paulis", "t_count", "t_depth", "elapsed"]
 
 
@@ -67,6 +76,10 @@ def compile_circuit(compiler: str, paulis, coeffs):
         return phoenix_pass(paulis, coeffs, grouping="support", optimize=False)
     if compiler == "qiskit":
         return qiskit_pass(paulis, coeffs, optimize=False)
+    if compiler == "paulihedral":
+        return paulihedral_pass(paulis, coeffs, optimize=False)
+    if compiler == "tetris":
+        return tetris_pass(paulis, coeffs, optimize=False)
     if compiler == "quclear":
         return quclear_pass(paulis, coeffs, optimize=False)
     if compiler == "tket":

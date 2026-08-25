@@ -639,9 +639,6 @@ def _synth_rz_angles(angles: list[float], epsilon: float, num_workers: int | Non
     batches = [[uniq[k] for k in keys[i:i + chunk]] for i in range(0, len(keys), chunk)]
 
     # "fork" rather than the macOS/Windows default "spawn": spawn (and forkserver)
-    # re-import ``__main__`` in every worker, which crashes plain benchmark scripts
-    # that lack an ``if __name__ == '__main__'`` guard, and re-imports qiskit per
-    # worker. Children here only call the Rust gridsynth kernel and exit.
     try:
         ctx = mp.get_context("fork")
     except ValueError:  # Windows

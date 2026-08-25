@@ -2,6 +2,7 @@
 Benchmarking utilities
 """
 
+import math
 import sys
 
 sys.path.append("../..")
@@ -20,6 +21,35 @@ from tetris.benchmark.mypauli import pauliString
 from rich.console import Console
 
 console = Console()
+
+
+def rotation_gate_counts(qc: qiskit.QuantumCircuit, *, atol: float = 1e-10) -> dict[str, int]:
+    """Separate tunable rotations from fixed Clifford basis changes.
+
+    Tetris and Paulihedral emit ``u(pi/2, ...)`` gates around Pauli
+    exponentials to change X/Y into the Z basis.  Their parameters are fixed
+    multiples of pi/2, so they are Clifford basis changes rather than
+    coefficient-dependent Pauli rotations.
+    """
+
+    def is_fixed_clifford_u(operation) -> bool:
+        if operation.name != "u":
+            return False
+        try:
+            return all(
+                math.isclose(2.0 * float(param) / math.pi, round(2.0 * float(param) / math.pi), abs_tol=atol)
+                for param in operation.params
+            )
+        except (TypeError, ValueError):
+            return False
+
+    all_parameterized = sum(bool(instruction.operation.params) for instruction in qc.data)
+    fixed_clifford_basis_changes = sum(is_fixed_clifford_u(instruction.operation) for instruction in qc.data)
+    return {
+        "all_parameterized": all_parameterized,
+        "fixed_clifford_basis_changes": fixed_clifford_basis_changes,
+        "tunable_rotations": all_parameterized - fixed_clifford_basis_changes,
+    }
 
 
 def naive_pass(
@@ -69,7 +99,7 @@ def phoenix_pass(
 
 
 def paulihedral_pass(
-    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, optimize: bool = True
 ) -> qiskit.QuantumCircuit:
     from tetris.utils.parallel_bl import gate_count_oriented_scheduling
     from tetris.synthesis_SC import block_opt_SC
@@ -83,7 +113,8 @@ def paulihedral_pass(
     # qc = qiskit.transpile(qc, optimization_level=2, basis_gates=["u1", "u2", "u3", "cx"])
 
     if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
-        qc = phoenix.utils.post_transpile(qc)
+        if optimize:
+            qc = phoenix.utils.post_transpile(qc)
     else:
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
 
@@ -99,7 +130,7 @@ def paulihedral_pass(
 
 
 def tetris_pass(
-    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None
+    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, optimize: bool = True
 ) -> qiskit.QuantumCircuit:
     from tetris.utils.synthesis_lookahead import synthesis_lookahead
 
@@ -115,7 +146,8 @@ def tetris_pass(
     )
 
     if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
-        qc = phoenix.utils.post_transpile(qc)
+        if optimize:
+            qc = phoenix.utils.post_transpile(qc)
     else:
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
 

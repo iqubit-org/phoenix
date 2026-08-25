@@ -10,7 +10,7 @@ Colours, markers, reference bands and grid are imported from plot_hamlib_result.
 so this figure sits next to hamlib_2q_depth.pdf with an identical visual language
 (each baseline keeps the same colour it has in the two-qubit figures).
 
-Input:  experiments/analysis/t_cost_data/{symphony,qiskit,tket,quclear,phoenix}.csv
+Input:  experiments/analysis/t_cost_data/{symphony,qiskit,tket,paulihedral,tetris,quclear,phoenix}.csv
 Run:    python experiments/analysis/plot_hamlib_t_depth.py
 """
 import os
@@ -47,7 +47,14 @@ HERO_LABEL = "Symphony"
 
 # Drawn baselines, in legend order. Labels match plot_hamlib_result.BASELINES so
 # STYLE hands back the same colour/marker each one uses in the 2q figures.
-T_BASELINES = [("Qiskit", "qiskit"), ("TKET", "tket"), ("QuCLEAR", "quclear"), ("Phoenix", "phoenix")]
+T_BASELINES = [
+    ("Qiskit", "qiskit"),
+    ("TKET", "tket"),
+    ("Paulihedral", "paulihedral"),
+    ("Tetris", "tetris"),
+    ("QuCLEAR", "quclear"),
+    ("Phoenix", "phoenix"),
+]
 
 
 def read_metric(key: str) -> pd.DataFrame:
