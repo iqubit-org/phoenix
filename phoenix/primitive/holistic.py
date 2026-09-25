@@ -12,10 +12,13 @@ guaranteed-descent loop over the whole table — grouping is fully emergent:
   support and constrained to strictly decrease its weight (always possible —
   exhaustively verified lemma, cf. ``_force_reduce_min_row``);
 - among guaranteed-descent candidates, the move with the best *whole-table*
-  benefit wins, scored by exact integers (total weight change, #rows improved,
-  #rows hurt); remaining ties resolve by enumeration order (a rank-J landing
-  tie-break was ablated provably inert across all families — 46/46 programs
-  gate-identical, penalty never nonzero — and removed; see design doc §3.2.1);
+  benefit wins, scored by exact integers (total weight change, #rows improved);
+  a third #rows-hurt component is redundant — each row's at-pair delta lies in
+  {-1, 0, +1}, so dW = #hurt - #improved identically and the first two
+  components already pin the third — and is therefore omitted; remaining ties
+  resolve by enumeration order (a rank-J landing tie-break was ablated provably
+  inert across all families — 46/46 programs gate-identical, penalty never
+  nonzero — and removed; see design doc §3.2.1);
 - Cliffords accumulate forward only; ONE terminal Clifford closes the frame
   (replayed, resynthesized, or absorbed into observables).
 
@@ -237,8 +240,9 @@ def peel_forward(
                 continue
             dW = hist @ d16
             nben = hist @ (d16 < 0).astype(np.int64)
-            nharm = hist @ (d16 > 0).astype(np.int64)
-            key = ((ma - dW) * K + nben) * K + (ma - nharm)
+            # nharm = hist @ (d16 > 0).astype(np.int64)
+            # key = ((ma - dW) * K + nben) * K + (ma - nharm)
+            key = (ma - dW) * K + nben
             key = np.where(valid, key, np.int64(-1))
             kmax = key.max()
             if kmax > best_key:
