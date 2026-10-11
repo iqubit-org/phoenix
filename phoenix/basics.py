@@ -315,8 +315,6 @@ class fSwapEquivCliffordGate(Gate):
         )
 
 
-
-    
 # Pre-defined two-qubit Clifford options
 CLIFFORD_OPTIONS = [
     CNOTEquivCliffordGate("X", "X"),
