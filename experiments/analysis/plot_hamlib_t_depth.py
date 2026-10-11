@@ -9,8 +9,8 @@ Two figures in ``experiments/figures``:
   1.5x / 2x / 3x / 5x / 10x ratios.
 * ``hamlib_t_depth_violin.pdf`` — the same pairs collapsed to per-program
   ratios (baseline / Symphony), one violin per baseline on a log axis. The
-  dashed parity line at 1 is the scatter's diagonal, the faint horizontal
-  lines are its band edges, and the white diamond marks the geomean.
+  dashed parity line at 1 is the scatter's diagonal, the shaded horizontal
+  bands are its 1.5x .. 10x bands, and the white diamond marks the geomean.
 
 Colours, markers, reference bands and grid are imported from plot_hamlib_result.py
 so these figures sit next to hamlib_2q_depth.pdf with an identical visual
@@ -38,8 +38,11 @@ from plot_hamlib_result import (
     KEY,
     OUT_DIR,
     POINT_ZORDER,
+    REFERENCE_BAND_ZORDER,
     REFERENCE_BANDS,
+    REFERENCE_COLOR,
     REFERENCE_DIVIDER_COLOR,
+    REFERENCE_LINE_ZORDER,
     STYLE,
     axis_limits,
     draw_grid,
@@ -155,7 +158,8 @@ def plot_violin(data, stats) -> None:
     """One violin per baseline over the per-program ratio baseline/Symphony.
 
     The ratio is the scatter's distance-to-diagonal, so the parity line here IS
-    the diagonal there, and the faint lines are the reference-band edges. KDE
+    the diagonal there, and the shaded bands are draw_reference's bands laid
+    flat (same colour, same stacked alpha, so 1x-1.5x is the darkest). KDE
     runs in log space (log_scale=True); cut=0 keeps it inside the data range,
     which the heavy upper tails (ratios into the hundreds) would otherwise
     smear far past the observed maximum. Each body carries dashed quartile
@@ -169,11 +173,16 @@ def plot_violin(data, stats) -> None:
         ignore_index=True,
     )
 
-    fig, ax = plt.subplots(figsize=(7, 3.6), constrained_layout=True)
+    fig, ax = plt.subplots(figsize=(7, 3.85), constrained_layout=True)
 
-    ax.axhline(1.0, color="#222222", lw=1.5, ls="--", alpha=0.75, zorder=1)
+    ax.axhline(1.0, color="#222222", lw=1.5, ls="--", alpha=0.75,
+               zorder=REFERENCE_LINE_ZORDER)
+    for k in REFERENCE_BANDS:                       # ratio in [1, k]  <=>  y in [x, k*x]
+        ax.axhspan(1.0, k, color=REFERENCE_COLOR, alpha=0.10, lw=0,
+                   zorder=REFERENCE_BAND_ZORDER)
     for k in REFERENCE_BANDS:
-        ax.axhline(k, color=REFERENCE_DIVIDER_COLOR, lw=0.55, alpha=0.45, zorder=1)
+        ax.axhline(k, color=REFERENCE_DIVIDER_COLOR, lw=0.55, alpha=0.45,
+                   zorder=REFERENCE_LINE_ZORDER)
 
     # inner="quartile" lays a dashed segment across the body at q25, the median
     # and q75, each clipped to the silhouette's width at that height.
@@ -213,7 +222,10 @@ def plot_violin(data, stats) -> None:
 
     lo, hi = long["ratio"].min(), long["ratio"].max()
     ax.set_ylim(lo / 1.35, hi * 2.6)  # extra log-headroom for the ×labels
-    ax.set(xlabel="", ylabel=f"T-depth ratio (Baseline / {HERO_LABEL})")
+    ax.set_xlabel("")
+    ax.set_ylabel(f"T-depth ratio (Baseline / {HERO_LABEL})", fontweight="bold")
+    for tick in ax.get_xticklabels():
+        tick.set_fontweight("bold")
     ax.yaxis.grid(True, which="major", lw=0.5, alpha=0.35)
     ax.yaxis.grid(True, which="minor", lw=0.3, alpha=0.15)
     ax.set_axisbelow(True)

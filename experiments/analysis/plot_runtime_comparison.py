@@ -44,8 +44,9 @@ COMPILERS = (
     ("Symphony", "phoenixpp", "*"),
 )
 HERO_KEY = "phoenixpp"
-GRID_COLOR = "#dedede"
-INK = "#202020"
+# seaborn's violinplot desaturates its fills; plot_hamlib_t_depth.py passes
+# saturation=0.9, so the curves here use the same toned-down Set2 colours.
+SATURATION = 0.9
 
 
 @dataclass(frozen=True)
@@ -121,19 +122,6 @@ def compact_integer(value: int) -> str:
     return f"{value / 1_000_000:.1f}M"
 
 
-def draw_grid(axis) -> None:
-    axis.set_axisbelow(True)
-    axis.grid(True, which="major", color=GRID_COLOR, linewidth=0.75)
-    axis.grid(True, which="minor", color="#f0f0f0", linewidth=0.45)
-    # for spine in ("top", "right"):
-    #     axis.spines[spine].set_visible(False)
-    axis.spines["left"].set_color("#777777")
-    axis.spines["bottom"].set_color("#777777")
-    axis.spines["top"].set_color("#777777")
-    axis.spines["right"].set_color("#777777")
-    axis.tick_params(colors="#555555", labelsize=12)
-
-
 def main() -> None:
     args = parse_args()
 
@@ -166,18 +154,24 @@ def main() -> None:
     import seaborn as sns
     from matplotlib.lines import Line2D
 
-    plt.rcParams.update(
-        {
-            "font.family": "sans-serif",
-            "font.sans-serif": ["Helvetica", "Arial", "DejaVu Sans"],
-            "font.size": 12,
-            "axes.linewidth": 0.9,
+    # Same grid as the hamlib_*_vs_symphony scatter figures.
+    from plot_hamlib_result import draw_grid
+
+    sns.set_theme(
+        context="paper",
+        style="ticks",
+        font="DejaVu Sans",
+        rc={
+            "axes.labelsize": 15,
+            "legend.fontsize": 12,
+            "xtick.labelsize": 12,
+            "ytick.labelsize": 12,
             "pdf.fonttype": 42,
             "ps.fonttype": 42,
-        }
+        },
     )
-    fig, axis = plt.subplots(figsize=(9, 7))
-    palette = sns.color_palette("Set2", len(COMPILERS))
+    fig, axis = plt.subplots(figsize=(7, 3.8), constrained_layout=True)
+    palette = [sns.desaturate(color, SATURATION) for color in sns.color_palette("Set2", len(COMPILERS))]
 
     legend_handles: list[Line2D] = []
     for index, (label, key, marker) in enumerate(COMPILERS):
@@ -217,22 +211,21 @@ def main() -> None:
 
     axis.set_xscale("log")
     axis.set_yscale("log")
-    axis.set_xlabel("Program size (#2Q in naive synthesis)", color=INK, labelpad=9, fontsize=15)
-    axis.set_ylabel("Compilation latency (s)", color=INK, fontdict={"weight": "bold"}, fontsize=15)
-    # axis.set_title("Absolute compilation runtime", color=INK, pad=10)
+    axis.set_xlabel("Program size (#2Q in naive synthesis)", fontweight="bold")
+    axis.set_ylabel("Compilation latency (s)", fontweight="bold")
+    # axis.set_title("Absolute compilation runtime", pad=10)
     draw_grid(axis)
 
-    fig.legend(
+    # One column in the upper-left corner: every curve rises to the right, so
+    # that corner is the only empty region tall enough for seven entries.
+    axis.legend(
         handles=legend_handles,
-        loc="upper center",
-        ncol=7,
-        frameon=False,
-        fontsize=11,
-        handlelength=2.2,
-        columnspacing=1.4,
-        bbox_to_anchor=(0.54, 0.82),
+        loc="upper left",
+        ncol=1,
+        frameon=True,
+        handlelength=2.0,
+        labelspacing=0.3,
     )
-    fig.subplots_adjust(left=0.10, right=0.985, bottom=0.27, top=0.75)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(args.output, bbox_inches="tight")

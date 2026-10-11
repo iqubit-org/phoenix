@@ -226,8 +226,8 @@ def plot_baseline_metrics(label, key, out_path):
         yscale="log",
         xlim=(xlo, xhi),
         ylim=(ylo, yhi),
-        xlabel=f"Two-qubit metric value ({HERO_LABEL})",
-        ylabel=f"Two-qubit metric value ({label})",
+        xlabel=f"Two-qubit metric ({HERO_LABEL})",
+        ylabel=f"Two-qubit metric ({label})",
         # title=f"{label} vs {HERO_LABEL}",
     )
     draw_grid(ax)
