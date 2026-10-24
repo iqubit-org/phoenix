@@ -67,6 +67,8 @@ T_BASELINES = [
     ("QuCLEAR", "quclear"),
     ("Phoenix", "phoenix"),
 ]
+# Shown in the legend / tick labels where they differ from the STYLE key above.
+DISPLAY_NAMES = {"Phoenix": "PHOENIX"}
 
 
 def read_metric(key: str) -> pd.DataFrame:
@@ -117,7 +119,7 @@ def legend_label(label: str, st: dict, n_hero: int) -> str:
     """``Qiskit  (x1.83)``; partial suites additionally carry their program count."""
     # suffix = "" if st["n"] == n_hero else f", n={st['n']}"
     suffix=""
-    return f"{label}  (×{st['ratio']:.2f}{suffix})"
+    return f"{DISPLAY_NAMES.get(label, label)}  (×{st['ratio']:.2f}{suffix})"
 
 
 def plot_scatter(data, stats, n_hero) -> None:
@@ -224,8 +226,8 @@ def plot_violin(data, stats) -> None:
     ax.set_ylim(lo / 1.35, hi * 2.6)  # extra log-headroom for the ×labels
     ax.set_xlabel("")
     ax.set_ylabel(f"T-depth ratio (Baseline / {HERO_LABEL})", fontweight="bold")
-    for tick in ax.get_xticklabels():
-        tick.set_fontweight("bold")
+    ax.set_xticks(range(len(order)), [DISPLAY_NAMES.get(label, label) for label in order],
+                  fontweight="bold")
     ax.yaxis.grid(True, which="major", lw=0.5, alpha=0.35)
     ax.yaxis.grid(True, which="minor", lw=0.3, alpha=0.15)
     ax.set_axisbelow(True)

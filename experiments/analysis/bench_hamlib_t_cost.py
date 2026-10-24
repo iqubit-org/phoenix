@@ -8,6 +8,7 @@ One compiler per invocation; the result lands in ``analysis/t_cost_data/<compile
     python bench_hamlib_t_cost.py -c tetris              # Tetris baseline
     python bench_hamlib_t_cost.py -c qiskit -j 32        # pin the worker count
     python bench_hamlib_t_cost.py -c quclear --resume    # continue an interrupted run
+    python bench_hamlib_t_cost.py -c quclear -t 3600     # give up on a program after 1 h
 
 Every compiler pass runs with ``optimize=False``, so the T-cost is measured on the raw
 compiled circuit without Qiskit's post-optimization.
@@ -20,6 +21,12 @@ Parallelism has two levels, and they are mutually exclusive by design:
   * ``-j 1``   -- one benchmark at a time, but ``synth_to_clifford_t`` then uses
     every core for the Ross-Selinger synthesis. Useful for a single large program.
 
+``-t/--timeout`` bounds the wall-clock time of each program (compilation plus
+Clifford+T synthesis). A program past its limit is terminated and reported like any
+other failure: it gets no row, so ``--resume`` (with a larger limit) retries it. The
+limit is enforced by killing the program's own process, which therefore also applies
+with ``-j 1`` -- at the price of serial synthesis there, as in the ``-j > 1`` mode.
+
 Rows are appended and flushed as each benchmark finishes, so an interrupted run
 loses nothing and ``--resume`` picks up where it stopped. The file is sorted by
 (category, program) at the end.
@@ -28,13 +35,15 @@ from __future__ import annotations
 
 import argparse
 import csv
+import itertools
 import json
+import math
 import multiprocessing as mp
 import os
 import sys
 import time
 import traceback
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from multiprocessing.connection import wait as wait_for_any
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -126,6 +135,69 @@ def run_one(task: tuple) -> dict:
         }
 
 
+def _report(sender, task: tuple) -> None:
+    # Importing phoenix already started Qiskit's rayon thread pool in the parent,
+    # and a forked child inherits that pool without its threads: the first
+    # multithreaded Rust call would wait on them forever. This is Qiskit's own
+    # switch for "worker process, stay single-threaded".
+    os.environ["QISKIT_IN_PARALLEL"] = "TRUE"
+    sender.send(run_one(task))
+    sender.close()
+
+
+def run_concurrently(tasks: list[tuple], jobs: int, timeout: float | None):
+    """Yield one result row per task as it finishes, running ``jobs`` at a time.
+
+    Every program gets a process of its own: unlike a pool worker, it can be
+    terminated once it overruns ``timeout`` without disturbing the others.
+    """
+    # "fork" keeps the already-imported qiskit/phoenix/tket stack in the
+    # children instead of re-importing it once per program.
+    ctx = mp.get_context("fork" if "fork" in mp.get_all_start_methods() else "spawn")
+    queue = iter(tasks)
+    running: dict = {}  # result pipe -> (process, task, deadline)
+
+    def failed(task: tuple, error: str, elapsed: float) -> dict:
+        return {"category": task[0], "program": task[1], "error": error, "elapsed": elapsed}
+
+    try:
+        while True:
+            for task in itertools.islice(queue, jobs - len(running)):
+                receiver, sender = ctx.Pipe(duplex=False)
+                process = ctx.Process(target=_report, args=(sender, task))
+                process.start()
+                sender.close()  # the child now holds the only writing end
+                deadline = time.monotonic() + timeout if timeout else math.inf
+                running[receiver] = (process, task, deadline)
+            if not running:
+                return
+
+            next_deadline = min(deadline for _, _, deadline in running.values())
+            patience = None if next_deadline == math.inf else max(0.0, next_deadline - time.monotonic())
+            finished = wait_for_any(list(running), patience)
+            now = time.monotonic()
+            for receiver in [r for r in running if r in finished or running[r][2] <= now]:
+                process, task, _ = running.pop(receiver)
+                if receiver in finished:
+                    try:
+                        row = receiver.recv()
+                    except EOFError:
+                        # Died without reporting (OOM kill, segfault). Record it and
+                        # keep going so one bad program does not discard the whole
+                        # run; --resume retries only what is missing.
+                        process.join()
+                        row = failed(task, f"worker died (exit code {process.exitcode})", 0.0)
+                else:
+                    process.terminate()
+                    row = failed(task, f"timeout: exceeded {timeout:g}s", timeout)
+                receiver.close()
+                process.join()
+                yield row
+    finally:  # interrupted (Ctrl-C) or abandoned: leave no program running
+        for process, _, _ in running.values():
+            process.terminate()
+
+
 def load_suite() -> list[dict]:
     with open(SUITE_CSV) as f:
         return list(csv.DictReader(f))
@@ -160,6 +232,9 @@ def main() -> None:
                              "which lets Clifford+T synthesis use all cores instead)")
     parser.add_argument("-e", "--epsilon", type=float, default=1e-10,
                         help="Ross-Selinger approximation error per rotation")
+    parser.add_argument("-t", "--timeout", type=float, default=None,
+                        help="Wall-clock limit per program in seconds (compile + synthesis); "
+                             "a program past it is terminated and reported as failed")
     parser.add_argument("--resume", action="store_true",
                         help="Skip programs already present in the output CSV")
     parser.add_argument("--limit", type=int, default=None,
@@ -167,6 +242,8 @@ def main() -> None:
     parser.add_argument("-o", "--output", type=Path, default=None,
                         help="Output CSV (default: t_cost_data/<compiler>.csv)")
     args = parser.parse_args()
+    if args.timeout is not None and args.timeout <= 0:
+        parser.error("--timeout must be positive")
 
     out_csv = args.output or OUT_DIR / f"{args.compiler}.csv"
     out_csv.parent.mkdir(parents=True, exist_ok=True)
@@ -185,8 +262,9 @@ def main() -> None:
     tasks = [(r["category"], r["program"], args.compiler, args.epsilon) for r in todo]
     jobs = max(1, min(args.jobs, len(tasks))) if tasks else 1
 
+    limit = "none" if args.timeout is None else f"{args.timeout:g}s"
     print(f"compiler={args.compiler}  programs={len(tasks)} (skipped {len(suite) - len(tasks)})  "
-          f"jobs={jobs}  epsilon={args.epsilon:g}  ->  {out_csv}", flush=True)
+          f"jobs={jobs}  epsilon={args.epsilon:g}  timeout={limit}  ->  {out_csv}", flush=True)
     if not tasks:
         return
 
@@ -213,27 +291,13 @@ def main() -> None:
             print(f"{tag} {row['program']}  T-count={row['t_count']}  "
                   f"T-depth={row['t_depth']}  ({row['elapsed']}s)", flush=True)
 
-        if jobs == 1:
+        if jobs == 1 and args.timeout is None:
             # Serial outer loop: synth_to_clifford_t is then free to use every core.
             for i, task in enumerate(tasks, 1):
                 record(run_one(task), i)
         else:
-            # "fork" keeps the already-imported qiskit/phoenix/tket stack in the
-            # workers instead of re-importing it once per worker.
-            ctx = mp.get_context("fork" if "fork" in mp.get_all_start_methods() else "spawn")
-            with ProcessPoolExecutor(max_workers=jobs, mp_context=ctx) as pool:
-                futures = {pool.submit(run_one, t): t for t in tasks}
-                for i, future in enumerate(as_completed(futures), 1):
-                    try:
-                        row = future.result()
-                    except Exception as exc:
-                        # Worker died outright (OOM kill, segfault). Record it and keep
-                        # going so one bad program does not discard the whole run;
-                        # --resume retries only what is missing.
-                        category, program = futures[future][0], futures[future][1]
-                        row = {"category": category, "program": program,
-                               "error": f"{type(exc).__name__}: {exc}", "elapsed": 0.0}
-                    record(row, i)
+            for i, row in enumerate(run_concurrently(tasks, jobs, args.timeout), 1):
+                record(row, i)
 
     sort_csv(out_csv)
 

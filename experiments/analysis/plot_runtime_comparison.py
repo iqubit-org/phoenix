@@ -40,7 +40,7 @@ COMPILERS = (
     ("Paulihedral", "paulihedral", "^"),
     ("Tetris", "tetris", "D"),
     ("QuCLEAR", "quclear", "P"),
-    ("Phoenix", "phoenix", "X"),
+    ("PHOENIX", "phoenix", "X"),
     ("Symphony", "phoenixpp", "*"),
 )
 HERO_KEY = "phoenixpp"
@@ -181,7 +181,8 @@ def main() -> None:
         observed = [program for program in programs if program in rows]
         hero = key == HERO_KEY
         color = palette[index]
-        linestyle = "--" if key in {"paulihedral", "tetris"} else "-"
+        # linestyle = "--" if key in {"paulihedral", "tetris"} else "-"
+        linestyle = "-"
         axis.plot(
             [metadata[program].num_2q_gates for program in observed],
             [rows[program] for program in observed],

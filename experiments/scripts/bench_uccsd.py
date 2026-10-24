@@ -61,7 +61,10 @@ def process_one(fname, compiler, device, output_dpath):
     coupling_map = gene_coupling_map(data["num_qubits"])
 
     compiler_pass = COMPILER_PASSES[compiler]
-    circ = compiler_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map)
+    kwargs = {}
+    if compiler in ("paulihedral", "tetris"):  # these two consume the benchmark's own blocks
+        kwargs["block_sizes"] = data.get("block_sizes")
+    circ = compiler_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, **kwargs)
 
     qiskit.qasm2.dump(circ, output_fname)
     return fname, circ

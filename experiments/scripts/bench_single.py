@@ -72,10 +72,20 @@ def main():
         circ_opt = bench_utils.qiskit_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, optimize=not args.no_opt)
     elif args.compiler == "paulihedral":
         circ_opt = bench_utils.paulihedral_pass(
-            data["paulis"], data["coeffs"], coupling_map=coupling_map, optimize=not args.no_opt
+            data["paulis"],
+            data["coeffs"],
+            coupling_map=coupling_map,
+            optimize=not args.no_opt,
+            block_sizes=data.get("block_sizes"),
         )
     elif args.compiler == "tetris":
-        circ_opt = bench_utils.tetris_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, optimize=not args.no_opt)
+        circ_opt = bench_utils.tetris_pass(
+            data["paulis"],
+            data["coeffs"],
+            coupling_map=coupling_map,
+            optimize=not args.no_opt,
+            block_sizes=data.get("block_sizes"),
+        )
     elif args.compiler == "pauliopt":
         circ_opt = bench_utils.pauliopt_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, optimize=not args.no_opt)
     elif args.compiler == "quclear":

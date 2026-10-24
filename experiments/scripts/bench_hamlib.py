@@ -49,8 +49,8 @@ def process_one(fname, compiler, output_dpath):
 
     output_fname = os.path.join(output_dpath, os.path.basename(fname).replace(".json", ".qasm"))
 
-    if os.path.exists(output_fname):
-        return fname, 'cached', output_fname
+    # if os.path.exists(output_fname):
+    #     return fname, 'cached', output_fname
 
     with open(fname, "r") as f:
         data = json.load(f)

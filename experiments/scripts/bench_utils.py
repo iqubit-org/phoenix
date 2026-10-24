@@ -10,6 +10,7 @@ sys.path.append("../..")
 import qiskit
 import numpy as np
 import rustworkx as rx
+from functools import partial
 from typing import Tuple, List
 from qiskit.transpiler import CouplingMap
 
@@ -99,38 +100,50 @@ def phoenix_pass(
 
 
 def paulihedral_pass(
-    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, optimize: bool = True
+    paulis: List[str],
+    coeffs: List[float],
+    coupling_map: CouplingMap = None,
+    optimize: bool = True,
+    block_sizes: List[int] = None,
+    scheduling: str = "do",
 ) -> qiskit.QuantumCircuit:
-    from tetris.utils.parallel_bl import gate_count_oriented_scheduling
+    """``scheduling``: Paulihedral's block scheduling pass, "do" (depth-oriented, with the artifact's
+    hyperparameters ``length = n // 2``, ``maxiter = 30``; the setting of Paulihedral's own evaluation)
+    or "gco" (gate-count-oriented)."""
+    from tetris.utils.parallel_bl import gate_count_oriented_scheduling, depth_oriented_scheduling
     from tetris.synthesis_SC import block_opt_SC
+    from tetris.synthesis_FT import block_opt_FT
 
-    if coupling_map is None:
-        coupling_map = phoenix.utils.gene_all2all_coupling_map(len(paulis[0]))
-
-    a2 = gate_count_oriented_scheduling(constr_mypauli_blocks(paulis, coeffs))
-
-    qc, total_swaps, total_cx = block_opt_SC(a2, graph=coupling_map_to_pGraph(coupling_map))
-    # qc = qiskit.transpile(qc, optimization_level=2, basis_gates=["u1", "u2", "u3", "cx"])
+    if scheduling == "gco":
+        schedule = gate_count_oriented_scheduling
+    elif scheduling == "do":
+        schedule = partial(depth_oriented_scheduling, length=len(paulis[0]) // 2, maxiter=30)
+    else:
+        raise ValueError(f"unknown Paulihedral scheduling {scheduling!r} (expected 'gco' or 'do')")
 
     if coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map):
+        # All-to-all: Paulihedral's device-agnostic FT backend, which takes one Pauli string per block
+        # (so ``block_sizes`` plays no role here)
+        blocks = constr_mypauli_blocks(paulis, coeffs)
+        a2 = schedule([[ps] for block in blocks for ps in block])
+        qc = block_opt_FT(a2)
         if optimize:
             qc = phoenix.utils.post_transpile(qc)
     else:
+        # Limited connectivity: Paulihedral's SC backend
+        a2 = schedule(constr_mypauli_blocks(paulis, coeffs, block_sizes))
+        qc, total_swaps, total_cx = block_opt_SC(a2, graph=coupling_map_to_pGraph(coupling_map))
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
-
-    # console.print({
-    #     'PH_swap_count': total_swaps,
-    #     'PH_cx_count': total_cx,
-    #     'CNOT': circ.num_nonlocal_gates(),
-    #     'Single': circ.size() - circ.num_nonlocal_gates(),
-    #     'Total': circ.size(),
-    #     'Depth': circ.depth()})
 
     return qc
 
 
 def tetris_pass(
-    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, optimize: bool = True
+    paulis: List[str],
+    coeffs: List[float],
+    coupling_map: CouplingMap = None,
+    optimize: bool = True,
+    block_sizes: List[int] = None,
 ) -> qiskit.QuantumCircuit:
     from tetris.utils.synthesis_lookahead import synthesis_lookahead
 
@@ -138,7 +151,7 @@ def tetris_pass(
         coupling_map = phoenix.utils.gene_all2all_coupling_map(len(paulis[0]))
 
     qc, metrics = synthesis_lookahead(
-        constr_mypauli_blocks(paulis, coeffs),
+        constr_mypauli_blocks(paulis, coeffs, block_sizes),
         graph=coupling_map_to_pGraph(coupling_map),
         use_bridge=False,
         swap_coefficient=3,
@@ -294,9 +307,11 @@ def tket_pass(
 
 
 def qiskit_pass(
-    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None, optimize: bool = True
+    paulis: List[str], coeffs: List[float],
+    coupling_map: CouplingMap = None, optimize: bool = True,
+    preserve_order: bool = False
 ) -> qiskit.QuantumCircuit:
-    qc = phoenix.utils.compile_by_qiskit(paulis, coeffs, little_endian=False, optimize=optimize)
+    qc = phoenix.utils.compile_by_qiskit(paulis, coeffs, little_endian=False, optimize=optimize, preserve_order=preserve_order)
     if not (coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)):
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
     return qc
@@ -317,8 +332,30 @@ def coupling_map_to_pGraph(coupling_map: CouplingMap) -> pGraph:
     return pGraph(G, C)
 
 
-def constr_mypauli_blocks(paulis, coeffs) -> List[List[pauliString]]:
-    """Used in Paulihedral/Tetris primitive"""
+def constr_mypauli_blocks(paulis, coeffs, block_sizes=None) -> List[List[pauliString]]:
+    """Used in Paulihedral/Tetris primitive
+
+    ``block_sizes`` gives the benchmark's own blocks, as Paulihedral/Tetris consume them: block k is the next
+    ``block_sizes[k]`` consecutive strings (e.g. the strings of one UCCSD excitation). Without it (benchmarks
+    that are a flat list of Pauli terms) the strings are grouped by identical support.
+    """
+    if block_sizes is not None:
+        if sum(block_sizes) != len(paulis):
+            raise ValueError("block_sizes must add up to the number of Pauli strings")
+        mypauli_blocks = []
+        start = 0
+        for size in block_sizes:
+            # all-identity strings are dropped, as in the same-support grouping below
+            block = [
+                pauliString(p, c)
+                for p, c in zip(paulis[start : start + size], coeffs[start : start + size])
+                if set(p) != {"I"}
+            ]
+            if block:
+                mypauli_blocks.append(block)
+            start += size
+        return mypauli_blocks
+
     groups = phoenix.primitive.group_paulis_and_coeffs(paulis, coeffs)
 
     mypauli_blocks = []

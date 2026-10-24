@@ -1,0 +1,3998 @@
+{
+  "metadata": {
+    "compiler": "bench_utils.paulihedral_pass (FT backend on all-to-all, SC backend on hhex/square)",
+    "metrics": "gate count, 2q gate count, depth and 2q depth of the compiled circuit",
+    "ratio_definition": "DO / GCO",
+    "do_hyperparameters": "length = num_qubits // 2, maxiter = 30 (as in the Paulihedral artifact)",
+    "reference_check": [
+      "HAMLib GCO arm equals experiments/results/result_hamlib_paulihedral.csv on 100/100 benchmarks",
+      "UCCSD GCO arm equals experiments/results/result_uccsd_paulihedral.csv on 18/18 cases"
+    ]
+  },
+  "results": [
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "flat100-4-flat100-7.cnf-90-cc",
+      "qubits": 90,
+      "paulis": 223,
+      "arms": {
+        "gco": {
+          "num_2q": 268,
+          "depth_2q": 26,
+          "num_gates": 887,
+          "depth": 53,
+          "compile_seconds": 0.17676587495952845
+        },
+        "do": {
+          "num_2q": 274,
+          "depth_2q": 28,
+          "num_gates": 829,
+          "depth": 53,
+          "compile_seconds": 0.24016937473788857
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0223880597014925,
+        "depth_2q": 1.0769230769230769,
+        "num_gates": 0.9346110484780158,
+        "depth": 1.0
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "graph-complete_bipart-complbipart-n-10_a-5_b-5",
+      "qubits": 10,
+      "paulis": 75,
+      "arms": {
+        "gco": {
+          "num_2q": 150,
+          "depth_2q": 118,
+          "num_gates": 460,
+          "depth": 237,
+          "compile_seconds": 0.0775276250205934
+        },
+        "do": {
+          "num_2q": 120,
+          "depth_2q": 63,
+          "num_gates": 370,
+          "depth": 127,
+          "compile_seconds": 0.08618712518364191
+        }
+      },
+      "ratios": {
+        "num_2q": 0.8,
+        "depth_2q": 0.5338983050847458,
+        "num_gates": 0.8043478260869565,
+        "depth": 0.5358649789029536
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "graph-gnp_k-2-gnp-k_2_n-4_rinst-05",
+      "qubits": 4,
+      "paulis": 12,
+      "arms": {
+        "do": {
+          "num_2q": 21,
+          "depth_2q": 21,
+          "num_gates": 67,
+          "depth": 43,
+          "compile_seconds": 0.015635957941412926
+        },
+        "gco": {
+          "num_2q": 21,
+          "depth_2q": 21,
+          "num_gates": 67,
+          "depth": 43,
+          "compile_seconds": 0.021950500085949898
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 1.0,
+        "num_gates": 1.0,
+        "depth": 1.0
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "graph-gnp_k-4-gnp-k_4_n-40_rinst-07",
+      "qubits": 40,
+      "paulis": 804,
+      "arms": {
+        "gco": {
+          "num_2q": 1602,
+          "depth_2q": 1197,
+          "num_gates": 4846,
+          "depth": 2395,
+          "compile_seconds": 1.0103768333792686
+        },
+        "do": {
+          "num_2q": 1510,
+          "depth_2q": 275,
+          "num_gates": 4522,
+          "depth": 549,
+          "compile_seconds": 1.753208332695067
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9425717852684145,
+        "depth_2q": 0.2297410192147034,
+        "num_gates": 0.933140734626496,
+        "depth": 0.22922755741127349
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "graph-gnp_k-4-gnp-k_4_n-6_rinst-15",
+      "qubits": 6,
+      "paulis": 45,
+      "arms": {
+        "do": {
+          "num_2q": 85,
+          "depth_2q": 50,
+          "num_gates": 254,
+          "depth": 100,
+          "compile_seconds": 0.04126970889046788
+        },
+        "gco": {
+          "num_2q": 87,
+          "depth_2q": 75,
+          "num_gates": 267,
+          "depth": 151,
+          "compile_seconds": 0.05659745912998915
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9770114942528736,
+        "depth_2q": 0.6666666666666666,
+        "num_gates": 0.951310861423221,
+        "depth": 0.6622516556291391
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "graph-gnp_k-5-gnp-k_5_n-24_rinst-04",
+      "qubits": 24,
+      "paulis": 188,
+      "arms": {
+        "gco": {
+          "num_2q": 376,
+          "depth_2q": 80,
+          "num_gates": 1152,
+          "depth": 161,
+          "compile_seconds": 0.16163025004789233
+        },
+        "do": {
+          "num_2q": 376,
+          "depth_2q": 96,
+          "num_gates": 1058,
+          "depth": 188,
+          "compile_seconds": 0.16595987509936094
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 1.2,
+        "num_gates": 0.9184027777777778,
+        "depth": 1.1677018633540373
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "graph-gnp_k-5-gnp-k_5_n-60_rinst-19",
+      "qubits": 60,
+      "paulis": 1971,
+      "arms": {
+        "gco": {
+          "num_2q": 3939,
+          "depth_2q": 2931,
+          "num_gates": 11877,
+          "depth": 5863,
+          "compile_seconds": 2.9956340831704438
+        },
+        "do": {
+          "num_2q": 3700,
+          "depth_2q": 505,
+          "num_gates": 11053,
+          "depth": 1008,
+          "compile_seconds": 6.69647862482816
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9393247017009393,
+        "depth_2q": 0.17229614466052542,
+        "num_gates": 0.9306222109960428,
+        "depth": 0.1719256353402695
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "graph-gnp_k-5-gnp-k_5_n-90_rinst-02",
+      "qubits": 90,
+      "paulis": 2958,
+      "arms": {
+        "gco": {
+          "num_2q": 5898,
+          "depth_2q": 4256,
+          "num_gates": 17784,
+          "depth": 8513,
+          "compile_seconds": 5.98008874990046
+        },
+        "do": {
+          "num_2q": 5516,
+          "depth_2q": 682,
+          "num_gates": 16538,
+          "depth": 1359,
+          "compile_seconds": 28.69127087527886
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9352322821295355,
+        "depth_2q": 0.16024436090225563,
+        "num_gates": 0.9299370220422852,
+        "depth": 0.15963820039938917
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "graph-regular_reg-4-reg-4_n-90_rinst-07",
+      "qubits": 90,
+      "paulis": 540,
+      "arms": {
+        "gco": {
+          "num_2q": 1008,
+          "depth_2q": 179,
+          "num_gates": 3114,
+          "depth": 359,
+          "compile_seconds": 0.7676674169488251
+        },
+        "do": {
+          "num_2q": 863,
+          "depth_2q": 107,
+          "num_gates": 2674,
+          "depth": 213,
+          "compile_seconds": 1.432619874831289
+        }
+      },
+      "ratios": {
+        "num_2q": 0.8561507936507936,
+        "depth_2q": 0.5977653631284916,
+        "num_gates": 0.8587026332691072,
+        "depth": 0.5933147632311978
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "uf100-2-uf100-0396.cnf-46-res",
+      "qubits": 46,
+      "paulis": 271,
+      "arms": {
+        "gco": {
+          "num_2q": 452,
+          "depth_2q": 170,
+          "num_gates": 1387,
+          "depth": 340,
+          "compile_seconds": 0.19903112528845668
+        },
+        "do": {
+          "num_2q": 509,
+          "depth_2q": 109,
+          "num_gates": 1399,
+          "depth": 205,
+          "compile_seconds": 0.25427737506106496
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1261061946902655,
+        "depth_2q": 0.6411764705882353,
+        "num_gates": 1.0086517664023071,
+        "depth": 0.6029411764705882
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "uf100-2-uf100-0601.cnf-46-res",
+      "qubits": 46,
+      "paulis": 284,
+      "arms": {
+        "gco": {
+          "num_2q": 486,
+          "depth_2q": 163,
+          "num_gates": 1478,
+          "depth": 326,
+          "compile_seconds": 0.21710404194891453
+        },
+        "do": {
+          "num_2q": 535,
+          "depth_2q": 132,
+          "num_gates": 1483,
+          "depth": 244,
+          "compile_seconds": 0.2753919172100723
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1008230452674896,
+        "depth_2q": 0.8098159509202454,
+        "num_gates": 1.003382949932341,
+        "depth": 0.7484662576687117
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "uf100-4-uf100-0246.cnf-70-res",
+      "qubits": 70,
+      "paulis": 688,
+      "arms": {
+        "gco": {
+          "num_2q": 1256,
+          "depth_2q": 550,
+          "num_gates": 3800,
+          "depth": 1099,
+          "compile_seconds": 0.6932336250320077
+        },
+        "do": {
+          "num_2q": 1461,
+          "depth_2q": 274,
+          "num_gates": 3937,
+          "depth": 506,
+          "compile_seconds": 1.173538208939135
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1632165605095541,
+        "depth_2q": 0.49818181818181817,
+        "num_gates": 1.0360526315789473,
+        "depth": 0.4604185623293904
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "uf20-7-uf20-0384.cnf-8-res",
+      "qubits": 8,
+      "paulis": 29,
+      "arms": {
+        "gco": {
+          "num_2q": 42,
+          "depth_2q": 25,
+          "num_gates": 131,
+          "depth": 50,
+          "compile_seconds": 0.027624541893601418
+        },
+        "do": {
+          "num_2q": 42,
+          "depth_2q": 23,
+          "num_gates": 120,
+          "depth": 44,
+          "compile_seconds": 0.02816887479275465
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.92,
+        "num_gates": 0.916030534351145,
+        "depth": 0.88
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "uuf100-0-uuf100-0810.cnf-40-res",
+      "qubits": 40,
+      "paulis": 187,
+      "arms": {
+        "gco": {
+          "num_2q": 300,
+          "depth_2q": 114,
+          "num_gates": 931,
+          "depth": 229,
+          "compile_seconds": 0.1426197923719883
+        },
+        "do": {
+          "num_2q": 325,
+          "depth_2q": 81,
+          "num_gates": 910,
+          "depth": 153,
+          "compile_seconds": 0.17665462475270033
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0833333333333333,
+        "depth_2q": 0.7105263157894737,
+        "num_gates": 0.9774436090225563,
+        "depth": 0.6681222707423581
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "binaryoptimization",
+      "device": "all2all",
+      "name": "uuf100-8-uuf100-0509.cnf-40-cc",
+      "qubits": 40,
+      "paulis": 206,
+      "arms": {
+        "gco": {
+          "num_2q": 342,
+          "depth_2q": 123,
+          "num_gates": 1051,
+          "depth": 247,
+          "compile_seconds": 0.1735734581016004
+        },
+        "do": {
+          "num_2q": 373,
+          "depth_2q": 85,
+          "num_gates": 1028,
+          "depth": 163,
+          "compile_seconds": 0.23155637504532933
+        }
+      },
+      "ratios": {
+        "num_2q": 1.090643274853801,
+        "depth_2q": 0.6910569105691057,
+        "num_gates": 0.978116079923882,
+        "depth": 0.659919028340081
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "TSP_Ncity-10-tsp_prob-pr76_Ncity-10_enc-unary",
+      "qubits": 100,
+      "paulis": 1000,
+      "arms": {
+        "gco": {
+          "num_2q": 1800,
+          "depth_2q": 194,
+          "num_gates": 5500,
+          "depth": 389,
+          "compile_seconds": 0.9681509169749916
+        },
+        "do": {
+          "num_2q": 1800,
+          "depth_2q": 139,
+          "num_gates": 5138,
+          "depth": 275,
+          "compile_seconds": 2.3435483751818538
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.7164948453608248,
+        "num_gates": 0.9341818181818182,
+        "depth": 0.7069408740359897
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "TSP_Ncity-10-tsp_prob-st70_Ncity-10_enc-unary",
+      "qubits": 100,
+      "paulis": 1000,
+      "arms": {
+        "gco": {
+          "num_2q": 1800,
+          "depth_2q": 194,
+          "num_gates": 5500,
+          "depth": 389,
+          "compile_seconds": 1.027990082744509
+        },
+        "do": {
+          "num_2q": 1800,
+          "depth_2q": 139,
+          "num_gates": 5126,
+          "depth": 273,
+          "compile_seconds": 2.3875892921350896
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.7164948453608248,
+        "num_gates": 0.932,
+        "depth": 0.7017994858611826
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "TSP_Ncity-16-tsp_prob-fl417_Ncity-16_enc-stdbinary",
+      "qubits": 64,
+      "paulis": 3840,
+      "arms": {
+        "gco": {
+          "num_2q": 7552,
+          "depth_2q": 7221,
+          "num_gates": 21483,
+          "depth": 13497,
+          "compile_seconds": 5.308224332984537
+        },
+        "do": {
+          "num_2q": 16373,
+          "depth_2q": 2111,
+          "num_gates": 33071,
+          "depth": 3271,
+          "compile_seconds": 21.951440708711743
+        }
+      },
+      "ratios": {
+        "num_2q": 2.1680349576271185,
+        "depth_2q": 0.29234178091677054,
+        "num_gates": 1.5394032490806684,
+        "depth": 0.24235015188560421
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "TSP_Ncity-16-tsp_prob-kroD100_Ncity-16_enc-stdbinary",
+      "qubits": 64,
+      "paulis": 3840,
+      "arms": {
+        "gco": {
+          "num_2q": 7552,
+          "depth_2q": 7221,
+          "num_gates": 21643,
+          "depth": 13608,
+          "compile_seconds": 5.458390207961202
+        },
+        "do": {
+          "num_2q": 16373,
+          "depth_2q": 2111,
+          "num_gates": 33231,
+          "depth": 3277,
+          "compile_seconds": 21.888511541765183
+        }
+      },
+      "ratios": {
+        "num_2q": 2.1680349576271185,
+        "depth_2q": 0.29234178091677054,
+        "num_gates": 1.53541560781777,
+        "depth": 0.24081422692533805
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "TSP_Ncity-4-tsp_rand-002_Ncity-4_enc-stdbinary",
+      "qubits": 8,
+      "paulis": 48,
+      "arms": {
+        "gco": {
+          "num_2q": 80,
+          "depth_2q": 65,
+          "num_gates": 240,
+          "depth": 127,
+          "compile_seconds": 0.03815129166468978
+        },
+        "do": {
+          "num_2q": 81,
+          "depth_2q": 45,
+          "num_gates": 213,
+          "depth": 83,
+          "compile_seconds": 0.040320624597370625
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0125,
+        "depth_2q": 0.6923076923076923,
+        "num_gates": 0.8875,
+        "depth": 0.6535433070866141
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "TSP_Ncity-5-tsp_prob-ts225_Ncity-5_enc-unary",
+      "qubits": 25,
+      "paulis": 125,
+      "arms": {
+        "gco": {
+          "num_2q": 200,
+          "depth_2q": 44,
+          "num_gates": 625,
+          "depth": 89,
+          "compile_seconds": 0.08465329185128212
+        },
+        "do": {
+          "num_2q": 200,
+          "depth_2q": 54,
+          "num_gates": 575,
+          "depth": 107,
+          "compile_seconds": 0.10327062476426363
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 1.2272727272727273,
+        "num_gates": 0.92,
+        "depth": 1.202247191011236
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "TSP_Ncity-7-tsp_prob-lin105_Ncity-7_enc-unary",
+      "qubits": 49,
+      "paulis": 343,
+      "arms": {
+        "gco": {
+          "num_2q": 588,
+          "depth_2q": 92,
+          "num_gates": 1813,
+          "depth": 185,
+          "compile_seconds": 0.28707066690549254
+        },
+        "do": {
+          "num_2q": 588,
+          "depth_2q": 88,
+          "num_gates": 1662,
+          "depth": 172,
+          "compile_seconds": 0.3612747499719262
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.9565217391304348,
+        "num_gates": 0.9167126309983453,
+        "depth": 0.9297297297297298
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "TSP_Ncity-8-tsp_prob-d198_Ncity-8_enc-unary",
+      "qubits": 64,
+      "paulis": 512,
+      "arms": {
+        "gco": {
+          "num_2q": 896,
+          "depth_2q": 122,
+          "num_gates": 2752,
+          "depth": 245,
+          "compile_seconds": 0.4503282499499619
+        },
+        "do": {
+          "num_2q": 896,
+          "depth_2q": 112,
+          "num_gates": 2524,
+          "depth": 219,
+          "compile_seconds": 0.6134715839289129
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.9180327868852459,
+        "num_gates": 0.9171511627906976,
+        "depth": 0.8938775510204081
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "TSP_Ncity-8-tsp_prob-ulysses22_Ncity-8_enc-stdbinary",
+      "qubits": 24,
+      "paulis": 448,
+      "arms": {
+        "gco": {
+          "num_2q": 848,
+          "depth_2q": 764,
+          "num_gates": 2451,
+          "depth": 1459,
+          "compile_seconds": 0.38968170806765556
+        },
+        "do": {
+          "num_2q": 1386,
+          "depth_2q": 370,
+          "num_gates": 3111,
+          "depth": 607,
+          "compile_seconds": 0.48211600026115775
+        }
+      },
+      "ratios": {
+        "num_2q": 1.634433962264151,
+        "depth_2q": 0.48429319371727747,
+        "num_gates": 1.2692778457772338,
+        "depth": 0.4160383824537354
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "binary-color02-dsjc1000.1_k-3-dsjc1000.1",
+      "qubits": 72,
+      "paulis": 675,
+      "arms": {
+        "gco": {
+          "num_2q": 1206,
+          "depth_2q": 489,
+          "num_gates": 3629,
+          "depth": 975,
+          "compile_seconds": 0.6425749575719237
+        },
+        "do": {
+          "num_2q": 1370,
+          "depth_2q": 305,
+          "num_gates": 3538,
+          "depth": 551,
+          "compile_seconds": 0.9831828330643475
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1359867330016584,
+        "depth_2q": 0.623721881390593,
+        "num_gates": 0.974924221548636,
+        "depth": 0.5651282051282052
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "binary-graph-regular_k-5-reg-5_n-10_rinst-07",
+      "qubits": 30,
+      "paulis": 1295,
+      "arms": {
+        "gco": {
+          "num_2q": 2530,
+          "depth_2q": 1757,
+          "num_gates": 7395,
+          "depth": 3398,
+          "compile_seconds": 1.2209440832957625
+        },
+        "do": {
+          "num_2q": 3739,
+          "depth_2q": 1171,
+          "num_gates": 8634,
+          "depth": 1967,
+          "compile_seconds": 1.7249694587662816
+        }
+      },
+      "ratios": {
+        "num_2q": 1.4778656126482212,
+        "depth_2q": 0.6664769493454752,
+        "num_gates": 1.1675456389452332,
+        "depth": 0.5788699234844026
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "gray-color02-1-fullins_5_k-5-1-fullins_5",
+      "qubits": 144,
+      "paulis": 5334,
+      "arms": {
+        "gco": {
+          "num_2q": 10380,
+          "depth_2q": 4858,
+          "num_gates": 30357,
+          "depth": 9396,
+          "compile_seconds": 5.966344207990915
+        },
+        "do": {
+          "num_2q": 16880,
+          "depth_2q": 3094,
+          "num_gates": 37945,
+          "depth": 5079,
+          "compile_seconds": 50.878431791905314
+        }
+      },
+      "ratios": {
+        "num_2q": 1.6262042389210019,
+        "depth_2q": 0.6368876080691642,
+        "num_gates": 1.2499588233356391,
+        "depth": 0.5405491698595147
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "gray-color02-will199gpia_k-3-will199gpia",
+      "qubits": 120,
+      "paulis": 1512,
+      "arms": {
+        "gco": {
+          "num_2q": 2784,
+          "depth_2q": 1082,
+          "num_gates": 8357,
+          "depth": 2152,
+          "compile_seconds": 1.9106248337775469
+        },
+        "do": {
+          "num_2q": 3624,
+          "depth_2q": 419,
+          "num_gates": 9230,
+          "depth": 771,
+          "compile_seconds": 6.906965458299965
+        }
+      },
+      "ratios": {
+        "num_2q": 1.3017241379310345,
+        "depth_2q": 0.38724584103512016,
+        "num_gates": 1.1044633241593873,
+        "depth": 0.358271375464684
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "unary-color02-ash608gpia_k-3-ash608gpia",
+      "qubits": 480,
+      "paulis": 1614,
+      "arms": {
+        "gco": {
+          "num_2q": 2268,
+          "depth_2q": 108,
+          "num_gates": 7284,
+          "depth": 217,
+          "compile_seconds": 2.539587500039488
+        },
+        "do": {
+          "num_2q": 2268,
+          "depth_2q": 73,
+          "num_gates": 6641,
+          "depth": 143,
+          "compile_seconds": 15.858584665693343
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.6759259259259259,
+        "num_gates": 0.9117243272926964,
+        "depth": 0.6589861751152074
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "discreteoptimization",
+      "device": "all2all",
+      "name": "unary-color02-queen13_13_k-4-queen13_13",
+      "qubits": 112,
+      "paulis": 412,
+      "arms": {
+        "gco": {
+          "num_2q": 600,
+          "depth_2q": 58,
+          "num_gates": 1912,
+          "depth": 117,
+          "compile_seconds": 0.3156086662784219
+        },
+        "do": {
+          "num_2q": 600,
+          "depth_2q": 36,
+          "num_gates": 1781,
+          "depth": 67,
+          "compile_seconds": 0.6495736250653863
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.6206896551724138,
+        "num_gates": 0.9314853556485355,
+        "depth": 0.5726495726495726
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "BH-JW-10",
+      "qubits": 10,
+      "paulis": 275,
+      "arms": {
+        "gco": {
+          "num_2q": 1252,
+          "depth_2q": 1168,
+          "num_gates": 3175,
+          "depth": 2079,
+          "compile_seconds": 0.4666404998861253
+        },
+        "do": {
+          "num_2q": 1241,
+          "depth_2q": 947,
+          "num_gates": 3060,
+          "depth": 1644,
+          "compile_seconds": 0.44017420895397663
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9912140575079872,
+        "depth_2q": 0.8107876712328768,
+        "num_gates": 0.9637795275590552,
+        "depth": 0.7907647907647908
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "Be2-JW-6",
+      "qubits": 6,
+      "paulis": 61,
+      "arms": {
+        "do": {
+          "num_2q": 192,
+          "depth_2q": 153,
+          "num_gates": 545,
+          "depth": 299,
+          "compile_seconds": 0.07566450024023652
+        },
+        "gco": {
+          "num_2q": 192,
+          "depth_2q": 179,
+          "num_gates": 537,
+          "depth": 342,
+          "compile_seconds": 0.08269004197791219
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.8547486033519553,
+        "num_gates": 1.0148975791433892,
+        "depth": 0.8742690058479532
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "C2-JW-18",
+      "qubits": 18,
+      "paulis": 1883,
+      "arms": {
+        "gco": {
+          "num_2q": 11944,
+          "depth_2q": 11131,
+          "num_gates": 29590,
+          "depth": 19662,
+          "compile_seconds": 4.031384749803692
+        },
+        "do": {
+          "num_2q": 12858,
+          "depth_2q": 9849,
+          "num_gates": 30795,
+          "depth": 16652,
+          "compile_seconds": 4.68967091711238
+        }
+      },
+      "ratios": {
+        "num_2q": 1.076523777628935,
+        "depth_2q": 0.884826161171503,
+        "num_gates": 1.0407232173031429,
+        "depth": 0.8469128267724545
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "H2-JW-8",
+      "qubits": 8,
+      "paulis": 184,
+      "arms": {
+        "gco": {
+          "num_2q": 723,
+          "depth_2q": 676,
+          "num_gates": 2017,
+          "depth": 1298,
+          "compile_seconds": 0.2655699159950018
+        },
+        "do": {
+          "num_2q": 744,
+          "depth_2q": 592,
+          "num_gates": 2046,
+          "depth": 1116,
+          "compile_seconds": 0.28310487512499094
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0290456431535269,
+        "depth_2q": 0.8757396449704142,
+        "num_gates": 1.0143777887952405,
+        "depth": 0.8597842835130971
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "HF-BK12",
+      "qubits": 12,
+      "paulis": 630,
+      "arms": {
+        "gco": {
+          "num_2q": 2656,
+          "depth_2q": 2333,
+          "num_gates": 7386,
+          "depth": 4463,
+          "compile_seconds": 1.0390289169736207
+        },
+        "do": {
+          "num_2q": 2961,
+          "depth_2q": 2238,
+          "num_gates": 8167,
+          "depth": 4283,
+          "compile_seconds": 1.1264410838484764
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1148343373493976,
+        "depth_2q": 0.9592798971281612,
+        "num_gates": 1.1057405903059843,
+        "depth": 0.9596683844947345
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "HF-parity10",
+      "qubits": 10,
+      "paulis": 275,
+      "arms": {
+        "gco": {
+          "num_2q": 1361,
+          "depth_2q": 1238,
+          "num_gates": 3603,
+          "depth": 2277,
+          "compile_seconds": 0.4927442497573793
+        },
+        "do": {
+          "num_2q": 1381,
+          "depth_2q": 1079,
+          "num_gates": 3553,
+          "depth": 1936,
+          "compile_seconds": 0.5027990001253784
+        }
+      },
+      "ratios": {
+        "num_2q": 1.014695077149155,
+        "depth_2q": 0.8715670436187399,
+        "num_gates": 0.9861226755481544,
+        "depth": 0.8502415458937198
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "Li2-JW14",
+      "qubits": 14,
+      "paulis": 669,
+      "arms": {
+        "gco": {
+          "num_2q": 3375,
+          "depth_2q": 3270,
+          "num_gates": 8688,
+          "depth": 6013,
+          "compile_seconds": 1.239194666966796
+        },
+        "do": {
+          "num_2q": 3500,
+          "depth_2q": 2864,
+          "num_gates": 8924,
+          "depth": 5145,
+          "compile_seconds": 1.3423121250234544
+        }
+      },
+      "ratios": {
+        "num_2q": 1.037037037037037,
+        "depth_2q": 0.8758409785932721,
+        "num_gates": 1.0271639042357275,
+        "depth": 0.8556461001164144
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "LiH-parity-4",
+      "qubits": 4,
+      "paulis": 26,
+      "arms": {
+        "gco": {
+          "num_2q": 50,
+          "depth_2q": 50,
+          "num_gates": 149,
+          "depth": 99,
+          "compile_seconds": 0.029697250109165907
+        },
+        "do": {
+          "num_2q": 60,
+          "depth_2q": 56,
+          "num_gates": 183,
+          "depth": 113,
+          "compile_seconds": 0.03193850023671985
+        }
+      },
+      "ratios": {
+        "num_2q": 1.2,
+        "depth_2q": 1.12,
+        "num_gates": 1.2281879194630871,
+        "depth": 1.1414141414141414
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "N2-JW-22",
+      "qubits": 22,
+      "paulis": 4577,
+      "arms": {
+        "gco": {
+          "num_2q": 31511,
+          "depth_2q": 30200,
+          "num_gates": 74692,
+          "depth": 52202,
+          "compile_seconds": 10.951226667035371
+        },
+        "do": {
+          "num_2q": 34813,
+          "depth_2q": 27836,
+          "num_gates": 80216,
+          "depth": 45764,
+          "compile_seconds": 15.771150292363018
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1047888039097458,
+        "depth_2q": 0.9217218543046357,
+        "num_gates": 1.07395705028651,
+        "depth": 0.8766713919006934
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "N2-parity-14",
+      "qubits": 14,
+      "paulis": 669,
+      "arms": {
+        "gco": {
+          "num_2q": 3166,
+          "depth_2q": 3002,
+          "num_gates": 8625,
+          "depth": 5674,
+          "compile_seconds": 1.255791749805212
+        },
+        "do": {
+          "num_2q": 3666,
+          "depth_2q": 2688,
+          "num_gates": 9763,
+          "depth": 4976,
+          "compile_seconds": 1.2601242088712752
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1579279848389135,
+        "depth_2q": 0.8954030646235843,
+        "num_gates": 1.1319420289855073,
+        "depth": 0.8769827282340501
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "NH-BK-14",
+      "qubits": 14,
+      "paulis": 1085,
+      "arms": {
+        "gco": {
+          "num_2q": 5176,
+          "depth_2q": 4531,
+          "num_gates": 14075,
+          "depth": 8509,
+          "compile_seconds": 1.943185165990144
+        },
+        "do": {
+          "num_2q": 5720,
+          "depth_2q": 4360,
+          "num_gates": 15291,
+          "depth": 8065,
+          "compile_seconds": 2.323736375197768
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1051004636785162,
+        "depth_2q": 0.96225998675789,
+        "num_gates": 1.0863943161634102,
+        "depth": 0.9478199553414032
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "NH-JW-14",
+      "qubits": 14,
+      "paulis": 1085,
+      "arms": {
+        "gco": {
+          "num_2q": 5441,
+          "depth_2q": 5134,
+          "num_gates": 14037,
+          "depth": 9401,
+          "compile_seconds": 2.4038318330422044
+        },
+        "do": {
+          "num_2q": 5758,
+          "depth_2q": 4501,
+          "num_gates": 14584,
+          "depth": 7914,
+          "compile_seconds": 2.494625207968056
+        }
+      },
+      "ratios": {
+        "num_2q": 1.058261349016725,
+        "depth_2q": 0.8767043241137514,
+        "num_gates": 1.038968440549975,
+        "depth": 0.8418253377300288
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "Na2-JW24",
+      "qubits": 24,
+      "paulis": 6508,
+      "arms": {
+        "gco": {
+          "num_2q": 44952,
+          "depth_2q": 43913,
+          "num_gates": 103038,
+          "depth": 74336,
+          "compile_seconds": 21.894856750033796
+        },
+        "do": {
+          "num_2q": 51002,
+          "depth_2q": 41232,
+          "num_gates": 113629,
+          "depth": 66064,
+          "compile_seconds": 33.500166167039424
+        }
+      },
+      "ratios": {
+        "num_2q": 1.134588004983093,
+        "depth_2q": 0.9389474643044201,
+        "num_gates": 1.1027873211824764,
+        "depth": 0.8887214808437366
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "O3-BK22",
+      "qubits": 22,
+      "paulis": 5465,
+      "arms": {
+        "gco": {
+          "num_2q": 32824,
+          "depth_2q": 29319,
+          "num_gates": 85617,
+          "depth": 53636,
+          "compile_seconds": 13.874277708120644
+        },
+        "do": {
+          "num_2q": 35528,
+          "depth_2q": 27608,
+          "num_gates": 92110,
+          "depth": 49900,
+          "compile_seconds": 23.121050083078444
+        }
+      },
+      "ratios": {
+        "num_2q": 1.082378747258104,
+        "depth_2q": 0.9416419386745796,
+        "num_gates": 1.0758377425044092,
+        "depth": 0.9303452904765456
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "OH-JW10",
+      "qubits": 10,
+      "paulis": 275,
+      "arms": {
+        "gco": {
+          "num_2q": 1252,
+          "depth_2q": 1168,
+          "num_gates": 3180,
+          "depth": 2079,
+          "compile_seconds": 0.4541800422593951
+        },
+        "do": {
+          "num_2q": 1241,
+          "depth_2q": 947,
+          "num_gates": 3068,
+          "depth": 1644,
+          "compile_seconds": 0.47705345787107944
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9912140575079872,
+        "depth_2q": 0.8107876712328768,
+        "num_gates": 0.9647798742138365,
+        "depth": 0.7907647907647908
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "OH-JW12",
+      "qubits": 12,
+      "paulis": 630,
+      "arms": {
+        "gco": {
+          "num_2q": 2777,
+          "depth_2q": 2688,
+          "num_gates": 7326,
+          "depth": 5006,
+          "compile_seconds": 1.0254392917267978
+        },
+        "do": {
+          "num_2q": 2953,
+          "depth_2q": 2366,
+          "num_gates": 7498,
+          "depth": 4229,
+          "compile_seconds": 1.0748456250876188
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0633777457688152,
+        "depth_2q": 0.8802083333333334,
+        "num_gates": 1.0234780234780234,
+        "depth": 0.8447862564922094
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "OH-parity12",
+      "qubits": 12,
+      "paulis": 630,
+      "arms": {
+        "gco": {
+          "num_2q": 2923,
+          "depth_2q": 2798,
+          "num_gates": 7887,
+          "depth": 5222,
+          "compile_seconds": 1.0794616672210395
+        },
+        "do": {
+          "num_2q": 3244,
+          "depth_2q": 2608,
+          "num_gates": 8557,
+          "depth": 4766,
+          "compile_seconds": 1.1278788750059903
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1098186794389326,
+        "depth_2q": 0.9320943531093638,
+        "num_gates": 1.0849499175859008,
+        "depth": 0.9126771351972425
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-bh-enc_stdbinary_dvalues_d-level-4",
+      "qubits": 2,
+      "paulis": 9,
+      "arms": {
+        "gco": {
+          "num_2q": 3,
+          "depth_2q": 3,
+          "num_gates": 11,
+          "depth": 7,
+          "compile_seconds": 0.007970999926328659
+        },
+        "do": {
+          "num_2q": 3,
+          "depth_2q": 3,
+          "num_gates": 11,
+          "depth": 7,
+          "compile_seconds": 0.006854167208075523
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 1.0,
+        "num_gates": 1.0,
+        "depth": 1.0
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-bhf2-mu_y_prime_enc_stdbinary_dvalues_8-8-8-8-8-8",
+      "qubits": 6,
+      "paulis": 24,
+      "arms": {
+        "do": {
+          "num_2q": 28,
+          "depth_2q": 14,
+          "num_gates": 90,
+          "depth": 29,
+          "compile_seconds": 0.025748124811798334
+        },
+        "gco": {
+          "num_2q": 28,
+          "depth_2q": 14,
+          "num_gates": 90,
+          "depth": 29,
+          "compile_seconds": 0.03221049997955561
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 1.0,
+        "num_gates": 1.0,
+        "depth": 1.0
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-c2h-mu_y_prime_enc_stdbinary_dvalues_8-8-4-4",
+      "qubits": 3,
+      "paulis": 12,
+      "arms": {
+        "do": {
+          "num_2q": 14,
+          "depth_2q": 14,
+          "num_gates": 45,
+          "depth": 29,
+          "compile_seconds": 0.01260029198601842
+        },
+        "gco": {
+          "num_2q": 14,
+          "depth_2q": 14,
+          "num_gates": 45,
+          "depth": 29,
+          "compile_seconds": 0.01919391704723239
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 1.0,
+        "num_gates": 1.0,
+        "depth": 1.0
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-c2h-mu_z_prime_enc_gray_dvalues_4-4-4-4",
+      "qubits": 4,
+      "paulis": 8,
+      "arms": {
+        "do": {
+          "num_2q": 4,
+          "depth_2q": 2,
+          "num_gates": 16,
+          "depth": 5,
+          "compile_seconds": 0.006881000008434057
+        },
+        "gco": {
+          "num_2q": 4,
+          "depth_2q": 2,
+          "num_gates": 16,
+          "depth": 5,
+          "compile_seconds": 0.008800792042165995
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 1.0,
+        "num_gates": 1.0,
+        "depth": 1.0
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-ch2-mu_y_prime_enc_gray_dvalues_16-16-16",
+      "qubits": 4,
+      "paulis": 32,
+      "arms": {
+        "gco": {
+          "num_2q": 58,
+          "depth_2q": 57,
+          "num_gates": 173,
+          "depth": 112,
+          "compile_seconds": 0.027605250012129545
+        },
+        "do": {
+          "num_2q": 70,
+          "depth_2q": 64,
+          "num_gates": 207,
+          "depth": 126,
+          "compile_seconds": 0.03900808421894908
+        }
+      },
+      "ratios": {
+        "num_2q": 1.206896551724138,
+        "depth_2q": 1.1228070175438596,
+        "num_gates": 1.1965317919075145,
+        "depth": 1.125
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-cyclo_propene-mu_x_prime_enc_stdbinary_dvalues_8-8-8-8-8-8-8-8-8-4-4-4-4-4-4",
+      "qubits": 11,
+      "paulis": 40,
+      "arms": {
+        "gco": {
+          "num_2q": 44,
+          "depth_2q": 14,
+          "num_gates": 143,
+          "depth": 29,
+          "compile_seconds": 0.046571250073611736
+        },
+        "do": {
+          "num_2q": 44,
+          "depth_2q": 14,
+          "num_gates": 143,
+          "depth": 29,
+          "compile_seconds": 0.05340887513011694
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 1.0,
+        "num_gates": 1.0,
+        "depth": 1.0
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-cyclo_propene-mu_x_prime_enc_unary_dvalues_16-16-16-16-16-16-16-16-16-16-16-16-16-16-16",
+      "qubits": 64,
+      "paulis": 120,
+      "arms": {
+        "gco": {
+          "num_2q": 120,
+          "depth_2q": 30,
+          "num_gates": 424,
+          "depth": 61,
+          "compile_seconds": 0.2210385832004249
+        },
+        "do": {
+          "num_2q": 120,
+          "depth_2q": 6,
+          "num_gates": 424,
+          "depth": 13,
+          "compile_seconds": 0.29947508312761784
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.2,
+        "num_gates": 1.0,
+        "depth": 0.21311475409836064
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-f2-enc_gray_dvalues_d-level-16",
+      "qubits": 4,
+      "paulis": 98,
+      "arms": {
+        "gco": {
+          "num_2q": 144,
+          "depth_2q": 143,
+          "num_gates": 432,
+          "depth": 285,
+          "compile_seconds": 0.0974240000359714
+        },
+        "do": {
+          "num_2q": 168,
+          "depth_2q": 160,
+          "num_gates": 508,
+          "depth": 321,
+          "compile_seconds": 0.09602395771071315
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1666666666666667,
+        "depth_2q": 1.118881118881119,
+        "num_gates": 1.1759259259259258,
+        "depth": 1.1263157894736842
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-fccf-enc_gray_dvalues_4-4-4-4-4-4-4",
+      "qubits": 14,
+      "paulis": 1035,
+      "arms": {
+        "gco": {
+          "num_2q": 2123,
+          "depth_2q": 2025,
+          "num_gates": 6259,
+          "depth": 4033,
+          "compile_seconds": 1.144842874724418
+        },
+        "do": {
+          "num_2q": 2820,
+          "depth_2q": 1845,
+          "num_gates": 7925,
+          "depth": 3548,
+          "compile_seconds": 1.5444234581664205
+        }
+      },
+      "ratios": {
+        "num_2q": 1.328308996702779,
+        "depth_2q": 0.9111111111111111,
+        "num_gates": 1.2661767055440165,
+        "depth": 0.8797421274485495
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-fccf-mu_y_prime_enc_stdbinary_dvalues_16-16-16-16-8-8-8",
+      "qubits": 4,
+      "paulis": 32,
+      "arms": {
+        "gco": {
+          "num_2q": 43,
+          "depth_2q": 41,
+          "num_gates": 132,
+          "depth": 83,
+          "compile_seconds": 0.046629708260297775
+        },
+        "do": {
+          "num_2q": 46,
+          "depth_2q": 44,
+          "num_gates": 141,
+          "depth": 89,
+          "compile_seconds": 0.04619737481698394
+        }
+      },
+      "ratios": {
+        "num_2q": 1.069767441860465,
+        "depth_2q": 1.0731707317073171,
+        "num_gates": 1.0681818181818181,
+        "depth": 1.072289156626506
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-fccf-mu_y_prime_enc_unary_dvalues_8-8-8-8-8-8-8",
+      "qubits": 8,
+      "paulis": 14,
+      "arms": {
+        "do": {
+          "num_2q": 14,
+          "depth_2q": 4,
+          "num_gates": 50,
+          "depth": 9,
+          "compile_seconds": 0.02399662509560585
+        },
+        "gco": {
+          "num_2q": 14,
+          "depth_2q": 14,
+          "num_gates": 50,
+          "depth": 29,
+          "compile_seconds": 0.030164040625095367
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.2857142857142857,
+        "num_gates": 1.0,
+        "depth": 0.3103448275862069
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-fccf-mu_z_prime_enc_unary_dvalues_16-16-16-16-16-16-16",
+      "qubits": 16,
+      "paulis": 30,
+      "arms": {
+        "gco": {
+          "num_2q": 30,
+          "depth_2q": 30,
+          "num_gates": 106,
+          "depth": 61,
+          "compile_seconds": 0.0532403327524662
+        },
+        "do": {
+          "num_2q": 30,
+          "depth_2q": 4,
+          "num_gates": 106,
+          "depth": 9,
+          "compile_seconds": 0.05299387499690056
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.13333333333333333,
+        "num_gates": 1.0,
+        "depth": 0.14754098360655737
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-h2co-mu_y_prime_enc_unary_dvalues_16-16-16-16-16-16",
+      "qubits": 32,
+      "paulis": 60,
+      "arms": {
+        "gco": {
+          "num_2q": 60,
+          "depth_2q": 30,
+          "num_gates": 212,
+          "depth": 61,
+          "compile_seconds": 0.1152937919832766
+        },
+        "do": {
+          "num_2q": 60,
+          "depth_2q": 4,
+          "num_gates": 212,
+          "depth": 9,
+          "compile_seconds": 0.10194004187360406
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.13333333333333333,
+        "num_gates": 1.0,
+        "depth": 0.14754098360655737
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-hc3h2cn-mu_y_prime_enc_stdbinary_dvalues_4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4-4",
+      "qubits": 24,
+      "paulis": 48,
+      "arms": {
+        "gco": {
+          "num_2q": 24,
+          "depth_2q": 2,
+          "num_gates": 96,
+          "depth": 5,
+          "compile_seconds": 0.05315258400514722
+        },
+        "do": {
+          "num_2q": 24,
+          "depth_2q": 2,
+          "num_gates": 96,
+          "depth": 5,
+          "compile_seconds": 0.06109862495213747
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 1.0,
+        "num_gates": 1.0,
+        "depth": 1.0
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-hco-enc_unary_dvalues_4-4-4",
+      "qubits": 12,
+      "paulis": 1788,
+      "arms": {
+        "gco": {
+          "num_2q": 3704,
+          "depth_2q": 3646,
+          "num_gates": 10693,
+          "depth": 7088,
+          "compile_seconds": 3.3755086669698358
+        },
+        "do": {
+          "num_2q": 4104,
+          "depth_2q": 3441,
+          "num_gates": 11840,
+          "depth": 6745,
+          "compile_seconds": 3.558985167182982
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1079913606911447,
+        "depth_2q": 0.9437739989029073,
+        "num_gates": 1.1072664359861593,
+        "depth": 0.9516083521444695
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-hno-mu_x_prime_enc_unary_dvalues_4-4-4",
+      "qubits": 12,
+      "paulis": 18,
+      "arms": {
+        "gco": {
+          "num_2q": 18,
+          "depth_2q": 6,
+          "num_gates": 66,
+          "depth": 13,
+          "compile_seconds": 0.027712457813322544
+        },
+        "do": {
+          "num_2q": 18,
+          "depth_2q": 4,
+          "num_gates": 66,
+          "depth": 9,
+          "compile_seconds": 0.0287732919678092
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.6666666666666666,
+        "num_gates": 1.0,
+        "depth": 0.6923076923076923
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-o3-enc_gray_dvalues_8-8-8",
+      "qubits": 9,
+      "paulis": 2801,
+      "arms": {
+        "gco": {
+          "num_2q": 5791,
+          "depth_2q": 5691,
+          "num_gates": 17264,
+          "depth": 11333,
+          "compile_seconds": 3.122028416953981
+        },
+        "do": {
+          "num_2q": 7096,
+          "depth_2q": 6121,
+          "num_gates": 20454,
+          "depth": 11983,
+          "compile_seconds": 3.793712916318327
+        }
+      },
+      "ratios": {
+        "num_2q": 1.2253496805387671,
+        "depth_2q": 1.0755578984361271,
+        "num_gates": 1.1847775718257645,
+        "depth": 1.0573546280772963
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "chemistry",
+      "device": "all2all",
+      "name": "all-vib-o3-mu_y_prime_enc_unary_dvalues_4-4-4",
+      "qubits": 4,
+      "paulis": 6,
+      "arms": {
+        "do": {
+          "num_2q": 6,
+          "depth_2q": 4,
+          "num_gates": 22,
+          "depth": 9,
+          "compile_seconds": 0.012549582868814468
+        },
+        "gco": {
+          "num_2q": 6,
+          "depth_2q": 6,
+          "num_gates": 22,
+          "depth": 13,
+          "compile_seconds": 0.013176291715353727
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.6666666666666666,
+        "num_gates": 1.0,
+        "depth": 0.6923076923076923
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-1_d-4-bh_graph-1D-grid-nonpbc-qubitnodes_Lx-12_U-40_enc-unary_d-4",
+      "qubits": 48,
+      "paulis": 816,
+      "arms": {
+        "gco": {
+          "num_2q": 1683,
+          "depth_2q": 1633,
+          "num_gates": 4636,
+          "depth": 3081,
+          "compile_seconds": 1.6356022502295673
+        },
+        "do": {
+          "num_2q": 2472,
+          "depth_2q": 395,
+          "num_gates": 6787,
+          "depth": 745,
+          "compile_seconds": 2.430913249962032
+        }
+      },
+      "ratios": {
+        "num_2q": 1.4688057040998217,
+        "depth_2q": 0.24188609920391918,
+        "num_gates": 1.4639775668679897,
+        "depth": 0.24180460889321648
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-14_U-10_enc-stdbinary_d-4",
+      "qubits": 28,
+      "paulis": 490,
+      "arms": {
+        "gco": {
+          "num_2q": 517,
+          "depth_2q": 513,
+          "num_gates": 1529,
+          "depth": 1024,
+          "compile_seconds": 0.6034695003181696
+        },
+        "do": {
+          "num_2q": 636,
+          "depth_2q": 88,
+          "num_gates": 1804,
+          "depth": 174,
+          "compile_seconds": 0.6273116660304368
+        }
+      },
+      "ratios": {
+        "num_2q": 1.230174081237911,
+        "depth_2q": 0.17153996101364521,
+        "num_gates": 1.1798561151079137,
+        "depth": 0.169921875
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-24_U-20_enc-stdbinary_d-4",
+      "qubits": 48,
+      "paulis": 840,
+      "arms": {
+        "gco": {
+          "num_2q": 887,
+          "depth_2q": 883,
+          "num_gates": 2629,
+          "depth": 1764,
+          "compile_seconds": 1.2433543340303004
+        },
+        "do": {
+          "num_2q": 1332,
+          "depth_2q": 155,
+          "num_gates": 3825,
+          "depth": 305,
+          "compile_seconds": 1.198799666017294
+        }
+      },
+      "ratios": {
+        "num_2q": 1.5016910935738443,
+        "depth_2q": 0.1755379388448471,
+        "num_gates": 1.4549258273107646,
+        "depth": 0.17290249433106575
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-46_U-2_enc-gray_d-4",
+      "qubits": 92,
+      "paulis": 1610,
+      "arms": {
+        "gco": {
+          "num_2q": 3497,
+          "depth_2q": 3434,
+          "num_gates": 10538,
+          "depth": 6825,
+          "compile_seconds": 2.664533874951303
+        },
+        "do": {
+          "num_2q": 4592,
+          "depth_2q": 229,
+          "num_gates": 13438,
+          "depth": 455,
+          "compile_seconds": 4.0278853750787675
+        }
+      },
+      "ratios": {
+        "num_2q": 1.3131255361738634,
+        "depth_2q": 0.06668608037274315,
+        "num_gates": 1.2751945340671855,
+        "depth": 0.06666666666666667
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-1_d-4-bh_graph-1D-grid-pbc-qubitnodes_Lx-60_U-10_enc-stdbinary_d-4",
+      "qubits": 120,
+      "paulis": 2100,
+      "arms": {
+        "gco": {
+          "num_2q": 2219,
+          "depth_2q": 2215,
+          "num_gates": 6589,
+          "depth": 4428,
+          "compile_seconds": 5.340961915906519
+        },
+        "do": {
+          "num_2q": 4081,
+          "depth_2q": 155,
+          "num_gates": 11880,
+          "depth": 304,
+          "compile_seconds": 6.986577165778726
+        }
+      },
+      "ratios": {
+        "num_2q": 1.839116719242902,
+        "depth_2q": 0.06997742663656885,
+        "num_gates": 1.8030050083472453,
+        "depth": 0.06865401987353206
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-10_U-30_enc-unary_d-8",
+      "qubits": 80,
+      "paulis": 3980,
+      "arms": {
+        "gco": {
+          "num_2q": 8029,
+          "depth_2q": 7833,
+          "num_gates": 20614,
+          "depth": 14153,
+          "compile_seconds": 8.224065999966115
+        },
+        "do": {
+          "num_2q": 11837,
+          "depth_2q": 1459,
+          "num_gates": 31874,
+          "depth": 2721,
+          "compile_seconds": 36.09420979209244
+        }
+      },
+      "ratios": {
+        "num_2q": 1.4742807323452485,
+        "depth_2q": 0.1862632452444785,
+        "num_gates": 1.5462307169884544,
+        "depth": 0.1922560587861231
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-1_d-8-bh_graph-1D-grid-pbc-qubitnodes_Lx-4_U-40_enc-gray_d-8",
+      "qubits": 12,
+      "paulis": 1176,
+      "arms": {
+        "gco": {
+          "num_2q": 2735,
+          "depth_2q": 2605,
+          "num_gates": 8125,
+          "depth": 5159,
+          "compile_seconds": 1.3594844578765333
+        },
+        "do": {
+          "num_2q": 3586,
+          "depth_2q": 2025,
+          "num_gates": 10222,
+          "depth": 3907,
+          "compile_seconds": 1.631359833292663
+        }
+      },
+      "ratios": {
+        "num_2q": 1.3111517367458867,
+        "depth_2q": 0.7773512476007678,
+        "num_gates": 1.2580923076923076,
+        "depth": 0.7573173095561155
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-2_d-4-bh_graph-2D-grid-nonpbc-qubitnodes_Lx-7_Ly-7_U-70_enc-gray_d-4",
+      "qubits": 98,
+      "paulis": 2835,
+      "arms": {
+        "gco": {
+          "num_2q": 6350,
+          "depth_2q": 5654,
+          "num_gates": 19100,
+          "depth": 11297,
+          "compile_seconds": 4.272097582928836
+        },
+        "do": {
+          "num_2q": 8557,
+          "depth_2q": 442,
+          "num_gates": 24962,
+          "depth": 873,
+          "compile_seconds": 10.031029582954943
+        }
+      },
+      "ratios": {
+        "num_2q": 1.3475590551181102,
+        "depth_2q": 0.07817474354439335,
+        "num_gates": 1.306910994764398,
+        "depth": 0.07727715322652032
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-11_Ly-11_U-100_enc-gray_d-4",
+      "qubits": 156,
+      "paulis": 6570,
+      "arms": {
+        "gco": {
+          "num_2q": 14764,
+          "depth_2q": 12575,
+          "num_gates": 44371,
+          "depth": 25140,
+          "compile_seconds": 7.286310458090156
+        },
+        "do": {
+          "num_2q": 20697,
+          "depth_2q": 777,
+          "num_gates": 59953,
+          "depth": 1520,
+          "compile_seconds": 59.32004408305511
+        }
+      },
+      "ratios": {
+        "num_2q": 1.4018558656190734,
+        "depth_2q": 0.06178926441351889,
+        "num_gates": 1.3511753172116923,
+        "depth": 0.060461416070007955
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-2_d-4-bh_graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-5_U-30_enc-gray_d-4",
+      "qubits": 28,
+      "paulis": 938,
+      "arms": {
+        "gco": {
+          "num_2q": 2097,
+          "depth_2q": 1832,
+          "num_gates": 6306,
+          "depth": 3661,
+          "compile_seconds": 1.060205209068954
+        },
+        "do": {
+          "num_2q": 2716,
+          "depth_2q": 626,
+          "num_gates": 7925,
+          "depth": 1237,
+          "compile_seconds": 1.4118688330054283
+        }
+      },
+      "ratios": {
+        "num_2q": 1.2951835956127802,
+        "depth_2q": 0.34170305676855894,
+        "num_gates": 1.2567396130669204,
+        "depth": 0.33788582354547936
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-10_Ly-10_U-30_enc-stdbinary_d-4",
+      "qubits": 100,
+      "paulis": 4950,
+      "arms": {
+        "gco": {
+          "num_2q": 5139,
+          "depth_2q": 4771,
+          "num_gates": 14204,
+          "depth": 9196,
+          "compile_seconds": 6.793147457763553
+        },
+        "do": {
+          "num_2q": 13259,
+          "depth_2q": 896,
+          "num_gates": 36645,
+          "depth": 1725,
+          "compile_seconds": 25.00756649998948
+        }
+      },
+      "ratios": {
+        "num_2q": 2.5800739443471494,
+        "depth_2q": 0.18780129951792077,
+        "num_gates": 2.5799070684314276,
+        "depth": 0.18758155719878208
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-3_Ly-22_U-70_enc-unary_d-4",
+      "qubits": 132,
+      "paulis": 7194,
+      "arms": {
+        "gco": {
+          "num_2q": 14544,
+          "depth_2q": 13727,
+          "num_gates": 38045,
+          "depth": 25075,
+          "compile_seconds": 14.664310667198151
+        },
+        "do": {
+          "num_2q": 19897,
+          "depth_2q": 3258,
+          "num_gates": 55295,
+          "depth": 6253,
+          "compile_seconds": 205.19212091574445
+        }
+      },
+      "ratios": {
+        "num_2q": 1.3680555555555556,
+        "depth_2q": 0.2373424637575581,
+        "num_gates": 1.453410435011171,
+        "depth": 0.24937188434695912
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-2_d-4-bh_graph-2D-triag-pbc-qubitnodes_Lx-5_Ly-5_U-30_enc-unary_d-4",
+      "qubits": 60,
+      "paulis": 3270,
+      "arms": {
+        "gco": {
+          "num_2q": 6606,
+          "depth_2q": 6281,
+          "num_gates": 17271,
+          "depth": 11468,
+          "compile_seconds": 8.614499832969159
+        },
+        "do": {
+          "num_2q": 8909,
+          "depth_2q": 1494,
+          "num_gates": 24550,
+          "depth": 2869,
+          "compile_seconds": 20.496136917266995
+        }
+      },
+      "ratios": {
+        "num_2q": 1.3486224644262792,
+        "depth_2q": 0.23786021334182456,
+        "num_gates": 1.421457935267211,
+        "depth": 0.2501743983257761
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "BH_D-3_d-4-bh_graph-3D-grid-nonpbc-qubitnodes_Lx-2_Ly-2_Lz-2_U-20_enc-unary_d-4",
+      "qubits": 32,
+      "paulis": 880,
+      "arms": {
+        "gco": {
+          "num_2q": 1791,
+          "depth_2q": 1701,
+          "num_gates": 4790,
+          "depth": 3154,
+          "compile_seconds": 1.5340101248584688
+        },
+        "do": {
+          "num_2q": 2196,
+          "depth_2q": 590,
+          "num_gates": 6131,
+          "depth": 1139,
+          "compile_seconds": 2.391967915929854
+        }
+      },
+      "ratios": {
+        "num_2q": 1.2261306532663316,
+        "depth_2q": 0.34685479129923574,
+        "num_gates": 1.2799582463465553,
+        "depth": 0.3611287254280279
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "FH_D-1-fh-graph-1D-grid-nonpbc-qubitnodes_Lx-90_U-2_enc-jw",
+      "qubits": 180,
+      "paulis": 626,
+      "arms": {
+        "gco": {
+          "num_2q": 536,
+          "depth_2q": 360,
+          "num_gates": 1788,
+          "depth": 721,
+          "compile_seconds": 0.9241175409406424
+        },
+        "do": {
+          "num_2q": 655,
+          "depth_2q": 16,
+          "num_gates": 2145,
+          "depth": 33,
+          "compile_seconds": 1.6876938752830029
+        }
+      },
+      "ratios": {
+        "num_2q": 1.2220149253731343,
+        "depth_2q": 0.044444444444444446,
+        "num_gates": 1.1996644295302012,
+        "depth": 0.04576976421636616
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-160_U-12_enc-parity",
+      "qubits": 320,
+      "paulis": 1120,
+      "arms": {
+        "gco": {
+          "num_2q": 3183,
+          "depth_2q": 3021,
+          "num_gates": 8776,
+          "depth": 5421,
+          "compile_seconds": 1.7012712080031633
+        },
+        "do": {
+          "num_2q": 2886,
+          "depth_2q": 1155,
+          "num_gates": 8170,
+          "depth": 2150,
+          "compile_seconds": 3.0182231250219047
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9066918001885014,
+        "depth_2q": 0.38232373386295926,
+        "num_gates": 0.9309480401093893,
+        "depth": 0.39660579228924553
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "FH_D-1-fh-graph-1D-grid-pbc-qubitnodes_Lx-50_U-2_enc-jw",
+      "qubits": 100,
+      "paulis": 350,
+      "arms": {
+        "gco": {
+          "num_2q": 684,
+          "depth_2q": 636,
+          "num_gates": 1455,
+          "depth": 951,
+          "compile_seconds": 0.692590500228107
+        },
+        "do": {
+          "num_2q": 784,
+          "depth_2q": 206,
+          "num_gates": 2438,
+          "depth": 409,
+          "compile_seconds": 0.5736962500959635
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1461988304093567,
+        "depth_2q": 0.3238993710691824,
+        "num_gates": 1.6756013745704468,
+        "depth": 0.43007360672975814
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-105_U-8_enc-bk",
+      "qubits": 420,
+      "paulis": 1890,
+      "arms": {
+        "gco": {
+          "num_2q": 6221,
+          "depth_2q": 1992,
+          "num_gates": 17834,
+          "depth": 3751,
+          "compile_seconds": 3.281847999896854
+        },
+        "do": {
+          "num_2q": 7010,
+          "depth_2q": 565,
+          "num_gates": 18787,
+          "depth": 950,
+          "compile_seconds": 13.3212797078304
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1268284841665328,
+        "depth_2q": 0.2836345381526104,
+        "num_gates": 1.053437254682068,
+        "depth": 0.2532657957877899
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "FH_D-2-fh-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-72_U-0_enc-parity",
+      "qubits": 720,
+      "paulis": 2880,
+      "arms": {
+        "do": {
+          "num_2q": 24171,
+          "depth_2q": 6791,
+          "num_gates": 52606,
+          "depth": 8842,
+          "compile_seconds": 24.500786166172475
+        },
+        "gco": {
+          "num_2q": 27126,
+          "depth_2q": 26825,
+          "num_gates": 51070,
+          "depth": 38317,
+          "compile_seconds": 25.16802433412522
+        }
+      },
+      "ratios": {
+        "num_2q": 0.8910639239106393,
+        "depth_2q": 0.25315936626281454,
+        "num_gates": 1.0300763657724692,
+        "depth": 0.2307591930474724
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "FH_D-2-fh-graph-2D-triag-nonpbc-qubitnodes_Lx-16_Ly-16_U-4_enc-bk",
+      "qubits": 306,
+      "paulis": 2091,
+      "arms": {
+        "gco": {
+          "num_2q": 10020,
+          "depth_2q": 5380,
+          "num_gates": 26356,
+          "depth": 9441,
+          "compile_seconds": 4.152832875028253
+        },
+        "do": {
+          "num_2q": 13411,
+          "depth_2q": 2087,
+          "num_gates": 34636,
+          "depth": 3552,
+          "compile_seconds": 17.57798545761034
+        }
+      },
+      "ratios": {
+        "num_2q": 1.3384231536926148,
+        "depth_2q": 0.3879182156133829,
+        "num_gates": 1.3141599635756565,
+        "depth": 0.37623133142675563
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-4_Ly-133_h-0.1",
+      "qubits": 532,
+      "paulis": 3313,
+      "arms": {
+        "gco": {
+          "num_2q": 5157,
+          "depth_2q": 4365,
+          "num_gates": 16003,
+          "depth": 8731,
+          "compile_seconds": 5.210951416287571
+        },
+        "do": {
+          "num_2q": 5234,
+          "depth_2q": 44,
+          "num_gates": 16133,
+          "depth": 89,
+          "compile_seconds": 224.8203294170089
+        }
+      },
+      "ratios": {
+        "num_2q": 1.01493116152802,
+        "depth_2q": 0.010080183276059565,
+        "num_gates": 1.008123476848091,
+        "depth": 0.010193563165731303
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-186_h-0.5",
+      "qubits": 930,
+      "paulis": 5937,
+      "arms": {
+        "gco": {
+          "num_2q": 9447,
+          "depth_2q": 7967,
+          "num_gates": 29271,
+          "depth": 15935,
+          "compile_seconds": 11.64493695879355
+        },
+        "do": {
+          "num_2q": 9196,
+          "depth_2q": 44,
+          "num_gates": 28380,
+          "depth": 89,
+          "compile_seconds": 756.8703265418299
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9734307187466921,
+        "depth_2q": 0.0055227814735785115,
+        "num_gates": 0.9695603156708005,
+        "depth": 0.005585189833699404
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "heis-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-58_h-2",
+      "qubits": 290,
+      "paulis": 1841,
+      "arms": {
+        "gco": {
+          "num_2q": 2919,
+          "depth_2q": 2463,
+          "num_gates": 9047,
+          "depth": 4927,
+          "compile_seconds": 2.0359621248207986
+        },
+        "do": {
+          "num_2q": 2863,
+          "depth_2q": 39,
+          "num_gates": 8848,
+          "depth": 79,
+          "compile_seconds": 15.245628000237048
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9808153477218226,
+        "depth_2q": 0.015834348355663823,
+        "num_gates": 0.9780037581518736,
+        "depth": 0.01603409782829308
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-2_Ly-185_h-0.5",
+      "qubits": 370,
+      "paulis": 2035,
+      "arms": {
+        "gco": {
+          "num_2q": 2778,
+          "depth_2q": 2406,
+          "num_gates": 8704,
+          "depth": 4813,
+          "compile_seconds": 2.2760564158670604
+        },
+        "do": {
+          "num_2q": 3122,
+          "depth_2q": 37,
+          "num_gates": 9683,
+          "depth": 75,
+          "compile_seconds": 22.966413208749145
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1238300935925125,
+        "depth_2q": 0.015378221113881962,
+        "num_gates": 1.1124770220588236,
+        "depth": 0.015582796592561812
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-190_h-0",
+      "qubits": 760,
+      "paulis": 4560,
+      "arms": {
+        "gco": {
+          "num_2q": 8550,
+          "depth_2q": 7028,
+          "num_gates": 26410,
+          "depth": 14057,
+          "compile_seconds": 8.724412333220243
+        },
+        "do": {
+          "num_2q": 8979,
+          "depth_2q": 61,
+          "num_gates": 27451,
+          "depth": 123,
+          "compile_seconds": 306.34924325020984
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0501754385964912,
+        "depth_2q": 0.008679567444507683,
+        "num_gates": 1.0394168875425975,
+        "depth": 0.008750088923667923
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "heis-graph-2D-grid-pbc-qubitnodes_Lx-5_Ly-186_h-3",
+      "qubits": 930,
+      "paulis": 6510,
+      "arms": {
+        "gco": {
+          "num_2q": 10599,
+          "depth_2q": 8737,
+          "num_gates": 32727,
+          "depth": 17475,
+          "compile_seconds": 12.829597624950111
+        },
+        "do": {
+          "num_2q": 10602,
+          "depth_2q": 73,
+          "num_gates": 32557,
+          "depth": 146,
+          "compile_seconds": 784.3293792502955
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0002830455703369,
+        "depth_2q": 0.008355270687879135,
+        "num_gates": 0.9948055122681578,
+        "depth": 0.008354792560801145
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "heis-graph-2D-triag-nonpbc-qubitnodes_Lx-40_Ly-40_h-0.1",
+      "qubits": 861,
+      "paulis": 8241,
+      "arms": {
+        "gco": {
+          "num_2q": 14700,
+          "depth_2q": 11580,
+          "num_gates": 44961,
+          "depth": 23161,
+          "compile_seconds": 16.15619079209864
+        },
+        "do": {
+          "num_2q": 14249,
+          "depth_2q": 118,
+          "num_gates": 43218,
+          "depth": 237,
+          "compile_seconds": 481.1197321251966
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9693197278911565,
+        "depth_2q": 0.010189982728842832,
+        "num_gates": 0.9612330686595049,
+        "depth": 0.010232718794525279
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "tfim-graph-1D-grid-pbc-qubitnodes_Lx-16_h-2",
+      "qubits": 16,
+      "paulis": 32,
+      "arms": {
+        "gco": {
+          "num_2q": 32,
+          "depth_2q": 30,
+          "num_gates": 112,
+          "depth": 61,
+          "compile_seconds": 0.02263816725462675
+        },
+        "do": {
+          "num_2q": 32,
+          "depth_2q": 4,
+          "num_gates": 112,
+          "depth": 9,
+          "compile_seconds": 0.030990791972726583
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.13333333333333333,
+        "num_gates": 1.0,
+        "depth": 0.14754098360655737
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "tfim-graph-1D-grid-pbc-qubitnodes_Lx-26_h-6",
+      "qubits": 26,
+      "paulis": 52,
+      "arms": {
+        "do": {
+          "num_2q": 52,
+          "depth_2q": 4,
+          "num_gates": 182,
+          "depth": 9,
+          "compile_seconds": 0.03901808429509401
+        },
+        "gco": {
+          "num_2q": 52,
+          "depth_2q": 50,
+          "num_gates": 182,
+          "depth": 101,
+          "compile_seconds": 0.043893291149288416
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.08,
+        "num_gates": 1.0,
+        "depth": 0.0891089108910891
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-19_Ly-19_h-5",
+      "qubits": 361,
+      "paulis": 1045,
+      "arms": {
+        "gco": {
+          "num_2q": 1368,
+          "depth_2q": 720,
+          "num_gates": 4465,
+          "depth": 1441,
+          "compile_seconds": 1.209743333980441
+        },
+        "do": {
+          "num_2q": 1368,
+          "depth_2q": 17,
+          "num_gates": 4450,
+          "depth": 35,
+          "compile_seconds": 3.370525375008583
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.02361111111111111,
+        "num_gates": 0.9966405375139977,
+        "depth": 0.024288688410825817
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "tfim-graph-2D-grid-nonpbc-qubitnodes_Lx-5_Ly-15_h-3",
+      "qubits": 75,
+      "paulis": 205,
+      "arms": {
+        "gco": {
+          "num_2q": 260,
+          "depth_2q": 148,
+          "num_gates": 855,
+          "depth": 297,
+          "compile_seconds": 0.17072675004601479
+        },
+        "do": {
+          "num_2q": 260,
+          "depth_2q": 11,
+          "num_gates": 854,
+          "depth": 23,
+          "compile_seconds": 0.23574279202148318
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.07432432432432433,
+        "num_gates": 0.9988304093567252,
+        "depth": 0.07744107744107744
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "tfim-graph-2D-grid-pbc-qubitnodes_Lx-4_Ly-148_h-6",
+      "qubits": 592,
+      "paulis": 1776,
+      "arms": {
+        "gco": {
+          "num_2q": 2368,
+          "depth_2q": 1182,
+          "num_gates": 7696,
+          "depth": 2365,
+          "compile_seconds": 2.8545289169996977
+        },
+        "do": {
+          "num_2q": 2368,
+          "depth_2q": 20,
+          "num_gates": 7673,
+          "depth": 41,
+          "compile_seconds": 17.145524207968265
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.01692047377326565,
+        "num_gates": 0.9970114345114345,
+        "depth": 0.01733615221987315
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "tfim-graph-2D-triag-nonpbc-qubitnodes_Lx-3_Ly-160_h-0.1",
+      "qubits": 324,
+      "paulis": 1127,
+      "arms": {
+        "gco": {
+          "num_2q": 1606,
+          "depth_2q": 652,
+          "num_gates": 5142,
+          "depth": 1305,
+          "compile_seconds": 1.5540539170615375
+        },
+        "do": {
+          "num_2q": 1606,
+          "depth_2q": 56,
+          "num_gates": 4976,
+          "depth": 112,
+          "compile_seconds": 3.06152466731146
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.08588957055214724,
+        "num_gates": 0.9677168416958382,
+        "depth": 0.08582375478927202
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "tfim-graph-2D-triag-pbc-qubitnodes_Lx-13_Ly-13_h-0.1",
+      "qubits": 91,
+      "paulis": 364,
+      "arms": {
+        "gco": {
+          "num_2q": 546,
+          "depth_2q": 204,
+          "num_gates": 1729,
+          "depth": 409,
+          "compile_seconds": 0.2778865830041468
+        },
+        "do": {
+          "num_2q": 546,
+          "depth_2q": 37,
+          "num_gates": 1658,
+          "depth": 75,
+          "compile_seconds": 0.4313564160838723
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.18137254901960784,
+        "num_gates": 0.9589358010410642,
+        "depth": 0.18337408312958436
+      }
+    },
+    {
+      "suite": "hamlib",
+      "group": "condensedmatter",
+      "device": "all2all",
+      "name": "tfim-graph-2D-triag-pbc-qubitnodes_Lx-19_Ly-19_h-0.5",
+      "qubits": 190,
+      "paulis": 760,
+      "arms": {
+        "gco": {
+          "num_2q": 1140,
+          "depth_2q": 414,
+          "num_gates": 3610,
+          "depth": 829,
+          "compile_seconds": 0.9042193340137601
+        },
+        "do": {
+          "num_2q": 1140,
+          "depth_2q": 45,
+          "num_gates": 3504,
+          "depth": 90,
+          "compile_seconds": 1.6382956658490002
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0,
+        "depth_2q": 0.10869565217391304,
+        "num_gates": 0.9706371191135734,
+        "depth": 0.10856453558504221
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "all2all",
+      "name": "uccsd_10",
+      "qubits": 10,
+      "paulis": 800,
+      "arms": {
+        "gco": {
+          "num_2q": 2366,
+          "depth_2q": 2266,
+          "num_gates": 6612,
+          "depth": 4343,
+          "compile_seconds": 1.2921074167825282
+        },
+        "do": {
+          "num_2q": 2394,
+          "depth_2q": 2172,
+          "num_gates": 6717,
+          "depth": 4168,
+          "compile_seconds": 1.2554816249758005
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0118343195266273,
+        "depth_2q": 0.9585172109443955,
+        "num_gates": 1.015880217785844,
+        "depth": 0.9597052728528667
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "all2all",
+      "name": "uccsd_15",
+      "qubits": 15,
+      "paulis": 1800,
+      "arms": {
+        "gco": {
+          "num_2q": 7768,
+          "depth_2q": 7385,
+          "num_gates": 20097,
+          "depth": 13416,
+          "compile_seconds": 3.3406431251205504
+        },
+        "do": {
+          "num_2q": 8259,
+          "depth_2q": 6776,
+          "num_gates": 20671,
+          "depth": 11745,
+          "compile_seconds": 3.8852347093634307
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0632080329557159,
+        "depth_2q": 0.9175355450236967,
+        "num_gates": 1.028561476837339,
+        "depth": 0.8754472271914132
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "all2all",
+      "name": "uccsd_20",
+      "qubits": 20,
+      "paulis": 3200,
+      "arms": {
+        "gco": {
+          "num_2q": 17654,
+          "depth_2q": 16700,
+          "num_gates": 41992,
+          "depth": 28475,
+          "compile_seconds": 7.368012375198305
+        },
+        "do": {
+          "num_2q": 19825,
+          "depth_2q": 16187,
+          "num_gates": 46088,
+          "depth": 26474,
+          "compile_seconds": 9.729211708065122
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1229749631811488,
+        "depth_2q": 0.9692814371257485,
+        "num_gates": 1.0975423890264813,
+        "depth": 0.9297278314310798
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "all2all",
+      "name": "uccsd_25",
+      "qubits": 25,
+      "paulis": 5000,
+      "arms": {
+        "gco": {
+          "num_2q": 35223,
+          "depth_2q": 33739,
+          "num_gates": 76541,
+          "depth": 53979,
+          "compile_seconds": 14.148886332754046
+        },
+        "do": {
+          "num_2q": 37880,
+          "depth_2q": 30670,
+          "num_gates": 81250,
+          "depth": 47331,
+          "compile_seconds": 20.922013957984746
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0754336655026546,
+        "depth_2q": 0.9090370194730134,
+        "num_gates": 1.0615225826681125,
+        "depth": 0.8768409937197799
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "all2all",
+      "name": "uccsd_30",
+      "qubits": 30,
+      "paulis": 7200,
+      "arms": {
+        "gco": {
+          "num_2q": 57185,
+          "depth_2q": 54737,
+          "num_gates": 118172,
+          "depth": 84268,
+          "compile_seconds": 28.25132575025782
+        },
+        "do": {
+          "num_2q": 63083,
+          "depth_2q": 50066,
+          "num_gates": 128239,
+          "depth": 74148,
+          "compile_seconds": 49.89450566703454
+        }
+      },
+      "ratios": {
+        "num_2q": 1.1031389350354115,
+        "depth_2q": 0.914664669236531,
+        "num_gates": 1.0851893849642893,
+        "depth": 0.879906963497413
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "all2all",
+      "name": "uccsd_35",
+      "qubits": 35,
+      "paulis": 9800,
+      "arms": {
+        "gco": {
+          "num_2q": 91448,
+          "depth_2q": 87902,
+          "num_gates": 176783,
+          "depth": 129006,
+          "compile_seconds": 27.433235208969563
+        },
+        "do": {
+          "num_2q": 100362,
+          "depth_2q": 81128,
+          "num_gates": 193204,
+          "depth": 115798,
+          "compile_seconds": 60.981776624917984
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0974761613157205,
+        "depth_2q": 0.9229369070100794,
+        "num_gates": 1.09288789080398,
+        "depth": 0.8976171650930964
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "hhex",
+      "name": "uccsd_10",
+      "qubits": 10,
+      "paulis": 800,
+      "arms": {
+        "do": {
+          "num_2q": 6159,
+          "depth_2q": 4988,
+          "num_gates": 11154,
+          "depth": 7328,
+          "compile_seconds": 0.9101719590835273
+        },
+        "gco": {
+          "num_2q": 7372,
+          "depth_2q": 6348,
+          "num_gates": 12518,
+          "depth": 8778,
+          "compile_seconds": 1.1970509174279869
+        }
+      },
+      "ratios": {
+        "num_2q": 0.8354584915897992,
+        "depth_2q": 0.7857592942659105,
+        "num_gates": 0.8910369068541301,
+        "depth": 0.834814308498519
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "hhex",
+      "name": "uccsd_15",
+      "qubits": 15,
+      "paulis": 1800,
+      "arms": {
+        "do": {
+          "num_2q": 20342,
+          "depth_2q": 16395,
+          "num_gates": 32096,
+          "depth": 21863,
+          "compile_seconds": 7.541894915979356
+        },
+        "gco": {
+          "num_2q": 22418,
+          "depth_2q": 18132,
+          "num_gates": 36384,
+          "depth": 24841,
+          "compile_seconds": 9.075163708999753
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9073958426264609,
+        "depth_2q": 0.9042025148908008,
+        "num_gates": 0.882145998240985,
+        "depth": 0.8801175476027535
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "hhex",
+      "name": "uccsd_20",
+      "qubits": 20,
+      "paulis": 3200,
+      "arms": {
+        "gco": {
+          "num_2q": 46393,
+          "depth_2q": 35567,
+          "num_gates": 74172,
+          "depth": 48200,
+          "compile_seconds": 25.261879041790962
+        },
+        "do": {
+          "num_2q": 45659,
+          "depth_2q": 34642,
+          "num_gates": 70371,
+          "depth": 45913,
+          "compile_seconds": 23.09536474989727
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9841786476408079,
+        "depth_2q": 0.973992746084854,
+        "num_gates": 0.9487542468856173,
+        "depth": 0.952551867219917
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "hhex",
+      "name": "uccsd_25",
+      "qubits": 25,
+      "paulis": 5000,
+      "arms": {
+        "do": {
+          "num_2q": 84766,
+          "depth_2q": 62881,
+          "num_gates": 126513,
+          "depth": 81559,
+          "compile_seconds": 49.249578250106424
+        },
+        "gco": {
+          "num_2q": 94594,
+          "depth_2q": 71013,
+          "num_gates": 146097,
+          "depth": 94249,
+          "compile_seconds": 61.06350404210389
+        }
+      },
+      "ratios": {
+        "num_2q": 0.8961033469353236,
+        "depth_2q": 0.8854857561291595,
+        "num_gates": 0.8659520729378427,
+        "depth": 0.8653566616091417
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "hhex",
+      "name": "uccsd_30",
+      "qubits": 30,
+      "paulis": 7200,
+      "arms": {
+        "do": {
+          "num_2q": 146035,
+          "depth_2q": 104249,
+          "num_gates": 214180,
+          "depth": 134154,
+          "compile_seconds": 113.26600791607052
+        },
+        "gco": {
+          "num_2q": 162944,
+          "depth_2q": 114633,
+          "num_gates": 243554,
+          "depth": 149613,
+          "compile_seconds": 123.62200354179367
+        }
+      },
+      "ratios": {
+        "num_2q": 0.8962281520031422,
+        "depth_2q": 0.9094152643654096,
+        "num_gates": 0.8793943027008384,
+        "depth": 0.8966734174169357
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "hhex",
+      "name": "uccsd_35",
+      "qubits": 35,
+      "paulis": 9800,
+      "arms": {
+        "gco": {
+          "num_2q": 319993,
+          "depth_2q": 227156,
+          "num_gates": 446712,
+          "depth": 281404,
+          "compile_seconds": 224.58024537516758
+        },
+        "do": {
+          "num_2q": 270223,
+          "depth_2q": 189876,
+          "num_gates": 375387,
+          "depth": 234836,
+          "compile_seconds": 215.94520883308724
+        }
+      },
+      "ratios": {
+        "num_2q": 0.8444653476794804,
+        "depth_2q": 0.835883709873391,
+        "num_gates": 0.8403333691505936,
+        "depth": 0.8345155008457591
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "square",
+      "name": "uccsd_10",
+      "qubits": 10,
+      "paulis": 800,
+      "arms": {
+        "gco": {
+          "num_2q": 5544,
+          "depth_2q": 4684,
+          "num_gates": 9924,
+          "depth": 6708,
+          "compile_seconds": 1.4143278333358467
+        },
+        "do": {
+          "num_2q": 5536,
+          "depth_2q": 4485,
+          "num_gates": 10341,
+          "depth": 6631,
+          "compile_seconds": 1.230595082975924
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9985569985569985,
+        "depth_2q": 0.9575149444918872,
+        "num_gates": 1.0420193470374848,
+        "depth": 0.9885211687537269
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "square",
+      "name": "uccsd_15",
+      "qubits": 15,
+      "paulis": 1800,
+      "arms": {
+        "gco": {
+          "num_2q": 17934,
+          "depth_2q": 14121,
+          "num_gates": 29385,
+          "depth": 19355,
+          "compile_seconds": 5.44499250035733
+        },
+        "do": {
+          "num_2q": 16168,
+          "depth_2q": 12700,
+          "num_gates": 26860,
+          "depth": 17546,
+          "compile_seconds": 4.44369341712445
+        }
+      },
+      "ratios": {
+        "num_2q": 0.9015278242444519,
+        "depth_2q": 0.8993697330217407,
+        "num_gates": 0.914071805342862,
+        "depth": 0.9065357788685094
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "square",
+      "name": "uccsd_20",
+      "qubits": 20,
+      "paulis": 3200,
+      "arms": {
+        "gco": {
+          "num_2q": 40179,
+          "depth_2q": 30426,
+          "num_gates": 63549,
+          "depth": 41065,
+          "compile_seconds": 13.834735665936023
+        },
+        "do": {
+          "num_2q": 35920,
+          "depth_2q": 26628,
+          "num_gates": 56464,
+          "depth": 35652,
+          "compile_seconds": 12.53883866686374
+        }
+      },
+      "ratios": {
+        "num_2q": 0.8939993528957914,
+        "depth_2q": 0.8751725497929402,
+        "num_gates": 0.8885112275566885,
+        "depth": 0.8681845854133691
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "square",
+      "name": "uccsd_25",
+      "qubits": 25,
+      "paulis": 5000,
+      "arms": {
+        "do": {
+          "num_2q": 73810,
+          "depth_2q": 53833,
+          "num_gates": 109550,
+          "depth": 69326,
+          "compile_seconds": 29.22368958313018
+        },
+        "gco": {
+          "num_2q": 72759,
+          "depth_2q": 52337,
+          "num_gates": 109868,
+          "depth": 68562,
+          "compile_seconds": 31.754178166855127
+        }
+      },
+      "ratios": {
+        "num_2q": 1.0144449483912643,
+        "depth_2q": 1.0285839845615912,
+        "num_gates": 0.9971056176502713,
+        "depth": 1.0111431988565094
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "square",
+      "name": "uccsd_30",
+      "qubits": 30,
+      "paulis": 7200,
+      "arms": {
+        "gco": {
+          "num_2q": 134337,
+          "depth_2q": 89946,
+          "num_gates": 195265,
+          "depth": 115556,
+          "compile_seconds": 74.01635941676795
+        },
+        "do": {
+          "num_2q": 118304,
+          "depth_2q": 83118,
+          "num_gates": 170478,
+          "depth": 105100,
+          "compile_seconds": 66.6318496670574
+        }
+      },
+      "ratios": {
+        "num_2q": 0.8806509003476332,
+        "depth_2q": 0.9240877860049362,
+        "num_gates": 0.8730596881161499,
+        "depth": 0.9095157326317975
+      }
+    },
+    {
+      "suite": "uccsd",
+      "group": "uccsd",
+      "device": "square",
+      "name": "uccsd_35",
+      "qubits": 35,
+      "paulis": 9800,
+      "arms": {
+        "do": {
+          "num_2q": 185018,
+          "depth_2q": 129183,
+          "num_gates": 259589,
+          "depth": 160391,
+          "compile_seconds": 108.51672179205343
+        },
+        "gco": {
+          "num_2q": 210359,
+          "depth_2q": 139628,
+          "num_gates": 298318,
+          "depth": 176346,
+          "compile_seconds": 114.45083895791322
+        }
+      },
+      "ratios": {
+        "num_2q": 0.8795345100518637,
+        "depth_2q": 0.9251940871458447,
+        "num_gates": 0.8701754503583424,
+        "depth": 0.9095244576003992
+      }
+    }
+  ],
+  "errors": [],
+  "summary": [
+    {
+      "group": "hamlib/binaryoptimization",
+      "group_label": "HAMLib Binary optimization",
+      "expected_cases": 15,
+      "completed_cases": 15,
+      "seconds_gco": 12.70142537727952,
+      "seconds_do": 41.262387125287205,
+      "identical_cases": 1,
+      "num_2q_valid_cases": 15,
+      "num_2q_ratio_geomean": 0.9976399730477468,
+      "num_2q_change_geomean_pct": -0.23600269522532358,
+      "num_2q_improved_cases": 6,
+      "num_2q_equal_cases": 3,
+      "num_2q_regressed_cases": 6,
+      "num_2q_ratio_min": 0.8,
+      "num_2q_ratio_max": 1.1632165605095541,
+      "num_2q_total_gco": 16227,
+      "num_2q_total_do": 15710,
+      "depth_2q_valid_cases": 15,
+      "depth_2q_ratio_geomean": 0.5674744251240547,
+      "depth_2q_change_geomean_pct": -43.25255748759454,
+      "depth_2q_improved_cases": 12,
+      "depth_2q_equal_cases": 1,
+      "depth_2q_regressed_cases": 2,
+      "depth_2q_ratio_min": 0.16024436090225563,
+      "depth_2q_ratio_max": 1.2,
+      "depth_2q_total_gco": 10028,
+      "depth_2q_total_do": 2531,
+      "num_gates_valid_cases": 15,
+      "num_gates_ratio_geomean": 0.9435435409778692,
+      "num_gates_change_geomean_pct": -5.645645902213081,
+      "num_gates_improved_cases": 11,
+      "num_gates_equal_cases": 1,
+      "num_gates_regressed_cases": 3,
+      "num_gates_ratio_min": 0.8043478260869565,
+      "num_gates_ratio_max": 1.0360526315789473,
+      "num_gates_total_gco": 49232,
+      "num_gates_total_do": 46242,
+      "depth_valid_cases": 15,
+      "depth_ratio_geomean": 0.5491925121971889,
+      "depth_change_geomean_pct": -45.08074878028111,
+      "depth_improved_cases": 12,
+      "depth_equal_cases": 2,
+      "depth_regressed_cases": 1,
+      "depth_ratio_min": 0.15963820039938917,
+      "depth_ratio_max": 1.1677018633540373,
+      "depth_total_gco": 20066,
+      "depth_total_do": 4955
+    },
+    {
+      "group": "hamlib/discreteoptimization",
+      "group_label": "HAMLib Discrete optimization",
+      "expected_cases": 15,
+      "completed_cases": 15,
+      "seconds_gco": 26.60832499805838,
+      "seconds_do": 127.17325133411214,
+      "identical_cases": 0,
+      "num_2q_valid_cases": 15,
+      "num_2q_ratio_geomean": 1.247689388355915,
+      "num_2q_change_geomean_pct": 24.768938835591502,
+      "num_2q_improved_cases": 0,
+      "num_2q_equal_cases": 7,
+      "num_2q_regressed_cases": 8,
+      "num_2q_ratio_min": 1.0,
+      "num_2q_ratio_max": 2.1680349576271185,
+      "num_2q_total_gco": 41084,
+      "num_2q_total_do": 67978,
+      "depth_2q_valid_cases": 15,
+      "depth_2q_ratio_geomean": 0.6150549571378967,
+      "depth_2q_change_geomean_pct": -38.49450428621033,
+      "depth_2q_improved_cases": 14,
+      "depth_2q_equal_cases": 0,
+      "depth_2q_regressed_cases": 1,
+      "depth_2q_ratio_min": 0.29234178091677054,
+      "depth_2q_ratio_max": 1.2272727272727273,
+      "depth_2q_total_gco": 24269,
+      "depth_2q_total_do": 10267,
+      "num_gates_valid_cases": 15,
+      "num_gates_ratio_geomean": 1.0598952201895413,
+      "num_gates_change_geomean_pct": 5.98952201895413,
+      "num_gates_improved_cases": 9,
+      "num_gates_equal_cases": 0,
+      "num_gates_regressed_cases": 6,
+      "num_gates_ratio_min": 0.8875,
+      "num_gates_ratio_max": 1.5394032490806684,
+      "num_gates_total_gco": 120941,
+      "num_gates_total_do": 152420,
+      "depth_valid_cases": 15,
+      "depth_ratio_geomean": 0.5644427420447374,
+      "depth_change_geomean_pct": -43.55572579552626,
+      "depth_improved_cases": 14,
+      "depth_equal_cases": 0,
+      "depth_regressed_cases": 1,
+      "depth_ratio_min": 0.24081422692533805,
+      "depth_ratio_max": 1.202247191011236,
+      "depth_total_gco": 46243,
+      "depth_total_do": 16862
+    },
+    {
+      "group": "hamlib/chemistry",
+      "group_label": "HAMLib Chemistry",
+      "expected_cases": 35,
+      "completed_cases": 35,
+      "seconds_gco": 70.97176562482491,
+      "seconds_do": 99.4074060455896,
+      "identical_cases": 6,
+      "num_2q_valid_cases": 35,
+      "num_2q_ratio_geomean": 1.0648733728553967,
+      "num_2q_change_geomean_pct": 6.487337285539674,
+      "num_2q_improved_cases": 2,
+      "num_2q_equal_cases": 13,
+      "num_2q_regressed_cases": 20,
+      "num_2q_ratio_min": 0.9912140575079872,
+      "num_2q_ratio_max": 1.328308996702779,
+      "num_2q_total_gco": 163803,
+      "num_2q_total_do": 181531,
+      "depth_2q_valid_cases": 35,
+      "depth_2q_ratio_geomean": 0.7689583941411997,
+      "depth_2q_change_geomean_pct": -23.10416058588003,
+      "depth_2q_improved_cases": 24,
+      "depth_2q_equal_cases": 6,
+      "depth_2q_regressed_cases": 5,
+      "depth_2q_ratio_min": 0.13333333333333333,
+      "depth_2q_ratio_max": 1.1228070175438596,
+      "depth_2q_total_gco": 154566,
+      "depth_2q_total_do": 143674,
+      "num_gates_valid_cases": 35,
+      "num_gates_ratio_geomean": 1.0534378573113325,
+      "num_gates_change_geomean_pct": 5.343785731133255,
+      "num_gates_improved_cases": 3,
+      "num_gates_equal_cases": 12,
+      "num_gates_regressed_cases": 20,
+      "num_gates_ratio_min": 0.9637795275590552,
+      "num_gates_ratio_max": 1.2661767055440165,
+      "num_gates_total_gco": 409856,
+      "num_gates_total_do": 444345,
+      "depth_valid_cases": 35,
+      "depth_ratio_geomean": 0.7692649990973256,
+      "depth_change_geomean_pct": -23.07350009026744,
+      "depth_improved_cases": 24,
+      "depth_equal_cases": 6,
+      "depth_regressed_cases": 5,
+      "depth_ratio_min": 0.14754098360655737,
+      "depth_ratio_max": 1.1414141414141414,
+      "depth_total_gco": 275574,
+      "depth_total_do": 247484
+    },
+    {
+      "group": "hamlib/condensedmatter",
+      "group_label": "HAMLib Condensed matter",
+      "expected_cases": 35,
+      "completed_cases": 35,
+      "seconds_gco": 167.13253608392552,
+      "seconds_do": 3055.18148587225,
+      "identical_cases": 0,
+      "num_2q_valid_cases": 35,
+      "num_2q_ratio_geomean": 1.1814427132581735,
+      "num_2q_change_geomean_pct": 18.14427132581735,
+      "num_2q_improved_cases": 5,
+      "num_2q_equal_cases": 8,
+      "num_2q_regressed_cases": 22,
+      "num_2q_ratio_min": 0.8910639239106393,
+      "num_2q_ratio_max": 2.5800739443471494,
+      "num_2q_total_gco": 180150,
+      "num_2q_total_do": 215301,
+      "depth_2q_valid_cases": 35,
+      "depth_2q_ratio_geomean": 0.08422805100964573,
+      "depth_2q_change_geomean_pct": -91.57719489903543,
+      "depth_2q_improved_cases": 35,
+      "depth_2q_equal_cases": 0,
+      "depth_2q_regressed_cases": 0,
+      "depth_2q_ratio_min": 0.0055227814735785115,
+      "depth_2q_ratio_max": 0.7773512476007678,
+      "depth_2q_total_gco": 151817,
+      "depth_2q_total_do": 24019,
+      "num_gates_valid_cases": 35,
+      "num_gates_ratio_geomean": 1.1890945727010804,
+      "num_gates_change_geomean_pct": 18.909457270108042,
+      "num_gates_improved_cases": 11,
+      "num_gates_equal_cases": 2,
+      "num_gates_regressed_cases": 22,
+      "num_gates_ratio_min": 0.9309480401093893,
+      "num_gates_ratio_max": 2.5799070684314276,
+      "num_gates_total_gco": 496940,
+      "num_gates_total_do": 603752,
+      "depth_valid_cases": 35,
+      "depth_ratio_geomean": 0.08554014398047656,
+      "depth_change_geomean_pct": -91.44598560195234,
+      "depth_improved_cases": 35,
+      "depth_equal_cases": 0,
+      "depth_regressed_cases": 0,
+      "depth_ratio_min": 0.005585189833699404,
+      "depth_ratio_max": 0.7573173095561155,
+      "depth_total_gco": 279934,
+      "depth_total_do": 41395
+    },
+    {
+      "group": "hamlib/all",
+      "group_label": "HAMLib all",
+      "expected_cases": 100,
+      "completed_cases": 100,
+      "seconds_gco": 277.4140520840883,
+      "seconds_do": 3323.024530377239,
+      "identical_cases": 7,
+      "num_2q_valid_cases": 100,
+      "num_2q_ratio_geomean": 1.1198523636723587,
+      "num_2q_change_geomean_pct": 11.985236367235874,
+      "num_2q_improved_cases": 13,
+      "num_2q_equal_cases": 31,
+      "num_2q_regressed_cases": 56,
+      "num_2q_ratio_min": 0.8,
+      "num_2q_ratio_max": 2.5800739443471494,
+      "num_2q_total_gco": 401264,
+      "num_2q_total_do": 480520,
+      "depth_2q_valid_cases": 100,
+      "depth_2q_ratio_geomean": 0.32764601504958935,
+      "depth_2q_change_geomean_pct": -67.23539849504107,
+      "depth_2q_improved_cases": 85,
+      "depth_2q_equal_cases": 7,
+      "depth_2q_regressed_cases": 8,
+      "depth_2q_ratio_min": 0.0055227814735785115,
+      "depth_2q_ratio_max": 1.2272727272727273,
+      "depth_2q_total_gco": 340680,
+      "depth_2q_total_do": 180491,
+      "num_gates_valid_cases": 100,
+      "num_gates_ratio_geomean": 1.0820382003106128,
+      "num_gates_change_geomean_pct": 8.203820031061282,
+      "num_gates_improved_cases": 34,
+      "num_gates_equal_cases": 15,
+      "num_gates_regressed_cases": 51,
+      "num_gates_ratio_min": 0.8043478260869565,
+      "num_gates_ratio_max": 2.5799070684314276,
+      "num_gates_total_gco": 1076969,
+      "num_gates_total_do": 1246759,
+      "depth_valid_cases": 100,
+      "depth_ratio_geomean": 0.3236590517986922,
+      "depth_change_geomean_pct": -67.63409482013078,
+      "depth_improved_cases": 85,
+      "depth_equal_cases": 8,
+      "depth_regressed_cases": 7,
+      "depth_ratio_min": 0.005585189833699404,
+      "depth_ratio_max": 1.202247191011236,
+      "depth_total_gco": 621817,
+      "depth_total_do": 310696
+    },
+    {
+      "group": "uccsd/all2all",
+      "group_label": "UCCSD all2all",
+      "expected_cases": 6,
+      "completed_cases": 6,
+      "seconds_gco": 81.83421020908281,
+      "seconds_do": 146.66822429234162,
+      "identical_cases": 0,
+      "num_2q_valid_cases": 6,
+      "num_2q_ratio_geomean": 1.078411335393224,
+      "num_2q_change_geomean_pct": 7.841133539322409,
+      "num_2q_improved_cases": 0,
+      "num_2q_equal_cases": 0,
+      "num_2q_regressed_cases": 6,
+      "num_2q_ratio_min": 1.0118343195266273,
+      "num_2q_ratio_max": 1.1229749631811488,
+      "num_2q_total_gco": 211644,
+      "num_2q_total_do": 231803,
+      "depth_2q_valid_cases": 6,
+      "depth_2q_ratio_geomean": 0.931711306797436,
+      "depth_2q_change_geomean_pct": -6.828869320256404,
+      "depth_2q_improved_cases": 6,
+      "depth_2q_equal_cases": 0,
+      "depth_2q_regressed_cases": 0,
+      "depth_2q_ratio_min": 0.9090370194730134,
+      "depth_2q_ratio_max": 0.9692814371257485,
+      "depth_2q_total_gco": 202729,
+      "depth_2q_total_do": 186999,
+      "num_gates_valid_cases": 6,
+      "num_gates_ratio_geomean": 1.0631243730280493,
+      "num_gates_change_geomean_pct": 6.31243730280493,
+      "num_gates_improved_cases": 0,
+      "num_gates_equal_cases": 0,
+      "num_gates_regressed_cases": 6,
+      "num_gates_ratio_min": 1.015880217785844,
+      "num_gates_ratio_max": 1.0975423890264813,
+      "num_gates_total_gco": 440197,
+      "num_gates_total_do": 476169,
+      "depth_valid_cases": 6,
+      "depth_ratio_geomean": 0.9026694385477314,
+      "depth_change_geomean_pct": -9.73305614522686,
+      "depth_improved_cases": 6,
+      "depth_equal_cases": 0,
+      "depth_regressed_cases": 0,
+      "depth_ratio_min": 0.8754472271914132,
+      "depth_ratio_max": 0.9597052728528667,
+      "depth_total_gco": 313487,
+      "depth_total_do": 279664
+    },
+    {
+      "group": "uccsd/hhex",
+      "group_label": "UCCSD hhex",
+      "expected_cases": 6,
+      "completed_cases": 6,
+      "seconds_gco": 444.79984662728384,
+      "seconds_do": 410.00822662422433,
+      "identical_cases": 0,
+      "num_2q_valid_cases": 6,
+      "num_2q_ratio_geomean": 0.8926729041764794,
+      "num_2q_change_geomean_pct": -10.732709582352062,
+      "num_2q_improved_cases": 6,
+      "num_2q_equal_cases": 0,
+      "num_2q_regressed_cases": 0,
+      "num_2q_ratio_min": 0.8354584915897992,
+      "num_2q_ratio_max": 0.9841786476408079,
+      "num_2q_total_gco": 653714,
+      "num_2q_total_do": 573184,
+      "depth_2q_valid_cases": 6,
+      "depth_2q_ratio_geomean": 0.8804406925337953,
+      "depth_2q_change_geomean_pct": -11.955930746620469,
+      "depth_2q_improved_cases": 6,
+      "depth_2q_equal_cases": 0,
+      "depth_2q_regressed_cases": 0,
+      "depth_2q_ratio_min": 0.7857592942659105,
+      "depth_2q_ratio_max": 0.973992746084854,
+      "depth_2q_total_gco": 472849,
+      "depth_2q_total_do": 413031,
+      "num_gates_valid_cases": 6,
+      "num_gates_ratio_geomean": 0.8840018378468536,
+      "num_gates_change_geomean_pct": -11.59981621531464,
+      "num_gates_improved_cases": 6,
+      "num_gates_equal_cases": 0,
+      "num_gates_regressed_cases": 0,
+      "num_gates_ratio_min": 0.8403333691505936,
+      "num_gates_ratio_max": 0.9487542468856173,
+      "num_gates_total_gco": 959437,
+      "num_gates_total_do": 829701,
+      "depth_valid_cases": 6,
+      "depth_ratio_geomean": 0.8764231491688086,
+      "depth_change_geomean_pct": -12.35768508311914,
+      "depth_improved_cases": 6,
+      "depth_equal_cases": 0,
+      "depth_regressed_cases": 0,
+      "depth_ratio_min": 0.8345155008457591,
+      "depth_ratio_max": 0.952551867219917,
+      "depth_total_gco": 607085,
+      "depth_total_do": 525653
+    },
+    {
+      "group": "uccsd/square",
+      "group_label": "UCCSD square",
+      "expected_cases": 6,
+      "completed_cases": 6,
+      "seconds_gco": 240.9154325411655,
+      "seconds_do": 222.58538820920512,
+      "identical_cases": 0,
+      "num_2q_valid_cases": 6,
+      "num_2q_ratio_geomean": 0.9264650881601981,
+      "num_2q_change_geomean_pct": -7.3534911839801875,
+      "num_2q_improved_cases": 5,
+      "num_2q_equal_cases": 0,
+      "num_2q_regressed_cases": 1,
+      "num_2q_ratio_min": 0.8795345100518637,
+      "num_2q_ratio_max": 1.0144449483912643,
+      "num_2q_total_gco": 481112,
+      "num_2q_total_do": 434756,
+      "depth_2q_valid_cases": 6,
+      "depth_2q_ratio_geomean": 0.9337427127746851,
+      "depth_2q_change_geomean_pct": -6.625728722531488,
+      "depth_2q_improved_cases": 5,
+      "depth_2q_equal_cases": 0,
+      "depth_2q_regressed_cases": 1,
+      "depth_2q_ratio_min": 0.8751725497929402,
+      "depth_2q_ratio_max": 1.0285839845615912,
+      "depth_2q_total_gco": 331142,
+      "depth_2q_total_do": 309947,
+      "num_gates_valid_cases": 6,
+      "num_gates_ratio_geomean": 0.9285782141960779,
+      "num_gates_change_geomean_pct": -7.142178580392211,
+      "num_gates_improved_cases": 5,
+      "num_gates_equal_cases": 0,
+      "num_gates_regressed_cases": 1,
+      "num_gates_ratio_min": 0.8701754503583424,
+      "num_gates_ratio_max": 1.0420193470374848,
+      "num_gates_total_gco": 706309,
+      "num_gates_total_do": 633282,
+      "depth_valid_cases": 6,
+      "depth_ratio_geomean": 0.9309007413013748,
+      "depth_change_geomean_pct": -6.909925869862521,
+      "depth_improved_cases": 5,
+      "depth_equal_cases": 0,
+      "depth_regressed_cases": 1,
+      "depth_ratio_min": 0.8681845854133691,
+      "depth_ratio_max": 1.0111431988565094,
+      "depth_total_gco": 427592,
+      "depth_total_do": 394646
+    },
+    {
+      "group": "uccsd/all",
+      "group_label": "UCCSD all",
+      "expected_cases": 18,
+      "completed_cases": 18,
+      "seconds_gco": 767.5494893775322,
+      "seconds_do": 779.2618391257711,
+      "identical_cases": 0,
+      "num_2q_valid_cases": 18,
+      "num_2q_ratio_geomean": 0.9625765672172784,
+      "num_2q_change_geomean_pct": -3.7423432782721644,
+      "num_2q_improved_cases": 11,
+      "num_2q_equal_cases": 0,
+      "num_2q_regressed_cases": 7,
+      "num_2q_ratio_min": 0.8354584915897992,
+      "num_2q_ratio_max": 1.1229749631811488,
+      "num_2q_total_gco": 1346470,
+      "num_2q_total_do": 1239743,
+      "depth_2q_valid_cases": 18,
+      "depth_2q_ratio_geomean": 0.9149616670210733,
+      "depth_2q_change_geomean_pct": -8.50383329789267,
+      "depth_2q_improved_cases": 17,
+      "depth_2q_equal_cases": 0,
+      "depth_2q_regressed_cases": 1,
+      "depth_2q_ratio_min": 0.7857592942659105,
+      "depth_2q_ratio_max": 1.0285839845615912,
+      "depth_2q_total_gco": 1006720,
+      "depth_2q_total_do": 909977,
+      "num_gates_valid_cases": 18,
+      "num_gates_ratio_geomean": 0.9556200305720776,
+      "num_gates_change_geomean_pct": -4.437996942792244,
+      "num_gates_improved_cases": 11,
+      "num_gates_equal_cases": 0,
+      "num_gates_regressed_cases": 7,
+      "num_gates_ratio_min": 0.8403333691505936,
+      "num_gates_ratio_max": 1.0975423890264813,
+      "num_gates_total_gco": 2105943,
+      "num_gates_total_do": 1939152,
+      "depth_valid_cases": 18,
+      "depth_ratio_geomean": 0.9030573223421127,
+      "depth_change_geomean_pct": -9.694267765788734,
+      "depth_improved_cases": 17,
+      "depth_equal_cases": 0,
+      "depth_regressed_cases": 1,
+      "depth_ratio_min": 0.8345155008457591,
+      "depth_ratio_max": 1.0111431988565094,
+      "depth_total_gco": 1348164,
+      "depth_total_do": 1199963
+    }
+  ]
+}

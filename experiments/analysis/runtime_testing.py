@@ -7,7 +7,9 @@ Examples (from this directory or any other working directory)::
     python runtime_testing.py -c phoenixpp -b hamlib --limit 1
 
 The timer covers Hamiltonian construction and compilation, but excludes JSON
-loading, CSV I/O, process start-up, and progress reporting.  Each completed
+loading, CSV I/O, process start-up, and progress reporting.  One untimed
+warm-up call on the first pending instance precedes the measurements, so
+one-off first-call costs are not charged to that instance.  Each completed
 instance is appended immediately to ``runtime_<suite>_<compiler>.csv`` so an
 interrupted run can be resumed safely.  Existing program names are skipped
 unless ``--overwrite`` is specified.
@@ -79,7 +81,7 @@ def instances_for(suite: str) -> list[tuple[str, Path]]:
     return [(str(path.relative_to(root).with_suffix("")), path) for path in files]
 
 
-def read_instance(path: Path) -> tuple[list[str], list[float]]:
+def read_instance(path: Path) -> tuple[list[str], list[float], list[int] | None]:
     with path.open() as handle:
         data = json.load(handle)
     paulis = data["paulis"]
@@ -88,7 +90,7 @@ def read_instance(path: Path) -> tuple[list[str], list[float]]:
         raise ValueError(f"{path} contains no Pauli strings")
     if len(paulis) != len(coeffs):
         raise ValueError(f"{path} has mismatched Pauli-string and coefficient counts")
-    return paulis, coeffs
+    return paulis, coeffs, data.get("block_sizes")
 
 
 def phoenix_runner(grouping: str) -> Callable[[list[str], list[float]], object]:
@@ -99,7 +101,7 @@ def phoenix_runner(grouping: str) -> Callable[[list[str], list[float]], object]:
         # Benchmark JSON labels are big-endian; PHOENIX follows Qiskit's
         # little-endian convention, matching experiments/scripts/bench_utils.py.
         hamiltonian = phoenix.Hamiltonian([p[::-1] for p in paulis], coeffs)
-        return phoenix.compile_hamiltonian_simulation(hamiltonian, grouping=grouping)
+        return phoenix.compile_hamiltonian_simulation(hamiltonian, grouping=grouping, rho_threshold=0.35)
 
     return run
 
@@ -197,16 +199,31 @@ def main() -> int:
         return 0
 
     run_compiler = compiler_runner(args.compiler)
+
+    def instance_args(path: Path) -> tuple[list[str], list[float], dict]:
+        paulis, coeffs, block_sizes = read_instance(path)
+        # Paulihedral and Tetris consume the benchmark's own blocks, as in the quality experiments.
+        kwargs = {"block_sizes": block_sizes} if args.compiler in ("paulihedral", "tetris") else {}
+        return paulis, coeffs, kwargs
+
+    # One untimed warm-up call: the first call in a fresh process pays one-off costs (e.g. TKet
+    # ~3 s, Qiskit ~0.1 s on uccsd_10) that would otherwise inflate the first measured instance.
+    try:
+        paulis, coeffs, kwargs = instance_args(pending[0][1])
+        run_compiler(paulis, coeffs, **kwargs)
+    except Exception as exc:  # The measurement loop reports the failure for this instance.
+        tqdm.write(f"Warm-up on {pending[0][0]} failed: {type(exc).__name__}: {exc}")
+
     failures: list[tuple[str, str]] = []
     progress = tqdm(pending, desc=f"{args.benchmark_suite}/{args.compiler}", unit="case")
     for program, path in progress:
         try:
-            paulis, coeffs = read_instance(path)
+            paulis, coeffs, kwargs = instance_args(path)
             nreps = repetitions_for(len(paulis))
             samples: list[float] = []
             for _ in range(nreps):
                 start = time.perf_counter()
-                run_compiler(paulis, coeffs)
+                run_compiler(paulis, coeffs, **kwargs)
                 samples.append(time.perf_counter() - start)
             runtime = fmean(samples)
             append_result(output, program, runtime)
