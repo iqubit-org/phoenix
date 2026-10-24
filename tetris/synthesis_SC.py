@@ -32,27 +32,37 @@ class treeNode:
         self.status = 0 # 0 means inner node; 1 means leaf node
 
 class tree:
+    # dp is the preorder of a DFS tree (see max_dfs_tree). A node is attached to the
+    # shallowest node adjacent to it on the path to the previously attached node; if
+    # there is none (the tree qubits form a cycle on the device), to its DFS parent
     def __init__(self, graph, dp, parent=None, depth=0):
         self.childs = []
         self.leaf = []
         self.depth = depth
         self.pid = dp[0]
-        if len(dp) == 1:
-            self.status = 1
-            self.leaf = [self]
-        else:
-            self.status = 0   
-            st = []
-            for i in range(1, len(dp)):
-                if dp[i] in graph[self.pid].adj:
-                    st.append(i)
-            st.append(len(dp))
-            for i in range(len(st)-1):
-                child = tree(graph, dp[st[i]:st[i+1]], parent=self, depth=self.depth+1)
-                self.childs.append(child)
-                self.leaf += child.leaf
+        self.status = 1
         if parent != None:
             self.parent = parent
+        nodes = [self]
+        path = [self]
+        dfs_path = [self]
+        for pid in dp[1:]:
+            while pid not in graph[dfs_path[-1].pid].adj:
+                dfs_path.pop()
+            p = next((n for n in path if pid in graph[n.pid].adj), dfs_path[-1])
+            child = tree(graph, [pid], parent=p, depth=p.depth+1)
+            p.childs.append(child)
+            p.status = 0
+            nodes.append(child)
+            dfs_path.append(child)
+            path = [child]
+            while path[0].depth > 0:
+                path.insert(0, path[0].parent)
+        for node in reversed(nodes):
+            if node.childs == []:
+                node.leaf = [node]
+            else:
+                node.leaf = [l for c in node.childs for l in c.leaf]
 # swap tree nodes only change its physical qubit id and logical id mapping;
 def swap_tree_node(t0, t1):
     pass
@@ -85,7 +95,7 @@ def tree_synthesis1(qc, graph, pauli_map, ptree, psd):
         l = lfs[0]
         if l.depth == 0:
             # psd.real may be zero
-            qc.rz(1, l.pid) # qc.rz(2*psd.real+1, l.pid)
+            qc.rz(2 * float(psd.real), l.pid)
             break
         # actually, if psn is empty in the middle, we can stop it first
         # and the choice of root is also important
@@ -127,7 +137,6 @@ def tree_synthesis1(qc, graph, pauli_map, ptree, psd):
     return qc, cnt_swaps, lc + rc
 
 def synthesis_initial(pauli_layers, pauli_map=None, graph=None, qc=None, arch='manhattan'):
-    assign_time_parameter(pauli_layers, 1)
     lnq = len(pauli_layers[0][0][0]) # logical qubits
     if graph == None:
         G, C = load_graph(arch, dist_comp=True) # G is adj, C is dist

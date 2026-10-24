@@ -319,7 +319,7 @@ class Scheduler:
     # this function is for test_mode scheduler
     def collect_CNOT_cost_in_one_block(self):
         for i in range(self.not_compiled_pointer, len(self.instruction_list)):
-            (instruction, data) = self.instruction_list[i]
+            (instruction, data, _) = self.instruction_list[i]
             if instruction.startswith('Logical_left_X'):
                 price = 0
             elif instruction.startswith('Logical_left_Y'):
@@ -358,7 +358,7 @@ class Scheduler:
         if self.test_mode:
             return
         for i in range(self.not_compiled_pointer, len(self.instruction_list)):
-            (instruction, data) = self.instruction_list[i]
+            (instruction, data, angle) = self.instruction_list[i]
             if instruction.startswith('Logical_left_X'):
                 self.qc.u(np.pi/2, 0, np.pi, self.pauli_map[data])
                 price = 0
@@ -382,7 +382,7 @@ class Scheduler:
                     self.physical_swap(u, v)
                 price = 3 * len(path)
             elif instruction.startswith('Logical_RZ'):
-                self.qc.rz(1, self.pauli_map[data])
+                self.qc.rz(angle, self.pauli_map[data])
                 price = 0
             elif instruction.startswith('Logical_right_X'):
                 self.qc.u(np.pi/2, 0, np.pi, self.pauli_map[data])
@@ -396,10 +396,10 @@ class Scheduler:
         
         self.not_compiled_pointer = len(self.instruction_list)
     
-    def add_instruction(self, instruction, data):
+    def add_instruction(self, instruction, data, angle=None):
         self.total_logical_instruction = self.total_logical_instruction + 1
         if self.enable_cancel == False:
-            self.instruction_list.append((instruction, data))
+            self.instruction_list.append((instruction, data, angle))
             return
 
         # check if there is any cancellation
@@ -448,4 +448,4 @@ class Scheduler:
             else:
                 raise Exception('Illegal instruction: ' + instruction)
         
-        self.instruction_list.append((instruction, data))
+        self.instruction_list.append((instruction, data, angle))

@@ -167,7 +167,7 @@ def max_dfs_tree(graph, cover, start, path=[]):
     for i in start.adj:
         if i not in cover:
             continue
-        if i in path:
+        if i in path or i in max_cp:
             continue
         else:
             r = max_dfs_tree(graph, cover, graph[i], path=path + max_cp + [start.idx])

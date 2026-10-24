@@ -281,7 +281,7 @@ def syn_pauli_string(qc, nq, ps0, cnotset, root, coeff):
         if ps0[k] == 'X':
             qc.h(k)
         if ps0[k] == 'Y':
-            qc.s(k)
+            qc.sdg(k)  # (H Sdg) Y (H Sdg)^dag = Z; the original s/h pair maps Y to -Z and flips the rotation angle
             qc.h(k)
     for k in reversed(cnotset):
         qc.cx(k[0], k[1])
@@ -295,7 +295,7 @@ def syn_pauli_string(qc, nq, ps0, cnotset, root, coeff):
             qc.h(k)
         if ps0[k] == 'Y':
             qc.h(k)
-            qc.sdg(k)
+            qc.s(k)
 
 
 def find_consecutive(pos):
@@ -555,6 +555,9 @@ def max_singlet_pairs_line(cost_matrix):
 
 
 def max_match_synthesis(ps_layers, tree_compl):
+    # only the first Pauli string of each block is synthesized below, so a longer block would silently lose strings
+    if any(len(block) != 1 for layer in ps_layers for block in layer):
+        raise ValueError("max_match_synthesis expects exactly one Pauli string per block")
     nq = len(ps_layers[0][0][0])
     qc = QuantumCircuit(nq)
     cost_matrix = construct_cost_matrix_line(ps_layers)
@@ -589,7 +592,8 @@ def max_match_synthesis(ps_layers, tree_compl):
     return qc
 
 
-def block_opt_FT(ps_layers, time_parameter=1):
+def block_opt_FT(ps_layers, time_parameter=0):
+    # time_parameter is *added* to every coefficient (upstream default 1); 0 keeps the input rotation angles
     assign_time_parameter(ps_layers, time_parameter)
     qc = max_match_synthesis(ps_layers, complement_tree2)
     return qc

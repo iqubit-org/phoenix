@@ -25,7 +25,7 @@ class Hamiltonian(SparsePauliOp):
     ):
         # ! Note that pauli list is in little-endian order in Qiskit
         temp_op = SparsePauliOp(data, coeffs, ignore_pauli_phase=ignore_pauli_phase, copy=copy)
-        simplified = temp_op.simplify()
+        simplified = temp_op.simplify(atol=0.0)  # Merge duplicates but drop only exact zeros
         super().__init__(simplified.paulis, simplified.coeffs, ignore_pauli_phase=False, copy=False)
 
     def unitary_evolution(self, t: float = 1.0) -> np.ndarray:

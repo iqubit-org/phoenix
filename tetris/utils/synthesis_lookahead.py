@@ -25,7 +25,6 @@ def pauli_single_gates(qc, pauli_map, ps, left=True):
 def synthesis_initial(pauli_layers, pauli_map=None, graph=None,
                       arch=None,
                       qc=None):
-    assign_time_parameter(pauli_layers, 1)
     lnq = len(pauli_layers[0][0][0]) # logical qubits
     if graph == None:
         G, C = load_graph(arch, dist_comp=True) # G is adj, C is dist
@@ -141,7 +140,7 @@ def try_block(n_qubits : int, block : list, scheduler : Scheduler, swap_coeffici
                     save_instructions.append(('Logical_SWAP', (node.idx_after_swap, node.parent_after_swap)))
                     scheduler.tree.swap_two_nodes(node.parent_after_swap, node.idx_after_swap)
             else:
-                scheduler.add_instruction('Logical_RZ', node.idx_after_swap)
+                scheduler.add_instruction('Logical_RZ', node.idx_after_swap, 2 * float(pauli_string.real))
         
         scheduler.clear_uncompiled_logical_instructions()
         # the right side of a pauli string circuit

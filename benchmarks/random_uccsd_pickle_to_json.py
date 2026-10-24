@@ -2,7 +2,9 @@
 
 The pickles store tetris ``pauliString`` blocks (size-8 UCCSD double-excitation groups) with
 ZERO coefficients — pure Pauli structure. We flatten the blocks into the flat benchmark schema
-``{num_qubits, paulis, coeffs}`` and assign each string a random rotation angle in (0, 2*pi),
+``{num_qubits, paulis, coeffs, block_sizes}`` (``block_sizes`` keeps the pickle's block boundaries:
+block k is the next ``block_sizes[k]`` consecutive strings) and assign each string a random
+rotation angle in (0, 2*pi),
 seeded for reproducibility (the structure benchmark's gate count is angle-independent; a random
 nonzero angle just makes the circuit non-trivial and avoids special cancellations).
 
@@ -39,7 +41,11 @@ def convert(pickle_path: str, output_path: str, rng: np.random.Generator) -> Non
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
-        json.dump({"num_qubits": num_qubits, "paulis": paulis, "coeffs": coeffs}, f, indent=2)
+        json.dump(
+            {"num_qubits": num_qubits, "paulis": paulis, "coeffs": coeffs, "block_sizes": [len(block) for block in blocks]},
+            f,
+            indent=2,
+        )
     print(f"{os.path.basename(pickle_path)} -> {os.path.basename(output_path)}: "
           f"{num_qubits}q, {len(blocks)} blocks, {len(paulis)} strings")
 

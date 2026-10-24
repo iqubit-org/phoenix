@@ -68,13 +68,11 @@ def _support_keys(paulis: list[str]) -> list[tuple[int, ...]]:
 
 
 def group_paulis(paulis: list[str]) -> dict[tuple[int, ...], list[str]]:
-    """Group Pauli strings by exact match of their nontrivial qubit indices
-    (same-support grouping, the DAC'25 unit)."""
-    support_keys = _support_keys(paulis)
-
+    """Group Pauli strings by exact match of their nontrivial qubit indices (same-support grouping, the DAC'25 unit)."""
     group_rows: dict[tuple[int, ...], list[int]] = {}
-    for row, key in enumerate(support_keys):
-        group_rows.setdefault(key, []).append(row)
+    for row, key in enumerate(_support_keys(paulis)):
+        if key:
+            group_rows.setdefault(key, []).append(row)
 
     sorted_keys = sorted(group_rows.keys(), key=lambda k: (-len(k), k))
     groups = {k: [paulis[row] for row in group_rows[k]] for k in sorted_keys}
@@ -85,7 +83,11 @@ def group_paulis(paulis: list[str]) -> dict[tuple[int, ...], list[str]]:
 def group_paulis_and_coeffs(
     paulis: list[str], coeffs: np.ndarray,
 ) -> dict[tuple[int, ...], tuple[list[str], np.ndarray]]:
-    """Group Pauli strings (with coefficients) by their nontrivial parts."""
+    """Group Pauli strings (with coefficients) by their nontrivial parts.
+
+    All-identity strings are dropped together with their coefficients, as in
+    :func:`group_paulis`.
+    """
     grouped_paulis = group_paulis(paulis)
 
     # Map each string back to its original indices; duplicates are consumed

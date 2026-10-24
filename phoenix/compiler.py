@@ -90,7 +90,11 @@ def compile_hamiltonian_simulation(
     elif grouping == "support":
         hams = hamiltonian.group_same_weights()
         circuits = _simplify_groups(hams, backend, parallel=parallel_search, patience=search_patience, optimize=optimize)
-        qc = order_circuits(circuits, method=order_method or "tsp")
+        qc = (
+            order_circuits(circuits, method=order_method or "tsp")
+            if circuits
+            else QuantumCircuit(hamiltonian.num_qubits)
+        )
     else:
         raise ValueError(
             f"Unknown grouping mode: {grouping!r}; options: None/'holistic' (default), 'support'"

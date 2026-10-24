@@ -217,7 +217,7 @@ def post_transpile(qc: QuantumCircuit) -> QuantumCircuit:
 
 def compile_by_qiskit(
     paulis: list[str], coeffs: list[float], coupling_map: CouplingMap = None,
-    little_endian: bool = True, optimize: bool = True
+    little_endian: bool = True, optimize: bool = True, preserve_order: bool = False
 ) -> QuantumCircuit:
     from qiskit.circuit.library import PauliEvolutionGate
     from qiskit.quantum_info import SparsePauliOp
@@ -237,7 +237,7 @@ def compile_by_qiskit(
                 "rustiq",
                 {
                     "optimize_count": True,  # Optimize the two-qubit gate count
-                    "preserve_order": False,  # Allow reordering of Pauli terms
+                    "preserve_order": preserve_order,  # Allow reordering of Pauli terms
                     "upto_phase": True,  # Allow a global phase difference
                     "upto_clifford": False,  # Resynthesize the final Clifford operator
                     "resynth_clifford_method": 1,  # Use Qiskit's greedy Clifford resynthesis
@@ -372,7 +372,8 @@ def gene_hhex_coupling_map(size) -> CouplingMap:
         node = queue[queue_index]
         queue_index += 1
         nodes.append(node)
-        for neighbor in coupling_map.neighbors(node):
+        # rustworkx returns neighbors in arbitrary order; sort so that a given size always yields the same device
+        for neighbor in sorted(coupling_map.neighbors(node)):
             if neighbor not in seen:
                 seen.add(neighbor)
                 queue.append(neighbor)
