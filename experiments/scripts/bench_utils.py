@@ -69,13 +69,14 @@ def naive_pass(
     qc = qiskit.transpile(qc, basis_gates=["u", "cx"], optimization_level=0)
     return qc
 
+
 def phoenix_pass(
     paulis: List[str],
     coeffs: List[float],
     grouping: str | None = None,
     coupling_map: CouplingMap = None,
     rho_threshold: float = 0.35,
-    optimize: bool = True
+    optimize: bool = True,
 ) -> qiskit.QuantumCircuit:
     """Phoenix's high-level optimization.
 
@@ -307,19 +308,21 @@ def tket_pass(
 
 
 def qiskit_pass(
-    paulis: List[str], coeffs: List[float],
-    coupling_map: CouplingMap = None, optimize: bool = True,
-    preserve_order: bool = False
+    paulis: List[str],
+    coeffs: List[float],
+    coupling_map: CouplingMap = None,
+    optimize: bool = True,
+    preserve_order: bool = False,
 ) -> qiskit.QuantumCircuit:
-    qc = phoenix.utils.compile_by_qiskit(paulis, coeffs, little_endian=False, optimize=optimize, preserve_order=preserve_order)
+    qc = phoenix.utils.compile_by_qiskit(
+        paulis, coeffs, little_endian=False, optimize=optimize, preserve_order=preserve_order
+    )
     if not (coupling_map is None or phoenix.utils.is_all2all_coupling_map(coupling_map)):
         qc = phoenix.utils.optimize_with_mapping(qc, coupling_map)
     return qc
 
 
-def paulirl_pass(
-    paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None
-) -> qiskit.QuantumCircuit:
+def paulirl_pass(paulis: List[str], coeffs: List[float], coupling_map: CouplingMap = None) -> qiskit.QuantumCircuit:
     """https://quantum.cloud.ibm.com/docs/en/guides/ai-transpiler-passes"""
     # TODO: perform PauliRL synthesis
     raise NotImplementedError("PauliRL pass not implemented yet cause it is not scalable")

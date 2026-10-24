@@ -81,7 +81,8 @@ def group_paulis(paulis: list[str]) -> dict[tuple[int, ...], list[str]]:
 
 
 def group_paulis_and_coeffs(
-    paulis: list[str], coeffs: np.ndarray,
+    paulis: list[str],
+    coeffs: np.ndarray,
 ) -> dict[tuple[int, ...], tuple[list[str], np.ndarray]]:
     """Group Pauli strings (with coefficients) by their nontrivial parts.
 

@@ -93,9 +93,7 @@ def pauli_exp_synth_cost(paulis: list[str], coeffs: list[float] = None) -> int:
         normalized_paulis.append(label)
 
     if coeffs is None:
-        support = {
-            (axis_to_index[label[0]], axis_to_index[label[1]]) for label in normalized_paulis
-        }
+        support = {(axis_to_index[label[0]], axis_to_index[label[1]]) for label in normalized_paulis}
         matched_left = [-1, -1, -1]
 
         def augment(left: int, visited_right: set[int]) -> bool:
@@ -194,9 +192,11 @@ def post_transpile(qc: QuantumCircuit) -> QuantumCircuit:
     pm.append(passes.CommutativeInverseCancellation(matrix_based=True))
     pm.append(passes.Optimize1qGatesDecomposition())
     pm.append(passes.CommutativeCancellation())
-    
+
     # Collect Clifford blocks up to width 3 and resynthesize them optimally with Bravyi-Maslov synthesis.
-    pm.append(passes.CollectCliffords(matrix_based=True, min_block_size=2, max_block_width=_OPTIMAL_CLIFFORD_MAX_BLOCK_WIDTH))
+    pm.append(
+        passes.CollectCliffords(matrix_based=True, min_block_size=2, max_block_width=_OPTIMAL_CLIFFORD_MAX_BLOCK_WIDTH)
+    )
     pm.append(passes.HighLevelSynthesis(hls_config=passes.HLSConfig(use_default_on_unspecified=False, clifford=["bm"])))
 
     # unroll CNOTEquivCliffordGate if existing
@@ -216,8 +216,12 @@ def post_transpile(qc: QuantumCircuit) -> QuantumCircuit:
 
 
 def compile_by_qiskit(
-    paulis: list[str], coeffs: list[float], coupling_map: CouplingMap = None,
-    little_endian: bool = True, optimize: bool = True, preserve_order: bool = False
+    paulis: list[str],
+    coeffs: list[float],
+    coupling_map: CouplingMap = None,
+    little_endian: bool = True,
+    optimize: bool = True,
+    preserve_order: bool = False,
 ) -> QuantumCircuit:
     from qiskit.circuit.library import PauliEvolutionGate
     from qiskit.quantum_info import SparsePauliOp
@@ -250,7 +254,7 @@ def compile_by_qiskit(
     if optimize:
         qc = post_transpile(qc)
 
-    if not(coupling_map is None or is_all2all_coupling_map(coupling_map)):
+    if not (coupling_map is None or is_all2all_coupling_map(coupling_map)):
         qc = optimize_with_mapping(qc, coupling_map)
 
     return qc
@@ -259,11 +263,7 @@ def compile_by_qiskit(
 def optimize_with_mapping(circ: QuantumCircuit, coupling_map: CouplingMap) -> QuantumCircuit:
     """By default, we use Qiskit's O3 compiler to performa hardware-aware tranpilation and optimization"""
     circ = qiskit.transpile(
-        circ,
-        optimization_level=3,
-        basis_gates=["u", "cx"],
-        coupling_map=coupling_map,
-        seed_transpiler=1997
+        circ, optimization_level=3, basis_gates=["u", "cx"], coupling_map=coupling_map, seed_transpiler=1997
     )
 
     return circ
@@ -385,8 +385,9 @@ def gene_hhex_coupling_map(size) -> CouplingMap:
     return coupling_map
 
 
-def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), hide_axis=False,
-                       title="Pauli Strings", output_filename=None):
+def plot_pauli_strings(
+    paulis, *, little_endian=False, figsize=(5, 10), hide_axis=False, title="Pauli Strings", output_filename=None
+):
     """
     Visualize a set of equal-length Pauli strings.
 
@@ -455,7 +456,6 @@ def plot_pauli_strings(paulis, *, little_endian=False, figsize=(5, 10), hide_axi
 
 
 def plot_pauli_exponential_circuit(paulis, coeffs=None) -> SVGCircuit:
-
     class MultiPauliRotation(cirq.Gate):
         """Use universal controlled gates to represent generic 2Q Clifford gates"""
 
@@ -490,7 +490,6 @@ def plot_pauli_exponential_circuit(paulis, coeffs=None) -> SVGCircuit:
         circ.append(MultiPauliRotation(pauli, coeff).on(*qubits_acted))
 
     return SVGCircuit(circ)
-
 
 
 def peel_front_cliffords(circuit: QuantumCircuit) -> tuple[QuantumCircuit, QuantumCircuit]:
@@ -637,7 +636,7 @@ def _synth_rz_angles(angles: list[float], epsilon: float, num_workers: int | Non
 
     # Several chunks per worker so that uneven per-angle cost still balances out.
     chunk = max(1, len(keys) // (num_workers * 4))
-    batches = [[uniq[k] for k in keys[i:i + chunk]] for i in range(0, len(keys), chunk)]
+    batches = [[uniq[k] for k in keys[i : i + chunk]] for i in range(0, len(keys), chunk)]
 
     # "fork" rather than the macOS/Windows default "spawn": spawn (and forkserver)
     try:
@@ -674,7 +673,7 @@ def synth_to_clifford_t(qc: QuantumCircuit, epsilon=1e-10, num_workers: int | No
     """
     base = qiskit.transpile(qc, basis_gates=["rz", "sx", "x", "cx"], optimization_level=1)
 
-    rz_angles = [float(inst.operation.params[0]) for inst in base.data if inst.operation.name == 'rz']
+    rz_angles = [float(inst.operation.params[0]) for inst in base.data if inst.operation.name == "rz"]
     rz_cache = _synth_rz_angles(rz_angles, float(epsilon), num_workers)
 
     out = QuantumCircuit(*base.qregs)
@@ -683,11 +682,11 @@ def synth_to_clifford_t(qc: QuantumCircuit, epsilon=1e-10, num_workers: int | No
         idx = [base.find_bit(q).index for q in qubits]
         if op.name == "cx":
             out.cx(*idx)
-        elif op.name == 'x':
+        elif op.name == "x":
             out.x(*idx)
-        elif op.name == 'sx':
+        elif op.name == "sx":
             out.sx(*idx)
-        elif op.name == 'rz':
+        elif op.name == "rz":
             out.compose(rz_cache[float(op.params[0]).hex()], [idx[0]], inplace=True)
         else:
             raise ValueError(f"unexpected {op.num_qubits}-qubit gate {op.name!r}")

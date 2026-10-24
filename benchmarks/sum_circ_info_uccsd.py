@@ -37,7 +37,7 @@ for fname in fnames:
     with open(fname, "r") as f:
         data = json.load(f)
 
-    data['paulis'] = [p[::-1] for p in data['paulis']]  # reverse the order of qubits to be consistent with qiskit
+    data["paulis"] = [p[::-1] for p in data["paulis"]]  # reverse the order of qubits to be consistent with qiskit
     ham = Hamiltonian(data["paulis"], data["coeffs"])
     qc = ham.generate_circuit()
     qc = qiskit.transpile(qc, basis_gates=["u", "cx"], optimization_level=0)

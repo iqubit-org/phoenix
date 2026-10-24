@@ -51,9 +51,7 @@ class Hamiltonian(SparsePauliOp):
 
         return [
             Hamiltonian(pls, coes)
-            for pls, coes in group_paulis_and_coeffs(
-                self.paulis.to_labels(), self.coeffs
-            ).values()
+            for pls, coes in group_paulis_and_coeffs(self.paulis.to_labels(), self.coeffs).values()
         ]
 
     def tableau(self, arrange="xz", with_phase=False) -> np.ndarray:

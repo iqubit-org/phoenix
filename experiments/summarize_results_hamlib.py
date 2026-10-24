@@ -64,9 +64,7 @@ def main():
     if not os.path.isdir(output_dpath):
         raise ValueError("There is not compiled circuit output by {} compiler".format(args.compiler))
     if not os.path.isdir(BENCHMARK_DPATH) or not any(
-        fn.endswith(".qasm")
-        for root, _, fns in os.walk(BENCHMARK_DPATH)
-        for fn in fns
+        fn.endswith(".qasm") for root, _, fns in os.walk(BENCHMARK_DPATH) for fn in fns
     ):
         raise ValueError(
             "{} is missing or empty — run `make naive -f Makefile-Hamlib` first "

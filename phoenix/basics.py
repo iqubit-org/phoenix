@@ -91,7 +91,7 @@ class RXYGate(Gate):
 
     def _define(self):
         """Default definition in the ``{CX, RZ, H, SX}`` basis."""
-        #      ┌───┐                       ┌───┐  
+        #      ┌───┐                       ┌───┐
         # q_0: ┤ H ├───■───────────────■───┤ H ├──
         #      ├───┴┐┌─┴─┐┌─────────┐┌─┴─┐┌┴───┴─┐
         # q_1: ┤ √X ├┤ X ├┤ Rz(0.1) ├┤ X ├┤ √Xdg ├

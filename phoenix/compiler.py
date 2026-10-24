@@ -13,7 +13,7 @@ from .utils import post_transpile
 
 
 def _process_same_weight_hamiltonian(
-    ham: Hamiltonian, parallel: bool = False, patience: int | None = None, optimize : bool = True
+    ham: Hamiltonian, parallel: bool = False, patience: int | None = None, optimize: bool = True
 ) -> QuantumCircuit:
     """Helper function to process a single Hamiltonian group (used for parallel execution)."""
     ham_, simp_steps = simplify_hamiltonian(ham, parallel=parallel, patience=patience)
@@ -22,7 +22,7 @@ def _process_same_weight_hamiltonian(
 
 
 def _simplify_groups(
-    hams: list[Hamiltonian], backend: str, parallel: bool, patience: int | None, optimize : bool = True
+    hams: list[Hamiltonian], backend: str, parallel: bool, patience: int | None, optimize: bool = True
 ) -> list[QuantumCircuit]:
     """Simplify each Hamiltonian group into a subcircuit, parallelizing across
     groups via the chosen backend (a single group always runs in-process)."""
@@ -45,7 +45,7 @@ def compile_hamiltonian_simulation(
     hamiltonian: Hamiltonian,
     grouping: str | None = None,
     parallel_search: bool = True,
-    terminal='auto',
+    terminal="auto",
     order_method: str | None = None,
     backend: str = "sequential",
     search_patience: int | None = None,
@@ -89,16 +89,16 @@ def compile_hamiltonian_simulation(
         )
     elif grouping == "support":
         hams = hamiltonian.group_same_weights()
-        circuits = _simplify_groups(hams, backend, parallel=parallel_search, patience=search_patience, optimize=optimize)
+        circuits = _simplify_groups(
+            hams, backend, parallel=parallel_search, patience=search_patience, optimize=optimize
+        )
         qc = (
             order_circuits(circuits, method=order_method or "tsp")
             if circuits
             else QuantumCircuit(hamiltonian.num_qubits)
         )
     else:
-        raise ValueError(
-            f"Unknown grouping mode: {grouping!r}; options: None/'holistic' (default), 'support'"
-        )
+        raise ValueError(f"Unknown grouping mode: {grouping!r}; options: None/'holistic' (default), 'support'")
     if optimize:
         qc = post_transpile(qc)
 

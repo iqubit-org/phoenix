@@ -37,7 +37,11 @@ def main():
         action="store_true",
         help="Disable circuit-level optimization, i.e., only perform high-level synthesis (default: False)",
     )
-    parser.add_argument("--tket-legacy", action="store_true", help="Use tket lecacy PauliSimp instead of default advanced GreedyPauliSimp pass (default: False)")
+    parser.add_argument(
+        "--tket-legacy",
+        action="store_true",
+        help="Use tket lecacy PauliSimp instead of default advanced GreedyPauliSimp pass (default: False)",
+    )
     parser.add_argument("-c", "--compiler", default="phoenixpp", type=str, help="Compiler (default: phoenixpp)")
     args = parser.parse_args()
 
@@ -66,10 +70,16 @@ def main():
     t0 = time.perf_counter()
     if args.compiler == "tket":
         circ_opt = bench_utils.tket_pass(
-            data["paulis"], data["coeffs"], greedy=not args.tket_legacy, coupling_map=coupling_map, optimize=not args.no_opt
+            data["paulis"],
+            data["coeffs"],
+            greedy=not args.tket_legacy,
+            coupling_map=coupling_map,
+            optimize=not args.no_opt,
         )
     elif args.compiler == "qiskit":
-        circ_opt = bench_utils.qiskit_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, optimize=not args.no_opt)
+        circ_opt = bench_utils.qiskit_pass(
+            data["paulis"], data["coeffs"], coupling_map=coupling_map, optimize=not args.no_opt
+        )
     elif args.compiler == "paulihedral":
         circ_opt = bench_utils.paulihedral_pass(
             data["paulis"],
@@ -87,9 +97,13 @@ def main():
             block_sizes=data.get("block_sizes"),
         )
     elif args.compiler == "pauliopt":
-        circ_opt = bench_utils.pauliopt_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, optimize=not args.no_opt)
+        circ_opt = bench_utils.pauliopt_pass(
+            data["paulis"], data["coeffs"], coupling_map=coupling_map, optimize=not args.no_opt
+        )
     elif args.compiler == "quclear":
-        circ_opt = bench_utils.quclear_pass(data["paulis"], data["coeffs"], coupling_map=coupling_map, optimize=not args.no_opt)
+        circ_opt = bench_utils.quclear_pass(
+            data["paulis"], data["coeffs"], coupling_map=coupling_map, optimize=not args.no_opt
+        )
     elif args.compiler == "phoenix":
         circ_opt = bench_utils.phoenix_pass(
             data["paulis"], data["coeffs"], grouping="support", coupling_map=coupling_map, optimize=not args.no_opt

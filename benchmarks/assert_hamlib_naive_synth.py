@@ -21,12 +21,7 @@ categories = [
 ]
 fnames = []
 for dir in categories:
-    fnames.extend(
-        [
-            os.path.join(benchmark_dir, dir, fname)
-            for fname in os.listdir(os.path.join(benchmark_dir, dir))
-        ]
-    )
+    fnames.extend([os.path.join(benchmark_dir, dir, fname) for fname in os.listdir(os.path.join(benchmark_dir, dir))])
 
 for fname in fnames:
     if not os.path.exists(fname):
@@ -36,7 +31,6 @@ for fname in fnames:
 
     with open(fname, "r") as f:
         data = json.load(f)
-
 
     if data["num_qubits"] >= 10:
         print("skipping due to large number of qubits")
@@ -49,5 +43,5 @@ for fname in fnames:
         continue
 
     u_ideal = ham.unitary_evolution()
-    u_ref = Operator(qc).to_matrix() 
+    u_ref = Operator(qc).to_matrix()
     print("infidelity (ideal v.s. ref):", infidelity(u_ideal, u_ref))

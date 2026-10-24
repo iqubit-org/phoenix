@@ -1,6 +1,7 @@
 """
 This script is to generate .json and .qasm files from the original 100_representative.json file which is 100 selected benchmarks from HamLib.
 """
+
 import os
 import json
 

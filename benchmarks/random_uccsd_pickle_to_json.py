@@ -42,19 +42,24 @@ def convert(pickle_path: str, output_path: str, rng: np.random.Generator) -> Non
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(
-            {"num_qubits": num_qubits, "paulis": paulis, "coeffs": coeffs, "block_sizes": [len(block) for block in blocks]},
+            {
+                "num_qubits": num_qubits,
+                "paulis": paulis,
+                "coeffs": coeffs,
+                "block_sizes": [len(block) for block in blocks],
+            },
             f,
             indent=2,
         )
-    print(f"{os.path.basename(pickle_path)} -> {os.path.basename(output_path)}: "
-          f"{num_qubits}q, {len(blocks)} blocks, {len(paulis)} strings")
+    print(
+        f"{os.path.basename(pickle_path)} -> {os.path.basename(output_path)}: "
+        f"{num_qubits}q, {len(blocks)} blocks, {len(paulis)} strings"
+    )
 
 
 def main() -> None:
     rng = np.random.default_rng(SEED)
-    names = sorted(
-        f for f in os.listdir(PICKLE_DIR) if f.endswith(".pickle")
-    )
+    names = sorted(f for f in os.listdir(PICKLE_DIR) if f.endswith(".pickle"))
     for name in names:
         convert(
             os.path.join(PICKLE_DIR, name),

@@ -81,14 +81,17 @@ for _ci, _cliff in enumerate(CLIFFORD_OPTIONS):
     _qc2.append(_cliff, [0, 1])
     _cl2 = Clifford(_qc2)
     for _code in range(16):
-        _p = Pauli((np.array([(_code >> 1) & 1, (_code >> 3) & 1], dtype=bool),
-                    np.array([_code & 1, (_code >> 2) & 1], dtype=bool)))
+        _p = Pauli(
+            (
+                np.array([(_code >> 1) & 1, (_code >> 3) & 1], dtype=bool),
+                np.array([_code & 1, (_code >> 2) & 1], dtype=bool),
+            )
+        )
         _evolved = _p.evolve(_cl2, frame="s")
         # Conjugation of a Hermitian Pauli by a Clifford yields phase +/-1.
         _SIGN16[_ci, _code] = (-1.0) ** ((_evolved.phase % 4) // 2)
         # Cross-check the symplectic-block bit update against qiskit's evolve.
-        _ec = (int(_evolved.x[0]) | (int(_evolved.z[0]) << 1)
-               | (int(_evolved.x[1]) << 2) | (int(_evolved.z[1]) << 3))
+        _ec = int(_evolved.x[0]) | (int(_evolved.z[0]) << 1) | (int(_evolved.x[1]) << 2) | (int(_evolved.z[1]) << 3)
         assert _ec == int(_NEWCODE16[_ci, _code]), "tableau/evolve convention mismatch"
 
 
@@ -107,7 +110,8 @@ class PeelResult:
     num_qubits: int
 
 
-RHO_THRESHOLD_SCAN = (1.0, 0.75, 0.5, 0.25, 0.0) 
+RHO_THRESHOLD_SCAN = (1.0, 0.75, 0.5, 0.25, 0.0)
+
 
 def peel_forward(
     ham: Hamiltonian,
@@ -157,9 +161,7 @@ def peel_forward(
         rows_weight_2 = np.where(active & (w == 2))[0]
         if rows_weight_2.size:
             active_rows = np.where(active)[0]
-            active_qubits = int(
-                np.any((x[active_rows] | z[active_rows]) != 0, axis=0).sum()
-            )
+            active_qubits = int(np.any((x[active_rows] | z[active_rows]) != 0, axis=0).sum())
             active_density = float(w[active_rows].mean()) / max(active_qubits, 1)
             emit_weight_2 = active_density <= rho_threshold
             if emit_weight_2:
@@ -183,8 +185,7 @@ def peel_forward(
 
     def _apply(ci: int, a: int, b: int, tag: str):
         act_idx = np.where(active)[0]
-        cq = (x[act_idx, a] | (z[act_idx, a] << 1)
-              | (x[act_idx, b] << 2) | (z[act_idx, b] << 3)).astype(np.int64)
+        cq = (x[act_idx, a] | (z[act_idx, a] << 1) | (x[act_idx, b] << 2) | (z[act_idx, b] << 3)).astype(np.int64)
         nc = _NEWCODE16[ci][cq]
         x[act_idx, a] = (nc & 1).astype(np.uint8)
         z[act_idx, a] = ((nc >> 1) & 1).astype(np.uint8)
@@ -382,8 +383,7 @@ def peel_circuit(result: PeelResult, terminal: str = "auto", phase_exact: bool =
                     deps = {last_move[q] for q in key if last_move[q] is not None}
                     bid = len(items)
                     open_buckets[key] = bid
-                    items.append({"kind": "block", "qubits": key, "deps": deps,
-                                  "labels": [lbl], "cs": [c]})
+                    items.append({"kind": "block", "qubits": key, "deps": deps, "labels": [lbl], "cs": [c]})
                     for q in key:
                         blocks_since[q].append(bid)
         if t < len(result.moves):
@@ -426,9 +426,7 @@ def peel_circuit(result: PeelResult, terminal: str = "auto", phase_exact: bool =
                     tail = synth
         qc.compose(tail, inplace=True)
     elif terminal != "absorb" and terminal not in ("auto", "replay", "synth"):
-        raise ValueError(
-            f"Unknown terminal mode: {terminal!r}; options: 'auto', 'replay', 'synth', 'absorb'"
-        )
+        raise ValueError(f"Unknown terminal mode: {terminal!r}; options: 'auto', 'replay', 'synth', 'absorb'")
     return qc.decompose("PauliEvolution")
 
 
@@ -476,12 +474,12 @@ def _synth_terminal(moves, n: int, phase_exact: bool = False) -> QuantumCircuit 
     for cliff, (a, b) in reversed(moves):
         replay.append(cliff, (a, b))
     try:
-        pm = PassManager([
-            passes.CollectCliffords(matrix_based=True, min_block_size=1, max_block_width=n),
-            passes.HighLevelSynthesis(
-                hls_config=HLSConfig(use_default_on_unspecified=False, clifford=["greedy"])
-            ),
-        ])
+        pm = PassManager(
+            [
+                passes.CollectCliffords(matrix_based=True, min_block_size=1, max_block_width=n),
+                passes.HighLevelSynthesis(hls_config=HLSConfig(use_default_on_unspecified=False, clifford=["greedy"])),
+            ]
+        )
         synth = pm.run(replay)
     except Exception:
         return None
@@ -586,24 +584,15 @@ def holistic_compile(
         )
 
     candidates = Parallel(n_jobs=len(RHO_THRESHOLD_SCAN), prefer="processes")(
-        delayed(_compile_holistic_candidate)(ham, terminal, phase_exact, rho)
-        for rho in RHO_THRESHOLD_SCAN
+        delayed(_compile_holistic_candidate)(ham, terminal, phase_exact, rho) for rho in RHO_THRESHOLD_SCAN
     )
     if verbose:
         for rho, _circuit, (num_2q, depth_2q) in candidates:
-            print(
-                f"[rho scan] rho_threshold={rho:.2f}: "
-                f"num_2q_gates={num_2q}, depth_2q={depth_2q}"
-            )
+            print(f"[rho scan] rho_threshold={rho:.2f}: num_2q_gates={num_2q}, depth_2q={depth_2q}")
     rho, circuit, (num_2q, depth_2q) = min(
         candidates,
         key=lambda candidate: candidate[2],
     )
     if verbose:
-        print(
-            f"[rho scan] selected rho_threshold={rho:.2f}: "
-            f"num_2q_gates={num_2q}, depth_2q={depth_2q}"
-        )
+        print(f"[rho scan] selected rho_threshold={rho:.2f}: num_2q_gates={num_2q}, depth_2q={depth_2q}")
     return circuit
-
-

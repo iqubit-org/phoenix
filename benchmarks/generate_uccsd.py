@@ -26,7 +26,7 @@ import numpy as np
 
 if not hasattr(np, "in1d"):  # numpy>=2.0 removed in1d; pyscf still calls it
     np.in1d = np.isin
-    
+
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -37,6 +37,7 @@ from qiskit_nature.second_q.mappers import BravyiKitaevMapper, JordanWignerMappe
 # Uniform cluster amplitude plugged in for every excitation; 0.1 reproduces the
 # legacy family's coefficient classes (singles ±0.05, doubles ±0.0125).
 UCCSD_AMPLITUDE = 0.1
+
 
 def uccsd_pauli_operator(ansatz: UCCSD, amplitude: float = UCCSD_AMPLITUDE) -> SparsePauliOp:
     """Collect the ansatz's excitation generators into one real-coefficient operator.
@@ -90,6 +91,7 @@ def dump_qubit_operator_json(
             f,
             indent=2,
         )
+
 
 @dataclass(frozen=True)
 class UCCCase:

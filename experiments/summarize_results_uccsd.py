@@ -25,9 +25,7 @@ OUTPUT_DPATH = os.path.join(OUTPUT_DPATH, args.compiler)
 
 if not os.path.isdir(OUTPUT_DPATH):
     raise ValueError("{} does not exist".format(OUTPUT_DPATH))
-if not os.path.isdir(BENCHMARK_DPATH) or not any(
-    f.endswith(".qasm") for f in os.listdir(BENCHMARK_DPATH)
-):
+if not os.path.isdir(BENCHMARK_DPATH) or not any(f.endswith(".qasm") for f in os.listdir(BENCHMARK_DPATH)):
     raise ValueError(
         "{} is missing or empty — run `make naive` first to generate the "
         "original-circuit reference (note: it is empty after an old-style "

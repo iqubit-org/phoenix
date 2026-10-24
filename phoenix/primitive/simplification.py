@@ -389,9 +389,7 @@ def search_best_clifford_par(
     S_x_q1 = S_x[q1p]
     S_z_q0 = S_z[q0p]
     S_z_q1 = S_z[q1p]
-    NZ_wo_outside = (
-        NZ_wo_total - (S_wo_q0 > 0).astype(np.int64) - (S_wo_q1 > 0).astype(np.int64)
-    )  # (P,)
+    NZ_wo_outside = NZ_wo_total - (S_wo_q0 > 0).astype(np.int64) - (S_wo_q1 > 0).astype(np.int64)  # (P,)
 
     # Running global-best across 9 Cliffords
     best_cost = np.inf
@@ -470,11 +468,7 @@ def search_best_clifford_par(
 
         # total_weight[p]: outside columns keep their S_k > 0 status; the two
         # pair columns use the candidate's nl-restricted NEW values.
-        total_weight = (
-            NZ_wo_outside
-            + (s_n_wo_q0 > 0).astype(np.int64)
-            + (s_n_wo_q1 > 0).astype(np.int64)
-        )
+        total_weight = NZ_wo_outside + (s_n_wo_q0 > 0).astype(np.int64) + (s_n_wo_q1 > 0).astype(np.int64)
 
         costs = (
             pair_or_wo.astype(np.float64)

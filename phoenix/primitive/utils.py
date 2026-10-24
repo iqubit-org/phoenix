@@ -12,6 +12,7 @@ from ..hamiltonian import Hamiltonian
 
 _PAULI_EXP_GATES = (RXXGate, RYYGate, RZZGate, RZXGate)
 
+
 @dataclass
 class SimplificationStep:
     clifford: CNOTEquivCliffordGate | fSwapEquivCliffordGate
@@ -19,7 +20,9 @@ class SimplificationStep:
     qubits: tuple[int, int]
 
 
-def constr_circuit_from_simp_steps(ham: Hamiltonian, steps: list[SimplificationStep], optimize : bool = True) -> QuantumCircuit:
+def constr_circuit_from_simp_steps(
+    ham: Hamiltonian, steps: list[SimplificationStep], optimize: bool = True
+) -> QuantumCircuit:
     qc_pre = QuantumCircuit(ham.num_qubits)
     qc_post = QuantumCircuit(ham.num_qubits)
 
@@ -40,12 +43,9 @@ def constr_circuit_from_simp_steps(ham: Hamiltonian, steps: list[SimplificationS
     return qc
 
 
-
-
-
-def cnot_equiv_commute(g1: CNOTEquivCliffordGate, q1: tuple,
-                       g2: CNOTEquivCliffordGate, q2: tuple) -> bool:
+def cnot_equiv_commute(g1: CNOTEquivCliffordGate, q1: tuple, g2: CNOTEquivCliffordGate, q2: tuple) -> bool:
     """Exact O(1) commutation test: axes must match on every shared qubit."""
+
     def axis(g, qs, q):
         return g.pauli_0 if q == qs[0] else g.pauli_1
 
@@ -118,9 +118,7 @@ def schedule_cnot_equiv_clifford(circ: QuantumCircuit, cancel: bool = True) -> Q
     """
     for inst in circ.data:
         if not isinstance(inst.operation, CNOTEquivCliffordGate):
-            raise ValueError(
-                f"schedule_cnot_equiv_clifford: unsupported gate {inst.operation.name!r}"
-            )
+            raise ValueError(f"schedule_cnot_equiv_clifford: unsupported gate {inst.operation.name!r}")
 
     if cancel and circ.size() > 1:
         from qiskit.transpiler.passes import CommutativeInverseCancellation
@@ -134,8 +132,7 @@ def schedule_cnot_equiv_clifford(circ: QuantumCircuit, cancel: bool = True) -> Q
         deps: set[int] = set()
         for q in qs:
             for j in reversed(on_q[q]):
-                if not cnot_equiv_commute(items[j]["gate"], items[j]["qubits"],
-                                          inst.operation, qs):
+                if not cnot_equiv_commute(items[j]["gate"], items[j]["qubits"], inst.operation, qs):
                     deps.add(j)
         i = len(items)
         items.append({"gate": inst.operation, "qubits": qs, "deps": deps})
@@ -150,10 +147,7 @@ def schedule_cnot_equiv_clifford(circ: QuantumCircuit, cancel: bool = True) -> Q
 
 def _is_twoq_pauli_exponential(node) -> bool:
     """Whether a DAG node is one of the 2Q Pauli-rotation gates to fuse."""
-    return (
-        node.op.num_qubits == 2
-        and isinstance(node.op, _PAULI_EXP_GATES)
-    )
+    return node.op.num_qubits == 2 and isinstance(node.op, _PAULI_EXP_GATES)
 
 
 class CollectSuccessive2QPauliExponentials(AnalysisPass):
@@ -180,9 +174,7 @@ class CollectSuccessive2QPauliExponentials(AnalysisPass):
                 qargs = tuple(node.qargs)
                 eligible = _is_twoq_pauli_exponential(node)
 
-                if eligible and (
-                    segment_qargs is None or qargs == segment_qargs
-                ):
+                if eligible and (segment_qargs is None or qargs == segment_qargs):
                     segment.append(node)
                     segment_qargs = qargs
                     continue
@@ -201,15 +193,18 @@ class CollectSuccessive2QPauliExponentials(AnalysisPass):
         self.property_set["block_list"] = blocks
         return dag
 
-pauli_exp_consolidation = PassManager([
-    CollectSuccessive2QPauliExponentials(),
-    ConsolidateBlocks(
-        kak_basis_gate=CXGate(),
-        force_consolidate=True,
-    ),
-    UnitarySynthesis(
-        basis_gates=["u", "cx"],
-        min_qubits=2,
-        approximation_degree=1.0,
-    ),
-])
+
+pauli_exp_consolidation = PassManager(
+    [
+        CollectSuccessive2QPauliExponentials(),
+        ConsolidateBlocks(
+            kak_basis_gate=CXGate(),
+            force_consolidate=True,
+        ),
+        UnitarySynthesis(
+            basis_gates=["u", "cx"],
+            min_qubits=2,
+            approximation_degree=1.0,
+        ),
+    ]
+)
