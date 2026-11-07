@@ -60,7 +60,7 @@ def compile_hamiltonian_simulation(
             - ``None`` (default) or ``"holistic"``: the holistic engine —
               forward-frame two-qubit peeling over the whole table, grouping
               fully emergent, adaptive density-gated weight-2 emission, and
-              guaranteed termination;
+              guaranteed termination (PPoPP'27 Symphony behavior, the default);
             - ``"support"``: exact same-support grouping + legacy BSF greedy
               search (DAC'25 behavior, kept as the ablation baseline).
         optimize: Whether to apply Qiskit post-optimization.

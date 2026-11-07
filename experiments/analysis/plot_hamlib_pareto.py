@@ -5,8 +5,8 @@ Each compiler is one point: x = 2-qubit *depth* optimization rate, y = 2-qubit
 *gate-count* optimization rate, both = geomean over the 100 per-program ratios
 (opt / naive), i.e. exactly the ``All (100)`` row of ``display_results_hamlib``.
 Lower is better on both axes, so the best compiler sits at the bottom-left.
-Symphony (our holistic engine, CSV key ``phoenixpp``) is the sole point in the
-region that Pareto-dominates every baseline; the old published Phoenix
+Symphony (our PPoPP'27 holistic engine, CSV key ``phoenixpp``) is the sole point
+in the region that Pareto-dominates every baseline; the old published Phoenix
 (support-grouped DAC'25 version, CSV key ``phoenix``) is one of the baselines,
 drawn automatically once its results CSV exists.
 

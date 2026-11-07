@@ -1,4 +1,4 @@
-"""Holistic compilation: forward-frame two-qubit peeling (no a-priori grouping).
+"""PPoPP'27 Symphony holistic compilation: forward-frame two-qubit peeling (no a-priori grouping).
 
 Design: ``docs/peel_forward_design.md``. The holistic engine replaces the
 support-grouped BSF search (greedy + tabu + stall machinery) with a single

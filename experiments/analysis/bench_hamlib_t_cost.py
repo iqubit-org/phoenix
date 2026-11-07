@@ -78,7 +78,7 @@ def compile_circuit(compiler: str, paulis, coeffs):
     tket keeps greedy=True), so the T-cost numbers line up with results/result_hamlib_*.csv.
     """
     if compiler == "symphony":
-        # holistic grouping == the default of compile_hamiltonian_simulation (the hero)
+        # holistic grouping == the PPoPP'27 Symphony hero (compile_hamiltonian_simulation default)
         return phoenix_pass(paulis, coeffs, optimize=False)
     if compiler == "phoenix":
         # same-support grouping == the DAC'25 Phoenix baseline

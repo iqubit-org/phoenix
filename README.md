@@ -1,6 +1,6 @@
 # 🐦‍🔥 PHOENIX: Pauli-based High-level Optimization ENgine for Instruction eXecution on NISQ Devices
 
-[![PyPI](https://img.shields.io/pypi/v/phoenix-quantum?logo=pypi&logoColor=white&color=3775A9)](https://pypi.org/project/phoenix-quantum/) [![Python](https://img.shields.io/badge/Python-3.9--3.12-3776AB?logo=python&logoColor=FFD43B)](https://pypi.org/project/phoenix-quantum/) [![License](https://img.shields.io/pypi/l/phoenix-quantum?logo=opensourceinitiative&logoColor=white&color=3DA639)](./LICENSE) [![CI](https://github.com/iqubit-org/phoenix/actions/workflows/ci.yml/badge.svg)](https://github.com/iqubit-org/phoenix/actions/workflows/ci.yml) [![Slides](https://img.shields.io/badge/Slides-PHOENIX-orange?logo=files&logoColor=white)](https://youngcius.github.io/docs/slides/phoenix_dac2025.pdf) [![Slides](https://img.shields.io/badge/Slides-PHOENIX++-orange?logo=files&logoColor=white)](https://youngcius.github.io/docs/slides/symphony_arxiv2026.pdf) [![Conference](https://img.shields.io/badge/Conference-DAC%202025-7B2CBF?logo=acm&logoColor=white)](https://arxiv.org/abs/2504.03529) [![arXiv](https://img.shields.io/badge/arXiv-2608.11579-B31B1B?logo=arxiv&logoColor=white)](https://arxiv.org/abs/2608.11579)
+[![PyPI](https://img.shields.io/pypi/v/phoenix-quantum?logo=pypi&logoColor=white&color=3775A9)](https://pypi.org/project/phoenix-quantum/) [![Python](https://img.shields.io/badge/Python-3.9--3.12-3776AB?logo=python&logoColor=FFD43B)](https://pypi.org/project/phoenix-quantum/) [![License](https://img.shields.io/pypi/l/phoenix-quantum?logo=opensourceinitiative&logoColor=white&color=3DA639)](./LICENSE) [![CI](https://github.com/iqubit-org/phoenix/actions/workflows/ci.yml/badge.svg)](https://github.com/iqubit-org/phoenix/actions/workflows/ci.yml) [![Slides](https://img.shields.io/badge/Slides-PHOENIX-orange?logo=files&logoColor=white)](https://youngcius.github.io/docs/slides/phoenix_dac2025.pdf) [![Slides](https://img.shields.io/badge/Slides-PHOENIX++-orange?logo=files&logoColor=white)](https://youngcius.github.io/docs/slides/symphony_arxiv2026.pdf) [![Conference](https://img.shields.io/badge/Conference-DAC%202025-7B2CBF?logo=acm&logoColor=white)](https://arxiv.org/abs/2504.03529) [![Conference](https://img.shields.io/badge/Conference-PPoPP%202027-7B2CBF?logo=acm&logoColor=white)](https://arxiv.org/abs/2608.11579)
 
 
 ## Overview
@@ -11,7 +11,7 @@ The package contains two generations of the compiler behind one public API:
 
 | Compiler | `grouping` value | Experiment key | Description |
 |----------|------------------|----------------|-------------|
-| **PHOENIX++/Symphony** ([arXiv:2608.11579](https://arxiv.org/abs/2608.11579)) | `None` or `"holistic"` (default) | `phoenixpp` | Grouping-free, holistic simplification of one global BSF tableau, followed by adaptive block emission and commutativity-aware ASAP scheduling |
+| **PHOENIX++/Symphony** ([arXiv:2608.11579, PPoPP '27](https://arxiv.org/abs/2608.11579)) | `None` or `"holistic"` (default) | `phoenixpp` | Grouping-free, holistic simplification of one global BSF tableau, followed by adaptive block emission and commutativity-aware ASAP scheduling |
 | **PHOENIX** ([arXiv:2504.03529, DAC '25](https://arxiv.org/abs/2504.03529)) | `"support"` | `phoenix` | Exact same-support grouping, per-group BSF simplification, and TSP-based inter-group circuit ordering |
 
 The newer compiler is named **Symphony** in the paper. `Phoenix++`/`phoenixpp` is retained only as the historical name used by the benchmarking targets, output directories, and result CSVs in this repository.
@@ -29,10 +29,10 @@ ham = phoenix.Hamiltonian(
     [0.01, 0.01, 0.01, 0.01],
 )
 
-# PHOENIX++ (Symphony): the default holistic compiler, arxiv:2608.11579
+# PHOENIX++ (Symphony): the default holistic compiler, arXiv:2608.11579 (PPoPP '27)
 symphony_circuit = phoenix.compile_hamiltonian_simulation(ham)
 
-# PHOENIX: the first-generation phoenix compiler, arXiv2504.03529 (DAC '25)
+# PHOENIX: the first-generation phoenix compiler, arXiv:2504.03529 (DAC '25)
 phoenix_circuit = phoenix.compile_hamiltonian_simulation(
     ham,
     grouping="support",
@@ -46,7 +46,7 @@ phoenix.utils.print_circ_info(symphony_circuit, title="Symphony")
 
 ## Compilation Pipelines
 
-### PHOENIX++/Symphony (default `grouping="holistic"` mode)
+### PHOENIX++/Symphony (PPoPP '27 default `grouping="holistic"` mode)
 
 Symphony removes the a-priori support partition used by the original PHOENIX pipeline:
 
@@ -73,7 +73,7 @@ Key parameters of `compile_hamiltonian_simulation`:
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `grouping` | `None` | `None`/`"holistic"` selects Symphony; `"support"` selects DAC '25 PHOENIX |
+| `grouping` | `None` | `None`/`"holistic"` selects PPoPP '27 Symphony; `"support"` selects DAC '25 PHOENIX |
 | `terminal` | `"auto"` | Symphony only: `"auto"`, `"replay"`, `"synth"`, or `"absorb"`; auto chooses the cheaper replay/resynthesis tail by 2Q count |
 | `rho_threshold` | `None` | Symphony only: scan five thresholds automatically, or provide one value in `[0, 1]` to compile a single candidate |
 | `optimize` | `True` | Apply common Qiskit post-optimization to the generated circuit |
@@ -207,7 +207,7 @@ Benchmarks live under [`benchmarks/`](benchmarks/). The committed result CSVs an
 | [`uccsd_all2all_to_limited.py`](experiments/scripts/uccsd_all2all_to_limited.py) | Map all-to-all UCCSD outputs to square or heavy-hex connectivity |
 
 
-The batch Makefile targets also require [GNU Parallel](https://www.gnu.org/software/parallel/). From the `experiments` directory, `phoenixpp` means Symphony and `phoenix` means the original DAC '25 compiler.
+The batch Makefile targets also require [GNU Parallel](https://www.gnu.org/software/parallel/). From the `experiments` directory, `phoenixpp` means the PPoPP '27 Symphony compiler and `phoenix` means the original DAC '25 compiler.
 
 UCCSD:
 
